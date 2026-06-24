@@ -1,0 +1,812 @@
+[
+  {
+    "id": "cmp-northstar-agents",
+    "name": "Northstar Agents",
+    "website_url": "https://example.com/northstar-agents",
+    "source_url": "https://example.com/launches/northstar-agents",
+    "source_name": "Sample Launch Dossier",
+    "discovered_at": "2026-06-14",
+    "launch_date": "2026-06-12",
+    "domain": "AI agents and workflow automation",
+    "subdomain": "Operations agents",
+    "description": "Workflow agents that reconcile invoices, purchase orders, and vendor exceptions for mid-market finance teams.",
+    "product_summary": "A controlled agent workspace for finance operations teams with approval queues, audit trails, and exception routing.",
+    "business_model": "B2B SaaS with usage-based automation tiers",
+    "target_customer": "Controllers and finance operations leaders at mid-market companies",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Maya Chen", "role": "CEO", "background": "Former enterprise workflow PM; sample profile, unverified" },
+      { "name": "Ravi Patel", "role": "CTO", "background": "Built internal approval systems at a late-stage SaaS company; sample profile, unverified" }
+    ],
+    "founder_background_summary": "The sample dossier suggests strong workflow and B2B automation exposure, but credentials need direct confirmation.",
+    "technical_summary": "Agent orchestration layer with policy controls, approval routing, and ledger-system connectors.",
+    "traction_summary": "Claims a waitlist and two design partners; names and contract status are not verified.",
+    "competitors": ["Zapier", "Airbase", "Ramp automation", "UiPath"],
+    "tags": ["agents", "finance operations", "workflow automation", "audit trails"],
+    "confidence_score": 84,
+    "score_inputs": {
+      "founder_signal": 82,
+      "market_signal": 88,
+      "product_signal": 86,
+      "technical_defensibility": 78,
+      "traction_signal": 64,
+      "timing_signal": 87,
+      "risk_adjustment": 71
+    },
+    "evidence": {
+      "confirmed": ["Source describes invoice exception workflow and approval controls.", "Product category and target buyer are stated in the launch copy."],
+      "inferred": ["Mid-market finance teams likely have clear budget owners.", "Auditability may help with enterprise trust."],
+      "unverified": ["Waitlist volume and design partner claims.", "Founder employment history."],
+      "needs_diligence": ["Verify integrations, security posture, and whether design partners are paying."]
+    },
+    "traction_signals": ["Waitlist claimed", "Design partner language", "Clear buyer persona"],
+    "pros": ["Urgent pain point with identifiable buyer", "Workflow integration can create switching costs", "Strong timing with controlled enterprise agent adoption"],
+    "cons": ["Crowded automation category", "Platform dependency on model providers", "Unverified traction"],
+    "risk_flags": [
+      { "risk_type": "Platform dependency", "severity": "medium", "explanation": "Core automation quality may depend on third-party LLM reliability and pricing.", "evidence_url": "https://example.com/launches/northstar-agents" },
+      { "risk_type": "Unverified traction", "severity": "medium", "explanation": "Waitlist and design-partner claims are not independently confirmed.", "evidence_url": "https://example.com/launches/northstar-agents" }
+    ],
+    "diligence_questions": ["Which systems are live today?", "Are design partners paying or only advising?", "What approval controls prevent erroneous payments?"]
+  },
+  {
+    "id": "cmp-alloy-compute",
+    "name": "Alloy Compute",
+    "website_url": "https://example.com/alloy-compute",
+    "source_url": "https://example.com/launches/alloy-compute",
+    "source_name": "Sample GitHub Trend",
+    "discovered_at": "2026-06-13",
+    "launch_date": "2026-06-11",
+    "domain": "AI infrastructure",
+    "subdomain": "Inference scheduling",
+    "description": "Open-source scheduler for routing inference jobs across GPU, CPU, and edge capacity.",
+    "product_summary": "A workload router that helps AI teams reduce idle compute and route latency-sensitive inference jobs.",
+    "business_model": "Open-core infrastructure with managed control plane",
+    "target_customer": "AI platform and ML infrastructure teams",
+    "pricing": "Open source; managed pricing unknown",
+    "geography": "United States",
+    "stage": "Seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Iris Novak", "role": "CEO", "background": "Former distributed systems engineer; sample profile, unverified" },
+      { "name": "Theo Mensah", "role": "CTO", "background": "Prior GPU scheduling research; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Technical depth appears strong from project framing, but professional history needs validation.",
+    "technical_summary": "Scheduling engine, cost-aware routing, benchmark suite, and deployment adapters.",
+    "traction_summary": "Repository activity is visible in the sample source; production usage is unknown.",
+    "competitors": ["Baseten", "Modal", "Runpod", "Together AI", "Kubernetes schedulers"],
+    "tags": ["inference", "GPU", "open source", "ML infrastructure"],
+    "confidence_score": 80,
+    "score_inputs": {
+      "founder_signal": 79,
+      "market_signal": 86,
+      "product_signal": 81,
+      "technical_defensibility": 86,
+      "traction_signal": 58,
+      "timing_signal": 89,
+      "risk_adjustment": 69
+    },
+    "evidence": {
+      "confirmed": ["Sample repository description states inference scheduling focus.", "Open-core deployment path is stated in project notes."],
+      "inferred": ["GPU cost pressure supports market urgency.", "Infrastructure depth could create defensibility if benchmarks hold."],
+      "unverified": ["Production deployments.", "Managed control-plane willingness to pay."],
+      "needs_diligence": ["Validate benchmark methodology and customer deployment evidence."]
+    },
+    "traction_signals": ["Open-source activity", "Technical benchmark claims", "Clear infrastructure buyer"],
+    "pros": ["Large and urgent infrastructure cost problem", "Potential technical wedge through scheduling performance", "Open-source adoption path"],
+    "cons": ["Infrastructure buyers demand proof", "Cloud/platform incumbents can respond", "Revenue conversion not proven"],
+    "risk_flags": [
+      { "risk_type": "Incumbent pressure", "severity": "medium", "explanation": "Cloud platforms and inference providers can bundle routing features.", "evidence_url": "https://example.com/launches/alloy-compute" }
+    ],
+    "diligence_questions": ["What workloads show measurable savings?", "How sticky is the managed layer?", "Which deployment environments are supported?"]
+  },
+  {
+    "id": "cmp-civicloop-ai",
+    "name": "CivicLoop AI",
+    "website_url": "https://example.com/civicloop-ai",
+    "source_url": "https://example.com/launches/civicloop-ai",
+    "source_name": "Sample Govtech Brief",
+    "discovered_at": "2026-06-15",
+    "launch_date": "2026-06-10",
+    "domain": "Govtech and public-sector technology",
+    "subdomain": "Permit intake",
+    "description": "AI intake and routing system for municipal permit requests, public records, and constituent service queues.",
+    "product_summary": "A case-management layer that classifies submissions, drafts responses, and escalates regulated decisions to staff.",
+    "business_model": "Annual SaaS contracts for local government departments",
+    "target_customer": "City managers, permitting departments, and public works teams",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Elena Brooks", "role": "CEO", "background": "Former city innovation office staffer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Domain exposure is plausible from the sample profile, but procurement experience needs confirmation.",
+    "technical_summary": "Document classification, policy-aware response drafting, and human approval workflows.",
+    "traction_summary": "Mentions two municipal pilots; procurement status is unknown.",
+    "competitors": ["OpenGov", "Granicus", "Cityworks", "Salesforce public sector"],
+    "tags": ["govtech", "permitting", "public sector", "workflow"],
+    "confidence_score": 76,
+    "score_inputs": {
+      "founder_signal": 76,
+      "market_signal": 79,
+      "product_signal": 82,
+      "technical_defensibility": 67,
+      "traction_signal": 54,
+      "timing_signal": 75,
+      "risk_adjustment": 58
+    },
+    "evidence": {
+      "confirmed": ["Source describes municipal permit and records workflow.", "Human approval is included in product positioning."],
+      "inferred": ["Public-sector backlog creates urgency.", "Compliance posture may be a differentiator."],
+      "unverified": ["Pilot status and procurement path.", "Founder public-sector operating history."],
+      "needs_diligence": ["Confirm data retention, audit logs, procurement cycle, and legal review requirements."]
+    },
+    "traction_signals": ["Pilot language", "Clear public-sector buyer", "Regulated workflow"],
+    "pros": ["Clear pain in understaffed municipalities", "Human-in-the-loop framing reduces automation risk", "Policy familiarity can matter"],
+    "cons": ["Slow procurement", "High implementation burden", "Regulatory and privacy exposure"],
+    "risk_flags": [
+      { "risk_type": "Public-sector procurement", "severity": "high", "explanation": "Long sales cycles can delay revenue and learning cycles.", "evidence_url": "https://example.com/launches/civicloop-ai" },
+      { "risk_type": "Privacy", "severity": "medium", "explanation": "Records and constituent submissions may contain sensitive personal information.", "evidence_url": "https://example.com/launches/civicloop-ai" }
+    ],
+    "diligence_questions": ["Are pilots paid?", "How does the product handle public-records retention?", "Which approvals remain with government staff?"]
+  },
+  {
+    "id": "cmp-veridian-robotics",
+    "name": "Veridian Robotics",
+    "website_url": "https://example.com/veridian-robotics",
+    "source_url": "https://example.com/launches/veridian-robotics",
+    "source_name": "Sample Accelerator Batch",
+    "discovered_at": "2026-06-12",
+    "launch_date": "2026-06-09",
+    "domain": "Robotics",
+    "subdomain": "Warehouse inspection",
+    "description": "Autonomous aisle-inspection robots for warehouses that detect damaged inventory, blocked paths, and safety issues.",
+    "product_summary": "A robotics system combining low-cost mobile hardware with computer vision and warehouse-management alerts.",
+    "business_model": "Robotics-as-a-service",
+    "target_customer": "Third-party logistics operators and warehouse safety managers",
+    "pricing": "Unknown",
+    "geography": "North America",
+    "stage": "Seed",
+    "funding_status": "Accelerator-backed in sample data",
+    "founders": [
+      { "name": "Samira Okafor", "role": "CEO", "background": "Robotics PhD candidate; sample profile, unverified" },
+      { "name": "Jon Ellis", "role": "COO", "background": "Warehouse operations background; sample profile, unverified" }
+    ],
+    "founder_background_summary": "The sample profile indicates useful technical and operational mix, pending verification.",
+    "technical_summary": "Navigation stack, defect-detection model, and warehouse alert integrations.",
+    "traction_summary": "Claims a pilot in one warehouse; deployment duration and results are unknown.",
+    "competitors": ["6 River Systems", "Locus Robotics", "DroneDeploy warehouse use cases", "Manual audits"],
+    "tags": ["robotics", "warehouse", "computer vision", "safety"],
+    "confidence_score": 72,
+    "score_inputs": {
+      "founder_signal": 81,
+      "market_signal": 78,
+      "product_signal": 77,
+      "technical_defensibility": 82,
+      "traction_signal": 52,
+      "timing_signal": 74,
+      "risk_adjustment": 56
+    },
+    "evidence": {
+      "confirmed": ["Accelerator-style source describes warehouse inspection use case.", "Product relies on robotics and computer vision."],
+      "inferred": ["Labor shortages can strengthen timing.", "Hardware deployments may slow iteration."],
+      "unverified": ["Pilot performance and hardware reliability.", "Unit economics."],
+      "needs_diligence": ["Validate uptime, maintenance burden, and ROI versus human audits."]
+    },
+    "traction_signals": ["Accelerator batch mention", "Pilot language", "Operational pain point"],
+    "pros": ["Clear operational ROI if defects and hazards are reduced", "Technical complexity can create moat", "Strong founder-market fit if profiles hold"],
+    "cons": ["Hardware capital requirements", "Deployment and maintenance complexity", "Pilot evidence unverified"],
+    "risk_flags": [
+      { "risk_type": "Hardware execution", "severity": "high", "explanation": "Robotics deployments require reliability, service operations, and capital discipline.", "evidence_url": "https://example.com/launches/veridian-robotics" }
+    ],
+    "diligence_questions": ["What is the robot bill of materials?", "How many hours has the pilot run?", "What defects are detected better than existing processes?"]
+  },
+  {
+    "id": "cmp-claimwise",
+    "name": "Claimwise",
+    "website_url": "https://example.com/claimwise",
+    "source_url": "https://example.com/launches/claimwise",
+    "source_name": "Sample Founder Blog",
+    "discovered_at": "2026-06-16",
+    "launch_date": "2026-06-15",
+    "domain": "Healthcare operations",
+    "subdomain": "Revenue cycle",
+    "description": "AI review assistant that helps revenue-cycle teams identify missing documentation and avoid denied claims.",
+    "product_summary": "A claim-readiness layer that checks documentation before submission and suggests human-reviewed fixes.",
+    "business_model": "Per-seat or per-claim SaaS",
+    "target_customer": "Revenue-cycle leaders at clinics and specialty practices",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Priya Desai", "role": "CEO", "background": "Former healthcare operations consultant; sample profile, unverified" },
+      { "name": "Miles Grant", "role": "CTO", "background": "Healthcare data engineer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Founder-market fit appears promising if healthcare operations background is confirmed.",
+    "technical_summary": "Documentation extraction, payer-rule checks, workflow queues, and denial analytics.",
+    "traction_summary": "Mentions an advisory group; no customer names or revenue are verified.",
+    "competitors": ["Waystar", "R1", "AKASA", "Cedar"],
+    "tags": ["healthcare", "revenue cycle", "documentation", "claims"],
+    "confidence_score": 78,
+    "score_inputs": {
+      "founder_signal": 78,
+      "market_signal": 87,
+      "product_signal": 83,
+      "technical_defensibility": 73,
+      "traction_signal": 49,
+      "timing_signal": 82,
+      "risk_adjustment": 57
+    },
+    "evidence": {
+      "confirmed": ["Founder blog describes denied-claim prevention workflow.", "Human review is included in product description."],
+      "inferred": ["Denials create direct economic pain.", "Payer-rule maintenance is operationally demanding."],
+      "unverified": ["Advisory group composition.", "HIPAA readiness and customer adoption."],
+      "needs_diligence": ["Confirm compliance posture, payer-rule coverage, and data access requirements."]
+    },
+    "traction_signals": ["Founder blog depth", "Advisory group claim", "Clear economic buyer"],
+    "pros": ["Strong budget pain", "Repeated workflow", "Regulated complexity can favor domain expertise"],
+    "cons": ["Compliance burden", "Crowded healthcare revenue-cycle market", "Requires high accuracy"],
+    "risk_flags": [
+      { "risk_type": "Regulatory and privacy", "severity": "high", "explanation": "Healthcare data handling requires rigorous privacy, security, and compliance controls.", "evidence_url": "https://example.com/launches/claimwise" }
+    ],
+    "diligence_questions": ["Is PHI processed or avoided?", "Which payer rules are covered?", "What denial reduction can be measured?"]
+  },
+  {
+    "id": "cmp-contractforge",
+    "name": "ContractForge",
+    "website_url": "https://example.com/contractforge",
+    "source_url": "https://example.com/launches/contractforge",
+    "source_name": "Sample Product Hunt",
+    "discovered_at": "2026-06-12",
+    "launch_date": "2026-06-12",
+    "domain": "Legal technology",
+    "subdomain": "Contract operations",
+    "description": "Contract review workspace for startup legal teams that flags unusual clauses and produces diligence-ready summaries.",
+    "product_summary": "A legal operations tool that summarizes contracts, flags risk, and builds clause libraries with attorney oversight.",
+    "business_model": "B2B SaaS",
+    "target_customer": "In-house counsel and legal operations teams at startups",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Nora Williams", "role": "CEO", "background": "Former startup counsel; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Domain expertise appears relevant, but product and technical depth are not yet clear.",
+    "technical_summary": "Clause extraction, risk tagging, and memo generation over uploaded contracts.",
+    "traction_summary": "Community comments are positive in sample source; usage depth unknown.",
+    "competitors": ["Ironclad", "LinkSquares", "Harvey", "Spellbook"],
+    "tags": ["legaltech", "contracts", "diligence", "AI review"],
+    "confidence_score": 70,
+    "score_inputs": {
+      "founder_signal": 75,
+      "market_signal": 75,
+      "product_signal": 78,
+      "technical_defensibility": 59,
+      "traction_signal": 46,
+      "timing_signal": 72,
+      "risk_adjustment": 54
+    },
+    "evidence": {
+      "confirmed": ["Launch copy describes clause risk flags and summaries.", "Target user is startup legal teams."],
+      "inferred": ["Attorney oversight is important for defensibility and safety.", "Differentiation may be difficult against incumbents."],
+      "unverified": ["Accuracy claims.", "Customer adoption and legal review process."],
+      "needs_diligence": ["Verify attorney workflow, liability posture, and differentiation."]
+    },
+    "traction_signals": ["Launch engagement", "Clear workflow", "Founder domain signal"],
+    "pros": ["Clear user and use case", "Diligence summaries are practical", "Domain founder signal"],
+    "cons": ["Crowded market", "Limited technical moat if generic extraction", "Legal liability concerns"],
+    "risk_flags": [
+      { "risk_type": "Weak differentiation", "severity": "medium", "explanation": "Contract AI is crowded and incumbents have distribution.", "evidence_url": "https://example.com/launches/contractforge" }
+    ],
+    "diligence_questions": ["How does review accuracy compare to attorney baseline?", "What makes the clause library proprietary?", "Who bears responsibility for missed risks?"]
+  },
+  {
+    "id": "cmp-gridledger",
+    "name": "GridLedger",
+    "website_url": "https://example.com/gridledger",
+    "source_url": "https://example.com/launches/gridledger",
+    "source_name": "Sample Climate Brief",
+    "discovered_at": "2026-06-11",
+    "launch_date": "2026-06-08",
+    "domain": "Climate and energy",
+    "subdomain": "Grid interconnection",
+    "description": "Software that helps clean-energy developers manage grid interconnection documents, queue risk, and milestone tracking.",
+    "product_summary": "A project intelligence system for energy developers navigating interconnection queues.",
+    "business_model": "SaaS plus implementation services",
+    "target_customer": "Renewable project developers and energy finance teams",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Leo Martin", "role": "CEO", "background": "Former energy project developer; sample profile, unverified" },
+      { "name": "Asha Reed", "role": "CTO", "background": "Data platform engineer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Strong domain-operating signal if project development experience is confirmed.",
+    "technical_summary": "Document ingestion, queue milestone models, and risk dashboards for interconnection timelines.",
+    "traction_summary": "Mentions three developer conversations; no contracts verified.",
+    "competitors": ["GridStatus", "LevelTen Energy", "Internal spreadsheets", "Energy consulting firms"],
+    "tags": ["climate", "energy", "grid", "interconnection"],
+    "confidence_score": 74,
+    "score_inputs": {
+      "founder_signal": 80,
+      "market_signal": 83,
+      "product_signal": 80,
+      "technical_defensibility": 72,
+      "traction_signal": 48,
+      "timing_signal": 85,
+      "risk_adjustment": 63
+    },
+    "evidence": {
+      "confirmed": ["Source states interconnection document and queue-risk workflow.", "Target customer is energy developers."],
+      "inferred": ["Queue delays create large financial exposure.", "Data quality may be uneven across regions."],
+      "unverified": ["Developer conversations and willingness to pay.", "Accuracy of queue-risk modeling."],
+      "needs_diligence": ["Validate data sources, regional coverage, and contract pipeline."]
+    },
+    "traction_signals": ["Domain-specific workflow", "Founder domain signal", "Customer discovery language"],
+    "pros": ["High-value pain point", "Domain complexity can support defensibility", "Macro timing is favorable for grid software"],
+    "cons": ["Fragmented data", "Long project cycles", "Services risk"],
+    "risk_flags": [
+      { "risk_type": "Data quality", "severity": "medium", "explanation": "Interconnection data can be fragmented, delayed, or utility-specific.", "evidence_url": "https://example.com/launches/gridledger" }
+    ],
+    "diligence_questions": ["Which ISOs and utilities are covered?", "How is queue-risk accuracy validated?", "Can the product sell without services?"]
+  },
+  {
+    "id": "cmp-railguard",
+    "name": "RailGuard",
+    "website_url": "https://example.com/railguard",
+    "source_url": "https://example.com/launches/railguard",
+    "source_name": "Sample Defense Tech Note",
+    "discovered_at": "2026-06-10",
+    "launch_date": "2026-06-07",
+    "domain": "Defense technology",
+    "subdomain": "Logistics resilience",
+    "description": "Software for mapping critical logistics dependencies and disruption scenarios across defense supply chains.",
+    "product_summary": "A resilience planning platform for supply-chain visibility, scenario planning, and operational-risk briefing.",
+    "business_model": "Enterprise and government contracts",
+    "target_customer": "Defense logistics offices and strategic suppliers",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Marcus Hale", "role": "CEO", "background": "Former logistics officer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Domain credibility appears plausible, but federal procurement and security posture require diligence.",
+    "technical_summary": "Graph-based dependency mapping, scenario scoring, and reporting workflows.",
+    "traction_summary": "Mentions conversations with strategic suppliers; no contracts verified.",
+    "competitors": ["Palantir", "Resilinc", "Everstream Analytics", "Internal planning teams"],
+    "tags": ["defense", "supply chain", "resilience", "risk"],
+    "confidence_score": 69,
+    "score_inputs": {
+      "founder_signal": 77,
+      "market_signal": 82,
+      "product_signal": 74,
+      "technical_defensibility": 70,
+      "traction_signal": 42,
+      "timing_signal": 88,
+      "risk_adjustment": 50
+    },
+    "evidence": {
+      "confirmed": ["Source describes logistics dependency mapping and scenario planning.", "Defense and strategic-supplier customers are named as target segments."],
+      "inferred": ["Geopolitical demand supports timing.", "Procurement path may be difficult."],
+      "unverified": ["Government access and supplier conversations.", "Security controls."],
+      "needs_diligence": ["Confirm clearance needs, deployment environment, and procurement pathway."]
+    },
+    "traction_signals": ["Timely sector focus", "Domain founder signal", "Strategic supplier language"],
+    "pros": ["Strong macro tailwinds", "Mission-critical problem", "Graph data could compound over time"],
+    "cons": ["Procurement complexity", "Security requirements", "Incumbent competition"],
+    "risk_flags": [
+      { "risk_type": "Government sales", "severity": "high", "explanation": "Federal and defense sales may require long cycles, certifications, and relationship access.", "evidence_url": "https://example.com/launches/railguard" }
+    ],
+    "diligence_questions": ["Does the team have procurement sponsors?", "What data sources are proprietary?", "What security certifications are required?"]
+  },
+  {
+    "id": "cmp-ledgerlane",
+    "name": "LedgerLane",
+    "website_url": "https://example.com/ledgerlane",
+    "source_url": "https://example.com/launches/ledgerlane",
+    "source_name": "Sample Fintech Launch",
+    "discovered_at": "2026-06-15",
+    "launch_date": "2026-06-13",
+    "domain": "Fintech infrastructure",
+    "subdomain": "Reconciliation APIs",
+    "description": "API layer that helps vertical SaaS companies reconcile payments, refunds, and ledger entries across processors.",
+    "product_summary": "Developer-first ledger reconciliation for platforms that process multi-party payments.",
+    "business_model": "Usage-based API pricing",
+    "target_customer": "Vertical SaaS and marketplace engineering teams",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Dina Alvarez", "role": "CEO", "background": "Former payments infrastructure engineer; sample profile, unverified" },
+      { "name": "Caleb Shaw", "role": "CTO", "background": "Built reconciliation systems for a marketplace; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Founder-market fit appears strong if payments infrastructure backgrounds are verified.",
+    "technical_summary": "API connectors, reconciliation engine, ledger diffing, and reporting exports.",
+    "traction_summary": "Claims three sandbox integrations; production volume unknown.",
+    "competitors": ["Modern Treasury", "Stripe ledger products", "Unit", "Internal engineering teams"],
+    "tags": ["fintech", "payments", "ledger", "API"],
+    "confidence_score": 81,
+    "score_inputs": {
+      "founder_signal": 84,
+      "market_signal": 82,
+      "product_signal": 84,
+      "technical_defensibility": 76,
+      "traction_signal": 55,
+      "timing_signal": 78,
+      "risk_adjustment": 66
+    },
+    "evidence": {
+      "confirmed": ["Launch copy describes reconciliation API and payment processor support.", "Target customers are vertical SaaS and marketplaces."],
+      "inferred": ["Financial operations pain is persistent and measurable.", "API reliability will be central to trust."],
+      "unverified": ["Sandbox integrations.", "Production payment volume."],
+      "needs_diligence": ["Verify compliance, processor coverage, data guarantees, and failure handling."]
+    },
+    "traction_signals": ["Sandbox integrations claimed", "Clear developer buyer", "Repeated workflow"],
+    "pros": ["Clear and costly pain", "Technical integration depth", "Strong founder-market fit signal"],
+    "cons": ["Incumbents can bundle", "Trust and reliability bar is high", "Longer enterprise integration cycles"],
+    "risk_flags": [
+      { "risk_type": "Reliability", "severity": "medium", "explanation": "Ledger reconciliation is sensitive infrastructure with low tolerance for errors.", "evidence_url": "https://example.com/launches/ledgerlane" }
+    ],
+    "diligence_questions": ["What processors are supported?", "How are reconciliation errors resolved?", "What evidence exists for production usage?"]
+  },
+  {
+    "id": "cmp-kernelkit",
+    "name": "KernelKit",
+    "website_url": "https://example.com/kernelkit",
+    "source_url": "https://example.com/launches/kernelkit",
+    "source_name": "Sample Developer Tool Post",
+    "discovered_at": "2026-06-13",
+    "launch_date": "2026-06-12",
+    "domain": "Developer tools",
+    "subdomain": "Local AI testing",
+    "description": "Local test harness for AI features that records prompts, model responses, tool calls, and regression diffs.",
+    "product_summary": "A developer workflow for testing LLM application behavior before release.",
+    "business_model": "Developer SaaS with team collaboration tier",
+    "target_customer": "Engineering teams building AI products",
+    "pricing": "Free local CLI; paid team workspace planned",
+    "geography": "Global",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Owen Park", "role": "CEO", "background": "Former devtools engineer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Developer-tooling signal is relevant but needs validation.",
+    "technical_summary": "CLI, prompt trace store, eval diffs, and CI integration.",
+    "traction_summary": "Repository interest in sample data; paid conversion unknown.",
+    "competitors": ["LangSmith", "Braintrust", "Humanloop", "Promptfoo"],
+    "tags": ["devtools", "AI testing", "evals", "CI"],
+    "confidence_score": 82,
+    "score_inputs": {
+      "founder_signal": 73,
+      "market_signal": 80,
+      "product_signal": 85,
+      "technical_defensibility": 70,
+      "traction_signal": 66,
+      "timing_signal": 86,
+      "risk_adjustment": 62
+    },
+    "evidence": {
+      "confirmed": ["Post describes local AI test harness and trace recording.", "CLI and CI workflow are stated."],
+      "inferred": ["AI regression testing is an urgent developer workflow.", "Crowding is high in eval tooling."],
+      "unverified": ["Repository stars and team adoption.", "Paid collaboration tier demand."],
+      "needs_diligence": ["Validate retention, CI usage, and differentiation from existing eval platforms."]
+    },
+    "traction_signals": ["Open-source interest", "Clear developer workflow", "CI integration"],
+    "pros": ["Immediate developer pain", "Strong product clarity", "Good timing with AI app deployment"],
+    "cons": ["Crowded category", "Potentially low willingness to pay for solo developers", "Limited moat without team workflow"],
+    "risk_flags": [
+      { "risk_type": "Crowded market", "severity": "medium", "explanation": "AI eval and prompt-testing tools are numerous and well-funded.", "evidence_url": "https://example.com/launches/kernelkit" }
+    ],
+    "diligence_questions": ["What workflow is uniquely local?", "What retention exists after first test?", "How does it integrate with production observability?"]
+  },
+  {
+    "id": "cmp-sentinelmesh",
+    "name": "SentinelMesh",
+    "website_url": "https://example.com/sentinelmesh",
+    "source_url": "https://example.com/launches/sentinelmesh",
+    "source_name": "Sample Cybersecurity Launch",
+    "discovered_at": "2026-06-14",
+    "launch_date": "2026-06-10",
+    "domain": "Cybersecurity",
+    "subdomain": "AI agent security",
+    "description": "Security layer for monitoring AI agents, tool permissions, prompt injection attempts, and data exfiltration patterns.",
+    "product_summary": "A policy and observability system for enterprises deploying AI agents with tool access.",
+    "business_model": "Enterprise SaaS",
+    "target_customer": "Security teams and AI platform owners",
+    "pricing": "Unknown",
+    "geography": "United States and Europe",
+    "stage": "Seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Amina Hart", "role": "CEO", "background": "Former security engineer; sample profile, unverified" },
+      { "name": "Vikram Rao", "role": "CTO", "background": "Built internal AI platform controls; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Security and AI platform backgrounds look relevant in sample data.",
+    "technical_summary": "Agent action logs, policy engine, prompt-injection detection, and SIEM exports.",
+    "traction_summary": "Claims enterprise beta users; names and deployment depth unknown.",
+    "competitors": ["Lakera", "Protect AI", "HiddenLayer", "Prompt Security"],
+    "tags": ["cybersecurity", "AI agents", "policy", "observability"],
+    "confidence_score": 79,
+    "score_inputs": {
+      "founder_signal": 81,
+      "market_signal": 85,
+      "product_signal": 82,
+      "technical_defensibility": 80,
+      "traction_signal": 57,
+      "timing_signal": 88,
+      "risk_adjustment": 64
+    },
+    "evidence": {
+      "confirmed": ["Launch copy states agent monitoring, tool permissions, and prompt-injection detection.", "Security team buyer is clear."],
+      "inferred": ["Enterprise agent adoption increases security demand.", "SIEM integrations could help distribution."],
+      "unverified": ["Enterprise beta users.", "Detection accuracy."],
+      "needs_diligence": ["Validate threat model, false-positive rates, and buyer urgency."]
+    },
+    "traction_signals": ["Enterprise beta language", "Clear security buyer", "Timely agent-security wedge"],
+    "pros": ["Strong market urgency", "Security budget exists", "Technical depth and data advantage possible"],
+    "cons": ["Detection claims hard to prove", "Emerging category risk", "Crowded AI security market"],
+    "risk_flags": [
+      { "risk_type": "Technical validation", "severity": "medium", "explanation": "Detection quality and false positives need rigorous evidence.", "evidence_url": "https://example.com/launches/sentinelmesh" }
+    ],
+    "diligence_questions": ["What attacks are detected today?", "How does it integrate with existing security stack?", "Which beta users are active?"]
+  },
+  {
+    "id": "cmp-stackbeam",
+    "name": "StackBeam",
+    "website_url": "https://example.com/stackbeam",
+    "source_url": "https://example.com/launches/stackbeam",
+    "source_name": "Sample SaaS Launch",
+    "discovered_at": "2026-06-12",
+    "launch_date": "2026-06-11",
+    "domain": "Enterprise SaaS",
+    "subdomain": "Customer implementation",
+    "description": "Implementation workspace that turns customer onboarding calls, tickets, and requirements into tracked launch plans.",
+    "product_summary": "A project system for implementation teams that extracts commitments, risks, and customer readiness signals.",
+    "business_model": "B2B SaaS per implementation seat",
+    "target_customer": "Customer success and implementation leaders",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Grace Liu", "role": "CEO", "background": "Former implementation leader; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Potentially strong founder-market fit through implementation experience.",
+    "technical_summary": "Meeting ingestion, ticket sync, risk classification, and onboarding plan generation.",
+    "traction_summary": "Mentions several implementation teams in waitlist; not verified.",
+    "competitors": ["Rocketlane", "GuideCX", "Asana", "Monday.com", "CS platforms"],
+    "tags": ["SaaS", "implementation", "customer success", "workflow"],
+    "confidence_score": 75,
+    "score_inputs": {
+      "founder_signal": 76,
+      "market_signal": 74,
+      "product_signal": 80,
+      "technical_defensibility": 61,
+      "traction_signal": 50,
+      "timing_signal": 71,
+      "risk_adjustment": 60
+    },
+    "evidence": {
+      "confirmed": ["Source describes onboarding calls, tickets, and launch plans.", "Customer success/implementation buyer is stated."],
+      "inferred": ["Implementation delays are costly for SaaS companies.", "Workflow differentiation may be limited."],
+      "unverified": ["Waitlist quality.", "Retention and data integration depth."],
+      "needs_diligence": ["Verify unique workflow, integration roadmap, and buyer willingness to replace existing tools."]
+    },
+    "traction_signals": ["Waitlist claim", "Clear workflow", "Founder domain signal"],
+    "pros": ["Readable product with clear user", "Repeat usage if embedded in onboarding", "Useful AI summarization surface"],
+    "cons": ["Crowded workflow category", "May be a feature in CS platforms", "Unclear defensibility"],
+    "risk_flags": [
+      { "risk_type": "Feature risk", "severity": "medium", "explanation": "Customer-success platforms could add similar AI implementation features.", "evidence_url": "https://example.com/launches/stackbeam" }
+    ],
+    "diligence_questions": ["What workflows are not solved by incumbents?", "What data syncs are live?", "What retention signal exists?"]
+  },
+  {
+    "id": "cmp-lumenpal",
+    "name": "LumenPal",
+    "website_url": "https://example.com/lumenpal",
+    "source_url": "https://example.com/launches/lumenpal",
+    "source_name": "Sample Consumer AI Launch",
+    "discovered_at": "2026-06-16",
+    "launch_date": "2026-06-14",
+    "domain": "Consumer AI",
+    "subdomain": "Personal knowledge",
+    "description": "Private AI journal that helps users organize voice notes, reflections, and personal goals.",
+    "product_summary": "A consumer companion for structured reflection and personal memory.",
+    "business_model": "Freemium subscription",
+    "target_customer": "Consumers who use journaling, notes, or coaching apps",
+    "pricing": "Unknown",
+    "geography": "Global",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Anika Stone", "role": "CEO", "background": "Consumer product designer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Consumer design signal is plausible, but distribution edge is unclear.",
+    "technical_summary": "Voice transcription, private embeddings, and goal-summary generation.",
+    "traction_summary": "Launch comments are positive; retention and conversion unknown.",
+    "competitors": ["Day One", "Reflect", "Notion AI", "ChatGPT memory features"],
+    "tags": ["consumer AI", "journaling", "personal memory", "voice notes"],
+    "confidence_score": 66,
+    "score_inputs": {
+      "founder_signal": 68,
+      "market_signal": 60,
+      "product_signal": 72,
+      "technical_defensibility": 48,
+      "traction_signal": 52,
+      "timing_signal": 70,
+      "risk_adjustment": 45
+    },
+    "evidence": {
+      "confirmed": ["Launch copy describes private journaling and voice-note organization.", "Consumer subscription model is stated."],
+      "inferred": ["Retention is the central risk.", "Platform memory features may pressure differentiation."],
+      "unverified": ["Privacy architecture.", "Daily active usage and paid conversion."],
+      "needs_diligence": ["Validate retention cohorts, privacy guarantees, and distribution strategy."]
+    },
+    "traction_signals": ["Launch engagement", "Clear consumer use case", "Privacy positioning"],
+    "pros": ["Understandable use case", "Personal data could improve stickiness", "Large consumer productivity surface"],
+    "cons": ["Weak moat", "Subscription fatigue", "High privacy sensitivity"],
+    "risk_flags": [
+      { "risk_type": "Retention risk", "severity": "high", "explanation": "Consumer journaling apps often struggle with durable habit formation.", "evidence_url": "https://example.com/launches/lumenpal" }
+    ],
+    "diligence_questions": ["What is week-four retention?", "How is private data protected?", "What distribution channel is working?"]
+  },
+  {
+    "id": "cmp-scholarlift",
+    "name": "ScholarLift",
+    "website_url": "https://example.com/scholarlift",
+    "source_url": "https://example.com/launches/scholarlift",
+    "source_name": "Sample University Spinout",
+    "discovered_at": "2026-06-11",
+    "launch_date": "2026-06-09",
+    "domain": "Education technology",
+    "subdomain": "Research mentoring",
+    "description": "AI research mentor for undergraduates that helps plan literature searches, source evaluation, and project milestones.",
+    "product_summary": "A guided research workflow for universities, with instructor oversight and source-quality controls.",
+    "business_model": "Institutional SaaS",
+    "target_customer": "University libraries, writing centers, and undergraduate research offices",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "University spinout in sample data",
+    "founders": [
+      { "name": "Dr. Hannah Cross", "role": "CEO", "background": "Education researcher; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Research and education credibility appears relevant, but sales motion needs diligence.",
+    "technical_summary": "Research plan generation, source evaluation guardrails, and instructor dashboard.",
+    "traction_summary": "Mentions a campus pilot; not independently verified.",
+    "competitors": ["Elicit", "Perplexity education features", "Library research guides", "Learning management systems"],
+    "tags": ["edtech", "research", "universities", "AI tutor"],
+    "confidence_score": 73,
+    "score_inputs": {
+      "founder_signal": 74,
+      "market_signal": 68,
+      "product_signal": 79,
+      "technical_defensibility": 62,
+      "traction_signal": 55,
+      "timing_signal": 73,
+      "risk_adjustment": 59
+    },
+    "evidence": {
+      "confirmed": ["Source describes undergraduate research workflow and source evaluation.", "Institutional buyer is education-focused."],
+      "inferred": ["Academic integrity controls are central to adoption.", "University budget cycles may slow sales."],
+      "unverified": ["Campus pilot status.", "Learning outcomes."],
+      "needs_diligence": ["Verify pilot data, FERPA posture, and academic-integrity design."]
+    },
+    "traction_signals": ["University spinout framing", "Campus pilot language", "Clear institutional workflow"],
+    "pros": ["Mission-aligned buyer", "Strong safety/quality framing", "Institutional workflow could support retention"],
+    "cons": ["Slow university sales", "Budget pressure", "AI tutoring policy uncertainty"],
+    "risk_flags": [
+      { "risk_type": "Policy risk", "severity": "medium", "explanation": "Campus AI policies and academic-integrity concerns can shape adoption.", "evidence_url": "https://example.com/launches/scholarlift" }
+    ],
+    "diligence_questions": ["What learning outcome is measured?", "How is academic integrity enforced?", "Who owns procurement?"]
+  },
+  {
+    "id": "cmp-fieldscribe",
+    "name": "FieldScribe",
+    "website_url": "https://example.com/fieldscribe",
+    "source_url": "https://example.com/launches/fieldscribe",
+    "source_name": "Sample Vertical AI Launch",
+    "discovered_at": "2026-06-13",
+    "launch_date": "2026-06-10",
+    "domain": "Vertical AI",
+    "subdomain": "Field service documentation",
+    "description": "Voice-first documentation assistant for field-service technicians that turns job notes into invoices, compliance logs, and parts orders.",
+    "product_summary": "A mobile AI workflow for technicians and dispatch teams in home services and industrial maintenance.",
+    "business_model": "Per-technician SaaS",
+    "target_customer": "Field-service companies and operations managers",
+    "pricing": "Unknown",
+    "geography": "United States",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Ben Ortega", "role": "CEO", "background": "Former field-service operator; sample profile, unverified" },
+      { "name": "Lina Foster", "role": "CTO", "background": "Mobile speech and workflow engineer; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Founder-market fit appears strong if field-service operating background is verified.",
+    "technical_summary": "Mobile voice capture, domain templates, parts and invoice exports, and compliance logs.",
+    "traction_summary": "Claims weekly usage by five technicians; no customer names verified.",
+    "competitors": ["ServiceTitan", "Housecall Pro", "Jobber", "Scribe tools"],
+    "tags": ["vertical AI", "field service", "voice", "workflow"],
+    "confidence_score": 83,
+    "score_inputs": {
+      "founder_signal": 83,
+      "market_signal": 81,
+      "product_signal": 86,
+      "technical_defensibility": 68,
+      "traction_signal": 60,
+      "timing_signal": 79,
+      "risk_adjustment": 67
+    },
+    "evidence": {
+      "confirmed": ["Source describes voice-first field-service documentation.", "Outputs include invoices, logs, and parts orders."],
+      "inferred": ["Repeated technician workflow supports habit formation.", "Integration into incumbents is a risk and opportunity."],
+      "unverified": ["Five-technician usage claim.", "Customer payment status."],
+      "needs_diligence": ["Confirm live usage, export integrations, and technician retention."]
+    },
+    "traction_signals": ["Weekly usage claim", "Clear vertical workflow", "Founder-operator signal"],
+    "pros": ["Strong product clarity", "High-frequency workflow", "Clear ROI from less admin time"],
+    "cons": ["Incumbent workflow suites may add similar features", "Voice accuracy in noisy environments", "SMB churn risk"],
+    "risk_flags": [
+      { "risk_type": "Incumbent bundling", "severity": "medium", "explanation": "Field-service platforms could bundle AI documentation into existing suites.", "evidence_url": "https://example.com/launches/fieldscribe" }
+    ],
+    "diligence_questions": ["Are users paying?", "How does voice capture perform in the field?", "Which systems are integrated today?"]
+  },
+  {
+    "id": "cmp-fabricmind",
+    "name": "FabricMind",
+    "website_url": "https://example.com/fabricmind",
+    "source_url": "https://example.com/launches/fabricmind",
+    "source_name": "Sample Manufacturing Post",
+    "discovered_at": "2026-06-10",
+    "launch_date": "2026-06-08",
+    "domain": "Enterprise SaaS",
+    "subdomain": "Manufacturing quality",
+    "description": "Quality-analysis workspace that connects defect logs, supplier issues, and line observations for small manufacturers.",
+    "product_summary": "A practical operations dashboard for quality teams that turns fragmented logs into prioritized corrective actions.",
+    "business_model": "B2B SaaS",
+    "target_customer": "Quality managers at small and midsize manufacturers",
+    "pricing": "Unknown",
+    "geography": "United States and Mexico",
+    "stage": "Pre-seed",
+    "funding_status": "Unknown",
+    "founders": [
+      { "name": "Mateo Ruiz", "role": "CEO", "background": "Family manufacturing operator; sample profile, unverified" }
+    ],
+    "founder_background_summary": "Operator background could be a meaningful distribution and product signal if confirmed.",
+    "technical_summary": "Defect-log ingestion, supplier issue clustering, corrective-action recommendations, and exports.",
+    "traction_summary": "Claims one unpaid pilot; no measured outcome verified.",
+    "competitors": ["Plex", "QMS tools", "Tulip", "Spreadsheets"],
+    "tags": ["manufacturing", "quality", "operations", "SaaS"],
+    "confidence_score": 71,
+    "score_inputs": {
+      "founder_signal": 72,
+      "market_signal": 70,
+      "product_signal": 76,
+      "technical_defensibility": 60,
+      "traction_signal": 43,
+      "timing_signal": 66,
+      "risk_adjustment": 61
+    },
+    "evidence": {
+      "confirmed": ["Source describes defect logs and corrective actions.", "SMB manufacturer buyer is stated."],
+      "inferred": ["Operator credibility may help distribution.", "SMB sales could be fragmented."],
+      "unverified": ["Pilot status.", "Measured quality improvements."],
+      "needs_diligence": ["Verify pilot results, integration burden, and buyer urgency."]
+    },
+    "traction_signals": ["Pilot language", "Operator founder story", "Clear workflow"],
+    "pros": ["Practical operational pain", "Clear workflow", "Potential wedge in underserved SMB manufacturing"],
+    "cons": ["Fragmented market", "Lower ACV risk", "Manual data quality issues"],
+    "risk_flags": [
+      { "risk_type": "Go-to-market", "severity": "medium", "explanation": "SMB manufacturing may require high-touch sales and onboarding.", "evidence_url": "https://example.com/launches/fabricmind" }
+    ],
+    "diligence_questions": ["What is target ACV?", "How much data cleanup is required?", "What quality metric improved in pilot?"]
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "src-product-hunt",
+    "name": "Product Hunt launches",
+    "type": "public_page_or_api",
+    "enabled": true,
+    "default_reliability_score": 0.68,
+    "notes": "Use official or permitted public routes. Treat launch comments and claims as unverified until corroborated."
+  },
+  {
+    "id": "src-yc-directory",
+    "name": "Y Combinator company directory",
+    "type": "public_directory",
+    "enabled": true,
+    "default_reliability_score": 0.82,
+    "notes": "Use public company pages. Funding and batch status can be treated as source-backed when present."
+  },
+  {
+    "id": "src-hn-launch",
+    "name": "Hacker News Launch HN",
+    "type": "public_api",
+    "enabled": true,
+    "default_reliability_score": 0.64,
+    "notes": "Use HN search/API where permitted. Community response is signal, not proof of traction."
+  },
+  {
+    "id": "src-github-trending",
+    "name": "GitHub trending repositories",
+    "type": "public_page_or_api",
+    "enabled": true,
+    "default_reliability_score": 0.62,
+    "notes": "Repository activity can support developer-interest signals but does not equal revenue or company formation."
+  },
+  {
+    "id": "src-techcrunch-rss",
+    "name": "TechCrunch startup coverage",
+    "type": "rss",
+    "enabled": false,
+    "default_reliability_score": 0.75,
+    "notes": "Use RSS when available and keep article facts separate from model inferences."
+  },
+  {
+    "id": "src-sec-form-d",
+    "name": "SEC Form D filings",
+    "type": "public_filing",
+    "enabled": false,
+    "default_reliability_score": 0.9,
+    "notes": "Useful for financing signals, but filing details should not be overinterpreted."
+  },
+  {
+    "id": "src-accelerator-batches",
+    "name": "Accelerator batch pages",
+    "type": "public_directory",
+    "enabled": true,
+    "default_reliability_score": 0.78,
+    "notes": "Batch pages can confirm participation and company descriptions."
+  },
+  {
+    "id": "src-manual-url",
+    "name": "Manual URL upload",
+    "type": "manual",
+    "enabled": true,
+    "default_reliability_score": 0.7,
+    "notes": "User-provided company sites, press releases, investor updates, and founder posts."
+  }
+]

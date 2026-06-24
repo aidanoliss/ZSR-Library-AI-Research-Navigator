@@ -1,0 +1,1123 @@
+{
+  "title": "Venture Radar VC Recommendation Packet",
+  "created_at": "2026-06-19T22:16:20.286Z",
+  "platform_pitch": "I built Venture Radar, a source-backed venture intelligence system that ingests public startup signals, deduplicates companies, scores them with explainable criteria, and maps each company against 12 VC thesis profiles. The current run screened 13 tracked companies and generated firm-specific recommendations with evidence, pass risks, and diligence questions.",
+  "firm_count": 12,
+  "company_count": 13,
+  "outreach_ready_company_count": 12,
+  "excluded_company_count": 1,
+  "min_fit_score": 60,
+  "min_company_score": 60,
+  "firm_recommendations": [
+    {
+      "firm": {
+        "id": "vc-8vc",
+        "name": "8VC",
+        "website_url": "https://www.8vc.com/",
+        "thesis": "Build and invest in ambitious technology platforms that create lasting economic and societal value.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Healthcare operations",
+          "Defense technology",
+          "Fintech infrastructure",
+          "Enterprise SaaS",
+          "Robotics",
+          "Climate and energy",
+          "Logistics"
+        ],
+        "stage_focus": [
+          "pre-seed",
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Joe Lonsdale",
+          "Jake Medwell"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 83,
+          "recommendation": "High-priority",
+          "confidence_level": "High",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to 8VC's AI infrastructure focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "8VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Joe Lonsdale",
+            "Jake Medwell"
+          ],
+          "suggested_angle": "Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.8vc.com/",
+            "https://www.8vc.com/portfolio",
+            "https://www.8vc.com/build"
+          ]
+        },
+        {
+          "name": "Transload",
+          "domain": "Logistics and supply chain",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48463273",
+          "company_score": 65,
+          "vc_fit_score": 67,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Transload is a Logistics and supply chain company around computer-vision freight dimensioning in logistics terminals. That maps to 8VC's Logistics focus.",
+          "why_this_firm_might_pass": "8VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Jake Medwell"
+          ],
+          "suggested_angle": "Frame Transload as a possible thesis-adjacent lead around computer-vision freight dimensioning in logistics terminals; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48463273",
+            "https://www.8vc.com/",
+            "https://www.8vc.com/portfolio",
+            "https://www.8vc.com/build"
+          ]
+        },
+        {
+          "name": "Minicor",
+          "domain": "AI agents and workflow automation",
+          "stage": "Pre-seed",
+          "source_url": "https://www.minicor.com/",
+          "company_score": 64,
+          "vc_fit_score": 66,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Minicor is an AI agents and workflow automation company around desktop RPA orchestration for systems without APIs. That maps to 8VC's Enterprise SaaS focus. Launch HN engagement: 105 points and 64 comments when fetched. Source text includes paid-pilot or customer-pilot language. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "8VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Joe Lonsdale"
+          ],
+          "suggested_angle": "Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://www.minicor.com/",
+            "https://www.8vc.com/",
+            "https://www.8vc.com/portfolio",
+            "https://www.8vc.com/build"
+          ]
+        },
+        {
+          "name": "Chert",
+          "domain": "Communications infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://www.trychert.com",
+          "company_score": 68,
+          "vc_fit_score": 63,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Chert is a Communications infrastructure company around programmatic iMessage and messaging infrastructure for business workflows. That maps to 8VC's Enterprise SaaS focus. Launch HN engagement: 62 points and 200 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "8VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Joe Lonsdale"
+          ],
+          "suggested_angle": "Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "diligence_question": "How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "sources": [
+            "https://www.trychert.com",
+            "https://www.8vc.com/",
+            "https://www.8vc.com/portfolio",
+            "https://www.8vc.com/build"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for 8VC\n\nHi Joe Lonsdale,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor 8VC, the current run surfaced:\n\n- Expanse (AI infrastructure) - 83/100 VC fit. Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- Transload (Logistics and supply chain) - 67/100 VC fit. Frame Transload as a possible thesis-adjacent lead around computer-vision freight dimensioning in logistics terminals; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- Minicor (AI agents and workflow automation) - 66/100 VC fit. Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For 8VC, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-founders-fund",
+        "name": "Founders Fund",
+        "website_url": "https://foundersfund.com/",
+        "thesis": "Contrarian technology investing with a preference for large, non-consensus markets and ambitious founders.",
+        "sector_focus": [
+          "Defense technology",
+          "AI infrastructure",
+          "Aerospace",
+          "Fintech infrastructure",
+          "Enterprise SaaS",
+          "Healthcare operations",
+          "Robotics"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Trae Stephens",
+          "Brian Singerman"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 77,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Founders Fund's AI infrastructure focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Founders Fund may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Trae Stephens",
+            "Brian Singerman"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://foundersfund.com/",
+            "https://foundersfund.com/manifesto"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Founders Fund\n\nHi Trae Stephens,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Founders Fund, the current run surfaced:\n\n- Expanse (AI infrastructure) - 77/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Founders Fund, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-a16z",
+        "name": "Andreessen Horowitz",
+        "website_url": "https://a16z.com/",
+        "thesis": "Software-driven company building across AI, infrastructure, enterprise, fintech, consumer, bio/health, crypto, and American Dynamism.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Enterprise SaaS",
+          "Consumer AI",
+          "Fintech infrastructure",
+          "Healthcare operations",
+          "Crypto",
+          "Gaming",
+          "Defense technology",
+          "Developer tools"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Martin Casado",
+          "Vijay Pande"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 81,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "High",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Andreessen Horowitz's AI infrastructure / Developer tools focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Andreessen Horowitz may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Martin Casado",
+            "Vijay Pande"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://a16z.com/",
+            "https://a16z.com/portfolio/"
+          ]
+        },
+        {
+          "name": "TesterArmy",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://tester.army",
+          "company_score": 62,
+          "vc_fit_score": 72,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "TesterArmy is a Developer tools company around agentic QA testing for web and mobile releases. That maps to Andreessen Horowitz's Developer tools focus.",
+          "why_this_firm_might_pass": "Andreessen Horowitz may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Martin Casado",
+            "Vijay Pande"
+          ],
+          "suggested_angle": "Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://tester.army",
+            "https://a16z.com/",
+            "https://a16z.com/portfolio/"
+          ]
+        },
+        {
+          "name": "Intuned",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://intunedhq.com",
+          "company_score": 61,
+          "vc_fit_score": 72,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Intuned is a Developer tools company around browser automation maintained as code. That maps to Andreessen Horowitz's Developer tools focus.",
+          "why_this_firm_might_pass": "Andreessen Horowitz may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Martin Casado",
+            "Vijay Pande"
+          ],
+          "suggested_angle": "Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://intunedhq.com",
+            "https://a16z.com/",
+            "https://a16z.com/portfolio/"
+          ]
+        },
+        {
+          "name": "Chert",
+          "domain": "Communications infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://www.trychert.com",
+          "company_score": 68,
+          "vc_fit_score": 61,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Chert is a Communications infrastructure company around programmatic iMessage and messaging infrastructure for business workflows. That maps to Andreessen Horowitz's Enterprise SaaS focus. Launch HN engagement: 62 points and 200 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Andreessen Horowitz may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Martin Casado"
+          ],
+          "suggested_angle": "Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "diligence_question": "How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "sources": [
+            "https://www.trychert.com",
+            "https://a16z.com/",
+            "https://a16z.com/portfolio/"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Andreessen Horowitz\n\nHi Martin Casado,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Andreessen Horowitz, the current run surfaced:\n\n- Expanse (AI infrastructure) - 81/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- TesterArmy (Developer tools) - 72/100 VC fit. Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- Intuned (Developer tools) - 72/100 VC fit. Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Andreessen Horowitz, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-general-catalyst",
+        "name": "General Catalyst",
+        "website_url": "https://www.generalcatalyst.com/",
+        "thesis": "Company creation and capital across seed, growth, transformation, healthcare, AI, and global resilience.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Healthcare operations",
+          "Fintech infrastructure",
+          "Enterprise SaaS",
+          "Defense technology",
+          "Manufacturing",
+          "Global resilience"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Hemant Taneja",
+          "Paul Kwan"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 77,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to General Catalyst's AI infrastructure focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "General Catalyst may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Hemant Taneja"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.generalcatalyst.com/",
+            "https://www.generalcatalyst.com/portfolio"
+          ]
+        },
+        {
+          "name": "Chert",
+          "domain": "Communications infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://www.trychert.com",
+          "company_score": 68,
+          "vc_fit_score": 61,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Chert is a Communications infrastructure company around programmatic iMessage and messaging infrastructure for business workflows. That maps to General Catalyst's Enterprise SaaS focus. Launch HN engagement: 62 points and 200 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "General Catalyst may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Hemant Taneja",
+            "Paul Kwan"
+          ],
+          "suggested_angle": "Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "diligence_question": "How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "sources": [
+            "https://www.trychert.com",
+            "https://www.generalcatalyst.com/",
+            "https://www.generalcatalyst.com/portfolio"
+          ]
+        },
+        {
+          "name": "Minicor",
+          "domain": "AI agents and workflow automation",
+          "stage": "Pre-seed",
+          "source_url": "https://www.minicor.com/",
+          "company_score": 64,
+          "vc_fit_score": 60,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Minicor is an AI agents and workflow automation company around desktop RPA orchestration for systems without APIs. That maps to General Catalyst's Enterprise SaaS focus. Launch HN engagement: 105 points and 64 comments when fetched. Source text includes paid-pilot or customer-pilot language. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "General Catalyst may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Hemant Taneja"
+          ],
+          "suggested_angle": "Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://www.minicor.com/",
+            "https://www.generalcatalyst.com/",
+            "https://www.generalcatalyst.com/portfolio"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for General Catalyst\n\nHi Hemant Taneja,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor General Catalyst, the current run surfaced:\n\n- Expanse (AI infrastructure) - 77/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- Chert (Communications infrastructure) - 61/100 VC fit. Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?\n- Minicor (AI agents and workflow automation) - 60/100 VC fit. Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For General Catalyst, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-lux-capital",
+        "name": "Lux Capital",
+        "website_url": "https://www.luxcapital.com/",
+        "thesis": "Back deep technical teams working at the edge of what is newly possible.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Robotics",
+          "Healthcare operations",
+          "Climate and energy",
+          "Defense technology",
+          "Developer tools",
+          "Biotech",
+          "Aerospace"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Josh Wolfe",
+          "Deena Shakir"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 78,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Lux Capital's AI infrastructure / Developer tools focus. The source suggests enough technical depth for Lux Capital's stated technical preference. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Lux Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Josh Wolfe",
+            "Deena Shakir"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.luxcapital.com/",
+            "https://www.luxcapital.com/companies"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Lux Capital\n\nHi Josh Wolfe,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Lux Capital, the current run surfaced:\n\n- Expanse (AI infrastructure) - 78/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Lux Capital, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-dcvc",
+        "name": "DCVC",
+        "website_url": "https://www.dcvc.com/",
+        "thesis": "Deep tech venture capital for high-stakes problems, using AI and science to unlock potential across sectors.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Climate and energy",
+          "Biotech",
+          "Cybersecurity",
+          "Defense technology",
+          "Fintech infrastructure",
+          "Manufacturing",
+          "Space",
+          "Agriculture",
+          "Healthcare operations"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Matt Ocko"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 81,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "High",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to DCVC's AI infrastructure focus. The source suggests enough technical depth for DCVC's stated technical preference. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "DCVC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Matt Ocko"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.dcvc.com/",
+            "https://www.dcvc.com/companies/"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for DCVC\n\nHi Matt Ocko,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor DCVC, the current run surfaced:\n\n- Expanse (AI infrastructure) - 81/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For DCVC, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-first-round",
+        "name": "First Round Capital",
+        "website_url": "https://www.firstround.com/",
+        "thesis": "Seed-stage backing for unreasonable founders in the earliest company-building years.",
+        "sector_focus": [
+          "Enterprise SaaS",
+          "Developer tools",
+          "Consumer AI",
+          "Healthcare operations",
+          "Fintech infrastructure",
+          "AI agents and workflow automation"
+        ],
+        "stage_focus": [
+          "pre-seed",
+          "seed"
+        ],
+        "relevant_partners": [
+          "Bill Trenchard",
+          "Hayley Barna"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Minicor",
+          "domain": "AI agents and workflow automation",
+          "stage": "Pre-seed",
+          "source_url": "https://www.minicor.com/",
+          "company_score": 64,
+          "vc_fit_score": 73,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Minicor is an AI agents and workflow automation company around desktop RPA orchestration for systems without APIs. That maps to First Round Capital's Enterprise SaaS / AI agents and workflow automation focus. Launch HN engagement: 105 points and 64 comments when fetched. Source text includes paid-pilot or customer-pilot language. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "First Round Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Bill Trenchard"
+          ],
+          "suggested_angle": "Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://www.minicor.com/",
+            "https://www.firstround.com/",
+            "https://www.firstround.com/companies"
+          ]
+        },
+        {
+          "name": "TesterArmy",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://tester.army",
+          "company_score": 62,
+          "vc_fit_score": 69,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "TesterArmy is a Developer tools company around agentic QA testing for web and mobile releases. That maps to First Round Capital's Developer tools focus.",
+          "why_this_firm_might_pass": "First Round Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Hayley Barna",
+            "Bill Trenchard"
+          ],
+          "suggested_angle": "Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://tester.army",
+            "https://www.firstround.com/",
+            "https://www.firstround.com/companies"
+          ]
+        },
+        {
+          "name": "Intuned",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://intunedhq.com",
+          "company_score": 61,
+          "vc_fit_score": 69,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Intuned is a Developer tools company around browser automation maintained as code. That maps to First Round Capital's Developer tools focus.",
+          "why_this_firm_might_pass": "First Round Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Hayley Barna",
+            "Bill Trenchard"
+          ],
+          "suggested_angle": "Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://intunedhq.com",
+            "https://www.firstround.com/",
+            "https://www.firstround.com/companies"
+          ]
+        },
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 62,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to First Round Capital's Developer tools focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "First Round Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Hayley Barna",
+            "Bill Trenchard"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.firstround.com/",
+            "https://www.firstround.com/companies"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for First Round Capital\n\nHi Bill Trenchard,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor First Round Capital, the current run surfaced:\n\n- Minicor (AI agents and workflow automation) - 73/100 VC fit. Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- TesterArmy (Developer tools) - 69/100 VC fit. Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- Intuned (Developer tools) - 69/100 VC fit. Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For First Round Capital, it surfaced Minicor as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-pear",
+        "name": "Pear VC",
+        "website_url": "https://pear.vc/",
+        "thesis": "Pre-seed and seed specialists with founder services across hiring, fundraising, and go-to-market.",
+        "sector_focus": [
+          "Enterprise SaaS",
+          "Developer tools",
+          "Healthcare operations",
+          "Fintech infrastructure",
+          "Consumer AI",
+          "AI infrastructure",
+          "Climate and energy"
+        ],
+        "stage_focus": [
+          "pre-seed",
+          "seed"
+        ],
+        "relevant_partners": [
+          "Pejman Nozad",
+          "Mar Hershenson"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 87,
+          "recommendation": "High-priority",
+          "confidence_level": "High",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Pear VC's Developer tools / AI infrastructure focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Pear VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Pejman Nozad",
+            "Mar Hershenson"
+          ],
+          "suggested_angle": "Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://pear.vc/",
+            "https://pear.vc/how-we-invest/",
+            "https://pear.vc/companies/"
+          ]
+        },
+        {
+          "name": "TesterArmy",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://tester.army",
+          "company_score": 62,
+          "vc_fit_score": 78,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "TesterArmy is a Developer tools company around agentic QA testing for web and mobile releases. That maps to Pear VC's Developer tools focus.",
+          "why_this_firm_might_pass": "Pear VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Pejman Nozad",
+            "Mar Hershenson"
+          ],
+          "suggested_angle": "Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://tester.army",
+            "https://pear.vc/",
+            "https://pear.vc/how-we-invest/",
+            "https://pear.vc/companies/"
+          ]
+        },
+        {
+          "name": "Intuned",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://intunedhq.com",
+          "company_score": 61,
+          "vc_fit_score": 78,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Intuned is a Developer tools company around browser automation maintained as code. That maps to Pear VC's Developer tools focus.",
+          "why_this_firm_might_pass": "Pear VC may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Pejman Nozad",
+            "Mar Hershenson"
+          ],
+          "suggested_angle": "Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://intunedhq.com",
+            "https://pear.vc/",
+            "https://pear.vc/how-we-invest/",
+            "https://pear.vc/companies/"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Pear VC\n\nHi Pejman Nozad,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Pear VC, the current run surfaced:\n\n- Expanse (AI infrastructure) - 87/100 VC fit. Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- TesterArmy (Developer tools) - 78/100 VC fit. Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- Intuned (Developer tools) - 78/100 VC fit. Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Pear VC, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-contrary",
+        "name": "Contrary",
+        "website_url": "https://contrary.com/",
+        "thesis": "Talent and research-driven investing in a small number of entrepreneurs from seed to scale.",
+        "sector_focus": [
+          "Defense technology",
+          "AI infrastructure",
+          "Biotech",
+          "Climate and energy",
+          "Enterprise SaaS",
+          "Fintech infrastructure",
+          "Consumer AI"
+        ],
+        "stage_focus": [
+          "pre-seed",
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Eric Tarczynski"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 83,
+          "recommendation": "High-priority",
+          "confidence_level": "High",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Contrary's AI infrastructure focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Contrary may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Eric Tarczynski"
+          ],
+          "suggested_angle": "Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://contrary.com/",
+            "https://research.contrary.com/",
+            "https://contrary.com/companies"
+          ]
+        },
+        {
+          "name": "Chert",
+          "domain": "Communications infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://www.trychert.com",
+          "company_score": 68,
+          "vc_fit_score": 63,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Chert is a Communications infrastructure company around programmatic iMessage and messaging infrastructure for business workflows. That maps to Contrary's Enterprise SaaS focus. Launch HN engagement: 62 points and 200 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Contrary may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Eric Tarczynski"
+          ],
+          "suggested_angle": "Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "diligence_question": "How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "sources": [
+            "https://www.trychert.com",
+            "https://contrary.com/",
+            "https://research.contrary.com/",
+            "https://contrary.com/companies"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Contrary\n\nHi Eric Tarczynski,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Contrary, the current run surfaced:\n\n- Expanse (AI infrastructure) - 83/100 VC fit. Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- Chert (Communications infrastructure) - 63/100 VC fit. Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Contrary, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-nfx",
+        "name": "NFX",
+        "website_url": "https://www.nfx.com/",
+        "thesis": "Early-stage investing for founders building network effects, marketplaces, and software with durable growth loops.",
+        "sector_focus": [
+          "Consumer AI",
+          "Marketplace",
+          "Fintech infrastructure",
+          "Healthcare operations",
+          "AI infrastructure",
+          "Developer tools",
+          "Enterprise SaaS",
+          "Space"
+        ],
+        "stage_focus": [
+          "pre-seed",
+          "seed",
+          "Series A"
+        ],
+        "relevant_partners": [
+          "James Currier",
+          "Pete Flint",
+          "Gigi Levy-Weiss"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 87,
+          "recommendation": "High-priority",
+          "confidence_level": "High",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to NFX's AI infrastructure / Developer tools focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "NFX may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "James Currier",
+            "Pete Flint",
+            "Gigi Levy-Weiss"
+          ],
+          "suggested_angle": "Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.nfx.com/",
+            "https://signal.nfx.com/",
+            "https://www.nfx.com/companies"
+          ]
+        },
+        {
+          "name": "TesterArmy",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://tester.army",
+          "company_score": 62,
+          "vc_fit_score": 74,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "TesterArmy is a Developer tools company around agentic QA testing for web and mobile releases. That maps to NFX's Developer tools focus.",
+          "why_this_firm_might_pass": "NFX may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Gigi Levy-Weiss"
+          ],
+          "suggested_angle": "Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://tester.army",
+            "https://www.nfx.com/",
+            "https://signal.nfx.com/",
+            "https://www.nfx.com/companies"
+          ]
+        },
+        {
+          "name": "Intuned",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://intunedhq.com",
+          "company_score": 61,
+          "vc_fit_score": 74,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Intuned is a Developer tools company around browser automation maintained as code. That maps to NFX's Developer tools focus.",
+          "why_this_firm_might_pass": "NFX may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Gigi Levy-Weiss"
+          ],
+          "suggested_angle": "Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://intunedhq.com",
+            "https://www.nfx.com/",
+            "https://signal.nfx.com/",
+            "https://www.nfx.com/companies"
+          ]
+        },
+        {
+          "name": "Minicor",
+          "domain": "AI agents and workflow automation",
+          "stage": "Pre-seed",
+          "source_url": "https://www.minicor.com/",
+          "company_score": 64,
+          "vc_fit_score": 66,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Minicor is an AI agents and workflow automation company around desktop RPA orchestration for systems without APIs. That maps to NFX's Enterprise SaaS focus. Launch HN engagement: 105 points and 64 comments when fetched. Source text includes paid-pilot or customer-pilot language. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "NFX may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "James Currier",
+            "Pete Flint",
+            "Gigi Levy-Weiss"
+          ],
+          "suggested_angle": "Frame Minicor as a possible thesis-adjacent lead around desktop RPA orchestration for systems without APIs; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://www.minicor.com/",
+            "https://www.nfx.com/",
+            "https://signal.nfx.com/",
+            "https://www.nfx.com/companies"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for NFX\n\nHi James Currier,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor NFX, the current run surfaced:\n\n- Expanse (AI infrastructure) - 87/100 VC fit. Lead with Expanse's HPC/GPU cluster utilization and scheduler-aware resource prediction, then show the source evidence and the first diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- TesterArmy (Developer tools) - 74/100 VC fit. Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- Intuned (Developer tools) - 74/100 VC fit. Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For NFX, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-sequoia",
+        "name": "Sequoia Capital",
+        "website_url": "https://sequoiacap.com/",
+        "thesis": "Help daring founders build legendary companies across technology cycles.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Enterprise SaaS",
+          "Consumer AI",
+          "Fintech infrastructure",
+          "Healthcare operations",
+          "Developer tools",
+          "Robotics",
+          "Climate and energy"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Sonya Huang",
+          "Pat Grady",
+          "Alfred Lin"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 77,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Sequoia Capital's AI infrastructure / Developer tools focus. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Sequoia Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Sonya Huang",
+            "Pat Grady"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://sequoiacap.com/",
+            "https://sequoiacap.com/companies/"
+          ]
+        },
+        {
+          "name": "TesterArmy",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://tester.army",
+          "company_score": 62,
+          "vc_fit_score": 64,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "TesterArmy is a Developer tools company around agentic QA testing for web and mobile releases. That maps to Sequoia Capital's Developer tools focus.",
+          "why_this_firm_might_pass": "Sequoia Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Alfred Lin"
+          ],
+          "suggested_angle": "Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://tester.army",
+            "https://sequoiacap.com/",
+            "https://sequoiacap.com/companies/"
+          ]
+        },
+        {
+          "name": "Intuned",
+          "domain": "Developer tools",
+          "stage": "Pre-seed",
+          "source_url": "https://intunedhq.com",
+          "company_score": 61,
+          "vc_fit_score": 64,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Intuned is a Developer tools company around browser automation maintained as code. That maps to Sequoia Capital's Developer tools focus.",
+          "why_this_firm_might_pass": "Sequoia Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Alfred Lin"
+          ],
+          "suggested_angle": "Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?",
+          "diligence_question": "What product is live today and who is using it repeatedly?",
+          "sources": [
+            "https://intunedhq.com",
+            "https://sequoiacap.com/",
+            "https://sequoiacap.com/companies/"
+          ]
+        },
+        {
+          "name": "Chert",
+          "domain": "Communications infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://www.trychert.com",
+          "company_score": 68,
+          "vc_fit_score": 61,
+          "recommendation": "Monitor",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Chert is a Communications infrastructure company around programmatic iMessage and messaging infrastructure for business workflows. That maps to Sequoia Capital's Enterprise SaaS focus. Launch HN engagement: 62 points and 200 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Sequoia Capital may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Sonya Huang",
+            "Pat Grady"
+          ],
+          "suggested_angle": "Frame Chert as a possible thesis-adjacent lead around programmatic iMessage and messaging infrastructure for business workflows; be explicit about the open diligence question: How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "diligence_question": "How durable is the platform dependency around iMessage delivery and line provisioning?",
+          "sources": [
+            "https://www.trychert.com",
+            "https://sequoiacap.com/",
+            "https://sequoiacap.com/companies/"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Sequoia Capital\n\nHi Sonya Huang,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Sequoia Capital, the current run surfaced:\n\n- Expanse (AI infrastructure) - 77/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n- TesterArmy (Developer tools) - 64/100 VC fit. Frame TesterArmy as a possible thesis-adjacent lead around agentic QA testing for web and mobile releases; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n- Intuned (Developer tools) - 64/100 VC fit. Frame Intuned as a possible thesis-adjacent lead around browser automation maintained as code; be explicit about the open diligence question: What product is live today and who is using it repeatedly?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Sequoia Capital, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    },
+    {
+      "firm": {
+        "id": "vc-khosla",
+        "name": "Khosla Ventures",
+        "website_url": "https://www.khoslaventures.com/",
+        "thesis": "Bold, early, impactful ventures with a willingness to back world-changing technical risk.",
+        "sector_focus": [
+          "AI infrastructure",
+          "Healthcare operations",
+          "Climate and energy",
+          "Robotics",
+          "Biotech",
+          "Fintech infrastructure",
+          "Developer tools",
+          "Aerospace"
+        ],
+        "stage_focus": [
+          "seed",
+          "Series A",
+          "growth"
+        ],
+        "relevant_partners": [
+          "Vinod Khosla"
+        ]
+      },
+      "recommended_companies": [
+        {
+          "name": "Expanse",
+          "domain": "AI infrastructure",
+          "stage": "Pre-seed",
+          "source_url": "https://news.ycombinator.com/item?id=48356312",
+          "company_score": 72,
+          "vc_fit_score": 78,
+          "recommendation": "Worth a conversation",
+          "confidence_level": "Medium",
+          "why_this_firm_might_care": "Expanse is an AI infrastructure company around HPC/GPU cluster utilization and scheduler-aware resource prediction. That maps to Khosla Ventures's AI infrastructure / Developer tools focus. The source suggests enough technical depth for Khosla Ventures's stated technical preference. Launch HN engagement: 103 points and 28 comments when fetched. Source text includes paid-pilot or customer-pilot language. Source text includes a usage-scale claim that needs verification. Treat HN engagement as community interest, not revenue or customer traction.",
+          "why_this_firm_might_pass": "Khosla Ventures may pass if diligence cannot verify the company was extracted from one launch source; core claims need corroboration.",
+          "relevant_partners": [
+            "Vinod Khosla"
+          ],
+          "suggested_angle": "Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+          "sources": [
+            "https://news.ycombinator.com/item?id=48356312",
+            "https://www.khoslaventures.com/",
+            "https://www.khoslaventures.com/portfolio/"
+          ]
+        }
+      ],
+      "outbound_email": "Subject: Source-backed startup recommendations for Khosla Ventures\n\nHi Vinod Khosla,\n\nI built Venture Radar, a venture intelligence system that screens public startup signals and maps companies to firm-specific thesis profiles.\n\nFor Khosla Ventures, the current run surfaced:\n\n- Expanse (AI infrastructure) - 78/100 VC fit. Frame Expanse as a possible thesis-adjacent lead around HPC/GPU cluster utilization and scheduler-aware resource prediction; be explicit about the open diligence question: Which clusters are installed or piloting today, and what utilization recovery has been measured?\n\nI am not treating these as investment recommendations. The output is a structured sourcing screen: evidence, fit rationale, pass risks, and diligence questions. I would value 15 minutes of feedback on whether this kind of source-backed sourcing workflow is useful for your team.\n\nBest,\nAidan",
+      "linkedin_dm": "I built Venture Radar to screen public startup signals against firm-specific VC theses. For Khosla Ventures, it surfaced Expanse as a current fit, with evidence, pass risks, and diligence questions. I would value feedback on the system and whether this kind of sourcing workflow is useful for your team."
+    }
+  ],
+  "caveats": [
+    "These are source-backed screening recommendations, not investment advice.",
+    "Fit scores estimate thesis relevance and outreach priority, not company quality with certainty.",
+    "Customer traction, revenue, founder background, and funding status need direct diligence before any investment claim.",
+    "Companies with placeholder or reserved example-domain sources are excluded from outreach packets by default."
+  ]
+}

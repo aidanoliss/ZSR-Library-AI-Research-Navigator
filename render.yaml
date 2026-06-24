@@ -1,0 +1,18 @@
+# Render Blueprint — deploys the whole app as one Node web service.
+# The Express server serves both the API and the built React frontend.
+services:
+  - type: web
+    name: zsr-research-navigator
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # set this in the Render dashboard (never commit the key)
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: NODE_VERSION
+        value: "22.16.0"
+      - key: LOG_QUERIES
+        value: "on"

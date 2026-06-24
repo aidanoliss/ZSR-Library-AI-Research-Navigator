@@ -1,0 +1,136 @@
+-- Starter SQL seed subset. The complete sample dataset is in data/sample_startups.json
+-- and data/sample_investors.json for local UI and worker execution.
+
+insert into public.domains (name, description, market_context, momentum_score, competition_level, investor_interest_score, regulatory_risk)
+values
+  ('AI infrastructure', 'Inference, model operations, data platforms, and developer-facing AI infrastructure.', 'GPU cost and reliability remain urgent buyer pains.', 89, 'High', 92, 'Low'),
+  ('AI agents and workflow automation', 'Controlled agents for repeated operational workflows.', 'Enterprises want automation with human review and auditability.', 90, 'High', 91, 'Medium'),
+  ('Healthcare operations', 'Administrative and operational workflows in healthcare.', 'Revenue-cycle and staffing pressures create clear urgency.', 86, 'Medium', 88, 'High'),
+  ('Govtech and public-sector technology', 'Software for public-sector workflows and public-interest institutions.', 'Demand is visible, but procurement and privacy remain gating risks.', 76, 'Medium', 78, 'High')
+on conflict (name) do update set
+  description = excluded.description,
+  market_context = excluded.market_context,
+  momentum_score = excluded.momentum_score,
+  competition_level = excluded.competition_level,
+  investor_interest_score = excluded.investor_interest_score,
+  regulatory_risk = excluded.regulatory_risk;
+
+insert into public.companies (
+  name,
+  website_url,
+  source_url,
+  source_name,
+  discovered_at,
+  launch_date,
+  domain,
+  subdomain,
+  description,
+  product_summary,
+  business_model,
+  target_customer,
+  pricing,
+  geography,
+  stage,
+  funding_status,
+  founders,
+  founder_background_summary,
+  technical_summary,
+  traction_summary,
+  competitors,
+  tags,
+  confidence_score
+)
+values
+  (
+    'Northstar Agents',
+    'https://example.com/northstar-agents',
+    'https://example.com/launches/northstar-agents',
+    'Sample Launch Dossier',
+    '2026-06-14',
+    '2026-06-12',
+    'AI agents and workflow automation',
+    'Operations agents',
+    'Workflow agents that reconcile invoices, purchase orders, and vendor exceptions for mid-market finance teams.',
+    'A controlled agent workspace for finance operations teams with approval queues, audit trails, and exception routing.',
+    'B2B SaaS with usage-based automation tiers',
+    'Controllers and finance operations leaders at mid-market companies',
+    'Unknown',
+    'United States',
+    'Pre-seed',
+    'Unknown',
+    '[{"name":"Maya Chen","role":"CEO","background":"Former enterprise workflow PM; sample profile, unverified"}]'::jsonb,
+    'Workflow and B2B automation exposure needs direct confirmation.',
+    'Agent orchestration layer with policy controls and approval routing.',
+    'Claims a waitlist and two design partners; names are unverified.',
+    '["Zapier","Airbase","Ramp automation","UiPath"]'::jsonb,
+    '["agents","finance operations","workflow automation"]'::jsonb,
+    84
+  ),
+  (
+    'Alloy Compute',
+    'https://example.com/alloy-compute',
+    'https://example.com/launches/alloy-compute',
+    'Sample GitHub Trend',
+    '2026-06-13',
+    '2026-06-11',
+    'AI infrastructure',
+    'Inference scheduling',
+    'Open-source scheduler for routing inference jobs across GPU, CPU, and edge capacity.',
+    'A workload router that helps AI teams reduce idle compute and route latency-sensitive inference jobs.',
+    'Open-core infrastructure with managed control plane',
+    'AI platform and ML infrastructure teams',
+    'Open source; managed pricing unknown',
+    'United States',
+    'Seed',
+    'Unknown',
+    '[{"name":"Iris Novak","role":"CEO","background":"Former distributed systems engineer; sample profile, unverified"}]'::jsonb,
+    'Technical depth appears strong from project framing.',
+    'Scheduling engine, cost-aware routing, benchmark suite, and deployment adapters.',
+    'Repository activity is visible in sample source; production usage is unknown.',
+    '["Baseten","Modal","Runpod","Together AI"]'::jsonb,
+    '["inference","GPU","open source","ML infrastructure"]'::jsonb,
+    80
+  ),
+  (
+    'Claimwise',
+    'https://example.com/claimwise',
+    'https://example.com/launches/claimwise',
+    'Sample Founder Blog',
+    '2026-06-16',
+    '2026-06-15',
+    'Healthcare operations',
+    'Revenue cycle',
+    'AI review assistant that helps revenue-cycle teams identify missing documentation and avoid denied claims.',
+    'A claim-readiness layer that checks documentation before submission and suggests human-reviewed fixes.',
+    'Per-seat or per-claim SaaS',
+    'Revenue-cycle leaders at clinics and specialty practices',
+    'Unknown',
+    'United States',
+    'Pre-seed',
+    'Unknown',
+    '[{"name":"Priya Desai","role":"CEO","background":"Former healthcare operations consultant; sample profile, unverified"}]'::jsonb,
+    'Founder-market fit appears promising if healthcare operations background is confirmed.',
+    'Documentation extraction, payer-rule checks, workflow queues, and denial analytics.',
+    'Mentions an advisory group; no customer names or revenue are verified.',
+    '["Waystar","R1","AKASA","Cedar"]'::jsonb,
+    '["healthcare","revenue cycle","documentation","claims"]'::jsonb,
+    78
+  );
+
+insert into public.investors (
+  name,
+  type,
+  website_url,
+  thesis,
+  stages,
+  domains,
+  geography,
+  notable_investments,
+  partner_names,
+  contact_url,
+  relevance_notes
+)
+values
+  ('Frontier Systems Ventures', 'VC', 'https://example.com/frontier-systems', 'Seed-stage infrastructure companies that reduce compute cost, improve developer velocity, or make AI systems production-safe.', '["pre-seed","seed","Series A"]'::jsonb, '["AI infrastructure","Developer tools","Cybersecurity"]'::jsonb, '["United States","Europe"]'::jsonb, '["Placeholder: VectorDock"]'::jsonb, '["Lena Ortiz"]'::jsonb, 'https://example.com/frontier-systems/contact', 'Good fit for technical infrastructure wedges.'),
+  ('HealthOps Capital', 'VC', 'https://example.com/healthops-capital', 'Workflow software for healthcare administration, revenue cycle, compliance, and clinical operations.', '["seed","Series A"]'::jsonb, '["Healthcare operations","Vertical AI"]'::jsonb, '["United States"]'::jsonb, '["Placeholder: IntakeCloud"]'::jsonb, '["Meera Singh"]'::jsonb, 'https://example.com/healthops-capital/contact', 'Prioritizes compliance readiness and measurable operational ROI.'),
+  ('AI Workbench Ventures', 'VC', 'https://example.com/ai-workbench', 'AI-native workbench products that become the operating layer for specialized teams.', '["pre-seed","seed","Series A"]'::jsonb, '["AI agents and workflow automation","Vertical AI","Enterprise SaaS","Developer tools"]'::jsonb, '["United States","Europe"]'::jsonb, '["Placeholder: OpsPilot"]'::jsonb, '["Victor Ng"]'::jsonb, 'https://example.com/ai-workbench/contact', 'Good fit for controlled workflow agents with auditability.');

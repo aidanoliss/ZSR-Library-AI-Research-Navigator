@@ -1,0 +1,130 @@
+{
+  "title": "Weekly Venture Radar Scan Summary",
+  "created_at": "2026-06-22T14:17:44.097Z",
+  "source": "hn",
+  "data_mode": "local",
+  "job_status": "completed",
+  "job_id": "job-1782137862569",
+  "fetched_count": 12,
+  "candidate_count": 12,
+  "new_company_count": 0,
+  "updated_company_count": 12,
+  "duplicate_count": 12,
+  "total_company_count": 13,
+  "outreach_ready_company_count": 12,
+  "top_new_companies": [],
+  "top_overall_companies": [
+    {
+      "name": "Expanse",
+      "domain": "AI infrastructure",
+      "score": 72,
+      "risk": "Medium"
+    },
+    {
+      "name": "Chert",
+      "domain": "Communications infrastructure",
+      "score": 68,
+      "risk": "High"
+    },
+    {
+      "name": "Transload",
+      "domain": "Logistics and supply chain",
+      "score": 65,
+      "risk": "Medium"
+    },
+    {
+      "name": "Minicor",
+      "domain": "AI agents and workflow automation",
+      "score": 64,
+      "risk": "Medium"
+    },
+    {
+      "name": "TesterArmy",
+      "domain": "Developer tools",
+      "score": 62,
+      "risk": "Medium"
+    }
+  ],
+  "top_updated_companies": [
+    {
+      "name": "Expanse",
+      "domain": "AI infrastructure",
+      "score": 72,
+      "risk": "Medium",
+      "source_url": "https://news.ycombinator.com/item?id=48356312",
+      "first_diligence_question": "Which clusters are installed or piloting today, and what utilization recovery has been measured?"
+    },
+    {
+      "name": "Chert",
+      "domain": "Communications infrastructure",
+      "score": 68,
+      "risk": "High",
+      "source_url": "https://www.trychert.com",
+      "first_diligence_question": "How durable is the platform dependency around iMessage delivery and line provisioning?"
+    },
+    {
+      "name": "Transload",
+      "domain": "Logistics and supply chain",
+      "score": 65,
+      "risk": "Medium",
+      "source_url": "https://news.ycombinator.com/item?id=48463273",
+      "first_diligence_question": "What product is live today and who is using it repeatedly?"
+    },
+    {
+      "name": "Minicor",
+      "domain": "AI agents and workflow automation",
+      "score": 64,
+      "risk": "Medium",
+      "source_url": "https://www.minicor.com/",
+      "first_diligence_question": "What product is live today and who is using it repeatedly?"
+    },
+    {
+      "name": "TesterArmy",
+      "domain": "Developer tools",
+      "score": 62,
+      "risk": "Medium",
+      "source_url": "https://tester.army",
+      "first_diligence_question": "What product is live today and who is using it repeatedly?"
+    }
+  ],
+  "highest_momentum_domains": [
+    {
+      "name": "AI infrastructure",
+      "company_count": 1,
+      "momentum_score": 75,
+      "best_company": "Expanse"
+    },
+    {
+      "name": "Communications infrastructure",
+      "company_count": 1,
+      "momentum_score": 71,
+      "best_company": "Chert"
+    },
+    {
+      "name": "Developer tools",
+      "company_count": 3,
+      "momentum_score": 68,
+      "best_company": "TesterArmy"
+    },
+    {
+      "name": "Logistics and supply chain",
+      "company_count": 1,
+      "momentum_score": 68,
+      "best_company": "Transload"
+    },
+    {
+      "name": "AI agents and workflow automation",
+      "company_count": 1,
+      "momentum_score": 67,
+      "best_company": "Minicor"
+    }
+  ],
+  "high_risk_new_companies": [],
+  "next_actions": [
+    "Expanse: Which clusters are installed or piloting today, and what utilization recovery has been measured?",
+    "Chert: How durable is the platform dependency around iMessage delivery and line provisioning?",
+    "Transload: What product is live today and who is using it repeatedly?",
+    "Minicor: What product is live today and who is using it repeatedly?",
+    "TesterArmy: What product is live today and who is using it repeatedly?"
+  ]
+}
