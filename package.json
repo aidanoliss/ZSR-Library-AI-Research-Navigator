@@ -1,8 +1,8 @@
 {
-  "name": "venture-radar",
+  "name": "zsr-research-navigator",
   "version": "1.0.0",
   "private": true,
-  "description": "AI venture-intelligence MVP for startup discovery, transparent scoring, investor matching, memos, proposals, and weekly reports.",
+  "description": "Prototype AI research navigator for Wake Forest ZSR Library workflows.",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -14,7 +14,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/index.js",
-    "test": "node --test test/validate.test.js test/screen.test.js test/venture.test.js test/venture-api.test.js",
+    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js",
     "test:live": "node --test test/adversarial.test.js",
     "venture:score": "node workers/score-companies.js",
     "venture:report": "node workers/generate-weekly-report.js",

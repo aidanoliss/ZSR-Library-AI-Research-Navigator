@@ -45,9 +45,25 @@ Do not share a `localhost` URL with Amanda unless she is on the same machine. Fo
 
 Private keys must stay server-side. The browser should only call `/api/chat` or `/api/chat/stream`.
 
+Suggested demo framing:
+
+- This is a student-built prototype, not an official ZSR service unless ZSR approves it.
+- It uses Gemini through the Express API, local librarian-editable ZSR resource configs, public link-outs, and best-effort catalog examples.
+- It does not provide authenticated database access, bypass paywalls, or confirm Wake Forest full-text availability.
+- ZSR librarians can review or replace the local resource config before any broader pilot.
+
+Live demo readiness checklist:
+
+- Set `GEMINI_API_KEY` only on the server host.
+- Confirm `.env` is not committed and no API key appears in browser-visible files.
+- Run `npm run build` before sharing.
+- Use Render/Railway/Fly for the current Express API shape; static-only Netlify/Vercel hosting will need a separate API deployment or serverless adapter.
+- Keep the prototype disclaimer visible in the demo and in any shared recording.
+
 ## Library Link Configuration
 
 Library URLs and mode definitions live in `config/libraryLinks.js`.
+The research-intent router, citation guide placeholders, and librarian-editable resource recommendations live in `config/researchAgent.js`.
 
 Values that should be confirmed with ZSR before a public pilot:
 
@@ -56,6 +72,18 @@ Values that should be confirmed with ZSR before a public pilot:
 - LibKey information page: currently points to a general ZSR research page until ZSR confirms a preferred LibKey Nomad page
 - ZSR Delivers / ILL: `https://zsr.wfu.edu/delivers/ill/`
 - Official Primo API endpoint/key, if ZSR wants API-backed search rather than public Primo lookup
+
+## Future Primo / MCP Integration TODO
+
+The current agentic behavior is intentionally local-config based: classify the student's need, generate better search terms, recommend likely ZSR paths, and link out to Primo, A-Z Databases, Google Scholar, LibKey Nomad, and ZSR help pages.
+
+Do not build a full MCP server until ZSR can provide official access details. A future integration should add:
+
+- Approved Primo API endpoint and key
+- Confirmed ZSR database metadata or LibGuides export
+- Wake Forest LibKey / Third Iron library ID or API details
+- Librarian-reviewed citation guide URLs for APA, MLA, Chicago, and Zotero
+- Logging/privacy rules approved for student research queries
 
 ## LibKey Nomad Support
 
@@ -67,129 +95,34 @@ This is not a LibKey API integration and does not control the browser extension.
 
 `server/primoApi.js` contains a future-facing service that can build Primo-compatible requests when `PRIMO_API_ENDPOINT` and `PRIMO_API_KEY` are configured. Without credentials, it falls back gracefully to current ZSR/Scholar links and the existing live Primo lookup.
 
-## Legacy Venture Radar Notes
+## Meeting Packet
 
-The repository still contains earlier Venture Radar files and scripts. They are not part of the ZSR Research Navigator demo.
+For library technical staff review, use:
 
-# Venture Radar
-
-Venture Radar is an AI venture-intelligence MVP for startup discovery, domain analysis, transparent scoring, investor matching, investment memo generation, proposal drafting, and weekly venture reports.
-
-It is not an automated investing product. It does not predict unicorns, recommend buying or selling securities, or provide financial, legal, or investment advice.
-
-## What Is Included
-
-- Vite + React dashboard with pages for Dashboard, Companies, Company Detail, Domains, Reports, Memos, and Settings.
-- Structured fictional sample startup data across AI infrastructure, vertical AI, agents, defense, fintech, healthcare, legal, climate, robotics, devtools, cybersecurity, SaaS, consumer AI, edtech, and govtech.
-- Fictional sample investor database with 25 entries across VC, angels, accelerators, corporate venture, university funds, and strategic investors.
-- Transparent scoring engine with component explanations.
-- Investor matching and proposal generation.
-- Weekly report automation worker that outputs Markdown and JSON.
-- Runtime source ingestion from Hacker News Launch HN through the public Algolia/HN search API.
-- Local JSON persistence with server-side Supabase REST persistence when configured.
-- Editable institutional VC profile config for 8VC, Founders Fund, a16z, General Catalyst, Lux, DCVC, First Round, Pear, Contrary, NFX, Sequoia, and Khosla.
-- Firm-specific VC fit scoring, firm-specific memos, outreach variants, CSV export, and browser-local watch/pass lists.
-- Supabase schema and SQL seed subset.
-- Prompt templates for extraction, scoring, risk analysis, investor matching, memos, proposals, and weekly reports.
-- Methodology, scoring, limitations, compliance, and roadmap docs.
-
-## Local Setup
-
-```bash
-npm install
-cp .env.example .env
-npm run dev
-```
-
-Frontend: http://localhost:5173  
-Express API: http://localhost:3001
+- `docs/library-technical-staff-brief.md`
+- `docs/demo-script.md`
+- `docs/architecture-summary.md`
+- `docs/live-demo-deployment.md`
+- `docs/privacy-logging-note.md`
+- `docs/technical-staff-questions.md`
 
 ## Useful Commands
 
 ```bash
 npm run build
 npm test
-npm run venture:score
-npm run venture:report
-npm run venture:report:write
-npm run venture:proposals
-npm run venture:weekly-scan
+PORT=3002 npm start
 ```
-
-`npm run venture:report:write` writes `data/generated_weekly_report.json`.
-`npm run venture:weekly-scan` runs source ingestion, persists the updated runtime state, and writes:
-
-- `data/generated_weekly_summary.md`
-- `data/generated_weekly_summary.json`
 
 ## Project Structure
 
 ```text
-components/              Reusable Venture Radar UI components
-config/                  Editable VC profile configuration
-data/                    Sample startups, investors, sources, generated outputs
-docs/                    Methodology, rubric, limitations, compliance, roadmap
-lib/                     Scoring, matching, reports, memos, source and LLM helpers
-prompts/                 Reusable LLM prompt templates
-python/                  Future Python scoring/context/clustering helpers
-server/                  Express API, including /api/venture/* endpoints
-src/                     Vite app entry and dashboard shell
-supabase/                schema.sql and seed.sql
-workers/                 Local cron-compatible jobs
+config/                  ZSR links, search modes, research-intent/resource config
+docs/                    Meeting packet, architecture, privacy, deployment notes
+public/                  Static images used by the prototype
+server/                  Express API, Gemini adapter, retrieval, Primo lookup, logging
+src/                     Vite/React frontend
+test/                    Focused validation, screening, and research-agent tests
 ```
 
-See `docs/architecture.md` for module boundaries and the current institutional workflow.
-
-## API Endpoints
-
-- `GET /api/venture/scorecards`
-- `GET /api/venture/investor-matches/:companyId`
-- `GET /api/venture/weekly-report`
-- `GET /api/venture/state`
-- `GET /api/venture/jobs`
-- `POST /api/venture/run-weekly-scan`
-
-`POST /api/venture/run-weekly-scan` currently supports `{ "source": "hn", "limit": 12 }`. It fetches Launch HN posts, extracts conservative company profiles, deduplicates against existing runtime data, scores the merged company set, updates the weekly report, and records a job.
-
-## Supabase
-
-Apply `supabase/schema.sql` in a Supabase project, then optionally run `supabase/seed.sql`.
-
-The schema enables RLS on every public table and grants access to authenticated users for the single-analyst MVP model. Before production multi-tenant use, replace those policies with owner/team-scoped policies.
-
-For server-side persistence, set:
-
-```bash
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-```
-
-The browser only needs public keys if you later add direct client access. The current ingestion job runs through Express and does not expose `SUPABASE_SERVICE_ROLE_KEY` to frontend code.
-
-The Supabase changelog reviewed during implementation includes a 2026 breaking change that new tables may not be exposed to the Data API automatically. If tables are inaccessible through the client, check Data API exposure and grants in addition to RLS policies.
-
-## Weekly Automation
-
-The weekly source scan command is:
-
-```bash
-npm run venture:weekly-scan
-```
-
-It:
-
-1. Reads the current runtime state from Supabase or local JSON fallback.
-2. Fetches Launch HN candidates.
-3. Extracts source-disciplined company profiles.
-4. Deduplicates against tracked companies.
-5. Scores the merged company set.
-6. Updates the weekly report and job log.
-7. Writes a Markdown and JSON summary with additions, duplicates, top new companies, top overall companies, high-risk items, and next diligence actions.
-
-This can be scheduled with Vercel Cron, GitHub Actions, Supabase Edge Functions, or a local cron runner.
-
-## Compliance
-
-This platform is for research and educational purposes. Startup scores are analytical estimates based on public information and model-generated inferences. Human diligence is required before any investment decision or recommendation.
-
-The product must not include promises of return, buy/sell/invest-now instructions, guaranteed performance claims, fabricated traction, fabricated funding, or fabricated investor interest.
+Some older experimental files may still exist in the working tree, but they are not part of the ZSR demo path.
