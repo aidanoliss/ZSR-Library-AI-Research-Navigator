@@ -16,9 +16,9 @@ const ACTIVE_SESSION_KEY = "zsr-research-navigator-active-session";
 
 const INITIAL_TOPIC = "The impact of social media on adolescent mental health";
 const TRY_PROMPTS = [
-  "The impact of social media on adolescent mental health",
-  "Primary sources on the Civil Rights Movement in North Carolina",
-  "How does inflation affect small business hiring decisions?",
+  "Help me research a topic",
+  "Help me with citations",
+  "Help me navigate ZSR",
 ];
 
 const Icon = {
@@ -403,15 +403,12 @@ export default function App() {
                   />
                   <button type="submit" disabled={!input.trim() || loading} aria-label="Send topic">{Icon.arrowUp}</button>
                 </div>
-                <div className="try-prompts" aria-label="Example research prompts">
-                  <span>Try:</span>
-                  <div>
-                    {TRY_PROMPTS.map((prompt) => (
-                      <button key={prompt} type="button" onClick={() => setInput(prompt)}>
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
+                <div className="try-prompts" aria-label="Quick start prompts">
+                  {TRY_PROMPTS.map((prompt) => (
+                    <button key={prompt} type="button" onClick={() => setInput(prompt)}>
+                      {prompt}
+                    </button>
+                  ))}
                 </div>
               </form>
             </section>

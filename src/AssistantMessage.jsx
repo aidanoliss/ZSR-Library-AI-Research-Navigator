@@ -13,6 +13,7 @@ import {
   LIBKEY_NOMAD_URL,
   LIBRARY_LINKS,
 } from "../config/libraryLinks.js";
+import { buildResearchPlan } from "../config/researchAgent.js";
 
 /* Monochrome inline icon per resource type — restrained, academic. */
 const TypeIcon = {
@@ -99,6 +100,81 @@ const SOCIAL_MEDIA_MENTAL_HEALTH_RESOURCES = [
   },
 ];
 
+const SOCIAL_MEDIA_DATABASE_STRATEGY = [
+  {
+    database: "PsycINFO",
+    az_area: "Psychology",
+    why: "Best first stop for peer-reviewed psychology research on adolescent development, depression, anxiety, and well-being.",
+    preview_image: "/preview-psycinfo.png",
+    search_inside: [
+      'Subject terms: "Social Media" + "Adolescent Development"',
+      "Limit by age group: Adolescence",
+      "Filter to peer-reviewed empirical studies",
+      "Try methodology limits such as longitudinal study or systematic review",
+    ],
+    journals_or_sources: [
+      "Journal of Adolescent Health",
+      "Developmental Psychology",
+      "Journal of Youth and Adolescence",
+      "Clinical Psychological Science",
+    ],
+  },
+  {
+    database: "Communication & Mass Media Complete",
+    az_area: "Communication / Media Studies",
+    why: "Best for media-effects research, platform behavior, online identity, and social comparison literature.",
+    preview_image: "/preview-communication-media.png",
+    search_inside: [
+      "Search platform names: TikTok, Instagram, Snapchat",
+      'Pair with media-effects terms: "social comparison", "online identity", "body image"',
+      "Use scholarly / peer-reviewed filters",
+      "Scan publication titles for communication and media-studies journals",
+    ],
+    journals_or_sources: [
+      "New Media & Society",
+      "Journal of Computer-Mediated Communication",
+      "Social Media + Society",
+      "Communication Research",
+    ],
+  },
+  {
+    database: "PubMed / MEDLINE",
+    az_area: "Health Sciences / Medicine",
+    why: "Useful for clinical, public-health, pediatric, and adolescent-health studies tied to mental-health outcomes.",
+    preview_image: "/preview-pubmed.png",
+    search_inside: [
+      'Use health terms: "mental health", depression, anxiety, well-being',
+      "Apply adolescent / child age filters where available",
+      "Try review, systematic review, or meta-analysis filters",
+      "Use MeSH-style terms such as Adolescent Health or Internet Use",
+    ],
+    journals_or_sources: [
+      "JAMA Pediatrics",
+      "Pediatrics",
+      "Journal of Adolescent Health",
+      "JAMA Psychiatry",
+    ],
+  },
+  {
+    database: "SocINDEX",
+    az_area: "Sociology / Social Sciences",
+    why: "Good secondary route for social context, peer relationships, inequality, cyberbullying, and family or school factors.",
+    preview_image: "/preview-socindex.png",
+    search_inside: [
+      "Search cyberbullying, peer networks, social comparison, and youth culture",
+      "Use subject terms for adolescence, family, schools, and inequality",
+      "Filter to scholarly journals",
+      "Combine with platform terms only after testing broader social concepts",
+    ],
+    journals_or_sources: [
+      "Youth & Society",
+      "Journal of Youth Studies",
+      "Social Science & Medicine",
+      "Children and Youth Services Review",
+    ],
+  },
+];
+
 const SUGGESTED_SEARCH_GROUPS = [
   { label: "Platforms", terms: "social media OR Instagram OR TikTok OR Snapchat" },
   { label: "Population", terms: "adolescent OR teenager OR youth" },
@@ -144,6 +220,58 @@ const REFINEMENT_OPTIONS = [
   { label: "PubMed / MEDLINE", prompt: "focus on PubMed or MEDLINE" },
   { label: "Comm & Mass Media", prompt: "focus on Communication & Mass Media Complete" },
 ];
+
+function normalizeSuggestedFollowup(followup) {
+  const raw = String(followup || "").trim();
+  if (raw.length < 12) return null;
+  if (/^(try (a |the )?(narrower|broader|different)|continue|more|ok\b|sure\b|yes\b|no\b)/i.test(raw)) return null;
+
+  const cleaned = raw.replace(/\s+/g, " ").replace(/[?!.]+$/, "");
+
+  const aspect = cleaned.match(/^what specific aspect of\s+(.+?)\s+are you\s+(?:researching|interested in)(?:\s*\((?:e\.g\.,?\s*)?(.+)\))?$/i);
+  if (aspect?.[1]) {
+    const examples = aspect[2]
+      ?.replace(/\betc\.?$/i, "")
+      .replace(/\s+or\s+/gi, ", or ")
+      .trim();
+    const label = examples
+      ? `Narrow to ${examples}`
+      : `Narrow to one specific aspect of ${aspect[1]}`;
+    return { label, prompt: label };
+  }
+
+  const interested = cleaned.match(/^are you interested in\s+(.+)$/i);
+  if (interested?.[1]) {
+    const topic = interested[1]
+      .replace(/^learning about\s+/i, "")
+      .replace(/^finding\s+/i, "")
+      .replace(/\byou\b/gi, "I")
+      .replace(/\byour\b/gi, "my");
+    const label = `Look into ${topic}`;
+    return { label, prompt: label };
+  }
+
+  const wouldLike = cleaned.match(/^(would you like|do you want|should i|can i)\s+(?:me to\s+)?(.+)$/i);
+  if (wouldLike?.[2]) {
+    const action = wouldLike[2]
+      .replace(/^to\s+/i, "")
+      .replace(/\byou\b/gi, "me")
+      .replace(/\byour\b/gi, "my");
+    const normalizedAction = /^recommendations?\s+for\b/i.test(action)
+      ? action.replace(/^recommendations?/i, "Find recommendations")
+      : action;
+    const label = /^(find|search|look|focus|narrow|broaden|compare|explain|cite|evaluate|show|help)\b/i.test(normalizedAction)
+      ? normalizedAction[0].toUpperCase() + normalizedAction.slice(1)
+      : `Help me ${normalizedAction}`;
+    return { label, prompt: label };
+  }
+
+  if (/\?$/.test(raw) && /^(are|is|do|does|did|would|could|should|can|what|why|how)\b/i.test(raw)) {
+    return null;
+  }
+
+  return { label: cleaned, prompt: cleaned };
+}
 
 function isSocialMediaMentalHealthTopic(topic) {
   const t = String(topic || "").toLowerCase();
@@ -225,14 +353,25 @@ function SectionHeader({ icon, children }) {
   );
 }
 
-function CitationLinks() {
+function CitationLinks({ guides } = {}) {
+  const links = guides?.length
+    ? guides
+        .filter((guide) => guide.url)
+        .map((guide) => ({ label: guide.label, url: guide.url }))
+    : CITATION_LINKS;
+  const todos = guides?.filter((guide) => !guide.url) || [];
   return (
     <div className="citation-links">
-      {CITATION_LINKS.map((link) => (
+      {links.map((link) => (
         <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">
           {link.label}
           <span className="ext-icon">{Icon.external}</span>
         </a>
+      ))}
+      {todos.map((guide) => (
+        <span key={guide.id} className="citation-todo">
+          {guide.label}: URL pending librarian review
+        </span>
       ))}
     </div>
   );
@@ -264,6 +403,14 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
           const sourceLeads = (item.journals_or_sources || []).filter(Boolean).slice(0, 5);
           return (
             <li key={item.database} className="database-card">
+              {item.preview_image && (
+                <img
+                  className="database-preview"
+                  src={item.preview_image}
+                  alt=""
+                  loading="lazy"
+                />
+              )}
               <div className="database-card-head">
                 <a
                   className="database-name"
@@ -291,8 +438,8 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
               )}
               {item.why && <p>{item.why}</p>}
               {searchInside.length > 0 && (
-                <details className="search-inside">
-                  <summary>Search inside</summary>
+                <details className="search-inside" open>
+                  <summary>Search inside this database</summary>
                   <div>
                     {searchInside.map((term) => (
                       <span key={term}>{term}</span>
@@ -302,7 +449,7 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
               )}
               {sourceLeads.length > 0 && (
                 <details className="source-leads">
-                  <summary>Journals, periodicals, or source types to try</summary>
+                  <summary>Journals, periodicals, or source types inside this area</summary>
                   <ul>
                     {sourceLeads.map((lead) => (
                       <li key={lead}>{lead}</li>
@@ -370,6 +517,141 @@ function FindFullText() {
         <span className="ext-icon">{Icon.external}</span>
       </a>
     </aside>
+  );
+}
+
+function StrategyTermGroup({ label, terms = [], linkBase }) {
+  const visible = terms.filter(Boolean).slice(0, 5);
+  if (!visible.length) return null;
+  return (
+    <div className="agent-term-group">
+      <strong>{label}</strong>
+      <div>
+        {visible.map((term) => (
+          <a
+            key={term}
+            href={fillTemplate(linkBase || LIBRARY_LINKS.zsrArticleSearch, term)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {term}
+            <span className="ext-icon">{Icon.external}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AgentResourceCard({ resource }) {
+  const terms = (resource.searchTerms || []).slice(0, 3);
+  const href = resource.id === "primo"
+    ? fillTemplate(resource.accessUrl, terms[0] || "")
+    : resource.accessUrl;
+  return (
+    <li className={`agent-resource-card ${resource.previewImage ? "has-preview" : "no-preview"}`}>
+      {resource.previewImage && (
+        <img className="agent-resource-preview" src={resource.previewImage} alt="" loading="lazy" />
+      )}
+      <div className="agent-resource-body">
+        <div className="agent-resource-head">
+          <a href={href} target="_blank" rel="noopener noreferrer">
+            {resource.name}
+            <span className="ext-icon">{Icon.external}</span>
+          </a>
+          <span>{resource.subjectArea}</span>
+        </div>
+        <p>{resource.description}</p>
+        <div className="agent-card-summary">
+          <span><strong>Expect:</strong> {resource.expect}</span>
+          <span><strong>Try:</strong> {terms.join(" | ")}</span>
+        </div>
+        <details className="agent-resource-details">
+          <summary>More guidance</summary>
+          <p><strong>Why it fits:</strong> {resource.whyFits}</p>
+          <p><strong>Best for:</strong> {resource.bestFor}</p>
+          <p><strong>Not best for:</strong> {resource.notBestFor}</p>
+          <p><strong>Caution:</strong> {resource.caution}</p>
+          <p><strong>Next step:</strong> {resource.nextStep}</p>
+        </details>
+      </div>
+    </li>
+  );
+}
+
+function ResearchAgentSection({ plan, compact = false }) {
+  if (!plan?.query) return null;
+  const firstFour = plan.recommendations.slice(0, 4);
+  const remaining = plan.recommendations.slice(4);
+  return (
+    <section className="research-agent">
+      <SectionHeader icon={Icon.search}>Search plan</SectionHeader>
+
+      <div className="agent-resource-block">
+        <div className="agent-block-head">
+          <strong>Recommended ZSR paths</strong>
+          <span>{plan.transparencyNote}</span>
+        </div>
+        <ul className="agent-resource-list">
+          {firstFour.map((resource) => (
+            <AgentResourceCard key={resource.id} resource={resource} />
+          ))}
+        </ul>
+        {remaining.length > 0 && (
+          <details className="more-results agent-more">
+            <summary>Show more ZSR paths</summary>
+            <ul className="agent-resource-list">
+              {remaining.map((resource) => (
+                <AgentResourceCard key={resource.id} resource={resource} />
+              ))}
+            </ul>
+          </details>
+        )}
+      </div>
+
+      {!compact && (
+        <details className="agent-fallback" open>
+          <summary>If this search fails, try...</summary>
+          <ul>
+            {plan.fallbacks.map((fallback) => (
+              <li key={fallback.label}>
+                <strong>{fallback.label}:</strong>{" "}
+                {fallback.href ? (
+                  <a href={fallback.href} target="_blank" rel="noopener noreferrer">
+                    {fallback.text}
+                    <span className="ext-icon">{Icon.external}</span>
+                  </a>
+                ) : (
+                  fallback.text
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+
+      {plan.fullText && (
+        <div className="agent-help-grid">
+          <div className="agent-help-card">
+            <strong>Full-text workflow</strong>
+            <p>Install LibKey Nomad, choose Wake Forest University, then try DOI, PMID, exact-title, Scholar, or ZSR lookup.</p>
+            <div className="agent-link-row compact">
+              <a href={plan.fullText.installLink} target="_blank" rel="noopener noreferrer">
+                Install LibKey Nomad
+                <span className="ext-icon">{Icon.external}</span>
+              </a>
+              {plan.fullText.links.map((link) => (
+                <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                  <span className="ext-icon">{Icon.external}</span>
+                </a>
+              ))}
+            </div>
+            <p className="muted terms-hint">This does not verify Wake Forest full-text access; it gives the student the right lookup path.</p>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -487,15 +769,13 @@ export default function AssistantMessage({
   const [selectedRefinements, setSelectedRefinements] = useState([]);
 
   if (!reply) return null;
-  // Keep only substantive follow-ups; drop vague filler that makes a poor prompt.
-  const followups = (reply.suggested_followups ?? []).filter((f) => {
-    const t = String(f || "").trim();
-    if (t.length < 12) return false;
-    if (/^(try (a |the )?(narrower|broader|different)|continue|more|ok\b|sure\b|yes\b|no\b)/i.test(t)) return false;
-    return true;
-  });
+  // Keep only substantive follow-ups and render them as action prompts, not vague yes/no questions.
+  const followups = (reply.suggested_followups ?? [])
+    .map(normalizeSuggestedFollowup)
+    .filter(Boolean);
   const tools = searchTools || [];
   const activeMode = getSearchMode(mode);
+  const agentPlan = buildResearchPlan(topic || reply.message || "", 5);
 
   // Enrich each recommended link with curated metadata (type, access) by URL.
   const byUrl = new Map((matched || []).map((r) => [r.url, r]));
@@ -509,6 +789,9 @@ export default function AssistantMessage({
   const startingPoints = showTopicSpecificPlan
     ? SOCIAL_MEDIA_MENTAL_HEALTH_RESOURCES
     : reply.starting_points || [];
+  const databaseStrategy = showTopicSpecificPlan
+    ? SOCIAL_MEDIA_DATABASE_STRATEGY
+    : reply.database_strategy || [];
   const displayStartingPoints = [];
   const seenStartingPoints = new Set();
   for (const sp of startingPoints) {
@@ -528,6 +811,9 @@ export default function AssistantMessage({
   const wantsCitationHelp = /citat|cite|apa|mla|zotero|bibliograph/i.test(latestAsk);
   const wantsEvaluationHelp = /evaluat|credible|peer|scholarly|quality/i.test(latestAsk);
   const wantsDatabaseStrategyHelp = /a-?z|database|databases|where to search|where can i search|periodical|periodicals|journal|journals|inside|within|specific resources/i.test(latestAsk);
+  const wantsOnlyCitationHelp =
+    wantsCitationHelp &&
+    !/sources?|articles?|books?|databases?|catalog|find|get|show|provide|evidence|pdf|full[-\s]?text|doi|pmid/i.test(latestAsk);
   const wantsSourceHeavyHelp =
     wantsStartingPointHelp ||
     wantsResourceHelp ||
@@ -536,7 +822,12 @@ export default function AssistantMessage({
     wantsEvaluationHelp ||
     /evidence|sources?|articles?|books?|journals?|database|databases|catalog|find|get|show|provide|pdf|full[-\s]?text/i.test(latestAsk);
   const allowSourceSections = responseStyle !== "answer" || wantsSourceHeavyHelp;
-  const showModeGuidance = responseStyle !== "answer" || wantsSourceHeavyHelp;
+  const showAgenticSearchPlan =
+    allowSourceSections &&
+    !showTopicSpecificPlan &&
+    !wantsOnlyCitationHelp &&
+    (!isFollowup || wantsSourceHeavyHelp || responseStyle === "sources");
+  const showModeGuidance = false;
   const showStartingPointCards = allowSourceSections && primaryStartingPoints.length > 0 && (!isFollowup || wantsStartingPointHelp || responseStyle === "sources");
   const showGeneratedTerms = allowSourceSections && !showTopicSpecificPlan && reply.search_terms?.length > 0 && (!isFollowup || wantsSearchHelp || responseStyle === "sources");
   const showCatalogResults = liveResults?.length > 0;
@@ -546,15 +837,32 @@ export default function AssistantMessage({
       /find|provide|show|get|source|sources|article|articles|book|books|database|primary|peer|recent|journal/i.test(latestAsk));
   const showMoreGuidance =
     showTopicSpecificPlan &&
-    (reply.source_evaluation?.length > 0 ||
+    (databaseStrategy.length > 0 ||
+      reply.source_evaluation?.length > 0 ||
       reply.academic_integrity_note ||
       reply.citation_tips?.length > 0 ||
-      reply.database_strategy?.length > 0 ||
       reply.key_journals?.length > 0 ||
       reply.limitations);
+  const showStandaloneCitationTips =
+    allowSourceSections &&
+    !showTopicSpecificPlan &&
+    reply.citation_tips?.length > 0 &&
+    wantsCitationHelp &&
+    (!isFollowup || responseStyle === "sources");
+  const showStandaloneFullTextHelp =
+    allowSourceSections &&
+    !showAgenticSearchPlan &&
+    /doi|pmid|full[-\s]?text|pdf|find this article|article title/i.test(latestAsk);
+  const modeLinks = showTopicSpecificPlan
+    ? SOCIAL_MEDIA_MENTAL_HEALTH_RESOURCES.slice(0, 3).map((resource) => [
+        resource.resource_name,
+        resource.url,
+        resource.bestFor,
+      ])
+    : activeMode.recommended.slice(0, 3);
   const nextStepActions =
     !showTopicSpecificPlan && followups.length > 0
-      ? followups.slice(0, 3).map((f) => ({ label: f, prompt: f }))
+      ? followups.slice(0, 3)
       : NEXT_STEP_ACTIONS;
   const showNextStep =
     isLatest &&
@@ -641,7 +949,7 @@ export default function AssistantMessage({
             <p>{activeMode.description}</p>
           </div>
           <div className="mode-links">
-            {activeMode.recommended.slice(0, 3).map(([name, url, bestFor]) => (
+            {modeLinks.map(([name, url, bestFor]) => (
               <a
                 key={name}
                 href={fillTemplate(url, topic)}
@@ -661,8 +969,12 @@ export default function AssistantMessage({
         <LiveResultsSection liveResults={liveResults} followup />
       )}
 
-      {allowSourceSections && reply.database_strategy?.length > 0 && (!isFollowup || wantsDatabaseStrategyHelp || responseStyle === "sources") && (
-        <DatabaseStrategySection strategy={reply.database_strategy} topic={topic} />
+      {showAgenticSearchPlan && (
+        <ResearchAgentSection plan={agentPlan} compact={isFollowup} />
+      )}
+
+      {allowSourceSections && databaseStrategy.length > 0 && (showTopicSpecificPlan || wantsDatabaseStrategyHelp || responseStyle === "sources") && (
+        <DatabaseStrategySection strategy={databaseStrategy} topic={topic} />
       )}
 
       {allowSourceSections && showTopicSpecificPlan && (
@@ -709,7 +1021,7 @@ export default function AssistantMessage({
         <LiveResultsSection liveResults={liveResults} />
       )}
 
-      {allowSourceSections && (!isFollowup || showCatalogResults) && <FindFullText />}
+      {showStandaloneFullTextHelp && <FindFullText />}
 
       {showGeneratedTerms && (
         <section>
@@ -786,7 +1098,7 @@ export default function AssistantMessage({
         </div>
       )}
 
-      {allowSourceSections && !showTopicSpecificPlan && reply.citation_tips?.length > 0 && (!isFollowup || wantsCitationHelp || responseStyle === "sources") && (
+      {showStandaloneCitationTips && (
         <section>
           <SectionHeader icon={Icon.cite}>Citing what you find</SectionHeader>
           <ul className="eval">
@@ -794,7 +1106,7 @@ export default function AssistantMessage({
               <li key={i}>{renderRich(tip)}</li>
             ))}
           </ul>
-          <CitationLinks />
+          <CitationLinks guides={agentPlan.citationGuides} />
         </section>
       )}
 

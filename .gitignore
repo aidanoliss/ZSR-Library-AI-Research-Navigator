@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.local
+.DS_Store
+*.log
+data/*.jsonl
+data/generated_*.json
+data/generated_*.md
+data/venture_runtime.json
+data/queries.jsonl
