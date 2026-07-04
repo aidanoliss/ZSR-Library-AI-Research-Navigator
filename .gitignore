@@ -1,5 +1,6 @@
 node_modules
 dist
+ZSR-Clean-Deploy/
 .env
 .env.local
 .DS_Store

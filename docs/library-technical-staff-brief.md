@@ -12,7 +12,7 @@ This is a student-built prototype showing how an AI assistant could guide Wake F
 - Suggest better search terms and recovery searches when a query is too broad, too narrow, or poorly suited to Primo.
 - Link students out to ZSR Library Search, A-Z Databases, ZSR guides, Google Scholar, LibKey Nomad, ZSR Delivers, and Ask a Librarian.
 - Show best-effort catalog examples from ZSR's public Primo discovery endpoint when available.
-- Keep the Gemini API key server-side through the Express backend.
+- Keep the Gemini API key server-side through the Node API server.
 
 ## What it does not do yet
 
@@ -26,7 +26,7 @@ This is a student-built prototype showing how an AI assistant could guide Wake F
 ## Current architecture
 
 - Frontend: Vite + React.
-- Backend: Express server in `server/index.js`.
+- Backend: Node server in `server/native.js`.
 - AI: Gemini API via server-side calls only.
 - Local ZSR guidance layer: `config/researchAgent.js` plus `server/resources.json`.
 - Live catalog examples: public Primo discovery lookup in `server/primo.js`, with safe fallback to link-outs.

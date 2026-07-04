@@ -1,6 +1,6 @@
 # Deploying the ZSR Research Navigator
 
-The whole app runs as **one Node web service** — the Express server serves both
+The whole app runs as **one Node web service** -- the Node server serves both
 the API and the built React frontend. So deployment is simple.
 
 ## Option A — Render (recommended, durable URL)
@@ -19,10 +19,12 @@ A `render.yaml` blueprint is included.
 
 2. **Create the service on Render** (https://render.com):
    - New → **Blueprint** → connect the repo → it reads `render.yaml`.
-   - (Or New → **Web Service**: build `npm install && npm run build`, start `npm start`.)
+   - (Or New → **Web Service**: build `npm ci && npm run build`, start `npm start`.)
 
 3. **Add your key:** in the service's **Environment** tab, set
-   `GEMINI_API_KEY` to your `AIza…`/`AQ.` key. Deploy.
+   `GEMINI_API_KEY` to the Gemini API key. Deploy.
+   Confirm the privacy-sensitive demo defaults stay set:
+   `LOG_QUERIES=off` and `HANDOFF_STORE_CONTACT=off`.
 
 4. You'll get a public URL like `https://zsr-research-navigator.onrender.com`.
 
@@ -35,11 +37,13 @@ Notes:
 
 To share a link for a quick live demo while your machine runs the app:
 ```bash
-npm run dev                      # app on http://localhost:5173
-npx cloudflared tunnel --url http://localhost:5173   # prints a public https URL
+npm run build
+PORT=3002 npm start
+npx cloudflared tunnel --url http://localhost:3002   # prints a public https URL
 ```
 The URL works only while your machine and the tunnel are running.
 
 ## Before going beyond a demo
-- Move billing to the **ZSR "Gemini Project"** (currently using a personal/Drone project key) so usage is self-contained.
+- Move billing/API ownership to an approved ZSR or WFU-managed Gemini project so usage is self-contained.
 - Get institutional sign-off on the ZSR branding and on query-topic logging (`LOG_QUERIES=off` disables it).
+- Get explicit approval before enabling handoff contact retention (`HANDOFF_STORE_CONTACT=on`).

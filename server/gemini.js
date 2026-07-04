@@ -52,11 +52,18 @@ function buildSystemInstruction() {
     "  question that is NOT asking for sources, evidence, databases, citations, or search",
     "  terms, answer directly in 'message' and omit source-heavy fields. You may offer one",
     "  concise next step, but do not dump recommended starting points or catalog strategy.",
+    "- If the student asks to brainstorm, narrow, choose, or list possible topics, make",
+    "  topic_options the main structured output: 4-6 distinct, researchable angles with",
+    "  a concrete research question, why it works, likely source types, and starter terms.",
     "- TOPIC REFINEMENT: if the student's topic is too broad or vague to plan well",
     "  (e.g. 'climate change', 'social media', 'the economy'), do NOT dump a full plan.",
     "  Instead, in 'message' ask 1-2 focused clarifying questions, and put 3 narrower",
-    "  angle suggestions in suggested_followups. Only give the full plan once the topic",
-    "  is specific enough to search effectively.",
+    "  angle suggestions in suggested_followups. Also populate clarifying_questions with",
+    "  2-4 multiple-choice questions that would narrow the research process. Only give",
+    "  the full plan once the topic is specific enough to search effectively.",
+    "- For Guided plan, return clarifying_questions whenever the student has not already",
+    "  specified time period, source type, discipline lens, and scope. Keep each option",
+    "  short enough to fit in a button.",
     "- Offer 2-3 short suggested_followups only when they would help the student choose",
     "  a next research move. Omit them for narrow follow-ups where a direct answer is enough.",
   ].join("\n");
@@ -101,6 +108,44 @@ const RESPONSE_SCHEMA = {
     redirect_notice: { type: "string" },
     citation_tips: { type: "array", items: { type: "string" } },
     key_journals: { type: "array", items: { type: "string" } },
+    topic_options: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          research_question: { type: "string" },
+          why: { type: "string" },
+          source_types: { type: "array", items: { type: "string" } },
+          search_terms: { type: "array", items: { type: "string" } },
+        },
+        required: ["title", "research_question", "why"],
+      },
+    },
+    clarifying_questions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          question: { type: "string" },
+          why: { type: "string" },
+          options: { type: "array", items: { type: "string" } },
+        },
+        required: ["question", "options"],
+      },
+    },
+    librarian_routes: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          label: { type: "string" },
+          unit: { type: "string" },
+          reason: { type: "string" },
+        },
+        required: ["label", "reason"],
+      },
+    },
     database_strategy: {
       type: "array",
       items: {
@@ -226,14 +271,20 @@ function buildTurnPrompt(latestUserText, resources, isFirstTurn, modeId = DEFAUL
     formatDatabaseStrategyReference(),
     "",
     responseStyle.id === "answer"
-      ? "Response style instruction: Answer first. For ordinary conceptual, planning, explanation, or writing-process questions, answer the prompt directly in message like a normal academic chat response. Do not merely recommend a search strategy. Unless the student explicitly asks for sources, articles, books, evidence, databases, citation help, search terms, PDFs, or full text, populate ONLY message and at most suggested_followups. Do not populate starting_points, search_terms, source_evaluation, citation_tips, key_journals, database_strategy, academic_integrity_note, or limitations for ordinary conceptual or planning questions."
+      ? "Response style instruction: Answer first. For ordinary conceptual, planning, explanation, or writing-process questions, answer the prompt directly in message like a normal academic chat response. Do not merely recommend a search strategy. If the student asks for a list of topic options, brainstorming help, angles, research questions, or ways to narrow, include topic_options and suggested_followups. Unless the student explicitly asks for sources, articles, books, evidence, databases, citation help, search terms, PDFs, or full text, omit source-heavy fields: starting_points, source_evaluation, citation_tips, key_journals, database_strategy, academic_integrity_note, and limitations."
+      : responseStyle.id === "plan"
+        ? "Response style instruction: Guided plan. Prefer a planning workflow over a finished source list. If the prompt is broad or missing important constraints, give a brief message, populate clarifying_questions, and add topic_options when useful. If the prompt already includes planner answers, synthesize them into a focused research plan with search_terms, database_strategy, source_evaluation, citation_tips, and librarian_routes."
       : responseStyle.id === "sources"
         ? "Response style instruction: Find sources. Keep message short and prioritize source-finding fields: search_terms, starting_points, database_strategy, source_evaluation, citation_tips, and key_journals when relevant. Frame this as a route into ZSR and Scholar, not as a claim that you personally retrieved full text."
         : "Response style instruction: Answer + sources. Start with a direct answer, then include source-finding fields only when they help the student's request or when the request asks for evidence, sources, articles, databases, citations, or search terms.",
     "",
     isFirstTurn
-      ? "This is the first research turn. If RESPONSE STYLE is 'Answer first' and the student did not explicitly ask for sources, give a direct substantive answer without the full source plan. Otherwise, give a short 'message' plus a structured plan tailored to the SEARCH INTENT MODE: 2-4 starting_points from the list above (exact urls + a short 'why'), 2-4 database_strategy entries, 5-8 concrete search_terms (include mode-specific words and a couple of Boolean examples), 3-5 source_evaluation tips, an academic_integrity_note, and a limitations note. For limitations, state that you do NOT access, download, or summarize the full text of paywalled or copyrighted sources — the student must open sources through ZSR themselves to read them. (The app may also show a few real results from ZSR's catalog; you do not generate or vouch for those.)"
+      ? "This is the first research turn. If RESPONSE STYLE is 'Answer first' and the student asks for brainstorming, topic options, possible angles, or research questions, give a concise message and 4-6 topic_options instead of a source dump. If RESPONSE STYLE is 'Answer first' and the student did not explicitly ask for sources or options, give a direct substantive answer without the full source plan. If RESPONSE STYLE is 'Guided plan' and the student has not provided planner preferences, prioritize clarifying_questions. Otherwise, give a short 'message' plus a structured plan tailored to the SEARCH INTENT MODE: 2-4 starting_points from the list above (exact urls + a short 'why'), 2-4 database_strategy entries, 5-8 concrete search_terms (include mode-specific words and a couple of Boolean examples), 3-5 source_evaluation tips, an academic_integrity_note, librarian_routes, and a limitations note. For limitations, state that you do NOT access, download, or summarize the full text of paywalled or copyrighted sources — the student must open sources through ZSR themselves to read them. (The app may also show a few real results from ZSR's catalog; you do not generate or vouch for those.)"
       : "This is a follow-up turn. Answer the student's specific question directly in 'message' and tailor it to the SEARCH INTENT MODE. Do NOT repeat the full research plan. If the student asks for articles, books, sources, evidence, databases, or results, keep the message focused on what to open/check in the live catalog results that the app may show; add database_strategy only if the student asks where to search, which A-Z databases to use, what to search within a database, or which journals/periodicals/source collections fit the topic. If the student asks a conceptual, explanation, planning, or writing-process question that is not about finding sources, populate ONLY message and possibly suggested_followups; omit starting_points, search_terms, citation_tips, source_evaluation, key_journals, database_strategy, academic_integrity_note, and limitations. Only populate a structured field if the student clearly asked for that kind of help: starting_points for resource/database recommendations, database_strategy for database/platform/journal guidance, search_terms for keywords/search strings, citation_tips for citation help, source_evaluation for evaluating sources, key_journals for places to search. Reuse links only from the curated list above.",
+    "topic_options: 4-6 entries when the student asks for brainstorming, topic choices, research-question options, or ways to narrow. Each title should be distinct; each research_question should be phrased as a usable academic research question; why should explain the evidence path; source_types should name likely source categories; search_terms should include 2-4 starter terms or Boolean strings.",
+    "If the student has chosen one prior option or asks to use a selected request/focus/angle, do NOT return more topic_options. Instead, return a source-finding plan with search_terms and database_strategy, plus concise next steps.",
+    "clarifying_questions: 2-4 multiple-choice questions when the prompt is broad, when RESPONSE STYLE is Guided plan, or when the missing answer would materially change which ZSR resources to use. Good dimensions include time period, population/case, source type, discipline lens, geographic scope, and whether the student needs peer-reviewed, primary, news, data, or background sources.",
+    "librarian_routes: 1-3 recommended support routes by subject or service area, not named staff. Examples: Psychology / Social Sciences librarian, Communication / Media Studies librarian, Data and Statistics support, Special Collections & Archives, Citation and Zotero help, Ask ZSR general research help. Do not invent staff names or contact details.",
     "citation_tips: 2-3 short, GENERAL reminders about citing sources for this kind of research (e.g. which style the field tends to use, to capture full citation details while reading, to use the ZSR citation guide / Zotero). NEVER fabricate a full citation for a specific article you have not been given — only give general how-to-cite guidance.",
     "key_journals: 2-4 well-known, REAL scholarly journals or databases in this field that the student could look for via ZSR (e.g. for labor economics: 'Journal of Labor Economics', 'ILR Review'). These are general field knowledge, framed as places to search. NEVER invent specific article titles, authors, or claim ZSR holds a particular item — journal/database names only. Omit this field if you are not confident the journals are real and relevant.",
     "database_strategy: 2-4 entries when database guidance is relevant. Pick databases/platforms from the DATABASE STRATEGY REFERENCE and the mode's recommended platforms. For each entry, set database to the specific database/platform name; az_area to the likely A-Z Databases subject area or part to look under (for example Psychology, Communication, Health Sciences, Business, News, Data/Statistics, Primary Sources, Legal/Policy, Multidisciplinary); why to a one-sentence topic-specific reason; search_inside to 2-4 concrete filters, fields, terms, or database features to try; journals_or_sources to 2-4 real journals, periodicals, collections, source types, or report series that fit the student's exact topic. Prefer specific journals/periodicals over generic categories when you are confident; otherwise use source types. Phrase uncertain access as 'look for via ZSR A-Z Databases' rather than a guarantee.",

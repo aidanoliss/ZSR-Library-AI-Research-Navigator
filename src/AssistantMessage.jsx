@@ -228,6 +228,25 @@ function normalizeSuggestedFollowup(followup) {
 
   const cleaned = raw.replace(/\s+/g, " ").replace(/[?!.]+$/, "");
 
+  const tellMore = cleaned.match(/^tell me more about\s+(.+)$/i);
+  if (tellMore?.[1]) {
+    const target = tellMore[1]
+      .replace(/\byou are\b/gi, "I am")
+      .replace(/\byou\b/gi, "me")
+      .replace(/\byour\b/gi, "my")
+      .trim();
+    if (/specific event or person/i.test(target)) {
+      return {
+        label: "Help me choose a specific event or person to research",
+        prompt: "Help me identify a few specific events or people I could research for this topic, and explain which one would be strongest for finding sources.",
+      };
+    }
+    return {
+      label: `Help me explore ${target}`,
+      prompt: `Help me explore ${target} for this topic and suggest focused research angles I can search in ZSR.`,
+    };
+  }
+
   const aspect = cleaned.match(/^what specific aspect of\s+(.+?)\s+are you\s+(?:researching|interested in)(?:\s*\((?:e\.g\.,?\s*)?(.+)\))?$/i);
   if (aspect?.[1]) {
     const examples = aspect[2]
@@ -302,6 +321,14 @@ function SourceImage({ resourceName, type }) {
   );
 }
 
+function resourcePreviewImage(resource) {
+  if (resource?.previewImage) return resource.previewImage;
+  return databasePreviewImage({
+    database: resource?.name || "ZSR Resource",
+    az_area: resource?.subjectArea || "ZSR research path",
+  });
+}
+
 function displayStartingPoint(sp, resource) {
   const resourceName = sp.resource_name || resource?.name || "ZSR resource";
   const isHomepage =
@@ -353,6 +380,18 @@ function SectionHeader({ icon, children }) {
   );
 }
 
+function EvidenceChips({ items = [], compact = false }) {
+  const visible = items.filter(Boolean).slice(0, 4);
+  if (!visible.length) return null;
+  return (
+    <div className={`evidence-chips ${compact ? "compact" : ""}`} aria-label="Recommendation evidence">
+      {visible.map((item) => (
+        <span key={item}>{item}</span>
+      ))}
+    </div>
+  );
+}
+
 function CitationLinks({ guides } = {}) {
   const links = guides?.length
     ? guides
@@ -381,6 +420,122 @@ function azDatabaseHref(database) {
   return `https://guides.zsr.wfu.edu/az.php?q=${encodeURIComponent(database || "")}`;
 }
 
+function fallbackDatabaseStrategyForMode(mode) {
+  return (mode.recommended || []).slice(0, 3).map(([database, , bestFor]) => ({
+    database,
+    az_area: mode.label,
+    why: bestFor,
+    search_inside: mode.termStrategies.slice(0, 3),
+    journals_or_sources: mode.termSuffixes.slice(0, 4),
+  }));
+}
+
+function uniqueTerms(terms = []) {
+  const seen = new Set();
+  const out = [];
+  for (const term of terms) {
+    const clean = String(term || "").trim();
+    const key = clean.toLowerCase();
+    if (!clean || seen.has(key)) continue;
+    seen.add(key);
+    out.push(clean);
+  }
+  return out;
+}
+
+const DATABASE_PREVIEW_PALETTES = [
+  { bg: "#fff3cf", ink: "#4d3607", accent: "#b88a22", soft: "#fffaf0" },
+  { bg: "#eaf3f0", ink: "#183f38", accent: "#357f72", soft: "#f7fcfa" },
+  { bg: "#f0edf9", ink: "#302650", accent: "#6955a3", soft: "#fbf9ff" },
+  { bg: "#edf3fb", ink: "#18395e", accent: "#3d72a7", soft: "#f8fbff" },
+  { bg: "#f9eee6", ink: "#553018", accent: "#b36a2b", soft: "#fffaf6" },
+];
+
+function escapeSvgText(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function previewLines(value, maxLength = 22) {
+  const words = String(value || "ZSR Resource").trim().split(/\s+/);
+  const lines = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length > maxLength && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  }
+  if (current) lines.push(current);
+  return lines.slice(0, 2);
+}
+
+function normalizedPreviewLabel(database) {
+  const value = String(database || "").trim();
+  const lower = value.toLowerCase();
+  if (lower.includes("cq")) return "CQ Researcher";
+  if (lower.includes("proquest")) return "ProQuest";
+  if (lower.includes("communication") || lower.includes("mass media")) return "Communication & Mass Media";
+  if (lower.includes("psycinfo")) return "PsycINFO";
+  if (lower.includes("pubmed") || lower.includes("medline")) return "PubMed / MEDLINE";
+  if (lower.includes("socindex")) return "SocINDEX";
+  if (lower.includes("jstor")) return "JSTOR";
+  if (lower.includes("factiva")) return "Factiva";
+  if (lower.includes("scholar")) return "Google Scholar";
+  if (lower.includes("a-z") || lower.includes("database")) return value || "A-Z Databases";
+  if (lower.includes("article")) return "ZSR Articles";
+  return value || "ZSR Resource";
+}
+
+function previewKicker(item) {
+  const database = String(item?.database || "").toLowerCase();
+  if (item?.az_area) return item.az_area;
+  if (database.includes("cq")) return "Issues, policy, background";
+  if (database.includes("proquest")) return "Articles, news, dissertations";
+  if (database.includes("factiva")) return "Business and news";
+  if (database.includes("pubmed") || database.includes("medline")) return "Health sciences";
+  if (database.includes("psycinfo")) return "Psychology";
+  if (database.includes("jstor")) return "Scholarly archives";
+  return "ZSR research path";
+}
+
+function databasePreviewSvg(item) {
+  const label = normalizedPreviewLabel(item?.database);
+  const hash = Array.from(label).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const palette = DATABASE_PREVIEW_PALETTES[hash % DATABASE_PREVIEW_PALETTES.length];
+  const [lineOne, lineTwo] = previewLines(label);
+  const subtitle = previewKicker(item);
+  const secondLine = lineTwo
+    ? `<text x="54" y="162" font-family="Georgia, serif" font-size="34" font-weight="700" fill="${palette.ink}">${escapeSvgText(lineTwo)}</text>`
+    : "";
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="${escapeSvgText(label)} preview">
+    <rect width="640" height="360" rx="24" fill="${palette.bg}"/>
+    <rect x="30" y="30" width="580" height="300" rx="20" fill="${palette.soft}" stroke="${palette.accent}" stroke-width="3"/>
+    <rect x="54" y="58" width="154" height="20" rx="10" fill="${palette.accent}" opacity="0.18"/>
+    <text x="54" y="74" font-family="Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2.4" fill="${palette.ink}" opacity="0.78">ZSR PATH</text>
+    <text x="54" y="122" font-family="Georgia, serif" font-size="36" font-weight="700" fill="${palette.ink}">${escapeSvgText(lineOne)}</text>
+    ${secondLine}
+    <rect x="54" y="204" width="316" height="12" rx="6" fill="${palette.ink}" opacity="0.16"/>
+    <rect x="54" y="232" width="248" height="12" rx="6" fill="${palette.ink}" opacity="0.12"/>
+    <rect x="54" y="264" width="202" height="34" rx="17" fill="${palette.accent}" opacity="0.16"/>
+    <text x="75" y="286" font-family="Arial, sans-serif" font-size="16" font-weight="800" fill="${palette.ink}">${escapeSvgText(subtitle)}</text>
+    <circle cx="532" cy="104" r="48" fill="${palette.accent}" opacity="0.14"/>
+    <path d="M506 104h52M532 78v52" stroke="${palette.accent}" stroke-width="8" stroke-linecap="round" opacity="0.72"/>
+  </svg>`;
+}
+
+function databasePreviewImage(item) {
+  if (item?.preview_image) return item.preview_image;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(databasePreviewSvg(item))}`;
+}
+
 // A result's DOI/PMID may live in dedicated fields or inside its text.
 function resultIds(r) {
   const text = `${r.doi || ""} ${r.pmid || ""} ${r.description || ""} ${(r.detailPoints || []).join(" ")}`;
@@ -401,77 +556,167 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
         {visible.map((item) => {
           const searchInside = (item.search_inside || []).filter(Boolean).slice(0, 4);
           const sourceLeads = (item.journals_or_sources || []).filter(Boolean).slice(0, 5);
+          const previewImage = databasePreviewImage(item);
           return (
-            <li key={item.database} className="database-card">
-              {item.preview_image && (
-                <img
-                  className="database-preview"
-                  src={item.preview_image}
-                  alt=""
-                  loading="lazy"
-                />
-              )}
-              <div className="database-card-head">
-                <a
-                  className="database-name"
-                  href={azDatabaseHref(item.database)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={`Look for ${item.database} in ZSR A-Z Databases`}
-                >
-                  {item.database}
-                  <span className="ext-icon">{Icon.external}</span>
-                </a>
-                <a
-                  className="database-action"
-                  href={azDatabaseHref(item.database)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Search A-Z for this database
-                </a>
-              </div>
-              {item.az_area && (
-                <p className="database-area">
-                  <strong>A-Z area:</strong> {item.az_area}
-                </p>
-              )}
-              {item.why && <p>{item.why}</p>}
-              {searchInside.length > 0 && (
-                <details className="search-inside" open>
-                  <summary>Search inside this database</summary>
-                  <div>
-                    {searchInside.map((term) => (
-                      <span key={term}>{term}</span>
-                    ))}
+            <li key={item.database} className="database-card-item">
+              <details className="database-card has-preview">
+                <summary className="database-card-toggle">
+                  <img
+                    className="database-preview"
+                    src={previewImage}
+                    alt=""
+                    loading="lazy"
+                  />
+                  <div className="database-card-summary-copy">
+                    <div className="database-card-head">
+                      <span className="database-name">{item.database}</span>
+                      {item.az_area && <span className="database-area-pill">{item.az_area}</span>}
+                    </div>
+                    {item.why && <p>{item.why}</p>}
                   </div>
-                </details>
-              )}
-              {sourceLeads.length > 0 && (
-                <details className="source-leads">
-                  <summary>Journals, periodicals, or source types inside this area</summary>
-                  <ul>
-                    {sourceLeads.map((lead) => (
-                      <li key={lead}>{lead}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-              {topic && (
-                <a
-                  className="database-topic-search"
-                  href={fillTemplate(LIBRARY_LINKS.zsrArticleSearch, `${topic} ${item.database}`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Search this topic in ZSR Articles
-                  <span className="ext-icon">{Icon.external}</span>
-                </a>
-              )}
+                </summary>
+                <div className="database-card-details">
+                  <div className="database-link-row">
+                    <a
+                      className="database-action"
+                      href={azDatabaseHref(item.database)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Search A-Z for this database
+                      <span className="ext-icon">{Icon.external}</span>
+                    </a>
+                    {topic && (
+                      <a
+                        className="database-topic-search"
+                        href={fillTemplate(LIBRARY_LINKS.zsrArticleSearch, `${topic} ${item.database}`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Search this topic in ZSR Articles
+                        <span className="ext-icon">{Icon.external}</span>
+                      </a>
+                    )}
+                  </div>
+                  {item.az_area && (
+                    <p className="database-area">
+                      <strong>A-Z area:</strong> {item.az_area}
+                    </p>
+                  )}
+                  <EvidenceChips
+                    compact
+                    items={[
+                      "A-Z database route",
+                      item.az_area ? `${item.az_area} fit` : "",
+                      "Access must be confirmed in ZSR",
+                    ]}
+                  />
+                  {searchInside.length > 0 && (
+                    <section className="search-inside database-detail-block">
+                      <h4>Search inside this database</h4>
+                      <div>
+                        {searchInside.map((term) => (
+                          <span key={term}>{term}</span>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                  {sourceLeads.length > 0 && (
+                    <section className="source-leads database-detail-block">
+                      <h4>Journals, periodicals, or source types inside this area</h4>
+                      <ul>
+                        {sourceLeads.map((lead) => (
+                          <li key={lead}>{lead}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                </div>
+              </details>
             </li>
           );
         })}
       </ul>
+    </section>
+  );
+}
+
+function TopicOptionsSection({ options = [], onFollowup }) {
+  const visible = options
+    .filter((option) => option?.title || option?.research_question)
+    .slice(0, 6);
+  if (!visible.length) return null;
+
+  return (
+    <section className="topic-options-section">
+      <SectionHeader icon={Icon.info}>Topic options</SectionHeader>
+      <div className="topic-options-grid" role="list">
+        {visible.map((option, index) => {
+          const title = option.title || `Option ${index + 1}`;
+          const question = option.research_question || title;
+          const sourceTypes = (option.source_types || []).filter(Boolean).slice(0, 4);
+          const terms = (option.search_terms || []).filter(Boolean).slice(0, 4);
+          return (
+            <details className="topic-option-card" key={`${title}-${index}`} role="listitem">
+              <summary className="topic-option-summary">
+                <div className="topic-option-head">
+                  <span>{index + 1}</span>
+                  <h4>{title}</h4>
+                </div>
+              </summary>
+              <div className="topic-option-body">
+                <p className="topic-question">{question}</p>
+                {option.why && <p>{option.why}</p>}
+                {sourceTypes.length > 0 && (
+                  <div className="mini-chip-row" aria-label="Likely source types">
+                    {sourceTypes.map((sourceType) => <span key={sourceType}>{sourceType}</span>)}
+                  </div>
+                )}
+                {terms.length > 0 && (
+                  <details className="topic-terms">
+                    <summary>Starter searches</summary>
+                    <ul>
+                      {terms.map((term) => <li key={term}><code>{term}</code></li>)}
+                    </ul>
+                  </details>
+                )}
+                {onFollowup && (
+                  <button
+                    type="button"
+                    className="topic-option-use"
+                    onClick={() => onFollowup(
+                      `Chosen request: ${question}. Build a focused ZSR source-finding plan. Do not generate more topic options. Include where to search in ZSR, suggested search terms, and concrete next steps.`,
+                      { skipPlanner: true }
+                    )}
+                  >
+                    Use this angle
+                  </button>
+                )}
+              </div>
+            </details>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function ClarifyingPlannerPrompt({ questions = [], onOpenPlanner }) {
+  const visible = questions
+    .filter((item) => item?.question && Array.isArray(item.options) && item.options.length)
+    .slice(0, 3);
+  if (!visible.length || !onOpenPlanner) return null;
+
+  return (
+    <section className="planner-inline no-print">
+      <div>
+        <SectionHeader icon={Icon.search}>Narrow the research plan</SectionHeader>
+        <p>Answer a few quick questions before searching so the next response can choose the right ZSR path.</p>
+      </div>
+      <ol>
+        {visible.map((item) => <li key={item.question}>{item.question}</li>)}
+      </ol>
+      <button type="button" onClick={() => onOpenPlanner(visible)}>Open guided planner</button>
     </section>
   );
 }
@@ -548,11 +793,10 @@ function AgentResourceCard({ resource }) {
   const href = resource.id === "primo"
     ? fillTemplate(resource.accessUrl, terms[0] || "")
     : resource.accessUrl;
+  const previewImage = resourcePreviewImage(resource);
   return (
-    <li className={`agent-resource-card ${resource.previewImage ? "has-preview" : "no-preview"}`}>
-      {resource.previewImage && (
-        <img className="agent-resource-preview" src={resource.previewImage} alt="" loading="lazy" />
-      )}
+    <li className="agent-resource-card has-preview">
+      <img className="agent-resource-preview" src={previewImage} alt="" loading="lazy" />
       <div className="agent-resource-body">
         <div className="agent-resource-head">
           <a href={href} target="_blank" rel="noopener noreferrer">
@@ -566,6 +810,13 @@ function AgentResourceCard({ resource }) {
           <span><strong>Expect:</strong> {resource.expect}</span>
           <span><strong>Try:</strong> {terms.join(" | ")}</span>
         </div>
+        <EvidenceChips
+          items={[
+            "Curated ZSR config",
+            resource.subjectArea ? `${resource.subjectArea} match` : "",
+            "Librarian-reviewable path",
+          ]}
+        />
         <details className="agent-resource-details">
           <summary>More guidance</summary>
           <p><strong>Why it fits:</strong> {resource.whyFits}</p>
@@ -678,6 +929,15 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
           <p className="result-meta">
             {[r.type, r.author, r.date].filter(Boolean).join(" · ")}
           </p>
+          <EvidenceChips
+            compact
+            items={[
+              "Live catalog metadata",
+              r.type ? `${r.type}` : "",
+              hasId ? "DOI/PMID detected" : "Title lookup needed",
+              "Confirm access in record",
+            ]}
+          />
           {r.description && <p className="result-description">{r.description}</p>}
           {r.detailPoints?.length > 0 && (
             <details className="result-details">
@@ -761,6 +1021,7 @@ export default function AssistantMessage({
   isFollowup = false,
   isLatest,
   onFollowup,
+  onOpenPlanner,
 }) {
   const [copied, setCopied] = useState(null); // index of copied term, or "all"
   const [fb, setFb] = useState("idle"); // idle | done
@@ -789,9 +1050,32 @@ export default function AssistantMessage({
   const startingPoints = showTopicSpecificPlan
     ? SOCIAL_MEDIA_MENTAL_HEALTH_RESOURCES
     : reply.starting_points || [];
+  const latestAsk = String(topic || "");
+  const selectedSourcePlanRequest = /chosen request|source-finding plan|do not generate more topic options|where to search in zsr|suggested search terms/i.test(latestAsk);
+  const rawTopicOptions = (reply.topic_options || [])
+    .filter((option) => option?.title || option?.research_question)
+    .slice(0, 6);
+  const optionSearchTerms = uniqueTerms(
+    rawTopicOptions.flatMap((option) => option.search_terms || [])
+  ).slice(0, 8);
+  const displaySearchTerms = uniqueTerms(
+    reply.search_terms?.length
+      ? reply.search_terms
+      : selectedSourcePlanRequest
+        ? optionSearchTerms
+        : []
+  );
   const databaseStrategy = showTopicSpecificPlan
     ? SOCIAL_MEDIA_DATABASE_STRATEGY
-    : reply.database_strategy || [];
+    : reply.database_strategy?.length
+      ? reply.database_strategy
+      : selectedSourcePlanRequest
+        ? fallbackDatabaseStrategyForMode(activeMode)
+        : [];
+  const topicOptions = selectedSourcePlanRequest ? [] : rawTopicOptions;
+  const clarifyingQuestions = (reply.clarifying_questions || [])
+    .filter((item) => item?.question && Array.isArray(item.options) && item.options.length)
+    .slice(0, 4);
   const displayStartingPoints = [];
   const seenStartingPoints = new Set();
   for (const sp of startingPoints) {
@@ -804,7 +1088,6 @@ export default function AssistantMessage({
   }
   const primaryStartingPoints = displayStartingPoints.slice(0, 3);
   const moreStartingPoints = displayStartingPoints.slice(3);
-  const latestAsk = String(topic || "");
   const wantsStartingPointHelp = /starting point|recommended|database|resource|where (should|can) i search|where to search/i.test(latestAsk);
   const wantsResourceHelp = /database|resource|where|source|peer|article|journal|search|find/i.test(latestAsk);
   const wantsSearchHelp = /term|keyword|boolean|search|string|database|find|article/i.test(latestAsk);
@@ -824,25 +1107,48 @@ export default function AssistantMessage({
   const allowSourceSections = responseStyle !== "answer" || wantsSourceHeavyHelp;
   const showAgenticSearchPlan =
     allowSourceSections &&
-    !showTopicSpecificPlan &&
     !wantsOnlyCitationHelp &&
-    (!isFollowup || wantsSourceHeavyHelp || responseStyle === "sources");
+    (wantsSourceHeavyHelp ||
+      responseStyle === "hybrid" ||
+      responseStyle === "sources" ||
+      responseStyle === "plan") &&
+    (!isFollowup || isLatest || wantsSourceHeavyHelp || responseStyle === "sources" || responseStyle === "plan");
   const showModeGuidance = false;
   const showStartingPointCards = allowSourceSections && primaryStartingPoints.length > 0 && (!isFollowup || wantsStartingPointHelp || responseStyle === "sources");
-  const showGeneratedTerms = allowSourceSections && !showTopicSpecificPlan && reply.search_terms?.length > 0 && (!isFollowup || wantsSearchHelp || responseStyle === "sources");
+  const showDatabaseStrategy =
+    allowSourceSections &&
+    databaseStrategy.length > 0 &&
+    (showTopicSpecificPlan || !isFollowup || wantsDatabaseStrategyHelp || responseStyle === "sources" || responseStyle === "plan");
+  const showGeneratedTerms =
+    allowSourceSections &&
+    !showTopicSpecificPlan &&
+    displaySearchTerms.length > 0 &&
+    (!isFollowup || wantsSearchHelp || wantsDatabaseStrategyHelp || responseStyle === "sources" || responseStyle === "plan");
   const showCatalogResults = liveResults?.length > 0;
   const benefitsFromRefinement =
     isFollowup &&
     (showCatalogResults ||
       /find|provide|show|get|source|sources|article|articles|book|books|database|primary|peer|recent|journal/i.test(latestAsk));
+  const moreSourceChecks = (reply.source_evaluation || []).filter(Boolean).slice(0, 3);
+  const providedCitationTips = (reply.citation_tips || []).filter(Boolean);
+  const moreCitationTips = (providedCitationTips.length
+    ? providedCitationTips
+    : [
+        "Capture the author, title, source or container, date, URL or DOI, and access date when the style requires it.",
+        "Check the assignment's required style, then verify the final citation against ZSR citation guidance before submitting.",
+      ]).slice(0, 3);
+  const moreJournalLeads = (reply.key_journals || []).filter(Boolean).slice(0, 4);
+  const moreIntegrityNote =
+    reply.academic_integrity_note ||
+    "Use this output as a research starting point. Verify claims in the sources you open, and cite the sources you actually read.";
+  const moreLimitations =
+    reply.limitations ||
+    "This prototype does not authenticate into ZSR databases, verify full-text access, or read paywalled sources. Open records through ZSR to confirm access, format, and citation details.";
   const showMoreGuidance =
-    showTopicSpecificPlan &&
-    (databaseStrategy.length > 0 ||
-      reply.source_evaluation?.length > 0 ||
-      reply.academic_integrity_note ||
-      reply.citation_tips?.length > 0 ||
-      reply.key_journals?.length > 0 ||
-      reply.limitations);
+    moreSourceChecks.length > 0 ||
+    moreCitationTips.length > 0 ||
+    moreJournalLeads.length > 0 ||
+    Boolean(moreIntegrityNote || moreLimitations);
   const showStandaloneCitationTips =
     allowSourceSections &&
     !showTopicSpecificPlan &&
@@ -941,6 +1247,14 @@ export default function AssistantMessage({
         </div>
       )}
 
+      {topicOptions.length > 0 && (
+        <TopicOptionsSection options={topicOptions} onFollowup={onFollowup} />
+      )}
+
+      {isLatest && clarifyingQuestions.length > 0 && (
+        <ClarifyingPlannerPrompt questions={clarifyingQuestions} onOpenPlanner={onOpenPlanner} />
+      )}
+
       {showModeGuidance && (
         <section className="mode-guidance">
           <div>
@@ -973,7 +1287,7 @@ export default function AssistantMessage({
         <ResearchAgentSection plan={agentPlan} compact={isFollowup} />
       )}
 
-      {allowSourceSections && databaseStrategy.length > 0 && (showTopicSpecificPlan || wantsDatabaseStrategyHelp || responseStyle === "sources") && (
+      {showDatabaseStrategy && (
         <DatabaseStrategySection strategy={databaseStrategy} topic={topic} />
       )}
 
@@ -1029,16 +1343,16 @@ export default function AssistantMessage({
             <SectionHeader icon={Icon.search}>Search terms to try</SectionHeader>
             <button
               type="button"
-              className={`icon-copy ${copied === "all" ? "is-copied" : ""}`}
-              onClick={() => copy(reply.search_terms.join("\n"), "all")}
+              className={`icon-copy copy-all-terms ${copied === "all" ? "is-copied" : ""}`}
+              onClick={() => copy(displaySearchTerms.join("\n"), "all")}
               aria-label={copied === "all" ? "All search terms copied" : "Copy all search terms"}
             >
               {Icon.copy}
-              <span className="sr-only">{copied === "all" ? "Copied" : "Copy all"}</span>
+              <span>{copied === "all" ? "Copied" : "Copy all"}</span>
             </button>
           </div>
           <ul className="terms">
-            {reply.search_terms.map((term, i) => (
+            {displaySearchTerms.map((term, i) => (
               <li key={i} className="term-row">
                 <span className="term">
                   <code>{term}</code>
@@ -1088,7 +1402,7 @@ export default function AssistantMessage({
         </section>
       )}
 
-      {allowSourceSections && !showTopicSpecificPlan && reply.academic_integrity_note && !isFollowup && (
+      {allowSourceSections && !showTopicSpecificPlan && reply.academic_integrity_note && !isFollowup && !showMoreGuidance && (
         <div className="notice integrity">
           <span className="sec-icon">{Icon.shield}</span>
           <div>
@@ -1098,7 +1412,7 @@ export default function AssistantMessage({
         </div>
       )}
 
-      {showStandaloneCitationTips && (
+      {showStandaloneCitationTips && !showMoreGuidance && (
         <section>
           <SectionHeader icon={Icon.cite}>Citing what you find</SectionHeader>
           <ul className="eval">
@@ -1136,7 +1450,7 @@ export default function AssistantMessage({
         </section>
       )}
 
-      {allowSourceSections && !showTopicSpecificPlan && reply.limitations && !isFollowup && (
+      {allowSourceSections && !showTopicSpecificPlan && reply.limitations && !isFollowup && !showMoreGuidance && (
         <details className="notice limitations limitations-toggle">
           <summary>
             <span className="sec-icon">{Icon.info}</span>
@@ -1153,72 +1467,49 @@ export default function AssistantMessage({
         </details>
       )}
 
-      {allowSourceSections && !showTopicSpecificPlan && matched?.length > 0 && !isFollowup && (
-        <details className="matched">
-          <summary>All curated resources matched to your topic ({matched.length})</summary>
-          <ul className="resource-list">
-            {matched.map((r) => (
-              <li key={r.id}>
-                <a href={r.url} target="_blank" rel="noopener noreferrer">
-                  {r.name}
-                  <span className="ext-icon">{Icon.external}</span>
-                </a>
-                <span className="type-badge">{r.type.replace(/_/g, " ")}</span>
-                <p>{r.description}</p>
-                <p className="access">{r.access}</p>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-
-      {allowSourceSections && showMoreGuidance && (
+      {showMoreGuidance && (
         <details className="more-guidance">
-          <summary>More details</summary>
+          <summary aria-label="Show citation notes, responsible AI notes, and limitations">
+            <span className="more-guidance-title">Citations, limitations & AI</span>
+            <span className="more-guidance-chips" aria-hidden="true">
+              <span>Citations</span>
+              <span>AI use</span>
+              <span>Limits</span>
+            </span>
+          </summary>
           <div className="more-guidance-body">
-            {reply.source_evaluation?.length > 0 && (
-              <section className="compact-extra">
-                <SectionHeader icon={Icon.evaluate}>Source checks</SectionHeader>
-                <ul className="eval">
-                  {reply.source_evaluation.slice(0, 3).map((tip, i) => (
-                    <li key={i}>{renderRich(tip)}</li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {reply.citation_tips?.length > 0 && (
+            {moreCitationTips.length > 0 && (
               <section className="compact-extra">
                 <SectionHeader icon={Icon.cite}>Citation notes</SectionHeader>
                 <ul className="eval">
-                  {reply.citation_tips.slice(0, 3).map((tip, i) => (
+                  {moreCitationTips.map((tip, i) => (
                     <li key={i}>{renderRich(tip)}</li>
                   ))}
                 </ul>
-                <CitationLinks />
+                <CitationLinks guides={agentPlan.citationGuides} />
               </section>
             )}
 
-            {reply.key_journals?.length > 0 && (
+            {moreJournalLeads.length > 0 && (
               <section className="compact-extra">
                 <SectionHeader icon={Icon.cite}>Journal leads</SectionHeader>
                 <ul className="journals compact-journals">
-                  {reply.key_journals.slice(0, 4).map((j, i) => (
+                  {moreJournalLeads.map((j, i) => (
                     <li key={i}><span>{j}</span></li>
                   ))}
                 </ul>
               </section>
             )}
 
-            {reply.academic_integrity_note && (
+            {moreIntegrityNote && (
               <p className="compact-note">
-                <strong>Responsible AI:</strong> {reply.academic_integrity_note}
+                <strong>Responsible AI:</strong> {moreIntegrityNote}
               </p>
             )}
 
-            {reply.limitations && (
+            {moreLimitations && (
               <p className="compact-note">
-                <strong>Limitations:</strong> {reply.limitations}
+                <strong>Limitations:</strong> {moreLimitations}
               </p>
             )}
           </div>

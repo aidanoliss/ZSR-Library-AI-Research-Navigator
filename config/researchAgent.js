@@ -263,6 +263,18 @@ export const ZSR_RESOURCE_CONFIG = [
     notes: "If the exact database title differs, use A-Z Databases to search ProQuest and News.",
   },
   {
+    id: "jstor",
+    name: "JSTOR",
+    description: "Scholarly archive for humanities and social-science journals, books, and historical scholarship.",
+    subjectArea: "Humanities / Social Sciences",
+    bestFor: "history, international relations, culture, literature, politics, and older scholarly context",
+    notBestFor: "breaking news, current market data, or clinical medical literature",
+    accessUrl: azSearch("JSTOR"),
+    tags: ["scholarly", "articles", "history", "humanities", "social science", "russia", "poland", "eastern europe", "international relations"],
+    priority: 83,
+    notes: "Use for scholarly context and citation trails; pair with news databases for recent events.",
+  },
+  {
     id: "cq-researcher",
     name: "CQ Researcher",
     description: "Issue reports with background, timelines, and policy context, when available through ZSR.",
@@ -389,6 +401,15 @@ const TOPIC_PROFILES = [
     resourceIds: ["factiva", "proquest-news", "cq-researcher", "primo"],
   },
   {
+    id: "russia-poland-history",
+    pattern: /\b(russia|russian|poland|polish|soviet|eastern europe|central europe|cold war|warsaw pact)\b/i,
+    better: ["Russia Poland relations", "Eastern Europe history", "Soviet Polish relations"],
+    broader: ["European history", "international relations", "borderlands", "nationalism"],
+    narrower: ["Cold War Eastern Europe", "Polish Soviet War", "Solidarity movement Poland", "Russia Poland diplomacy"],
+    alternate: ["Polish-Russian relations", "Central Europe", "post-Soviet Europe", "Soviet Union"],
+    resourceIds: ["jstor", "primo", "research-guides", "proquest-news", "cq-researcher"],
+  },
+  {
     id: "energy-drinks",
     pattern: /\b(energy drink|red bull|monster beverage|beverage market)\b/i,
     better: ["energy drinks market data", "functional beverage consumer trends", "energy drink brand share"],
@@ -429,7 +450,7 @@ function articleTitleLike(query) {
   const q = cleanQuery(query);
   if (extractDoi(q) || extractPmid(q)) return true;
   if (/^".+"$/.test(q)) return true;
-  if (q.length > 55 && !/\b(i need|find|where|how|what|sources?|database|statistics|market)\b/i.test(q)) return true;
+  if (q.length > 55 && !/\b(i need|help me|brainstorm|research questions?|topic|find|where|how|what|sources?|database|statistics|market)\b/i.test(q)) return true;
   if (/:/.test(q) && q.split(/\s+/).length >= 7 && !/\?$/.test(q)) return true;
   return false;
 }

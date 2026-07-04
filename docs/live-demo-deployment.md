@@ -2,7 +2,7 @@
 
 ## Recommended path: Render
 
-This project is easiest to share as a Render Web Service because it has an Express backend. Static-only hosting such as Netlify or Vercel is not enough unless the API is converted to serverless functions or hosted separately.
+This project is easiest to share as a Render Web Service because it has a Node API server. Static-only hosting such as Netlify or Vercel is not enough unless the API is converted to serverless functions or hosted separately.
 
 ## Render settings
 
@@ -10,22 +10,31 @@ Use the included `render.yaml`, or configure manually:
 
 - Service type: Web Service
 - Runtime: Node
-- Build command: `npm install && npm run build`
+- Build command: `npm ci && npm run build`
 - Start command: `npm start`
 - Environment variables:
   - `GEMINI_API_KEY`: required, server-side only
   - `GEMINI_MODEL`: optional, default currently `gemini-2.5-flash`
-  - `LOG_QUERIES`: use `off` for privacy-sensitive demos
+  - `NODE_VERSION`: `22.16.0`
+  - `NODE_ENV`: `production`
+  - `HOST`: `0.0.0.0`
+  - `PORT`: `10000`
+  - `LOG_QUERIES`: `off` for privacy-sensitive demos
+  - `HANDOFF_STORE_CONTACT`: `off` unless ZSR approves retaining contact details
   - `PRIMO_LIVE`: optional, use `off` if Primo lookup is slow/unavailable
+  - `ASK_ZSR_EMAIL`: default `askzsr@wfu.edu`
+
+Render's Web Service runtime expects the app to bind to `0.0.0.0` on the configured port. This app reads `HOST` and `PORT` in `server/native.js`, and `render.yaml` sets those explicitly.
 
 ## GitHub-to-Render flow
 
 1. Push this repo to GitHub under `aidanoliss`.
 2. In Render, choose New -> Blueprint or Web Service.
 3. Connect the GitHub repo.
-4. Add `GEMINI_API_KEY` in Render's Environment tab.
-5. Deploy.
-6. Test the public URL with the demo prompts in `docs/demo-script.md`.
+4. Add `GEMINI_API_KEY` in Render's Environment tab. Do not commit it to the repo.
+5. Confirm `LOG_QUERIES=off` and `HANDOFF_STORE_CONTACT=off` before sharing the first link.
+6. Deploy.
+7. Test the public URL with the demo prompts in `docs/demo-script.md`.
 
 ## Backup plan
 

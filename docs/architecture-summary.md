@@ -5,10 +5,10 @@
 ```mermaid
 flowchart LR
   Student["Student browser"] --> React["Vite/React frontend"]
-  React --> Express["Express backend"]
-  Express --> Gemini["Gemini API"]
-  Express --> Config["Local ZSR resource config"]
-  Express --> Primo["Best-effort Primo lookup"]
+  React --> Server["Node API server"]
+  Server --> Gemini["Gemini API"]
+  Server --> Config["Local ZSR resource config"]
+  Server --> Primo["Best-effort Primo lookup"]
   React --> Links["ZSR / A-Z / Scholar / LibKey / Ask links"]
 ```
 
@@ -20,7 +20,8 @@ flowchart LR
 
 ## Backend
 
-- `server/index.js`: Express routes, request validation, screening, retrieval, Gemini calls, streaming.
+- `server/native.js`: canonical demo/deploy server; serves the built React app plus API routes.
+- `server/index.js`: older Express route implementation kept for reference while the native server is the deploy target.
 - `server/gemini.js`: Gemini prompt and JSON response schema.
 - `server/retrieve.js`: local resource matching and search-tool metadata.
 - `server/primo.js`: best-effort public Primo discovery lookup.

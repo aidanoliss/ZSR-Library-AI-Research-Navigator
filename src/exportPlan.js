@@ -1,14 +1,39 @@
 /** Turn a conversation (user + assistant turns) into clean Markdown. */
+function plannerContextLines(context) {
+  return String(context || "")
+    .split("\n")
+    .map((line) => line.trim().replace(/^-\s*/, ""))
+    .filter(Boolean);
+}
+
 export function conversationToMarkdown(messages) {
   const lines = ["# ZSR Research Navigator — Research Plan", ""];
 
   for (const m of messages) {
     if (m.role === "user") {
       lines.push(`## You asked`, "", m.content, "");
+      const plannerLines = plannerContextLines(m.plannerContext);
+      if (plannerLines.length) {
+        lines.push("### Guided planner choices sent", "");
+        for (const line of plannerLines) lines.push(`- ${line}`);
+        lines.push("");
+      }
       continue;
     }
     const r = m.reply || {};
     if (r.message) lines.push(r.message, "");
+
+    if (r.topic_options?.length) {
+      lines.push("### Topic options", "");
+      for (const option of r.topic_options) {
+        lines.push(`- ${option.title || option.research_question}`);
+        if (option.research_question) lines.push(`  - Research question: ${option.research_question}`);
+        if (option.why) lines.push(`  - Why it works: ${option.why}`);
+        if (option.source_types?.length) lines.push(`  - Source types: ${option.source_types.join("; ")}`);
+        if (option.search_terms?.length) lines.push(`  - Starter searches: ${option.search_terms.join("; ")}`);
+      }
+      lines.push("");
+    }
 
     if (r.starting_points?.length) {
       lines.push("### Recommended starting points", "");
@@ -47,6 +72,16 @@ export function conversationToMarkdown(messages) {
       lines.push("### Responsible AI & academic integrity", "", r.academic_integrity_note, "");
     }
     if (r.limitations) lines.push("### Limitations", "", r.limitations, "");
+
+    if (r.librarian_routes?.length) {
+      lines.push("### Recommended ZSR support routes", "");
+      for (const route of r.librarian_routes) {
+        lines.push(`- ${route.label || route.unit}`);
+        if (route.unit) lines.push(`  - Unit: ${route.unit}`);
+        if (route.reason) lines.push(`  - Why: ${route.reason}`);
+      }
+      lines.push("");
+    }
 
     if (m.liveResults?.length) {
       lines.push("### Real results in ZSR's catalog", "");

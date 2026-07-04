@@ -20,6 +20,8 @@ The selected mode affects search-term suggestions, recommended platforms, Primo/
 
 ## Local Demo
 
+The root folder is the canonical app/deploy path. See `docs/canonical-deploy-path.md`.
+
 ```bash
 npm install
 cp .env.example .env
@@ -37,18 +39,18 @@ npm run dev
 ```
 
 Frontend: `http://localhost:5173`  
-Express API: `http://localhost:3001`
+ZSR API server: `http://localhost:3001`
 
 ## Sharing A Test Link
 
-Do not share a `localhost` URL with Amanda unless she is on the same machine. For a live test link, deploy the app to a server that can run the Express API and set `GEMINI_API_KEY` as a server-side environment variable. Render, Railway, Fly.io, or a similar Node host is the simplest path for this Express + Vite setup.
+Do not share a `localhost` URL with Amanda unless she is on the same machine. For a live test link, deploy the app to a server that can run the Node API server and set `GEMINI_API_KEY` as a server-side environment variable. Render, Railway, Fly.io, or a similar Node host is the simplest path for this Node + Vite setup.
 
 Private keys must stay server-side. The browser should only call `/api/chat` or `/api/chat/stream`.
 
 Suggested demo framing:
 
 - This is a student-built prototype, not an official ZSR service unless ZSR approves it.
-- It uses Gemini through the Express API, local librarian-editable ZSR resource configs, public link-outs, and best-effort catalog examples.
+- It uses Gemini through the Node API server, local librarian-editable ZSR resource configs, public link-outs, and best-effort catalog examples.
 - It does not provide authenticated database access, bypass paywalls, or confirm Wake Forest full-text availability.
 - ZSR librarians can review or replace the local resource config before any broader pilot.
 
@@ -56,8 +58,10 @@ Live demo readiness checklist:
 
 - Set `GEMINI_API_KEY` only on the server host.
 - Confirm `.env` is not committed and no API key appears in browser-visible files.
+- For Render, deploy as a Web Service with build `npm ci && npm run build`, start `npm start`, `HOST=0.0.0.0`, and `PORT=10000`.
 - Run `npm run build` before sharing.
-- Use Render/Railway/Fly for the current Express API shape; static-only Netlify/Vercel hosting will need a separate API deployment or serverless adapter.
+- Keep `LOG_QUERIES=off` and `HANDOFF_STORE_CONTACT=off` for the first shared demo unless ZSR approves retention.
+- Use Render/Railway/Fly for the current Node API shape; static-only Netlify/Vercel hosting will need a separate API deployment or serverless adapter.
 - Keep the prototype disclaimer visible in the demo and in any shared recording.
 
 ## Library Link Configuration
@@ -95,6 +99,14 @@ This is not a LibKey API integration and does not control the browser extension.
 
 `server/primoApi.js` contains a future-facing service that can build Primo-compatible requests when `PRIMO_API_ENDPOINT` and `PRIMO_API_KEY` are configured. Without credentials, it falls back gracefully to current ZSR/Scholar links and the existing live Primo lookup.
 
+## Pilot Admin And Handoff
+
+Open `/?admin=1` or use the shield icon in the app to view the read-only pilot dashboard. It shows curated resource coverage, privacy posture, integration readiness, recent explicit feedback, and librarian handoff packages.
+
+Use the envelope handoff icon to package a student's topic, suggested search terms, matched ZSR paths, and live catalog leads into an Ask ZSR email draft. Handoff contact details are not retained by default; set `HANDOFF_STORE_CONTACT=on` only after privacy review.
+
+Query logging is off by default for safer demos. Set `LOG_QUERIES=on` only after ZSR approves retention and student notice language.
+
 ## Meeting Packet
 
 For library technical staff review, use:
@@ -120,7 +132,7 @@ PORT=3002 npm start
 config/                  ZSR links, search modes, research-intent/resource config
 docs/                    Meeting packet, architecture, privacy, deployment notes
 public/                  Static images used by the prototype
-server/                  Express API, Gemini adapter, retrieval, Primo lookup, logging
+server/                  Node API server, Gemini adapter, retrieval, Primo lookup, logging
 src/                     Vite/React frontend
 test/                    Focused validation, screening, and research-agent tests
 ```

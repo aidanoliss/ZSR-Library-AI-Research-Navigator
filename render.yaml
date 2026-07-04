@@ -1,11 +1,11 @@
-# Render Blueprint — deploys the whole app as one Node web service.
-# The Express server serves both the API and the built React frontend.
+# Render Blueprint - deploys the whole app as one Node web service.
+# The Node server serves both the API and the built React frontend.
 services:
   - type: web
     name: zsr-research-navigator
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     envVars:
       - key: GEMINI_API_KEY
@@ -14,5 +14,17 @@ services:
         value: gemini-2.5-flash
       - key: NODE_VERSION
         value: "22.16.0"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: "10000"
       - key: LOG_QUERIES
+        value: "off"
+      - key: HANDOFF_STORE_CONTACT
+        value: "off"
+      - key: PRIMO_LIVE
         value: "on"
+      - key: ASK_ZSR_EMAIL
+        value: askzsr@wfu.edu

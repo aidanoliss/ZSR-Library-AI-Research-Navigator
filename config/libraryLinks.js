@@ -194,7 +194,13 @@ export const RESPONSE_STYLES = [
     id: "answer",
     label: "Answer first",
     shortLabel: "Answer",
-    description: "Prioritize a concise AI answer; skip source-heavy sections unless asked.",
+    description: "Prioritize a direct answer, topic options, and next research moves before source lists.",
+  },
+  {
+    id: "plan",
+    label: "Guided plan",
+    shortLabel: "Plan",
+    description: "Ask narrowing questions first, then turn the answers into a focused ZSR research plan.",
   },
   {
     id: "sources",

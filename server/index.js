@@ -8,11 +8,19 @@ import { existsSync } from "node:fs";
 import { retrieveResources, loadResources, getSearchTools } from "./retrieve.js";
 import { generateChatResponse, streamChatResponse } from "./gemini.js";
 import { validateReply } from "./validate.js";
-import { logQuery, logFeedback, readFeedback } from "./log.js";
+import {
+  logQuery,
+  logFeedback,
+  logHandoff,
+  loggingStatus,
+  readFeedback,
+  readHandoffs,
+  readQuerySummary,
+} from "./log.js";
 import { rateLimit } from "./ratelimit.js";
 import { screenMessage, blockedReply } from "./screen.js";
 import { searchPrimo } from "./primo.js";
-import { ventureRouter } from "./venture.js";
+import { buildPrimoRequest } from "./primoApi.js";
 import {
   DEFAULT_MODE_ID,
   DEFAULT_RESPONSE_STYLE_ID,
@@ -23,16 +31,118 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || "0.0.0.0";
+const ASK_ZSR_EMAIL = process.env.ASK_ZSR_EMAIL || "askzsr@wfu.edu";
 
 export const app = express();
 app.use(cors());
 app.use(express.json());
-app.use("/api/venture", ventureRouter);
+
+// Keep the ZSR preview fast and isolated. The older Venture Radar API imports a
+// larger experimental pipeline, so load it only if that namespace is requested.
+app.use("/api/venture", async (req, res, next) => {
+  try {
+    const { ventureRouter } = await import("./venture.js");
+    return ventureRouter(req, res, next);
+  } catch (err) {
+    console.error("[/api/venture lazy-load]", err.message);
+    return res.status(503).json({ ok: false, error: "Venture Radar tools are not available right now." });
+  }
+});
 
 // Health + visibility into what the curated file currently holds.
 app.get("/api/health", async (_req, res) => {
   const resources = await loadResources();
   res.json({ ok: true, resourceCount: resources.length });
+});
+
+function envConfigured(name) {
+  return Boolean(String(process.env[name] || "").trim());
+}
+
+function resourceSummary(resources = []) {
+  const byType = {};
+  const missing = [];
+  for (const resource of resources) {
+    byType[resource.type || "unknown"] = (byType[resource.type || "unknown"] || 0) + 1;
+    const missingFields = ["id", "name", "type", "url", "description", "access"].filter((field) => !resource[field]);
+    if (missingFields.length) {
+      missing.push({ id: resource.id || resource.name || "(unnamed)", missingFields });
+    }
+  }
+
+  return {
+    count: resources.length,
+    byType,
+    searchableTools: resources.filter((resource) => resource.search_url_template).length,
+    paywalled: resources.filter((resource) => resource.paywalled).length,
+    missing: missing.slice(0, 20),
+  };
+}
+
+function integrationStatus() {
+  const primoRequest = buildPrimoRequest("test", DEFAULT_MODE_ID);
+  return {
+    gemini: {
+      configured: envConfigured("GEMINI_API_KEY"),
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+    },
+    primoPublicLookup: {
+      configured: (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off",
+      note: "Best-effort public Primo lookup; not an approved authenticated ZSR API.",
+    },
+    primoApi: {
+      configured: primoRequest.configured,
+      endpointConfigured: Boolean(primoRequest.endpoint),
+      keyConfigured: envConfigured("PRIMO_API_KEY"),
+    },
+    libkey: {
+      libraryIdConfigured: envConfigured("VITE_WFU_LIBKEY_LIBRARY_ID") || envConfigured("WFU_LIBKEY_LIBRARY_ID"),
+      note: "Without a Wake Forest LibKey library ID, the app uses LibKey choose-library links.",
+    },
+  };
+}
+
+async function pilotStatusPayload() {
+  const resources = await loadResources();
+  return {
+    ok: true,
+    prototype: true,
+    canonicalPath: "/Users/aidanoliss/Desktop/ZSR AI Assistant",
+    privacy: loggingStatus(),
+    resources: resourceSummary(resources),
+    integrations: integrationStatus(),
+  };
+}
+
+app.get("/api/pilot/status", async (_req, res) => {
+  res.json(await pilotStatusPayload());
+});
+
+app.get("/api/admin/summary", async (_req, res) => {
+  const [status, feedback, handoffs, querySummary] = await Promise.all([
+    pilotStatusPayload(),
+    readFeedback(100),
+    readHandoffs(50),
+    readQuerySummary(200),
+  ]);
+
+  const feedbackCounts = feedback.reduce((counts, item) => {
+    counts[item.rating] = (counts[item.rating] || 0) + 1;
+    return counts;
+  }, {});
+
+  res.json({
+    ...status,
+    feedback: {
+      counts: feedbackCounts,
+      recent: feedback.slice(0, 25),
+    },
+    handoffs: {
+      totalRecent: handoffs.length,
+      recent: handoffs.slice(0, 25),
+    },
+    querySummary,
+  });
 });
 
 /**
@@ -116,7 +226,7 @@ function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID) {
 
 function withCatalogFoundIntro(reply, liveResults, latestText) {
   if (!reply || !liveResults?.length) return reply;
-  if (!/\b(find|show|get|give|provide|article|articles|source|sources|results)\b/i.test(latestText)) {
+  if (!sourceRequestIntent(latestText)) {
     return reply;
   }
   return {
@@ -126,10 +236,17 @@ function withCatalogFoundIntro(reply, liveResults, latestText) {
   };
 }
 
+function topicOptionIntent(text) {
+  const value = String(text || "");
+  return /\b(brainstorm|options?|angles?|possible topics?|topic ideas?|research questions?|narrow|focus)\b/i.test(value);
+}
+
 function sourceRequestIntent(text) {
-  return /\b(find|show|get|give|provide|articles?|books?|sources?|evidence|results?|database|databases|catalog|journal|journals|citation|cite|search terms?|keywords?|pdf|full[-\s]?text)\b/i.test(
-    String(text || "")
-  );
+  const value = String(text || "");
+  const explicitSource = /\b(articles?|books?|sources?|evidence|results?|database|databases|catalog|journal|journals|citation|cite|search terms?|keywords?|pdf|full[-\s]?text)\b/i.test(value);
+  if (explicitSource) return true;
+  if (topicOptionIntent(value)) return false;
+  return /\b(find|show|get|give|provide)\b.{0,48}\b(articles?|books?|sources?|evidence|results?|databases?|catalog|journals?|citations?|keywords?)\b/i.test(value);
 }
 
 function stripSourceHeavyFields(reply) {
@@ -151,7 +268,7 @@ function stripSourceHeavyFields(reply) {
 function catalogResultFocusedTurn(history, latestText, liveResults) {
   const userTurns = history.filter((m) => m.role === "user").length;
   if (userTurns <= 1 || !liveResults?.length) return false;
-  const wantsSources = /\b(find|show|get|give|provide|articles?|books?|sources?|results)\b/i.test(latestText);
+  const wantsSources = sourceRequestIntent(latestText);
   const wantsWhereToSearch = /\b(database|databases|resource|resources|where|starting point|guide|guides|search tool)\b/i.test(latestText);
   return wantsSources && !wantsWhereToSearch;
 }
@@ -228,6 +345,66 @@ function fallbackDatabaseStrategy(original, modeId = DEFAULT_MODE_ID) {
   }));
 }
 
+function fallbackTopicOptions(original) {
+  const topic = String(original || "the topic").trim();
+  if (/\b(ptsd|trauma)\b/i.test(topic) && /\b(tv|television|watching)\b/i.test(topic)) {
+    return [
+      {
+        title: "Fictional trauma portrayals and viewer distress",
+        research_question: "How do fictional television portrayals of trauma shape viewers' anxiety, distress, or perceptions of PTSD?",
+        why: "It narrows the topic to media representation and audience effects, which fits communication and psychology databases.",
+        source_types: ["Peer-reviewed articles", "Media-effects studies", "Psychology research"],
+        search_terms: ['television trauma portrayal AND PTSD', '"media effects" AND trauma AND viewers'],
+      },
+      {
+        title: "News exposure and secondary traumatic stress",
+        research_question: "Can repeated television news exposure to disasters or violence contribute to secondary traumatic stress symptoms?",
+        why: "It creates a clearer causal mechanism and lets the student compare journalism, psychology, and public-health sources.",
+        source_types: ["Peer-reviewed articles", "News studies", "Public-health research"],
+        search_terms: ['"secondary traumatic stress" AND television news', 'disaster coverage AND viewer distress'],
+      },
+      {
+        title: "True crime, violence, and perceived safety",
+        research_question: "How does frequent exposure to true-crime or violent television content affect perceived safety and trauma-related symptoms?",
+        why: "It gives the project a recognizable content genre and measurable outcomes.",
+        source_types: ["Communication studies", "Psychology articles", "Audience research"],
+        search_terms: ['true crime television AND anxiety', 'violent media AND perceived safety AND trauma'],
+      },
+      {
+        title: "Content warnings and trauma-sensitive viewing",
+        research_question: "Do content warnings before traumatic television scenes reduce distress for viewers with trauma histories?",
+        why: "It is focused enough for a research paper and points toward intervention/evaluation literature.",
+        source_types: ["Psychology articles", "Media studies", "Ethics/commentary"],
+        search_terms: ['content warnings AND trauma AND television', 'trigger warnings AND PTSD AND media'],
+      },
+    ];
+  }
+
+  return [
+    {
+      title: "Mechanism-focused angle",
+      research_question: `What mechanism explains the relationship between ${topic} and the outcome I care about?`,
+      why: "A mechanism gives the search concrete concepts instead of one broad topic phrase.",
+      source_types: ["Peer-reviewed articles", "Theory/background sources"],
+      search_terms: [`${topic} mechanism`, `${topic} effects`],
+    },
+    {
+      title: "Population-focused angle",
+      research_question: `How does ${topic} affect one specific population or community?`,
+      why: "A population limit makes databases and filters much easier to use.",
+      source_types: ["Scholarly articles", "Data/statistics"],
+      search_terms: [`${topic} adolescents`, `${topic} college students`],
+    },
+    {
+      title: "Comparison angle",
+      research_question: `How does ${topic} differ across two groups, time periods, platforms, or settings?`,
+      why: "A comparison creates a stronger analytical structure for a paper.",
+      source_types: ["Peer-reviewed articles", "News/current context", "Data"],
+      search_terms: [`${topic} comparison`, `${topic} differences`],
+    },
+  ];
+}
+
 function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
   const userTurns = history.filter((m) => m.role === "user").length;
   if (userTurns <= 1) return null;
@@ -240,6 +417,15 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
     "Suggest stronger search terms",
     "Help me evaluate sources I find",
   ];
+
+  if (topicOptionIntent(latest)) {
+    return {
+      message:
+        "Here are researchable angles you could choose from. Pick the one that best matches the assignment, then use it to build search terms and choose databases.",
+      topic_options: fallbackTopicOptions(original),
+      suggested_followups: ["Turn one option into a research question", "Find ZSR databases for one option", "Build search terms for one option"],
+    };
+  }
 
   if (/peer|scholarly|article|journal/.test(latest)) {
     return {
@@ -484,6 +670,91 @@ app.post("/api/feedback", async (req, res) => {
   } catch (err) {
     console.error("[/api/feedback]", err.message);
     res.status(500).json({ error: "Could not save feedback." });
+  }
+});
+
+function compactLines(items, render, limit = 6) {
+  return (items || [])
+    .slice(0, limit)
+    .map(render)
+    .filter(Boolean)
+    .join("\n");
+}
+
+function handoffEmailBody({ topic, mode, responseStyle, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
+  const terms = compactLines(searchTerms, (term) => `- ${term}`, 10);
+  const results = compactLines(
+    liveResults,
+    (item) => `- ${item.title || "Untitled"}${item.type ? ` (${item.type})` : ""}${item.url ? `\n  ${item.url}` : ""}`,
+    8
+  );
+  const resources = compactLines(
+    matchedResources,
+    (item) => `- ${item.name || item.resource_name || item.id}${item.url ? `\n  ${item.url}` : ""}`,
+    8
+  );
+  const routes = compactLines(
+    librarianRoutes,
+    (item) => `- ${item.label || item.unit || "ZSR support"}${item.unit ? ` (${item.unit})` : ""}${item.reason ? `\n  ${item.reason}` : ""}${item.href ? `\n  ${item.href}` : ""}`,
+    3
+  );
+
+  return [
+    "Hello ZSR,",
+    "",
+    "I used the ZSR Research Navigator and would like help with this research question.",
+    "",
+    `Topic: ${topic || "(not provided)"}`,
+    `Research mode: ${mode || "(not provided)"}`,
+    `Response style: ${responseStyle || "(not provided)"}`,
+    contact ? `Student contact: ${contact}` : "",
+    note ? `Student note: ${note}` : "",
+    "",
+    routes ? `Recommended ZSR support routes:\n${routes}` : "",
+    "",
+    terms ? `Search terms tried or suggested:\n${terms}` : "",
+    "",
+    resources ? `Recommended ZSR paths:\n${resources}` : "",
+    "",
+    results ? `Catalog leads to review:\n${results}` : "",
+    "",
+    "Please help me confirm the best databases, search terms, and next steps.",
+  ].filter((line) => line !== "").join("\n");
+}
+
+app.post("/api/handoff", async (req, res) => {
+  const body = req.body || {};
+  const topic = String(body.topic || "").slice(0, 2000);
+  if (!topic.trim()) {
+    return res.status(400).json({ error: "A topic is required for librarian handoff." });
+  }
+
+  const payload = {
+    topic,
+    mode: String(body.mode || "").slice(0, 80),
+    responseStyle: String(body.responseStyle || "").slice(0, 80),
+    note: String(body.note || "").slice(0, 1000),
+    contact: String(body.contact || "").slice(0, 300),
+    searchTerms: Array.isArray(body.searchTerms) ? body.searchTerms : [],
+    liveResults: Array.isArray(body.liveResults) ? body.liveResults : [],
+    matchedResources: Array.isArray(body.matchedResources) ? body.matchedResources : [],
+    librarianRoutes: Array.isArray(body.librarianRoutes) ? body.librarianRoutes : [],
+  };
+
+  try {
+    await logHandoff(payload);
+    const subject = `Research help request: ${payload.topic.slice(0, 80)}`;
+    const bodyText = handoffEmailBody(payload);
+    const mailto = `mailto:${ASK_ZSR_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+    res.json({
+      ok: true,
+      askEmail: ASK_ZSR_EMAIL,
+      mailto,
+      body: bodyText,
+    });
+  } catch (err) {
+    console.error("[/api/handoff]", err.message);
+    res.status(500).json({ error: "Could not prepare the librarian handoff." });
   }
 });
 
