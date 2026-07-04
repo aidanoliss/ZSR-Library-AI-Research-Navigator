@@ -19,7 +19,7 @@ A `render.yaml` blueprint is included.
 
 2. **Create the service on Render** (https://render.com):
    - New → **Blueprint** → connect the repo → it reads `render.yaml`.
-   - (Or New → **Web Service**: build `npm ci && npm run build`, start `npm start`.)
+   - (Or New → **Web Service**: build `npm ci --include=dev && npm run build`, start `npm start`.)
 
 3. **Add your key:** in the service's **Environment** tab, set
    `GEMINI_API_KEY` to the Gemini API key. Deploy.

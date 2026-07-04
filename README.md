@@ -58,7 +58,7 @@ Live demo readiness checklist:
 
 - Set `GEMINI_API_KEY` only on the server host.
 - Confirm `.env` is not committed and no API key appears in browser-visible files.
-- For Render, deploy as a Web Service with build `npm ci && npm run build`, start `npm start`, `HOST=0.0.0.0`, and `PORT=10000`.
+- For Render, deploy as a Web Service with build `npm ci --include=dev && npm run build`, start `npm start`, `HOST=0.0.0.0`, and `PORT=10000`.
 - Run `npm run build` before sharing.
 - Keep `LOG_QUERIES=off` and `HANDOFF_STORE_CONTACT=off` for the first shared demo unless ZSR approves retention.
 - Use Render/Railway/Fly for the current Node API shape; static-only Netlify/Vercel hosting will need a separate API deployment or serverless adapter.

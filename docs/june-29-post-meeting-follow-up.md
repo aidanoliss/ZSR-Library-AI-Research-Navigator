@@ -39,7 +39,7 @@ Aidan
 
 - Canonical deploy path: repository root.
 - Render service type: Web Service.
-- Build command: `npm ci && npm run build`.
+- Build command: `npm ci --include=dev && npm run build`.
 - Start command: `npm start`.
 - Required secret: `GEMINI_API_KEY`, set only in Render or local `.env`.
 - Demo privacy defaults: `LOG_QUERIES=off`, `HANDOFF_STORE_CONTACT=off`.

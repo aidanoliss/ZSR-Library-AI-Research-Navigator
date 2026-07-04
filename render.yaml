@@ -5,7 +5,7 @@ services:
     name: zsr-research-navigator
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: GEMINI_API_KEY

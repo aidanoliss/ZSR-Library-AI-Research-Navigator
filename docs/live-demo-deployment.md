@@ -10,7 +10,7 @@ Use the included `render.yaml`, or configure manually:
 
 - Service type: Web Service
 - Runtime: Node
-- Build command: `npm ci && npm run build`
+- Build command: `npm ci --include=dev && npm run build`
 - Start command: `npm start`
 - Environment variables:
   - `GEMINI_API_KEY`: required, server-side only
