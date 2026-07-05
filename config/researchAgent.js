@@ -121,13 +121,54 @@ export const ZSR_RESOURCE_CONFIG = [
     name: "PubMed / MEDLINE",
     description: "Biomedical and public-health literature, including clinical and population-health studies.",
     subjectArea: "Health Sciences / Medicine",
-    bestFor: "public health, medicine, adolescent health, clinical outcomes, and DOI/PMID follow-up",
+    bestFor: "biomedical mechanisms, medicine, genetics, disease pathways, public health, and DOI/PMID follow-up",
     notBestFor: "humanities background sources or market research reports",
     accessUrl: "https://pubmed.ncbi.nlm.nih.gov/",
-    tags: ["scholarly", "articles", "health", "medicine", "statistics", "mental health", "autism", "doi", "pmid"],
+    tags: [
+      "scholarly",
+      "articles",
+      "health",
+      "medicine",
+      "biology",
+      "biochemistry",
+      "protein",
+      "protein folding",
+      "disease",
+      "genetics",
+      "alzheimer",
+      "statistics",
+      "mental health",
+      "autism",
+      "doi",
+      "pmid",
+    ],
     priority: 88,
     notes: "PubMed is open; full text may require Wake Forest access through ZSR or LibKey Nomad.",
     previewImage: "/preview-pubmed.png",
+  },
+  {
+    id: "web-of-science",
+    name: "Web of Science",
+    description: "Multidisciplinary citation index for science, biomedical, and research-impact discovery.",
+    subjectArea: "Science Citation Index",
+    bestFor: "citation chaining, highly cited biology or biomedical articles, and cross-disciplinary science searches",
+    notBestFor: "consumer market reports, company financials, or quick news coverage",
+    accessUrl: azSearch("Web of Science"),
+    tags: ["scholarly", "articles", "science", "biology", "biochemistry", "protein", "protein folding", "disease", "genetics", "citation"],
+    priority: 86,
+    notes: "Confirm access through A-Z Databases; use cited-by and references to move from one strong article to related studies.",
+  },
+  {
+    id: "science-direct",
+    name: "ScienceDirect",
+    description: "Science and health journal platform with biology, chemistry, and biomedical article coverage.",
+    subjectArea: "Biology / Life Sciences",
+    bestFor: "molecular biology, protein folding, biochemistry, disease mechanisms, and review articles",
+    notBestFor: "business intelligence, news coverage, or general library navigation",
+    accessUrl: azSearch("ScienceDirect"),
+    tags: ["scholarly", "articles", "science", "biology", "biochemistry", "protein", "protein folding", "molecular biology", "disease", "genetics"],
+    priority: 84,
+    notes: "Confirm available full text through ZSR; use abstracts and references when the full article is not available.",
   },
   {
     id: "socindex",
@@ -374,6 +415,15 @@ const TOPIC_PROFILES = [
     resourceIds: ["psycinfo", "communication-mass-media", "pubmed-medline", "socindex"],
   },
   {
+    id: "protein-disease",
+    pattern: /\b(protein folding|protein misfolding|amyloid|prion|neurodegenerative|alzheimer'?s?|biochemistry|molecular biology|genetic mutations?|genetics|biomedical|disease mechanism|pathogenesis)\b|\bprotein\b.*\b(folding|misfolding|disease|genetic|mutation)\b/i,
+    better: ["protein folding disease", "protein misfolding disease mechanism", "protein folding AND genetics"],
+    broader: ["molecular biology", "biochemistry", "disease mechanisms", "biomedical research"],
+    narrower: ["amyloid beta protein folding", "protein aggregation disease", "familial Alzheimer's disease mutations"],
+    alternate: ["protein misfolding", "pathogenesis", "molecular mechanisms", "genetic variants"],
+    resourceIds: ["pubmed-medline", "web-of-science", "science-direct", "primo"],
+  },
+  {
     id: "ai-education",
     pattern: /\b(ai|artificial intelligence|generative ai|chatgpt)\b.*\b(education|school|teaching|learning)\b|\b(education|school|teaching|learning)\b.*\b(ai|artificial intelligence|generative ai|chatgpt)\b/i,
     better: ["generative AI in education", "artificial intelligence learning outcomes", "AI academic integrity teaching"],
@@ -506,18 +556,32 @@ export function recommendResources(query, limit = 5) {
   const q = cleanQuery(query);
   const intents = classifyResearchIntent(q);
   const profiles = activeProfiles(q);
-  return ZSR_RESOURCE_CONFIG
+  const profileResourceIds = new Set(profiles.flatMap((profile) => profile.resourceIds || []));
+  const ranked = ZSR_RESOURCE_CONFIG
     .map((resource) => ({
       ...resource,
       score: resourceScore(resource, intents, profiles, q),
+      profileMatch: profileResourceIds.has(resource.id),
       whyFits: whyResourceFits(resource, intents, profiles),
       searchTerms: termsForResource(resource, q, profiles),
       expect: expectForResource(resource),
       caution: resource.notes,
       nextStep: nextStepForResource(resource, q),
     }))
-    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
-    .slice(0, limit);
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+
+  const minimumUsefulScore = profiles.length ? 120 : 105;
+  const useful = ranked.filter((resource) => resource.profileMatch || resource.score >= minimumUsefulScore);
+
+  if (useful.length) return useful.slice(0, limit);
+
+  const intentIds = new Set(intents.map((intent) => intent.id));
+  const fallbackIds = intentIds.has("citation")
+    ? ["research-guides", "primo"]
+    : intentIds.has("books") || intentIds.has("general")
+      ? ["research-guides", "primo"]
+      : ["research-guides"];
+  return ranked.filter((resource) => fallbackIds.includes(resource.id)).slice(0, limit);
 }
 
 function whyResourceFits(resource, intents, profiles) {
@@ -668,6 +732,6 @@ export function buildResearchPlan(query, limit = 5) {
     citationGuides,
     fullText,
     transparencyNote:
-      "These are ZSR-oriented search paths from an editable local config plus live link-outs. Open each ZSR record or database to confirm access and fit.",
+      "These are the strongest topic-matched ZSR search paths from an editable local config plus live link-outs. Shorter lists mean weak matches were intentionally left out.",
   };
 }

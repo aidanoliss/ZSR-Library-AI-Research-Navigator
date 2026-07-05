@@ -91,6 +91,28 @@ test("recommendations avoid unsupported access guarantees", () => {
   assert.ok(buildFullTextWorkflow(plan.query).installLink.includes("chromewebstore.google.com"));
 });
 
+test("protein and disease topics only show related biomedical ZSR paths", () => {
+  const resources = recommendResources("protein folding and disease", 5);
+  const ids = resources.map((resource) => resource.id);
+
+  assert.ok(ids.includes("pubmed-medline"));
+  assert.ok(ids.includes("web-of-science"));
+  assert.ok(ids.includes("science-direct"));
+  assert.ok(ids.length <= 4, "do not pad the path list with weak matches");
+  assert.deepEqual(
+    ids.filter((id) => ["business-guide", "mintel", "business-source", "communication-mass-media"].includes(id)),
+    []
+  );
+});
+
+test("business paths still appear for actual market research prompts", () => {
+  const ids = recommendResources("market data on energy drinks", 5).map((resource) => resource.id);
+
+  assert.ok(ids.includes("business-guide"));
+  assert.ok(ids.includes("mintel"));
+  assert.ok(ids.includes("statista"));
+});
+
 test("citation and known-item routing are explicit", () => {
   const intents = classifyResearchIntent("Kessler RC prevalence severity unmet need treatment mental disorders JAMA 2004");
   assert.ok(intents.some((intent) => intent.id === "known-item" || intent.id === "fulltext"));
