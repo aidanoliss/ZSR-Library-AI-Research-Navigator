@@ -4,6 +4,7 @@ import {
   getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
+import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "../config/subjectFocus.js";
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
@@ -248,16 +249,28 @@ function formatDatabaseStrategyReference() {
 }
 
 /** Wrap the student's latest turn with the curated resources + per-turn guidance. */
-function buildTurnPrompt(latestUserText, resources, isFirstTurn, modeId = DEFAULT_MODE_ID, responseStyleId = DEFAULT_RESPONSE_STYLE_ID) {
+function buildTurnPrompt(
+  latestUserText,
+  resources,
+  isFirstTurn,
+  modeId = DEFAULT_MODE_ID,
+  responseStyleId = DEFAULT_RESPONSE_STYLE_ID,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID
+) {
   const mode = getSearchMode(modeId);
   const responseStyle = getResponseStyle(responseStyleId);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, latestUserText);
   return [
     `STUDENT'S MESSAGE:\n"""${latestUserText}"""`,
     "",
     `SEARCH INTENT MODE: ${mode.label}`,
     `RESPONSE STYLE: ${responseStyle.label}`,
+    `SUBJECT FOCUS: ${subjectFocus.label}${subjectFocus.autoDetected ? " (auto-detected)" : ""}`,
     `Response style purpose: ${responseStyle.description}`,
     `Mode purpose: ${mode.description}`,
+    `Subject focus purpose: ${subjectFocus.description}`,
+    `Subject focus instruction: ${subjectFocus.prompt}`,
+    subjectFocus.keywords?.length ? `Subject focus vocabulary: ${subjectFocus.keywords.slice(0, 12).join(", ")}` : "",
     `Search-term strategy: ${mode.termStrategies.join("; ")}`,
     `Recommended platforms: ${mode.recommended.map(([name, , bestFor]) => `${name} (${bestFor})`).join("; ")}`,
     `Source evaluation emphasis: ${mode.evaluation}`,
@@ -303,7 +316,13 @@ function requireApiKey() {
 }
 
 /** Shared request body for both the buffered and streaming calls. */
-function buildRequestBody(history, resources, modeId = DEFAULT_MODE_ID, responseStyleId = DEFAULT_RESPONSE_STYLE_ID) {
+function buildRequestBody(
+  history,
+  resources,
+  modeId = DEFAULT_MODE_ID,
+  responseStyleId = DEFAULT_RESPONSE_STYLE_ID,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID
+) {
   const userTurns = history.filter((m) => m.role === "user").length;
   const isFirstTurn = userTurns <= 1;
 
@@ -317,7 +336,8 @@ function buildRequestBody(history, resources, modeId = DEFAULT_MODE_ID, response
     resources,
     isFirstTurn,
     modeId,
-    responseStyleId
+    responseStyleId,
+    subjectFocusId
   );
 
   return {
@@ -336,14 +356,20 @@ function buildRequestBody(history, resources, modeId = DEFAULT_MODE_ID, response
  * @param {{role:'user'|'assistant', content:string}[]} history
  * @param {object[]} resources curated resources relevant to the conversation
  */
-export async function generateChatResponse(history, resources, modeId = DEFAULT_MODE_ID, responseStyleId = DEFAULT_RESPONSE_STYLE_ID) {
+export async function generateChatResponse(
+  history,
+  resources,
+  modeId = DEFAULT_MODE_ID,
+  responseStyleId = DEFAULT_RESPONSE_STYLE_ID,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID
+) {
   const apiKey = requireApiKey();
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
 
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId)),
+    body: JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId, subjectFocusId)),
   });
 
   if (!res.ok) {
@@ -379,14 +405,21 @@ export function extractPartialMessage(raw) {
  * Stream a chat response. Calls onDelta(messageText) as the conversational
  * message grows, and resolves to the final fully-parsed reply object.
  */
-export async function streamChatResponse(history, resources, onDelta, modeId = DEFAULT_MODE_ID, responseStyleId = DEFAULT_RESPONSE_STYLE_ID) {
+export async function streamChatResponse(
+  history,
+  resources,
+  onDelta,
+  modeId = DEFAULT_MODE_ID,
+  responseStyleId = DEFAULT_RESPONSE_STYLE_ID,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID
+) {
   const apiKey = requireApiKey();
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId)),
+    body: JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId, subjectFocusId)),
   });
 
   if (!res.ok || !res.body) {

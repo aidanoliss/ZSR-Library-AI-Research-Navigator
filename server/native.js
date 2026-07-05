@@ -28,6 +28,7 @@ import {
   getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
+import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -74,7 +75,8 @@ function parseChatRequest(body) {
   const studentText = history.filter((m) => m.role === "user").map((m) => m.content).join(" ");
   const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
   const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
-  return { history, studentText, last, mode, responseStyle };
+  const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
+  return { history, studentText, last, mode, responseStyle, subjectFocusId };
 }
 
 function gate(req) {
@@ -102,18 +104,20 @@ function sourceRequestIntent(text) {
   return /\b(find|show|get|give|provide)\b.{0,48}\b(articles?|books?|sources?|evidence|results?|databases?|catalog|journals?|citations?|keywords?)\b/i.test(value);
 }
 
-function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID) {
+function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const mode = getSearchMode(modeId);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
+  const focusTerms = subjectFocus.id === "interdisciplinary" ? "" : subjectFocus.keywords.slice(0, 2).join(" ");
   const userTurns = history.filter((m) => m.role === "user");
   const latest = userTurns[userTurns.length - 1]?.content || "";
-  if (userTurns.length <= 1) return `${studentText} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  if (userTurns.length <= 1) return `${studentText} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
   const substantiveWords = latest
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 3 && !/^(find|show|give|provide|article|articles|source|sources|about|with|help|peer|reviewed|scholarly)$/.test(w));
-  if (substantiveWords.length >= 2) return `${latest} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
-  return `${userTurns[0]?.content || ""} ${latest} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  if (substantiveWords.length >= 2) return `${latest} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  return `${userTurns[0]?.content || ""} ${latest} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
 }
 
 function stripSourceHeavyFields(reply) {
@@ -383,7 +387,7 @@ function compactLines(items, render, limit = 6) {
   return (items || []).slice(0, limit).map(render).filter(Boolean).join("\n");
 }
 
-function handoffEmailBody({ topic, mode, responseStyle, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
+function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
   const terms = compactLines(searchTerms, (term) => `- ${term}`, 10);
   const results = compactLines(liveResults, (item) => `- ${item.title || "Untitled"}${item.type ? ` (${item.type})` : ""}${item.url ? `\n  ${item.url}` : ""}`, 8);
   const resources = compactLines(matchedResources, (item) => `- ${item.name || item.resource_name || item.id}${item.url ? `\n  ${item.url}` : ""}`, 8);
@@ -396,6 +400,7 @@ function handoffEmailBody({ topic, mode, responseStyle, note, contact, searchTer
     `Topic: ${topic || "(not provided)"}`,
     `Research mode: ${mode || "(not provided)"}`,
     `Response style: ${responseStyle || "(not provided)"}`,
+    subjectFocus ? `Subject focus: ${subjectFocus}` : "",
     contact ? `Student contact: ${contact}` : "",
     note ? `Student note: ${note}` : "",
     "",
@@ -417,7 +422,7 @@ async function handleChat(req, res, stream = false) {
   const body = await readJson(req);
   const parsed = parseChatRequest(body);
   if (parsed.error) return sendJson(res, 400, { error: parsed.error });
-  const { history, studentText, last, mode, responseStyle } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId } = parsed;
 
   const screen = screenMessage(last.content);
   if (screen.block) {
@@ -432,12 +437,12 @@ async function handleChat(req, res, stream = false) {
   let resources = [];
   let primoPromise = Promise.resolve([]);
   try {
-    resources = await retrieveResources(studentText, 6, mode);
+    resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
     const shouldLookupCatalog = responseStyle !== "answer" || sourceRequestIntent(last.content);
-    primoPromise = shouldLookupCatalog ? searchPrimo(catalogSearchText(history, studentText, mode), 10, mode) : Promise.resolve([]);
+    primoPromise = shouldLookupCatalog ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode) : Promise.resolve([]);
 
     if (!stream) {
-      const rawReply = await generateChatResponse(history, resources, mode, responseStyle);
+      const rawReply = await generateChatResponse(history, resources, mode, responseStyle, subjectFocusId);
       const liveResults = await primoPromise;
       const { reply: validatedReply } = validateReply(rawReply, resources);
       const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle);
@@ -447,7 +452,7 @@ async function handleChat(req, res, stream = false) {
 
     sendNdjsonHead(res);
     const write = (obj) => res.write(JSON.stringify(obj) + "\n");
-    const rawReply = await streamChatResponse(history, resources, (message) => write({ type: "delta", message }), mode, responseStyle);
+    const rawReply = await streamChatResponse(history, resources, (message) => write({ type: "delta", message }), mode, responseStyle, subjectFocusId);
     const liveResults = await primoPromise;
     const { reply: validatedReply } = validateReply(rawReply, resources);
     const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle);
@@ -516,6 +521,7 @@ async function handleApi(req, res, path) {
       topic: String(body.topic || "").slice(0, 2000),
       mode: String(body.mode || "").slice(0, 80),
       responseStyle: String(body.responseStyle || "").slice(0, 80),
+      subjectFocus: String(body.subjectFocus || "").slice(0, 120),
       note: String(body.note || "").slice(0, 1000),
       contact: String(body.contact || "").slice(0, 300),
       searchTerms: Array.isArray(body.searchTerms) ? body.searchTerms : [],

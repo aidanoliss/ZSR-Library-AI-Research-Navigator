@@ -1,3 +1,5 @@
+import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "./subjectFocus.js";
+
 const AZ = "https://guides.zsr.wfu.edu/az.php";
 const azSearch = (name) => `${AZ}?q=${encodeURIComponent(name)}`;
 
@@ -532,12 +534,25 @@ export function classifyResearchIntent(query) {
   }).slice(0, 4);
 }
 
-function resourceScore(resource, intents, profiles, query) {
+function resourceScore(resource, intents, profiles, query, subjectFocus) {
   const q = query.toLowerCase();
   let score = resource.priority || 0;
   const ids = new Set(profiles.flatMap((profile) => profile.resourceIds || []));
+  const focusIds = new Set(subjectFocus?.resourceIds || []);
   if (ids.has(resource.id)) score += 60;
+  if (focusIds.has(resource.id)) score += 70;
   const intentIds = new Set(intents.map((intent) => intent.id));
+  const resourceText = [
+    resource.name,
+    resource.description,
+    resource.subjectArea,
+    resource.bestFor,
+    ...(resource.tags || []),
+  ].join(" ").toLowerCase();
+  for (const keyword of subjectFocus?.keywords || []) {
+    const term = String(keyword || "").toLowerCase();
+    if (term && resourceText.includes(term)) score += 8;
+  }
   for (const tag of resource.tags || []) {
     if (q.includes(tag)) score += 10;
   }
@@ -552,18 +567,21 @@ function resourceScore(resource, intents, profiles, query) {
   return score;
 }
 
-export function recommendResources(query, limit = 5) {
+export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const q = cleanQuery(query);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const intents = classifyResearchIntent(q);
   const profiles = activeProfiles(q);
   const profileResourceIds = new Set(profiles.flatMap((profile) => profile.resourceIds || []));
+  const focusResourceIds = new Set(subjectFocus.resourceIds || []);
   const ranked = ZSR_RESOURCE_CONFIG
     .map((resource) => ({
       ...resource,
-      score: resourceScore(resource, intents, profiles, q),
+      score: resourceScore(resource, intents, profiles, q, subjectFocus),
       profileMatch: profileResourceIds.has(resource.id),
-      whyFits: whyResourceFits(resource, intents, profiles),
-      searchTerms: termsForResource(resource, q, profiles),
+      focusMatch: focusResourceIds.has(resource.id),
+      whyFits: whyResourceFits(resource, intents, profiles, subjectFocus),
+      searchTerms: termsForResource(resource, q, profiles, subjectFocus),
       expect: expectForResource(resource),
       caution: resource.notes,
       nextStep: nextStepForResource(resource, q),
@@ -571,7 +589,7 @@ export function recommendResources(query, limit = 5) {
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
 
   const minimumUsefulScore = profiles.length ? 120 : 105;
-  const useful = ranked.filter((resource) => resource.profileMatch || resource.score >= minimumUsefulScore);
+  const useful = ranked.filter((resource) => resource.profileMatch || resource.focusMatch || resource.score >= minimumUsefulScore);
 
   if (useful.length) return useful.slice(0, limit);
 
@@ -584,17 +602,24 @@ export function recommendResources(query, limit = 5) {
   return ranked.filter((resource) => fallbackIds.includes(resource.id)).slice(0, limit);
 }
 
-function whyResourceFits(resource, intents, profiles) {
+function whyResourceFits(resource, intents, profiles, subjectFocus) {
   const profileMatch = profiles.find((profile) => profile.resourceIds?.includes(resource.id));
   if (profileMatch) return `This fits because the topic maps to ${resource.subjectArea.toLowerCase()} research rather than only a literal keyword search.`;
+  if (subjectFocus?.resourceIds?.includes(resource.id)) {
+    return `This fits the ${subjectFocus.shortLabel || subjectFocus.label} subject focus and is grounded in the local ZSR resource config.`;
+  }
   const intentLabel = intents[0]?.label || "this research need";
   return `This fits the ${intentLabel} path and is grounded in the local ZSR resource config.`;
 }
 
-function termsForResource(resource, query, profiles) {
+function termsForResource(resource, query, profiles, subjectFocus) {
   const profileTerms = profiles.flatMap((profile) => [...profile.better.slice(0, 2), ...profile.alternate.slice(0, 1)]);
+  const focusTerms = (subjectFocus?.keywords || [])
+    .filter((term) => !/^doi|pmid$/i.test(term))
+    .slice(0, 2)
+    .map((term) => `${query} ${term}`);
   const fallback = [query, `${query} ${resource.subjectArea}`];
-  return uniq([...profileTerms, ...fallback]).slice(0, 4);
+  return uniq([...profileTerms, ...focusTerms, ...fallback]).slice(0, 4);
 }
 
 function expectForResource(resource) {
@@ -612,8 +637,9 @@ function nextStepForResource(resource, query) {
   return `Open ${resource.name} and test one focused search before broadening.`;
 }
 
-export function buildSearchStrategy(query) {
+export function buildSearchStrategy(query, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const q = cleanQuery(query);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const profiles = activeProfiles(q);
   const profileTerms = profiles.length
     ? profiles
@@ -625,7 +651,8 @@ export function buildSearchStrategy(query) {
         resourceIds: ["research-guides", "primo"],
       }];
   const betterTerms = uniq(profileTerms.flatMap((profile) => profile.better)).slice(0, 5);
-  const broaderTerms = uniq(profileTerms.flatMap((profile) => profile.broader)).slice(0, 5);
+  const focusTerms = subjectFocus.id === "interdisciplinary" ? [] : (subjectFocus.keywords || []).slice(0, 3);
+  const broaderTerms = uniq([...focusTerms, ...profileTerms.flatMap((profile) => profile.broader)]).slice(0, 5);
   const narrowerTerms = uniq(profileTerms.flatMap((profile) => profile.narrower)).slice(0, 5);
   const alternateTerms = uniq(profileTerms.flatMap((profile) => profile.alternate)).slice(0, 5);
   const exactQuery = articleTitleLike(q) ? `"${q.replace(/^"|"$/g, "")}"` : q;
@@ -635,7 +662,7 @@ export function buildSearchStrategy(query) {
     broaderTerms,
     narrowerTerms,
     alternateTerms,
-    likelyDatabaseCategories: uniq(recommendResources(q, 5).map((resource) => resource.subjectArea)).slice(0, 5),
+    likelyDatabaseCategories: uniq(recommendResources(q, 5, subjectFocus.selectedId || subjectFocus.id).map((resource) => resource.subjectArea)).slice(0, 5),
     links: {
       googleScholar: fillTemplate(LIBRARY_LINKS.googleScholarSearch, exactQuery),
       zsrCatalog: fillTemplate(LIBRARY_LINKS.zsrPrimoSearch, exactQuery),
@@ -644,10 +671,10 @@ export function buildSearchStrategy(query) {
   };
 }
 
-export function buildFallbackSearches(query) {
+export function buildFallbackSearches(query, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const q = cleanQuery(query);
-  const strategy = buildSearchStrategy(q);
-  const resources = recommendResources(q, 4);
+  const strategy = buildSearchStrategy(q, subjectFocusId);
+  const resources = recommendResources(q, 4, subjectFocusId);
   return [
     {
       label: "Try the exact phrase",
@@ -715,16 +742,25 @@ export function selectCitationGuides(query) {
     .slice(0, 3);
 }
 
-export function buildResearchPlan(query, limit = 5) {
+export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const q = cleanQuery(query);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const intents = classifyResearchIntent(q);
-  const strategy = buildSearchStrategy(q);
-  const recommendations = recommendResources(q, limit);
-  const fallbacks = buildFallbackSearches(q);
+  const strategy = buildSearchStrategy(q, subjectFocus.selectedId || subjectFocus.id);
+  const recommendations = recommendResources(q, limit, subjectFocus.selectedId || subjectFocus.id);
+  const fallbacks = buildFallbackSearches(q, subjectFocus.selectedId || subjectFocus.id);
   const citationGuides = selectCitationGuides(q);
   const fullText = buildFullTextWorkflow(q);
   return {
     query: q,
+    subjectFocus: {
+      id: subjectFocus.id,
+      selectedId: subjectFocus.selectedId,
+      label: subjectFocus.label,
+      shortLabel: subjectFocus.shortLabel,
+      autoDetected: Boolean(subjectFocus.autoDetected),
+      description: subjectFocus.description,
+    },
     intents,
     strategy,
     recommendations,

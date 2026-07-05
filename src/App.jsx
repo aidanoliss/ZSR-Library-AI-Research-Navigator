@@ -12,6 +12,11 @@ import {
   getSearchMode,
 } from "../config/libraryLinks.js";
 import { recommendLibrarianRoutes } from "../config/librarianRoutes.js";
+import {
+  DEFAULT_SUBJECT_FOCUS_ID,
+  SUBJECT_FOCUSES,
+  resolveSubjectFocus,
+} from "../config/subjectFocus.js";
 
 const STORAGE_KEY = "zsr-research-navigator-draft";
 const SESSIONS_KEY = "zsr-research-navigator-sessions";
@@ -49,13 +54,14 @@ const Icon = {
   sources: <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3" /><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5" /><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" /></svg>,
 };
 
-function makeSession(messages = [], mode = DEFAULT_MODE_ID, responseStyle = DEFAULT_RESPONSE_STYLE_ID) {
+function makeSession(messages = [], mode = DEFAULT_MODE_ID, responseStyle = DEFAULT_RESPONSE_STYLE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const firstUser = messages.find((m) => m.role === "user")?.content || "New research topic";
   return {
     id: crypto.randomUUID(),
     title: firstUser.slice(0, 64),
     mode,
     responseStyle,
+    subjectFocusId,
     folderId: DEFAULT_FOLDER_ID,
     messages,
     pinned: false,
@@ -79,6 +85,7 @@ function readSessions() {
         ...session,
         folderId: session.folderId || DEFAULT_FOLDER_ID,
         pinned: Boolean(session.pinned),
+        subjectFocusId: session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID,
         messages: Array.isArray(session.messages) ? session.messages : [],
         updatedAt: session.updatedAt || 0,
       })))
@@ -155,6 +162,31 @@ function ModeSelector({ value, onChange, responseStyle, onResponseStyleChange, c
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+function SubjectFocusControl({ value, detectedFocus, onChange }) {
+  const activeFocus = detectedFocus || resolveSubjectFocus(value, "");
+  return (
+    <section className="subject-focus-panel" aria-labelledby="subject-focus-label">
+      <div>
+        <label id="subject-focus-label" htmlFor="subject-focus-select">Subject focus</label>
+        <p>
+          {value === DEFAULT_SUBJECT_FOCUS_ID
+            ? `Auto: ${activeFocus.shortLabel || activeFocus.label}`
+            : activeFocus.description}
+        </p>
+      </div>
+      <select
+        id="subject-focus-select"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        {SUBJECT_FOCUSES.map((focus) => (
+          <option key={focus.id} value={focus.id}>{focus.label}</option>
+        ))}
+      </select>
     </section>
   );
 }
@@ -254,7 +286,22 @@ function SessionRow({ session, activeId, onOpen, onTogglePin, onDelete, classNam
   );
 }
 
-function SessionSidebar({ sessions, activeId, folders, activeFolderId, onFolderChange, onCreateFolder, onDeleteFolder, onOpen, onNew, onTogglePin, onDeleteSession }) {
+function SessionSidebar({
+  sessions,
+  activeId,
+  folders,
+  activeFolderId,
+  subjectFocusId,
+  detectedFocus,
+  onSubjectFocusChange,
+  onFolderChange,
+  onCreateFolder,
+  onDeleteFolder,
+  onOpen,
+  onNew,
+  onTogglePin,
+  onDeleteSession,
+}) {
   const [folderName, setFolderName] = useState("");
   const customFolders = folders.filter((folder) => folder.id !== DEFAULT_FOLDER_ID);
   const customFolderIds = new Set(customFolders.map((folder) => folder.id));
@@ -277,6 +324,11 @@ function SessionSidebar({ sessions, activeId, folders, activeFolderId, onFolderC
         {Icon.plus}
         <span>New topic</span>
       </button>
+      <SubjectFocusControl
+        value={subjectFocusId}
+        detectedFocus={detectedFocus}
+        onChange={onSubjectFocusChange}
+      />
       <div className="folder-list" aria-label="Session folders">
         <h2>Folders</h2>
         {customFolders.length === 0 ? (
@@ -384,6 +436,17 @@ function PlannerContextSummary({ context }) {
   );
 }
 
+function RequestMetaSummary({ message }) {
+  if (!message?.subjectFocusLabel) return null;
+  return (
+    <div className="request-meta-summary">
+      <span>Subject focus sent</span>
+      <strong>{message.subjectFocusLabel}</strong>
+      {message.subjectFocusAuto && <em>Auto-detected</em>}
+    </div>
+  );
+}
+
 function uniqueBy(items, keyFn) {
   const seen = new Set();
   const out = [];
@@ -396,9 +459,13 @@ function uniqueBy(items, keyFn) {
   return out;
 }
 
-function buildHandoffPayload(messages, input, mode, responseStyle) {
+function buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId) {
   const assistantTurns = messages.filter((message) => message.role === "assistant");
   const topic = messages.find((message) => message.role === "user")?.content || String(input || "").trim();
+  const subjectFocus = resolveSubjectFocus(
+    subjectFocusId,
+    topic || messages.filter((message) => message.role === "user").map((message) => message.content).join(" ")
+  );
   const searchTerms = uniqueBy(
     assistantTurns.flatMap((message) => message.reply?.search_terms || []),
     (term) => String(term).toLowerCase()
@@ -424,6 +491,8 @@ function buildHandoffPayload(messages, input, mode, responseStyle) {
     mode: getSearchMode(mode).label,
     modeId: mode,
     responseStyle: getResponseStyle(responseStyle).label,
+    subjectFocus: subjectFocus.label,
+    subjectFocusId: subjectFocus.id,
     searchTerms,
     liveResults,
     matchedResources,
@@ -612,6 +681,7 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [mode, setMode] = useState(DEFAULT_MODE_ID);
   const [responseStyle, setResponseStyle] = useState(DEFAULT_RESPONSE_STYLE_ID);
+  const [subjectFocusId, setSubjectFocusId] = useState(DEFAULT_SUBJECT_FOCUS_ID);
   const [sessions, setSessions] = useState(() => readSessions());
   const [folders, setFolders] = useState(() => readFolders());
   const [activeFolderId, setActiveFolderId] = useState(DEFAULT_FOLDER_ID);
@@ -628,6 +698,11 @@ export default function App() {
 
   const hasConversation = messages.length > 0;
   const activeMode = getSearchMode(mode);
+  const subjectFocusSeed = input || [...messages].reverse().find((message) => message.role === "user")?.content || "";
+  const effectiveSubjectFocus = useMemo(
+    () => resolveSubjectFocus(subjectFocusId, subjectFocusSeed),
+    [subjectFocusId, subjectFocusSeed]
+  );
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, input);
@@ -659,6 +734,7 @@ export default function App() {
     }
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
+    setSubjectFocusId(session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID);
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
     setInput("");
@@ -689,11 +765,11 @@ export default function App() {
   );
 
   const handoffPayload = useMemo(
-    () => buildHandoffPayload(messages, input, mode, responseStyle),
-    [messages, input, mode, responseStyle]
+    () => buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId),
+    [messages, input, mode, responseStyle, subjectFocusId]
   );
 
-  function saveSession(nextMessages, nextMode = mode, nextResponseStyle = responseStyle, sessionId = activeSessionId) {
+  function saveSession(nextMessages, nextMode = mode, nextResponseStyle = responseStyle, sessionId = activeSessionId, nextSubjectFocusId = subjectFocusId) {
     const id = sessionId || crypto.randomUUID();
     if (!activeSessionId || activeSessionId !== id) setActiveSessionId(id);
     setSessions((current) => {
@@ -706,6 +782,7 @@ export default function App() {
         folderId,
         mode: nextMode,
         responseStyle: nextResponseStyle,
+        subjectFocusId: nextSubjectFocusId,
         messages: nextMessages,
         pinned: Boolean(existing?.pinned),
         createdAt: existing?.createdAt || Date.now(),
@@ -714,6 +791,18 @@ export default function App() {
       return sortSessions([session, ...current.filter((s) => s.id !== id)]).slice(0, 60);
     });
     return id;
+  }
+
+  function changeSubjectFocus(nextSubjectFocusId) {
+    setSubjectFocusId(nextSubjectFocusId);
+    if (!activeSessionId) return;
+    setSessions((current) =>
+      sortSessions(current.map((session) =>
+        session.id === activeSessionId
+          ? { ...session, subjectFocusId: nextSubjectFocusId, updatedAt: Date.now() }
+          : session
+      ))
+    );
   }
 
   function createFolder(name) {
@@ -759,6 +848,7 @@ export default function App() {
     setActiveSessionId("");
     setMessages([]);
     setInput("");
+    setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
     setPlannerDraft(null);
     setError("");
     setStreamText("");
@@ -771,6 +861,7 @@ export default function App() {
     setActiveSessionId(id);
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
+    setSubjectFocusId(session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID);
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
     setInput("");
@@ -785,6 +876,7 @@ export default function App() {
     setInput("");
     setMode(DEFAULT_MODE_ID);
     setResponseStyle(DEFAULT_RESPONSE_STYLE_ID);
+    setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
     setPlannerDraft(null);
     setError("");
     setStreamText("");
@@ -814,9 +906,13 @@ export default function App() {
       return;
     }
 
+    const requestFocus = resolveSubjectFocus(subjectFocusId, content);
     const userMessage = options.plannerContext
       ? { role: "user", content, plannerContext: options.plannerContext }
       : { role: "user", content };
+    userMessage.subjectFocusId = requestFocus.id;
+    userMessage.subjectFocusLabel = requestFocus.label;
+    userMessage.subjectFocusAuto = subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID;
     const nextMessages = [...messages, userMessage];
     const sessionId = activeSessionId || crypto.randomUUID();
     saveSession(nextMessages, mode, responseStyle, sessionId);
@@ -833,6 +929,7 @@ export default function App() {
         body: JSON.stringify({
           mode,
           responseStyle,
+          subjectFocusId,
           messages: nextMessages.map((m) => ({
             role: m.role,
             content: m.role === "assistant"
@@ -877,6 +974,9 @@ export default function App() {
         liveResults: finalPayload.liveResults || [],
         mode,
         responseStyle,
+        subjectFocusId: requestFocus.id,
+        subjectFocusLabel: requestFocus.label,
+        subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
       };
       const finished = [...nextMessages, assistantMessage];
       setMessages(finished);
@@ -902,6 +1002,9 @@ export default function App() {
           liveResults: [],
           mode,
           responseStyle,
+          subjectFocusId: requestFocus.id,
+          subjectFocusLabel: requestFocus.label,
+          subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
         },
       ];
       setMessages(fallback);
@@ -981,6 +1084,9 @@ export default function App() {
           activeId={activeSessionId}
           folders={folders}
           activeFolderId={activeFolderId}
+          subjectFocusId={subjectFocusId}
+          detectedFocus={effectiveSubjectFocus}
+          onSubjectFocusChange={changeSubjectFocus}
           onFolderChange={setActiveFolderId}
           onCreateFolder={createFolder}
           onDeleteFolder={deleteFolder}
@@ -1013,6 +1119,9 @@ export default function App() {
         activeId={activeSessionId}
         folders={folders}
         activeFolderId={activeFolderId}
+        subjectFocusId={subjectFocusId}
+        detectedFocus={effectiveSubjectFocus}
+        onSubjectFocusChange={changeSubjectFocus}
         onFolderChange={setActiveFolderId}
         onCreateFolder={createFolder}
         onDeleteFolder={deleteFolder}
@@ -1106,6 +1215,7 @@ export default function App() {
                       <div className="bubble user" key={`${message.role}-${index}`}>
                         <span>Research request</span>
                         <p>{message.content}</p>
+                        <RequestMetaSummary message={message} />
                         <PlannerContextSummary context={message.plannerContext} />
                       </div>
                     );
@@ -1120,6 +1230,7 @@ export default function App() {
                       topic={messages[index - 1]?.content || ""}
                       mode={message.mode || mode}
                       responseStyle={message.responseStyle || responseStyle}
+                      subjectFocusId={message.subjectFocusId || messages[index - 1]?.subjectFocusId || effectiveSubjectFocus.id}
                       isFollowup={index > 1}
                       isLatest={index === messages.length - 1 && !loading}
                       onFollowup={send}

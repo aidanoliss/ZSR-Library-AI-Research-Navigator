@@ -834,6 +834,7 @@ function ResearchAgentSection({ plan, compact = false }) {
   if (!plan?.query) return null;
   const firstFour = plan.recommendations.slice(0, 4);
   const remaining = plan.recommendations.slice(4);
+  const focusLabel = plan.subjectFocus?.label;
   return (
     <section className="research-agent">
       <SectionHeader icon={Icon.search}>Search plan</SectionHeader>
@@ -842,6 +843,11 @@ function ResearchAgentSection({ plan, compact = false }) {
         <div className="agent-block-head">
           <strong>Recommended ZSR paths</strong>
           <span>{plan.transparencyNote}</span>
+          {focusLabel && (
+            <span className="agent-focus-chip">
+              Subject focus: {focusLabel}{plan.subjectFocus.autoDetected ? " (auto)" : ""}
+            </span>
+          )}
         </div>
         <ul className="agent-resource-list">
           {firstFour.map((resource) => (
@@ -1018,6 +1024,7 @@ export default function AssistantMessage({
   topic,
   mode = DEFAULT_MODE_ID,
   responseStyle = DEFAULT_RESPONSE_STYLE_ID,
+  subjectFocusId,
   isFollowup = false,
   isLatest,
   onFollowup,
@@ -1036,7 +1043,7 @@ export default function AssistantMessage({
     .filter(Boolean);
   const tools = searchTools || [];
   const activeMode = getSearchMode(mode);
-  const agentPlan = buildResearchPlan(topic || reply.message || "", 5);
+  const agentPlan = buildResearchPlan(topic || reply.message || "", 5, subjectFocusId);
 
   // Enrich each recommended link with curated metadata (type, access) by URL.
   const byUrl = new Map((matched || []).map((r) => [r.url, r]));

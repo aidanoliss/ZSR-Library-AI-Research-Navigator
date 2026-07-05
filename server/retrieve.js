@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { DEFAULT_MODE_ID, getSearchMode } from "../config/libraryLinks.js";
+import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "../config/subjectFocus.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RESOURCES_PATH = join(__dirname, "resources.json");
@@ -109,22 +110,31 @@ function scoreResource(resource, tokens) {
  * Always returns something: if nothing scores, fall back to the
  * general "starting point" resources so the user is never stranded.
  */
-export async function retrieveResources(query, limit = 6, modeId = DEFAULT_MODE_ID) {
+export async function retrieveResources(query, limit = 6, modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const all = await loadResources();
   // Pure search tools (e.g. Google Scholar) are never recommended as starting points.
   const resources = all.filter((r) => !r.search_tool_only);
   const mode = getSearchMode(modeId);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, query);
   const modeText = [
     mode.label,
     mode.description,
     mode.termStrategies.join(" "),
     mode.recommended.map(([name]) => name).join(" "),
     mode.termSuffixes.join(" "),
+    subjectFocus.label,
+    subjectFocus.description,
+    subjectFocus.prompt,
+    (subjectFocus.keywords || []).join(" "),
   ].join(" ");
   const tokens = expandTokens(tokenize(`${query} ${modeText}`));
+  const focusIds = new Set(subjectFocus.resourceIds || []);
 
   const scored = resources
-    .map((r) => ({ resource: r, score: scoreResource(r, tokens) }))
+    .map((r) => ({
+      resource: r,
+      score: scoreResource(r, tokens) + (focusIds.has(r.id) ? 18 : 0),
+    }))
     .sort((a, b) => b.score - a.score);
 
   let matches = scored.filter((s) => s.score > 0).slice(0, limit);

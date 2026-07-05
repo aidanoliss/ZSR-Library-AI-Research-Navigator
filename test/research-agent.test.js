@@ -105,6 +105,27 @@ test("protein and disease topics only show related biomedical ZSR paths", () => 
   );
 });
 
+test("research plan exposes auto-detected subject focus", () => {
+  const plan = buildResearchPlan("protein folding and disease", 5);
+
+  assert.equal(plan.subjectFocus.id, "biology-health");
+  assert.equal(plan.subjectFocus.autoDetected, true);
+  assert.deepEqual(
+    plan.recommendations.map((resource) => resource.id).filter((id) => ["business-guide", "mintel", "communication-mass-media"].includes(id)),
+    []
+  );
+});
+
+test("manual subject focus can steer ambiguous prompts", () => {
+  const resources = recommendResources("misinformation and public trust", 5, "communication-media");
+  const ids = resources.map((resource) => resource.id);
+  const plan = buildResearchPlan("misinformation and public trust", 5, "communication-media");
+
+  assert.equal(plan.subjectFocus.id, "communication-media");
+  assert.equal(plan.subjectFocus.autoDetected, false);
+  assert.ok(ids.includes("communication-mass-media"));
+});
+
 test("business paths still appear for actual market research prompts", () => {
   const ids = recommendResources("market data on energy drinks", 5).map((resource) => resource.id);
 

@@ -27,6 +27,7 @@ import {
   getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
+import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -147,7 +148,7 @@ app.get("/api/admin/summary", async (_req, res) => {
 
 /**
  * Validate + normalize an incoming chat request body.
- * Returns { error } on bad input, or { history, studentText, last, mode, responseStyle } on success.
+ * Returns { error } on bad input, or { history, studentText, last, mode, responseStyle, subjectFocusId } on success.
  */
 function parseChatRequest(body) {
   const messages = Array.isArray(body?.messages) ? body.messages : null;
@@ -176,7 +177,8 @@ function parseChatRequest(body) {
 
   const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
   const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
-  return { history, studentText, last, mode, responseStyle };
+  const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
+  return { history, studentText, last, mode, responseStyle, subjectFocusId };
 }
 
 function noKeyResponse(res) {
@@ -207,11 +209,13 @@ function startingPoint(resources, id, why) {
   return { resource_name: resource.name, url: resource.url, why };
 }
 
-function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID) {
+function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const mode = getSearchMode(modeId);
+  const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
+  const focusTerms = subjectFocus.id === "interdisciplinary" ? "" : subjectFocus.keywords.slice(0, 2).join(" ");
   const userTurns = history.filter((m) => m.role === "user");
   const latest = userTurns[userTurns.length - 1]?.content || "";
-  if (userTurns.length <= 1) return `${studentText} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  if (userTurns.length <= 1) return `${studentText} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
 
   // If the follow-up contains its own searchable concepts, let the catalog
   // search that directly. Otherwise keep the first topic as context.
@@ -220,8 +224,8 @@ function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID) {
     .replace(/[^a-z0-9\s-]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 3 && !/^(find|show|give|provide|article|articles|source|sources|about|with|help|peer|reviewed|scholarly)$/.test(w));
-  if (substantiveWords.length >= 2) return `${latest} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
-  return `${userTurns[0]?.content || ""} ${latest} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  if (substantiveWords.length >= 2) return `${latest} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  return `${userTurns[0]?.content || ""} ${latest} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
 }
 
 function withCatalogFoundIntro(reply, liveResults, latestText) {
@@ -502,7 +506,7 @@ app.post("/api/chat", async (req, res) => {
   if (gate(req, res)) return;
   const parsed = parseChatRequest(req.body);
   if (parsed.error) return res.status(400).json({ error: parsed.error });
-  const { history, studentText, last, mode, responseStyle } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId } = parsed;
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
   const screen = screenMessage(last.content);
@@ -514,13 +518,13 @@ app.post("/api/chat", async (req, res) => {
   let resources = [];
   let primoPromise = Promise.resolve([]);
   try {
-    resources = await retrieveResources(studentText, 6, mode);
+    resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
     // Run the AI plan and the live ZSR catalog lookup in parallel.
     const shouldLookupCatalog = responseStyle !== "answer" || sourceRequestIntent(last.content);
     primoPromise = shouldLookupCatalog
-      ? searchPrimo(catalogSearchText(history, studentText, mode), 10, mode)
+      ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode)
       : Promise.resolve([]);
-    const rawReply = await generateChatResponse(history, resources, mode, responseStyle);
+    const rawReply = await generateChatResponse(history, resources, mode, responseStyle, subjectFocusId);
     const liveResults = await primoPromise;
 
     const { reply: validatedReply, report } = validateReply(rawReply, resources);
@@ -566,7 +570,7 @@ app.post("/api/chat/stream", async (req, res) => {
   if (gate(req, res)) return;
   const parsed = parseChatRequest(req.body);
   if (parsed.error) return res.status(400).json({ error: parsed.error });
-  const { history, studentText, last, mode, responseStyle } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId } = parsed;
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
   const screen = screenMessage(last.content);
@@ -580,7 +584,7 @@ app.post("/api/chat/stream", async (req, res) => {
 
   let resources;
   try {
-    resources = await retrieveResources(studentText, 6, mode);
+    resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
   } catch (err) {
     console.error("[/api/chat/stream] retrieve", err.message);
     return res.status(502).json({ error: "Could not generate a reply right now. Please try again." });
@@ -595,14 +599,15 @@ app.post("/api/chat/stream", async (req, res) => {
   try {
     const shouldLookupCatalog = responseStyle !== "answer" || sourceRequestIntent(last.content);
     primoPromise = shouldLookupCatalog
-      ? searchPrimo(catalogSearchText(history, studentText, mode), 10, mode)
+      ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode)
       : Promise.resolve([]); // in parallel with streaming
     const rawReply = await streamChatResponse(
       history,
       resources,
       (message) => write({ type: "delta", message }),
       mode,
-      responseStyle
+      responseStyle,
+      subjectFocusId
     );
 
     const liveResults = await primoPromise;
@@ -681,7 +686,7 @@ function compactLines(items, render, limit = 6) {
     .join("\n");
 }
 
-function handoffEmailBody({ topic, mode, responseStyle, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
+function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
   const terms = compactLines(searchTerms, (term) => `- ${term}`, 10);
   const results = compactLines(
     liveResults,
@@ -707,6 +712,7 @@ function handoffEmailBody({ topic, mode, responseStyle, note, contact, searchTer
     `Topic: ${topic || "(not provided)"}`,
     `Research mode: ${mode || "(not provided)"}`,
     `Response style: ${responseStyle || "(not provided)"}`,
+    subjectFocus ? `Subject focus: ${subjectFocus}` : "",
     contact ? `Student contact: ${contact}` : "",
     note ? `Student note: ${note}` : "",
     "",
@@ -733,6 +739,7 @@ app.post("/api/handoff", async (req, res) => {
     topic,
     mode: String(body.mode || "").slice(0, 80),
     responseStyle: String(body.responseStyle || "").slice(0, 80),
+    subjectFocus: String(body.subjectFocus || "").slice(0, 120),
     note: String(body.note || "").slice(0, 1000),
     contact: String(body.contact || "").slice(0, 300),
     searchTerms: Array.isArray(body.searchTerms) ? body.searchTerms : [],

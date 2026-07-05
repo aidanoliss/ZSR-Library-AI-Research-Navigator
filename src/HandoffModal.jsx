@@ -3,6 +3,7 @@ import { useState } from "react";
 function summarizePayload(payload) {
   const parts = [
     payload.topic,
+    payload.subjectFocus ? `Subject: ${payload.subjectFocus}` : "",
     `${payload.searchTerms?.length || 0} search terms`,
     `${payload.liveResults?.length || 0} catalog leads`,
     `${payload.matchedResources?.length || 0} ZSR paths`,
