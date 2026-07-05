@@ -37,6 +37,11 @@ const ASK_ZSR_EMAIL = process.env.ASK_ZSR_EMAIL || "askzsr@wfu.edu";
 const DIST_DIR = join(__dirname, "..", "dist");
 
 function sendJson(res, status, payload) {
+  if (res.writableEnded) return;
+  if (res.headersSent) {
+    res.end();
+    return;
+  }
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
@@ -45,12 +50,21 @@ function sendJson(res, status, payload) {
 }
 
 function sendNdjsonHead(res, status = 200) {
+  if (res.writableEnded) return false;
+  if (res.headersSent) return true;
   res.writeHead(status, {
     "Content-Type": "application/x-ndjson; charset=utf-8",
     "Cache-Control": "no-cache, no-transform",
     "X-Accel-Buffering": "no",
     "Access-Control-Allow-Origin": "*",
   });
+  return true;
+}
+
+function writeNdjson(res, obj) {
+  if (res.writableEnded) return;
+  if (!res.headersSent) sendNdjsonHead(res);
+  res.write(JSON.stringify(obj) + "\n");
 }
 
 async function readJson(req) {
@@ -429,8 +443,8 @@ async function handleChat(req, res, stream = false) {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
     if (!stream) return sendJson(res, 200, { reply: blockedReply(screen.message), matchedResources: [] });
     sendNdjsonHead(res);
-    res.write(JSON.stringify({ type: "delta", message: screen.message }) + "\n");
-    res.write(JSON.stringify({ type: "done", reply: blockedReply(screen.message), matchedResources: [] }) + "\n");
+    writeNdjson(res, { type: "delta", message: screen.message });
+    writeNdjson(res, { type: "done", reply: blockedReply(screen.message), matchedResources: [] });
     return res.end();
   }
 
@@ -451,7 +465,7 @@ async function handleChat(req, res, stream = false) {
     }
 
     sendNdjsonHead(res);
-    const write = (obj) => res.write(JSON.stringify(obj) + "\n");
+    const write = (obj) => writeNdjson(res, obj);
     const rawReply = await streamChatResponse(history, resources, (message) => write({ type: "delta", message }), mode, responseStyle, subjectFocusId);
     const liveResults = await primoPromise;
     const { reply: validatedReply } = validateReply(rawReply, resources);
@@ -466,16 +480,15 @@ async function handleChat(req, res, stream = false) {
     if (reply) {
       const payload = { reply: prepareReply(reply, history, liveResults, last.content, responseStyle), matchedResources: resources, searchTools: await getSearchTools(), liveResults };
       if (!stream) return sendJson(res, 200, payload);
-      sendNdjsonHead(res);
-      res.write(JSON.stringify({ type: "done", ...payload }) + "\n");
+      writeNdjson(res, { type: "done", ...payload });
       return res.end();
     }
     const msg = err.code === "NO_API_KEY"
       ? "The server is missing a Gemini API key. Add GEMINI_API_KEY to your .env file (see .env.example)."
       : "Could not generate a reply right now. Please try again.";
     if (!stream) return sendJson(res, err.code === "NO_API_KEY" ? 503 : 502, { error: msg });
-    sendNdjsonHead(res, 502);
-    res.write(JSON.stringify({ type: "error", error: msg }) + "\n");
+    if (!res.headersSent) sendNdjsonHead(res, 502);
+    writeNdjson(res, { type: "error", error: msg });
     return res.end();
   }
 }
@@ -573,6 +586,8 @@ export const server = http.createServer(async (req, res) => {
     return await serveStatic(res, url.pathname);
   } catch (err) {
     console.error("[native]", err.message);
+    if (res.writableEnded) return;
+    if (res.headersSent) return res.end();
     return sendJson(res, 500, { error: "Internal server error." });
   }
 });
