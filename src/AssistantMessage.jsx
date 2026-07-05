@@ -1117,6 +1117,7 @@ export default function AssistantMessage({
   const showStartingPointCards = allowSourceSections && primaryStartingPoints.length > 0 && (!isFollowup || wantsStartingPointHelp || responseStyle === "sources");
   const showDatabaseStrategy =
     allowSourceSections &&
+    !showAgenticSearchPlan &&
     databaseStrategy.length > 0 &&
     (showTopicSpecificPlan || !isFollowup || wantsDatabaseStrategyHelp || responseStyle === "sources" || responseStyle === "plan");
   const showGeneratedTerms =
