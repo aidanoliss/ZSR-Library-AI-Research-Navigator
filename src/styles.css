@@ -1186,8 +1186,7 @@ h3 {
   gap: 10px;
 }
 
-.rcard,
-.result-row {
+.rcard {
   display: grid;
   grid-template-columns: 82px minmax(0, 1fr);
   gap: 12px;
@@ -1196,6 +1195,21 @@ h3 {
   border: 1px solid #e6d8bd;
   border-radius: var(--radius);
   background: #fffaf0;
+}
+
+.result-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 13px 16px;
+  border: 1px solid #e6d8bd;
+  border-radius: var(--radius);
+  background: #fffaf0;
+}
+
+.result-row:has(.result-thumb) {
+  grid-template-columns: 82px minmax(0, 1fr);
 }
 
 .rcard-body,
