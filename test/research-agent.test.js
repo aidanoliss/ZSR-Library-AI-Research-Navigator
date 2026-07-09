@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  buildFallbackSearches,
   buildFullTextWorkflow,
   buildResearchPlan,
   classifyResearchIntent,
@@ -42,7 +43,7 @@ const cases = [
     query: "I need a citation for a website in APA",
     intent: "citation",
     resource: "research-guides",
-    fallback: /exact phrase/i,
+    fallback: /keywords|Google Scholar/i,
   },
   {
     query: "I need full text for this DOI 10.1001/jama.2004.1635",
@@ -103,6 +104,31 @@ test("protein and disease topics only show related biomedical ZSR paths", () => 
     ids.filter((id) => ["business-guide", "mintel", "business-source", "communication-mass-media"].includes(id)),
     []
   );
+});
+
+test("AI and cognitive offloading uses psychology and education paths", () => {
+  const plan = buildResearchPlan("AI and cognitive offloading in college students", 5);
+  const ids = plan.recommendations.map((resource) => resource.id);
+
+  assert.equal(plan.subjectFocus.id, "psychology");
+  assert.ok(ids.includes("psycinfo"));
+  assert.ok(ids.includes("eric"));
+  assert.ok(ids.includes("web-of-science"));
+  assert.deepEqual(ids.slice(0, 3), ["psycinfo", "web-of-science", "eric"]);
+  assert.deepEqual(
+    ids.filter((id) => ["business-guide", "mintel", "business-source"].includes(id)),
+    []
+  );
+});
+
+test("fallback searches avoid natural-language queries and broad concept dumps", () => {
+  const fallbacks = buildFallbackSearches("Can you help me find sources about how AI affects cognitive offloading in students?");
+  const text = fallbacks.map((fallback) => `${fallback.label}: ${fallback.text}`).join("\n");
+  const broad = fallbacks.find((fallback) => /Broaden/.test(fallback.label));
+
+  assert.match(text, /cognitive offloading|artificial intelligence|generative AI/i);
+  assert.doesNotMatch(text, /Can you help me|how AI affects/i);
+  assert.ok(broad.text.split(/\s+OR\s+/i).length <= 2, "broaden fallback should only move one step broader");
 });
 
 test("research plan exposes auto-detected subject focus", () => {

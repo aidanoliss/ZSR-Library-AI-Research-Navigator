@@ -47,8 +47,8 @@ export const SUBJECT_FOCUSES = [
     prompt:
       "Prioritize psychology terms, population/outcome filters, empirical-study language, and APA-style citation expectations.",
     resourceIds: ["psycinfo", "pubmed-medline", "socindex"],
-    keywords: ["psychology", "behavior", "cognition", "mental health", "depression", "anxiety", "well-being", "development"],
-    patterns: [/\b(psychology|behavior|cognition|mental health|depression|anxiety|trauma|ptsd|well-being|wellbeing|development|self-esteem)\b/i],
+    keywords: ["psychology", "behavior", "cognition", "cognitive offloading", "mental health", "depression", "anxiety", "well-being", "development"],
+    patterns: [/\b(psychology|behavior|cognition|cognitive|cognitive offloading|metacognition|critical thinking|mental health|depression|anxiety|trauma|ptsd|well-being|wellbeing|development|self-esteem)\b/i],
   },
   {
     id: "communication-media",

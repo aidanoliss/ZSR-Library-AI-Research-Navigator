@@ -426,6 +426,19 @@ const TOPIC_PROFILES = [
     resourceIds: ["pubmed-medline", "web-of-science", "science-direct", "primo"],
   },
   {
+    id: "ai-cognitive-offloading",
+    pattern: /\b(ai|artificial intelligence|generative ai|chatgpt|large language models?|llms?)\b.*\b(cognitive offloading|offloading|memory|metacognition|critical thinking|learning|cognition)\b|\b(cognitive offloading|offloading)\b.*\b(ai|artificial intelligence|generative ai|chatgpt|large language models?|llms?)\b/i,
+    better: [
+      '"cognitive offloading" AND artificial intelligence',
+      '"cognitive offloading" AND generative AI',
+      "AI tools AND cognition AND learning",
+    ],
+    broader: ["cognitive offloading", "human-computer interaction", "educational technology", "metacognition"],
+    narrower: ["generative AI student learning", "AI writing tools cognitive load", "ChatGPT critical thinking"],
+    alternate: ["cognitive load", "metacognition", "human-AI interaction", "distributed cognition"],
+    resourceIds: ["psycinfo", "eric", "education-source", "web-of-science"],
+  },
+  {
     id: "ai-education",
     pattern: /\b(ai|artificial intelligence|generative ai|chatgpt)\b.*\b(education|school|teaching|learning)\b|\b(education|school|teaching|learning)\b.*\b(ai|artificial intelligence|generative ai|chatgpt)\b/i,
     better: ["generative AI in education", "artificial intelligence learning outcomes", "AI academic integrity teaching"],
@@ -498,6 +511,61 @@ function uniq(items) {
   return [...new Set(items.filter(Boolean).map((item) => String(item).trim()).filter(Boolean))];
 }
 
+const QUERY_STOPWORDS = new Set([
+  "about",
+  "after",
+  "also",
+  "analyze",
+  "because",
+  "between",
+  "could",
+  "does",
+  "find",
+  "give",
+  "have",
+  "help",
+  "impact",
+  "into",
+  "looking",
+  "need",
+  "please",
+  "provide",
+  "question",
+  "research",
+  "results",
+  "search",
+  "show",
+  "some",
+  "source",
+  "sources",
+  "that",
+  "their",
+  "there",
+  "these",
+  "this",
+  "topic",
+  "what",
+  "when",
+  "where",
+  "which",
+  "with",
+  "would",
+]);
+
+function keywordSearchBase(query) {
+  const q = cleanQuery(query);
+  if (articleTitleLike(q)) return `"${q.replace(/^"|"$/g, "")}"`;
+  const quoted = [...q.matchAll(/"([^"]{3,80})"/g)].map((match) => match[1].trim());
+  const words = q
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .split(/\s+/)
+    .map((word) => word.trim())
+    .filter((word) => word.length >= 3 && !QUERY_STOPWORDS.has(word))
+    .map((word) => (word === "ai" ? "AI" : word));
+  return uniq([...quoted, ...words]).slice(0, 6).join(" ") || q;
+}
+
 function articleTitleLike(query) {
   const q = cleanQuery(query);
   if (extractDoi(q) || extractPmid(q)) return true;
@@ -539,8 +607,8 @@ function resourceScore(resource, intents, profiles, query, subjectFocus) {
   let score = resource.priority || 0;
   const ids = new Set(profiles.flatMap((profile) => profile.resourceIds || []));
   const focusIds = new Set(subjectFocus?.resourceIds || []);
-  if (ids.has(resource.id)) score += 60;
-  if (focusIds.has(resource.id)) score += 70;
+  if (ids.has(resource.id)) score += 90;
+  if (focusIds.has(resource.id)) score += 50;
   const intentIds = new Set(intents.map((intent) => intent.id));
   const resourceText = [
     resource.name,
@@ -572,16 +640,19 @@ export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SU
   const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const intents = classifyResearchIntent(q);
   const profiles = activeProfiles(q);
+  const rankingFocus = subjectFocus.id === "interdisciplinary" && profiles.length
+    ? { ...subjectFocus, resourceIds: [], keywords: [] }
+    : subjectFocus;
   const profileResourceIds = new Set(profiles.flatMap((profile) => profile.resourceIds || []));
-  const focusResourceIds = new Set(subjectFocus.resourceIds || []);
+  const focusResourceIds = new Set(rankingFocus.resourceIds || []);
   const ranked = ZSR_RESOURCE_CONFIG
     .map((resource) => ({
       ...resource,
-      score: resourceScore(resource, intents, profiles, q, subjectFocus),
+      score: resourceScore(resource, intents, profiles, q, rankingFocus),
       profileMatch: profileResourceIds.has(resource.id),
       focusMatch: focusResourceIds.has(resource.id),
-      whyFits: whyResourceFits(resource, intents, profiles, subjectFocus),
-      searchTerms: termsForResource(resource, q, profiles, subjectFocus),
+      whyFits: whyResourceFits(resource, intents, profiles, rankingFocus),
+      searchTerms: termsForResource(resource, q, profiles, rankingFocus),
       expect: expectForResource(resource),
       caution: resource.notes,
       nextStep: nextStepForResource(resource, q),
@@ -614,11 +685,15 @@ function whyResourceFits(resource, intents, profiles, subjectFocus) {
 
 function termsForResource(resource, query, profiles, subjectFocus) {
   const profileTerms = profiles.flatMap((profile) => [...profile.better.slice(0, 2), ...profile.alternate.slice(0, 1)]);
-  const focusTerms = (subjectFocus?.keywords || [])
+  const base = keywordSearchBase(query);
+  const focusTerms = profiles.length ? [] : (subjectFocus?.keywords || [])
     .filter((term) => !/^doi|pmid$/i.test(term))
     .slice(0, 2)
-    .map((term) => `${query} ${term}`);
-  const fallback = [query, `${query} ${resource.subjectArea}`];
+    .map((term) => `${base} ${term}`);
+  const tagHint = (resource.tags || [])
+    .filter((tag) => !/^(scholarly|articles|general|background|full text|books|guides)$/i.test(tag))
+    .find((tag) => !base.toLowerCase().includes(String(tag).toLowerCase()));
+  const fallback = [base, tagHint ? `${base} ${tagHint}` : ""];
   return uniq([...profileTerms, ...focusTerms, ...fallback]).slice(0, 4);
 }
 
@@ -641,18 +716,19 @@ export function buildSearchStrategy(query, subjectFocusId = DEFAULT_SUBJECT_FOCU
   const q = cleanQuery(query);
   const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const profiles = activeProfiles(q);
+  const keywordBase = keywordSearchBase(q);
   const profileTerms = profiles.length
     ? profiles
     : [{
-        better: [q],
-        broader: ["background", "scholarly research", "subject guide"],
-        narrower: [`${q} case study`, `${q} recent research`],
-        alternate: [`${q} terminology`, `${q} evidence`],
+        better: [keywordBase],
+        broader: [`${keywordBase} overview`, `${keywordBase} scholarly research`],
+        narrower: [`${keywordBase} case study`, `${keywordBase} recent research`],
+        alternate: [`${keywordBase} terminology`, `${keywordBase} evidence`],
         resourceIds: ["research-guides", "primo"],
       }];
   const betterTerms = uniq(profileTerms.flatMap((profile) => profile.better)).slice(0, 5);
   const focusTerms = subjectFocus.id === "interdisciplinary" ? [] : (subjectFocus.keywords || []).slice(0, 3);
-  const broaderTerms = uniq([...focusTerms, ...profileTerms.flatMap((profile) => profile.broader)]).slice(0, 5);
+  const broaderTerms = uniq([...profileTerms.flatMap((profile) => profile.broader), ...focusTerms]).slice(0, 5);
   const narrowerTerms = uniq(profileTerms.flatMap((profile) => profile.narrower)).slice(0, 5);
   const alternateTerms = uniq(profileTerms.flatMap((profile) => profile.alternate)).slice(0, 5);
   const exactQuery = articleTitleLike(q) ? `"${q.replace(/^"|"$/g, "")}"` : q;
@@ -675,16 +751,27 @@ export function buildFallbackSearches(query, subjectFocusId = DEFAULT_SUBJECT_FO
   const q = cleanQuery(query);
   const strategy = buildSearchStrategy(q, subjectFocusId);
   const resources = recommendResources(q, 4, subjectFocusId);
+  const keywordBase = strategy.betterTerms[0] || keywordSearchBase(q);
+  const synonymSearch = uniq([...strategy.alternateTerms, ...strategy.narrowerTerms]).slice(0, 3).join(" OR ");
+  const carefulBroaden = uniq(strategy.broaderTerms)
+    .filter((term) => !/^(background|scholarly research|subject guide)$/i.test(term))
+    .slice(0, 2)
+    .join(" OR ") || keywordBase;
   return [
     {
-      label: "Try the exact phrase",
-      text: articleTitleLike(q) ? `"${q.replace(/^"|"$/g, "")}"` : q,
-      href: strategy.links.zsrCatalog,
+      label: "Start with keywords, not a sentence",
+      text: keywordBase,
+      href: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, keywordBase),
     },
     {
-      label: "Broaden the concept",
-      text: strategy.broaderTerms.slice(0, 3).join(" OR "),
-      href: fillTemplate(LIBRARY_LINKS.zsrPrimoSearch, strategy.broaderTerms.slice(0, 3).join(" OR ")),
+      label: "Swap in a close synonym",
+      text: synonymSearch || keywordBase,
+      href: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, synonymSearch || keywordBase),
+    },
+    {
+      label: "Broaden one step",
+      text: carefulBroaden,
+      href: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, carefulBroaden),
     },
     {
       label: "Search likely database names",
@@ -692,14 +779,14 @@ export function buildFallbackSearches(query, subjectFocusId = DEFAULT_SUBJECT_FO
       href: AZ,
     },
     {
-      label: "Try Google Scholar",
-      text: strategy.betterTerms[0] || q,
-      href: strategy.links.googleScholar,
+      label: "Try Google Scholar with keywords",
+      text: keywordBase,
+      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, keywordBase),
     },
     {
       label: "Use citation chaining",
       text: "Open one strong source, then follow its references and cited-by links.",
-      href: strategy.links.googleScholar,
+      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, keywordBase),
     },
   ];
 }

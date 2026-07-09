@@ -22,6 +22,8 @@ const STOPWORDS = new Set([
   "source", "results", "result",
 ]);
 const WEAK_TOPIC_TOKENS = new Set(["impact", "effect", "effects", "ment", "health"]);
+const AI_CONCEPT_RE = /\b(ai|artificial intelligence|generative ai|chatgpt|large language models?|llms?)\b/i;
+const OFFLOADING_CONCEPT_RE = /\b(cognitive offload(?:ing)?|offload(?:ing)?|cognitive load|external memory|distributed cognition|human-ai interaction)\b/i;
 
 function clean(s) {
   return String(s || "")
@@ -146,20 +148,36 @@ function queryTokens(query) {
     .toLowerCase()
     .split(/\s+/)
     .map(tokenRoot)
-    .filter((token) => token.length >= 4 && !STOPWORDS.has(token));
+    .filter((token) => (token.length >= 4 || token === "ai") && !STOPWORDS.has(token));
+}
+
+function tokenAppears(text, token) {
+  const haystack = String(text || "").toLowerCase();
+  if (token === "ai") return AI_CONCEPT_RE.test(haystack);
+  return haystack.includes(token);
 }
 
 function relevanceScore(text, tokens) {
-  const haystack = tokenRoot(text).length ? String(text || "").toLowerCase() : "";
-  return tokens.reduce((score, token) => (haystack.includes(token) ? score + 1 : score), 0);
+  return tokens.reduce((score, token) => (tokenAppears(text, token) ? score + 1 : score), 0);
 }
 
 function matchedStrongTokens(text, tokens) {
-  const haystack = String(text || "").toLowerCase();
-  return tokens.filter((token) => !WEAK_TOPIC_TOKENS.has(token) && haystack.includes(token));
+  return tokens.filter((token) => !WEAK_TOPIC_TOKENS.has(token) && tokenAppears(text, token));
+}
+
+function conceptRequirements(query) {
+  const requirements = [];
+  if (AI_CONCEPT_RE.test(query)) requirements.push(AI_CONCEPT_RE);
+  if (/\b(cognitive offload(?:ing)?|offload(?:ing)?)\b/i.test(query)) requirements.push(OFFLOADING_CONCEPT_RE);
+  return requirements;
+}
+
+function passesConceptRequirements(text, requirements) {
+  return requirements.every((requirement) => requirement.test(text));
 }
 
 function isRelevantResult(result, tokens) {
+  if (result.requiredConceptMatch === false) return false;
   if (!tokens.length) return true;
   if (tokens.length < 4) return result.relevance > 0;
   const strongQueryTokenCount = tokens.filter((token) => !WEAK_TOPIC_TOKENS.has(token)).length;
@@ -193,6 +211,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
   if (!ENABLED || !q) return [];
   const wantsArticles = articleIntent(query, mode.id);
   const tokens = queryTokens(q);
+  const requirements = conceptRequirements(q);
   const requestLimit = wantsArticles ? Math.max(limit * 4, 30) : Math.max(limit * 3, 24);
   const tab = wantsArticles ? "Articles" : "LibraryCatalog";
   const scope = wantsArticles ? "CentralIndex" : SCOPE;
@@ -243,6 +262,12 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         ...(disp.subject || []),
         disp.type?.[0],
       ].filter(Boolean).join(" ");
+      const conceptText = [
+        relevanceText,
+        ...(disp.description || []),
+        ...(disp.abstract || []),
+        ...(values(d.pnx?.search, 8) || []),
+      ].filter(Boolean).join(" ");
       const titleText = disp.title?.[0] || "";
       const subjects = values(disp.subject, 8);
       const description = resultDescription({
@@ -281,6 +306,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         titleRelevance: relevanceScore(titleText, tokens),
         strongRelevance: matchedStrongTokens(relevanceText, tokens).length,
         titleStrongRelevance: matchedStrongTokens(titleText, tokens).length,
+        requiredConceptMatch: passesConceptRequirements(conceptText, requirements),
       };
     });
     const relevantResults = tokens.length ? results.filter((result) => isRelevantResult(result, tokens)) : results;
@@ -288,7 +314,8 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       ? relevantResults.filter((result) => !/newsletter|newspaper|magazine|trade/i.test(String(result.type || "")))
       : relevantResults;
     const seen = new Set();
-    return (articleUsefulResults.length ? articleUsefulResults : relevantResults.length ? relevantResults : results)
+    const displayResults = articleUsefulResults.length ? articleUsefulResults : relevantResults;
+    return displayResults
       .sort((a, b) => resultScore(b, wantsArticles) - resultScore(a, wantsArticles))
       .filter((result) => !looksLikeNewswireRecord(result))
       .filter((result) => {
@@ -298,7 +325,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         return true;
       })
       .slice(0, limit)
-      .map(({ relevance, titleRelevance, strongRelevance, titleStrongRelevance, ...result }) => result);
+      .map(({ relevance, titleRelevance, strongRelevance, titleStrongRelevance, requiredConceptMatch, ...result }) => result);
   } catch {
     return []; // network error / timeout / abort → degrade gracefully
   } finally {

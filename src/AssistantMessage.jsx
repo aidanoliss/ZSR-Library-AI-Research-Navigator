@@ -1393,6 +1393,10 @@ export default function AssistantMessage({
               </li>
             ))}
           </ul>
+          <div className="term-combo-advice" role="note">
+            <strong>Try combinations, not the whole list at once.</strong>
+            <span>Start with one core phrase plus one limiter. If results are thin, swap one synonym or remove one limit before changing databases.</span>
+          </div>
           {tools.length > 0 && (
             <p className="muted terms-hint">Use the copy icon for a single term, or ↗ to run it as a search.</p>
           )}

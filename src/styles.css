@@ -2024,6 +2024,23 @@ code {
   font-size: 0.92rem;
 }
 
+.term-combo-advice {
+  display: grid;
+  gap: 3px;
+  margin-top: 8px;
+  padding: 9px 11px;
+  border: 1px solid #e1d1ad;
+  border-radius: 8px;
+  background: #fff8e7;
+  color: #5f513c;
+  font: 750 0.78rem/1.35 system-ui, sans-serif;
+}
+
+.term-combo-advice strong {
+  color: #2b2217;
+  font-weight: 900;
+}
+
 .term-row .icon-copy {
   width: 30px;
   height: 30px;
