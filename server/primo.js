@@ -44,7 +44,9 @@ function resultKey(result) {
     .replace(/\b(the|a|an)\b/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  return title;
+  const author = String(result.author || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const date = String(result.date || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  return [title, author, date].join("|");
 }
 
 function looksLikeNewswireRecord(result) {
@@ -78,7 +80,7 @@ function resultDescription({ title, type, date, subjects }) {
     ? ` Metadata highlights ${subjects.slice(0, 3).join(", ")}.`
     : "";
   const dateText = date ? ` Published/created ${date}.` : "";
-  return `Relevant ZSR catalog record for this search.${topicText}${dateText} Open the record to confirm access, peer-review status, and citation details.`;
+  return `Potential ZSR discovery lead for this search.${topicText}${dateText} Open the record to confirm relevance, access, peer-review status, and citation details.`;
 }
 
 function firstValue(value) {
@@ -128,6 +130,7 @@ function articleIntent(query, modeId = DEFAULT_MODE_ID) {
 function normalizeCatalogQuery(query) {
   return clean(query)
     .replace(/\b(can you|could you|please|find|provide|show|get|give me|list|recommend)\b/gi, " ")
+    .replace(/\b(how|why|whether|ways?|affects?|influences?|impacts?)\b/gi, " ")
     .replace(/\b(peer[-\s]?reviewed|scholarly|academic)\b/gi, " ")
     .replace(/\b(journal\s+)?articles?\b/gi, " ")
     .replace(/\b(sources?|results?|on|about|for|related to)\b/gi, " ")
@@ -179,10 +182,17 @@ function passesConceptRequirements(text, requirements) {
 function isRelevantResult(result, tokens) {
   if (result.requiredConceptMatch === false) return false;
   if (!tokens.length) return true;
-  if (tokens.length < 4) return result.relevance > 0;
+  if (tokens.length === 1) return result.relevance > 0;
+  if (tokens.length === 2) return result.relevance >= 2;
+  if (tokens.length === 3) {
+    return result.relevance >= 2 && (result.titleStrongRelevance >= 1 || result.strongRelevance >= 3);
+  }
   const strongQueryTokenCount = tokens.filter((token) => !WEAK_TOPIC_TOKENS.has(token)).length;
   if (!strongQueryTokenCount) return result.relevance >= 2;
-  return result.relevance >= 2 && result.titleStrongRelevance >= Math.min(2, strongQueryTokenCount);
+  return (
+    result.relevance >= 2 &&
+    (result.titleStrongRelevance >= Math.min(2, strongQueryTokenCount) || result.strongRelevance >= Math.min(3, strongQueryTokenCount))
+  );
 }
 
 function resultScore(result, wantsArticles) {
@@ -314,7 +324,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       ? relevantResults.filter((result) => !/newsletter|newspaper|magazine|trade/i.test(String(result.type || "")))
       : relevantResults;
     const seen = new Set();
-    const displayResults = articleUsefulResults.length ? articleUsefulResults : relevantResults;
+    const displayResults = wantsArticles ? articleUsefulResults : relevantResults;
     return displayResults
       .sort((a, b) => resultScore(b, wantsArticles) - resultScore(a, wantsArticles))
       .filter((result) => !looksLikeNewswireRecord(result))

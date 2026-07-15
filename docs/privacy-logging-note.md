@@ -10,6 +10,9 @@
 - Feedback logging records thumbs up/down/gap feedback when a student uses those controls.
 - Librarian handoff logging records the topic, note, search terms, catalog leads, and matched resources only after the student explicitly uses the handoff control.
 - Handoff contact details are not retained unless `HANDOFF_STORE_CONTACT=on`.
+- Chat sessions, folders, assignment briefs, saved research-trail items, and search history are stored in browser `localStorage` and are not synced to ZSR or a user account.
+- When `Use in AI requests` is enabled, populated assignment constraints are sent to Gemini as model context. They are kept separate from catalog queries and resource routing.
+- Research-workspace details are included in the Ask ZSR email draft only after the student explicitly opens the librarian handoff. They are not added to the local handoff log.
 
 ## Current limitations
 
@@ -17,6 +20,7 @@
 - It does not provide user accounts, FERPA review, retention policy, or institutional audit logging.
 - It does not have a reviewed student-data privacy policy.
 - It does not provide full de-identification; students could still type personal information that is not caught by lightweight redaction.
+- Browser-local research work is not encrypted, remotely backed up, or portable across devices.
 
 ## Recommended setting for a public demo
 

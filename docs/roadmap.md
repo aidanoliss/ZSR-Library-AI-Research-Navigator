@@ -1,46 +1,34 @@
-# Roadmap
+# ZSR Research Navigator Roadmap
 
-## Phase 1: Core Data Model And Sample Data
+## Current demo
 
-- Supabase schema
-- Fictional startup and investor seed data
-- Scoring engine
-- Dashboard, company table, domain summaries, report preview
+- Subject-aware, variable-length ZSR path recommendations
+- Keyword-first search terms and controlled search broadening
+- Intent-gated, relevance-filtered live ZSR discovery leads
+- Topic-angle brainstorming and guided planning
+- Source evaluation, citation, responsible-AI, and limitation guidance
+- Per-chat folders and browser-local research workspaces
+- Assignment briefs, saved trails, search history, and librarian review packets
 
-## Phase 2: LLM Analysis Layer
+## Next pilot priorities
 
-- Prompt templates
-- Provider abstraction
-- Server-side model adapters
-- Stored company summaries, scorecards, risks, and memos
+1. Run a librarian-reviewed evaluation set across common and niche disciplines. Record path relevance, term quality, catalog precision, and safe fallback behavior.
+2. Add a reviewed directory for subject librarians and research-support contacts, with a general Ask ZSR fallback when no confident match exists.
+3. Add optional course/instructor templates only after ZSR approves their language and ownership.
+4. Improve search iteration support with side-by-side query/result notes and a clear record of which concept changed.
+5. Add accessibility testing with keyboard-only, screen-reader, zoom, contrast, and reduced-motion checks.
 
-## Phase 3: Weekly Report Automation
+## Official integration track
 
-- Local cron-compatible weekly report worker
-- Report Markdown and JSON output
-- Investor matches and proposal drafts
+- Replace hand-maintained database metadata with a reviewed LibGuides/A-Z export when available.
+- Use an approved Primo API endpoint and key rather than relying only on public discovery requests.
+- Confirm LibKey/Third Iron configuration and preferred full-text workflow.
+- Decide whether authentication, course-system context, or account sync is appropriate.
+- Approve student notice, retention, logging, support ownership, branding, and incident-response policies before production use.
 
-## Phase 4: Source Ingestion
+## Production readiness gates
 
-- HN Launch connector through public Algolia/HN search API
-- Runtime job endpoint and UI scan control
-- Local JSON persistence with optional server-side Supabase REST persistence
-- Deduplication by source UID, source URL, website, and normalized name
-- Source reliability and confidence scoring
-- Product Hunt, YC, GitHub, RSS, and richer manual URL connectors
-
-## Phase 5: UI Polish And Export
-
-- Markdown export
-- CSV export
-- PDF export
-- Investor proposal export
-
-## Phase 6: Advanced Features
-
-- Domain trend analysis
-- Competitive mapping
-- Founder graph
-- Market context ingestion
-- Email and Slack delivery
-- User-configurable scoring weights
+- Librarian evaluation thresholds are defined and met.
+- Privacy, accessibility, security, and records-retention reviews are complete.
+- API ownership, billing, monitoring, uptime, and support escalation are institutionally owned.
+- Every external link and database label has a documented reviewer and review date.

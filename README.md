@@ -2,6 +2,8 @@
 
 Prototype research navigator for Wake Forest Z. Smith Reynolds Library workflows. The app helps students turn a topic into search terms, mode-specific research strategies, ZSR starting points, live ZSR catalog leads where available, citation guidance, and honest full-text access next steps.
 
+Topic-matched ZSR recommendations are kept separate from general discovery routes. If a matched path or live catalog list is small, the interface offers a collapsed `Other potentially helpful ZSR starting points` group without presenting those general services as additional topic matches.
+
 This is a prototype, not a production ZSR integration. It uses Gemini through the server API, curated ZSR-style resource metadata, and a best-effort live Primo lookup. It does not log students into ZSR, bypass paywalls, control LibKey Nomad, or expose private keys in the browser.
 
 ## Research Modes
@@ -17,6 +19,18 @@ Students can choose:
 - General Research
 
 The selected mode affects search-term suggestions, recommended platforms, Primo/ZSR lookup behavior, source-evaluation advice, citation reminders, and next steps.
+
+## Research Workspace
+
+Each chat has a browser-local research workspace with:
+
+- an optional assignment brief and course presets
+- saved ZSR paths, catalog leads, and search strings
+- source statuses, notes, and citation details
+- search iteration history and result notes
+- a copy/download review packet for librarian handoff
+
+Workspace data remains in that browser unless the student explicitly prepares a librarian handoff. Assignment constraints can be included in AI requests without changing the literal catalog query or ZSR resource matching.
 
 ## Local Demo
 
@@ -101,7 +115,7 @@ This is not a LibKey API integration and does not control the browser extension.
 
 ## Pilot Admin And Handoff
 
-Open `/?admin=1` or use the shield icon in the app to view the read-only pilot dashboard. It shows curated resource coverage, privacy posture, integration readiness, recent explicit feedback, and librarian handoff packages.
+Open `/?admin=1` to view the read-only pilot dashboard. It shows curated resource coverage, privacy posture, integration readiness, recent explicit feedback, and librarian handoff packages. The student interface intentionally has no pilot-status shield button.
 
 Use the envelope handoff icon to package a student's topic, suggested search terms, matched ZSR paths, and live catalog leads into an Ask ZSR email draft. Handoff contact details are not retained by default; set `HANDOFF_STORE_CONTACT=on` only after privacy review.
 
@@ -116,6 +130,7 @@ For library technical staff review, use:
 - `docs/architecture-summary.md`
 - `docs/live-demo-deployment.md`
 - `docs/privacy-logging-note.md`
+- `docs/amanda-feedback-validation.md`
 - `docs/technical-staff-questions.md`
 
 ## Useful Commands

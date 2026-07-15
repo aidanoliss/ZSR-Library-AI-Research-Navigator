@@ -18,6 +18,12 @@ export function conversationToMarkdown(messages) {
         for (const line of plannerLines) lines.push(`- ${line}`);
         lines.push("");
       }
+      const assignmentLines = plannerContextLines(m.assignmentContext);
+      if (assignmentLines.length) {
+        lines.push("### Assignment brief sent", "");
+        for (const line of assignmentLines) lines.push(`- ${line}`);
+        lines.push("");
+      }
       continue;
     }
     const r = m.reply || {};
@@ -84,7 +90,7 @@ export function conversationToMarkdown(messages) {
     }
 
     if (m.liveResults?.length) {
-      lines.push("### Real results in ZSR's catalog", "");
+      lines.push("### Live ZSR discovery leads", "");
       for (const item of m.liveResults) {
         lines.push(`- [${item.title}](${item.url})`);
         const meta = [item.type, item.author, item.date].filter(Boolean).join(" · ");

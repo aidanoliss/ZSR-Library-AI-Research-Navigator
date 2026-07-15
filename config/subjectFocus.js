@@ -32,11 +32,14 @@ export const SUBJECT_FOCUSES = [
       "genetics",
       "clinical",
       "public health",
+      "maternal health",
+      "mortality",
+      "epidemiology",
       "doi",
       "pmid",
     ],
     patterns: [
-      /\b(protein|protein folding|protein misfolding|amyloid|biochemistry|biology|genetics|gene|mutation|molecular|cell|disease|clinical|medical|medicine|public health|pubmed|pmid|doi)\b/i,
+      /\b(protein|protein folding|protein misfolding|amyloid|biochemistry|biology|genetics|gene|mutation|molecular|cell|disease|clinical|medical|medicine|public health|maternal|mortality|epidemiology|pubmed|pmid|doi|ecology|ecological|biodiversity|pollinator|environmental science)\b/i,
     ],
   },
   {
@@ -79,9 +82,9 @@ export const SUBJECT_FOCUSES = [
     description: "Historical context, humanities scholarship, cultural analysis, and archival leads.",
     prompt:
       "Prioritize historical context, humanities scholarship, primary-source awareness, subject headings, and citation trails.",
-    resourceIds: ["jstor", "primo", "zsr-discovery", "research-guides", "proquest-news"],
-    keywords: ["history", "historical", "humanities", "culture", "literature", "archive", "primary source"],
-    patterns: [/\b(history|historical|humanities|literature|culture|archive|archival|primary source|cold war|russia|poland|soviet)\b/i],
+    resourceIds: ["jstor", "primo", "zsr-discovery", "research-guides"],
+    keywords: ["history", "historical", "humanities", "culture", "literature", "archive", "primary source", "manuscript"],
+    patterns: [/\b(history|historical|humanities|literature|culture|archive|archival|primary source|cold war|russia|poland|soviet|medieval|manuscript|religion|philosophy|classics|art history|music history)\b/i],
   },
   {
     id: "education",
@@ -135,11 +138,24 @@ export function getSubjectFocus(id) {
 
 export function detectSubjectFocus(text) {
   const value = String(text || "");
-  for (const focus of SUBJECT_FOCUSES) {
-    if (focus.id === DEFAULT_SUBJECT_FOCUS_ID) continue;
-    if ((focus.patterns || []).some((pattern) => pattern.test(value))) return focus;
-  }
-  return getSubjectFocus("interdisciplinary");
+  const matches = SUBJECT_FOCUSES.filter(
+    (focus) => focus.id !== DEFAULT_SUBJECT_FOCUS_ID && (focus.patterns || []).some((pattern) => pattern.test(value))
+  );
+  if (!matches.length) return getSubjectFocus("interdisciplinary");
+  if (matches.length === 1) return matches[0];
+
+  const [primary] = matches;
+  return {
+    ...primary,
+    label: matches.map((focus) => focus.shortLabel || focus.label).join(" + "),
+    shortLabel: "Interdisciplinary",
+    description: `Combined subject lens: ${matches.map((focus) => focus.label).join(", ")}.`,
+    prompt: matches.map((focus) => focus.prompt).join(" "),
+    resourceIds: [...new Set(matches.flatMap((focus) => focus.resourceIds || []))],
+    keywords: [...new Set(matches.flatMap((focus) => focus.keywords || []))],
+    matchedFocusIds: matches.map((focus) => focus.id),
+    interdisciplinary: true,
+  };
 }
 
 export function resolveSubjectFocus(selectedId, text) {

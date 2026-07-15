@@ -2,15 +2,27 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import AdminPanel from "./AdminPanel.jsx";
 import AssistantMessage from "./AssistantMessage.jsx";
 import HandoffModal from "./HandoffModal.jsx";
+import ResearchWorkspace from "./ResearchWorkspace.jsx";
+import { submittedResearchContext } from "./conversationContext.js";
 import { conversationToMarkdown, downloadText } from "./exportPlan.js";
+import {
+  addResearchItem,
+  addSearchHistoryEntry,
+  assignmentContext,
+  createResearchWorkspace,
+  normalizeResearchWorkspace,
+  researchItemKey,
+} from "./researchWorkspace.js";
 import {
   DEFAULT_MODE_ID,
   DEFAULT_RESPONSE_STYLE_ID,
   RESPONSE_STYLES,
   SEARCH_MODES,
+  LIBRARY_LINKS,
   getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
+import { buildSearchTermSuggestions } from "../config/researchAgent.js";
 import { recommendLibrarianRoutes } from "../config/librarianRoutes.js";
 import {
   DEFAULT_SUBJECT_FOCUS_ID,
@@ -31,6 +43,19 @@ const TRY_PROMPTS = [
   "Help me navigate ZSR",
 ];
 
+const FALLBACK_SEARCH_TOOLS = [
+  {
+    id: "zsr-discovery",
+    name: "ZSR Article Search",
+    search_url_template: LIBRARY_LINKS.zsrArticleSearch,
+  },
+  {
+    id: "google-scholar",
+    name: "Google Scholar",
+    search_url_template: LIBRARY_LINKS.googleScholarSearch,
+  },
+];
+
 const Icon = {
   plus: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>,
   folder: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h6l2 2h8v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" /></svg>,
@@ -48,6 +73,7 @@ const Icon = {
   send: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13" /><path d="m22 2-7 20-4-9-9-4 20-7z" /></svg>,
   handoff: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l1 2h3v14H5V6h3l1-2z" /><path d="M9 12h5" /><path d="M9 16h4" /><path d="M16 12h5" /><path d="m19 10 2 2-2 2" /></svg>,
   admin: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4z" /><path d="M9 12l2 2 4-5" /></svg>,
+  workspace: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z" /><path d="M9 8h6M9 12h6M9 16h3" /><path d="m15 16 2 2 3-4" /></svg>,
   answerSources: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a2 2 0 0 1 2 2v4" /><path d="M5 4v16h6" /><path d="M8 8h5" /><path d="M8 12h3" /><circle cx="16" cy="16" r="4" /><path d="m19 19 2 2" /></svg>,
   answerFirst: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16" /><path d="M4 10h12" /><path d="M4 15h9" /><path d="M4 20h6" /></svg>,
   plan: <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6" /><path d="M9 13h6" /><path d="m8 17 1.5 1.5L12 16" /></svg>,
@@ -62,6 +88,7 @@ function makeSession(messages = [], mode = DEFAULT_MODE_ID, responseStyle = DEFA
     mode,
     responseStyle,
     subjectFocusId,
+    researchWorkspace: createResearchWorkspace(),
     folderId: DEFAULT_FOLDER_ID,
     messages,
     pinned: false,
@@ -86,6 +113,7 @@ function readSessions() {
         folderId: session.folderId || DEFAULT_FOLDER_ID,
         pinned: Boolean(session.pinned),
         subjectFocusId: session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID,
+        researchWorkspace: normalizeResearchWorkspace(session.researchWorkspace),
         messages: Array.isArray(session.messages) ? session.messages : [],
         updatedAt: session.updatedAt || 0,
       })))
@@ -301,6 +329,8 @@ function SessionSidebar({
   onNew,
   onTogglePin,
   onDeleteSession,
+  researchWorkspace,
+  onOpenResearchWorkspace,
 }) {
   const [folderName, setFolderName] = useState("");
   const customFolders = folders.filter((folder) => folder.id !== DEFAULT_FOLDER_ID);
@@ -329,6 +359,13 @@ function SessionSidebar({
         detectedFocus={detectedFocus}
         onChange={onSubjectFocusChange}
       />
+      <button type="button" className="research-workspace-open" onClick={onOpenResearchWorkspace}>
+        {Icon.workspace}
+        <span>
+          <strong>Research workspace</strong>
+          <em>{researchWorkspace.trail.length} saved · {researchWorkspace.searchHistory.length} searches</em>
+        </span>
+      </button>
       <div className="folder-list" aria-label="Session folders">
         <h2>Folders</h2>
         {customFolders.length === 0 ? (
@@ -437,12 +474,22 @@ function PlannerContextSummary({ context }) {
 }
 
 function RequestMetaSummary({ message }) {
-  if (!message?.subjectFocusLabel) return null;
+  if (!message?.subjectFocusLabel && !message?.assignmentContext) return null;
   return (
     <div className="request-meta-summary">
-      <span>Subject focus sent</span>
-      <strong>{message.subjectFocusLabel}</strong>
-      {message.subjectFocusAuto && <em>Auto-detected</em>}
+      {message.subjectFocusLabel && (
+        <>
+          <span>Subject focus sent</span>
+          <strong>{message.subjectFocusLabel}</strong>
+          {message.subjectFocusAuto && <em>Auto-detected</em>}
+        </>
+      )}
+      {message.assignmentContext && (
+        <details>
+          <summary>Assignment brief sent</summary>
+          <pre>{message.assignmentContext}</pre>
+        </details>
+      )}
     </div>
   );
 }
@@ -459,7 +506,7 @@ function uniqueBy(items, keyFn) {
   return out;
 }
 
-function buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId) {
+function buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId, researchWorkspace) {
   const assistantTurns = messages.filter((message) => message.role === "assistant");
   const topic = messages.find((message) => message.role === "user")?.content || String(input || "").trim();
   const subjectFocus = resolveSubjectFocus(
@@ -497,29 +544,8 @@ function buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusI
     liveResults,
     matchedResources,
     librarianRoutes,
+    researchWorkspace: normalizeResearchWorkspace(researchWorkspace),
   };
-}
-
-function PilotStatus({ status, onOpenAdmin }) {
-  if (!status) return null;
-  const privacyText = status.privacy.queryLoggingEnabled
-    ? "Query logging on"
-    : "Query logging off";
-  const integrationText = status.integrations.gemini.configured
-    ? "AI key configured"
-    : "AI key missing";
-
-  return (
-    <section className="pilot-status no-print" aria-label="Pilot readiness status">
-      <div>
-        <strong>Pilot posture</strong>
-        <span>{status.resources.count} curated ZSR resources</span>
-        <span>{privacyText}</span>
-        <span>{integrationText}</span>
-      </div>
-      <button type="button" onClick={onOpenAdmin}>Review status</button>
-    </section>
-  );
 }
 
 function plannerQuestionsFor(topic, modeLabel, providedQuestions = []) {
@@ -682,11 +708,12 @@ export default function App() {
   const [mode, setMode] = useState(DEFAULT_MODE_ID);
   const [responseStyle, setResponseStyle] = useState(DEFAULT_RESPONSE_STYLE_ID);
   const [subjectFocusId, setSubjectFocusId] = useState(DEFAULT_SUBJECT_FOCUS_ID);
+  const [researchWorkspace, setResearchWorkspace] = useState(() => createResearchWorkspace());
+  const [researchWorkspaceOpen, setResearchWorkspaceOpen] = useState(false);
   const [sessions, setSessions] = useState(() => readSessions());
   const [folders, setFolders] = useState(() => readFolders());
   const [activeFolderId, setActiveFolderId] = useState(DEFAULT_FOLDER_ID);
   const [activeSessionId, setActiveSessionId] = useState(() => localStorage.getItem(ACTIVE_SESSION_KEY) || "");
-  const [pilotStatus, setPilotStatus] = useState(null);
   const [adminOpen, setAdminOpen] = useState(() => new URLSearchParams(window.location.search).has("admin"));
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [plannerDraft, setPlannerDraft] = useState(null);
@@ -698,7 +725,7 @@ export default function App() {
 
   const hasConversation = messages.length > 0;
   const activeMode = getSearchMode(mode);
-  const subjectFocusSeed = input || [...messages].reverse().find((message) => message.role === "user")?.content || "";
+  const subjectFocusSeed = useMemo(() => submittedResearchContext(messages), [messages]);
   const effectiveSubjectFocus = useMemo(
     () => resolveSubjectFocus(subjectFocusId, subjectFocusSeed),
     [subjectFocusId, subjectFocusSeed]
@@ -735,22 +762,10 @@ export default function App() {
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
     setSubjectFocusId(session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID);
+    setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
     setInput("");
-  }, []);
-
-  useEffect(() => {
-    let active = true;
-    fetch("/api/pilot/status")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (active) setPilotStatus(data);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
   }, []);
 
   // Scroll only when a new question is asked — not while "Thinking" animates or
@@ -765,11 +780,16 @@ export default function App() {
   );
 
   const handoffPayload = useMemo(
-    () => buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId),
-    [messages, input, mode, responseStyle, subjectFocusId]
+    () => buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId, researchWorkspace),
+    [messages, input, mode, responseStyle, subjectFocusId, researchWorkspace]
   );
 
-  function saveSession(nextMessages, nextMode = mode, nextResponseStyle = responseStyle, sessionId = activeSessionId, nextSubjectFocusId = subjectFocusId) {
+  const savedResearchItemKeys = useMemo(
+    () => new Set(researchWorkspace.trail.map(researchItemKey).filter(Boolean)),
+    [researchWorkspace.trail]
+  );
+
+  function saveSession(nextMessages, nextMode = mode, nextResponseStyle = responseStyle, sessionId = activeSessionId, nextSubjectFocusId = subjectFocusId, nextResearchWorkspace = researchWorkspace) {
     const id = sessionId || crypto.randomUUID();
     if (!activeSessionId || activeSessionId !== id) setActiveSessionId(id);
     setSessions((current) => {
@@ -783,6 +803,7 @@ export default function App() {
         mode: nextMode,
         responseStyle: nextResponseStyle,
         subjectFocusId: nextSubjectFocusId,
+        researchWorkspace: normalizeResearchWorkspace(nextResearchWorkspace),
         messages: nextMessages,
         pinned: Boolean(existing?.pinned),
         createdAt: existing?.createdAt || Date.now(),
@@ -803,6 +824,25 @@ export default function App() {
           : session
       ))
     );
+  }
+
+  function changeResearchWorkspace(nextWorkspace) {
+    const normalized = normalizeResearchWorkspace(nextWorkspace);
+    setResearchWorkspace(normalized);
+    if (!activeSessionId) return;
+    setSessions((current) => sortSessions(current.map((session) =>
+      session.id === activeSessionId
+        ? { ...session, researchWorkspace: normalized, updatedAt: Date.now() }
+        : session
+    )));
+  }
+
+  function saveResearchItem(item) {
+    changeResearchWorkspace(addResearchItem(researchWorkspace, item));
+  }
+
+  function trackSearch(entry) {
+    changeResearchWorkspace(addSearchHistoryEntry(researchWorkspace, entry));
   }
 
   function createFolder(name) {
@@ -849,6 +889,8 @@ export default function App() {
     setMessages([]);
     setInput("");
     setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
+    setResearchWorkspace(createResearchWorkspace());
+    setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
     setError("");
     setStreamText("");
@@ -862,6 +904,7 @@ export default function App() {
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
     setSubjectFocusId(session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID);
+    setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
     setInput("");
@@ -877,6 +920,8 @@ export default function App() {
     setMode(DEFAULT_MODE_ID);
     setResponseStyle(DEFAULT_RESPONSE_STYLE_ID);
     setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
+    setResearchWorkspace(createResearchWorkspace());
+    setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
     setError("");
     setStreamText("");
@@ -906,13 +951,16 @@ export default function App() {
       return;
     }
 
-    const requestFocus = resolveSubjectFocus(subjectFocusId, content);
+    const focusText = submittedResearchContext([...messages, { role: "user", content }]);
+    const requestFocus = resolveSubjectFocus(subjectFocusId, focusText);
+    const requestAssignmentContext = assignmentContext(researchWorkspace.assignment);
     const userMessage = options.plannerContext
       ? { role: "user", content, plannerContext: options.plannerContext }
       : { role: "user", content };
     userMessage.subjectFocusId = requestFocus.id;
     userMessage.subjectFocusLabel = requestFocus.label;
     userMessage.subjectFocusAuto = subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID;
+    if (requestAssignmentContext) userMessage.assignmentContext = requestAssignmentContext;
     const nextMessages = [...messages, userMessage];
     const sessionId = activeSessionId || crypto.randomUUID();
     saveSession(nextMessages, mode, responseStyle, sessionId);
@@ -930,11 +978,13 @@ export default function App() {
           mode,
           responseStyle,
           subjectFocusId,
+          assignmentContext: requestAssignmentContext,
+          plannerContext: options.plannerContext || "",
           messages: nextMessages.map((m) => ({
             role: m.role,
             content: m.role === "assistant"
               ? (m.reply?.message || m.content || "")
-              : (m.plannerContext ? `${m.content}\n\nGuided planner choices sent with this request:\n${m.plannerContext}` : m.content),
+              : m.content,
           })),
         }),
       });
@@ -981,8 +1031,8 @@ export default function App() {
       const finished = [...nextMessages, assistantMessage];
       setMessages(finished);
       saveSession(finished, mode, responseStyle, sessionId);
-    } catch (err) {
-      setError(err.message || "Could not generate a reply right now. Please try again.");
+    } catch {
+      setError("");
       const fallback = [
         ...nextMessages,
         {
@@ -990,15 +1040,11 @@ export default function App() {
           content: "I could not reach the AI service, but you can still search ZSR with the terms below.",
           reply: {
             message: "I could not reach the AI service, but you can still search ZSR with the terms below.",
-            search_terms: [
-              content,
-              `${content} ${activeMode.termSuffixes.slice(0, 2).join(" ")}`,
-              `${content} research`,
-            ],
+            search_terms: buildSearchTermSuggestions(content, [], requestFocus.selectedId || requestFocus.id, 6),
             suggested_followups: ["Try a narrower version", "Find source leads", "Get citation help"],
           },
           matched: [],
-          searchTools: [],
+          searchTools: FALLBACK_SEARCH_TOOLS,
           liveResults: [],
           mode,
           responseStyle,
@@ -1058,13 +1104,6 @@ export default function App() {
     await navigator.clipboard?.writeText(url).catch(() => {});
   }
 
-  function openAdmin() {
-    setAdminOpen(true);
-    const url = new URL(window.location.href);
-    url.searchParams.set("admin", "1");
-    window.history.replaceState(null, "", url);
-  }
-
   function closeAdmin() {
     setAdminOpen(false);
     const url = new URL(window.location.href);
@@ -1073,7 +1112,7 @@ export default function App() {
   }
 
   function openPlannerFromAssistant(seed, questions = []) {
-    openPlanner(seed || messages.find((message) => message.role === "user")?.content || input, questions);
+    openPlanner(seed || submittedResearchContext(messages) || input, questions);
   }
 
   if (adminOpen) {
@@ -1094,6 +1133,8 @@ export default function App() {
           onNew={startNew}
           onTogglePin={togglePinSession}
           onDeleteSession={deleteSession}
+          researchWorkspace={researchWorkspace}
+          onOpenResearchWorkspace={() => setResearchWorkspaceOpen(true)}
         />
         <main className="zsr-main">
           <header className="zsr-hero">
@@ -1129,6 +1170,8 @@ export default function App() {
         onNew={startNew}
         onTogglePin={togglePinSession}
         onDeleteSession={deleteSession}
+        researchWorkspace={researchWorkspace}
+        onOpenResearchWorkspace={() => setResearchWorkspaceOpen(true)}
       />
 
       <main className="zsr-main">
@@ -1146,13 +1189,12 @@ export default function App() {
             {Icon.mail}
           </a>
           <button type="button" className="tool-icon" onClick={() => setHandoffOpen(true)} disabled={!handoffPayload.topic} aria-label="Prepare librarian handoff" data-tip="Handoff">{Icon.handoff}</button>
+          <button type="button" className="tool-icon" onClick={() => setResearchWorkspaceOpen(true)} aria-label="Open research workspace" data-tip="Research workspace">{Icon.workspace}</button>
           <button type="button" className="tool-icon" onClick={copyPlan} aria-label="Copy research plan" data-tip="Copy plan">{Icon.copy}</button>
           <button type="button" className="tool-icon" onClick={downloadPlan} aria-label="Download plan" data-tip="Download">{Icon.download}</button>
           <button type="button" className="tool-icon" onClick={() => window.print()} aria-label="Print" data-tip="Print">{Icon.print}</button>
           <button type="button" className="tool-icon" onClick={sharePlan} aria-label="Share" data-tip="Share">{Icon.share}</button>
         </section>
-        <PilotStatus status={pilotStatus} onOpenAdmin={openAdmin} />
-
         <div className="content-wrap">
           {!hasConversation ? (
             <section className="start-panel">
@@ -1227,14 +1269,17 @@ export default function App() {
                       matched={message.matched}
                       searchTools={message.searchTools}
                       liveResults={message.liveResults}
-                      topic={messages[index - 1]?.content || ""}
+                      topic={submittedResearchContext(messages, index)}
                       mode={message.mode || mode}
                       responseStyle={message.responseStyle || responseStyle}
                       subjectFocusId={message.subjectFocusId || messages[index - 1]?.subjectFocusId || effectiveSubjectFocus.id}
                       isFollowup={index > 1}
                       isLatest={index === messages.length - 1 && !loading}
                       onFollowup={send}
-                      onOpenPlanner={(questions) => openPlannerFromAssistant(messages[index - 1]?.content || "", questions)}
+                      onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchContext(messages, index), questions)}
+                      onSaveResearchItem={saveResearchItem}
+                      onTrackSearch={trackSearch}
+                      savedResearchItemKeys={savedResearchItemKeys}
                     />
                   );
                 })}
@@ -1286,6 +1331,17 @@ export default function App() {
         </form>
       )}
       <HandoffModal open={handoffOpen} onClose={() => setHandoffOpen(false)} payload={handoffPayload} />
+      <ResearchWorkspace
+        open={researchWorkspaceOpen}
+        workspace={researchWorkspace}
+        topic={handoffPayload.topic}
+        onChange={changeResearchWorkspace}
+        onClose={() => setResearchWorkspaceOpen(false)}
+        onHandoff={() => {
+          setResearchWorkspaceOpen(false);
+          setHandoffOpen(true);
+        }}
+      />
     </div>
   );
 }

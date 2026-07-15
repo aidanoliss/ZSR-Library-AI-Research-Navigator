@@ -8,6 +8,8 @@ function summarizePayload(payload) {
     `${payload.liveResults?.length || 0} catalog leads`,
     `${payload.matchedResources?.length || 0} ZSR paths`,
     `${payload.librarianRoutes?.length || 0} support routes`,
+    `${payload.researchWorkspace?.trail?.length || 0} saved trail items`,
+    `${payload.researchWorkspace?.searchHistory?.length || 0} searches recorded`,
   ];
   return parts.filter(Boolean).join(" · ");
 }
@@ -70,7 +72,7 @@ export default function HandoffModal({ open, onClose, payload }) {
 
         <p className="handoff-summary">{summarizePayload(payload)}</p>
         <p className="handoff-privacy">
-          This creates a review package and opens your email client. Contact details are not retained by the app unless the server explicitly enables contact storage.
+          This creates a review package and opens your email client. Your assignment brief and research trail are included only in this draft. Contact details and workspace notes are not retained by the app unless the server explicitly enables contact storage.
         </p>
 
         {routes.length > 0 && (

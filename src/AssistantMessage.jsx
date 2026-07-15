@@ -13,7 +13,12 @@ import {
   LIBKEY_NOMAD_URL,
   LIBRARY_LINKS,
 } from "../config/libraryLinks.js";
-import { buildResearchPlan } from "../config/researchAgent.js";
+import {
+  buildResearchPlan,
+  buildSearchTermSuggestions,
+  isSubstantiveResearchRequest,
+} from "../config/researchAgent.js";
+import { researchItemKey } from "./researchWorkspace.js";
 
 /* Monochrome inline icon per resource type — restrained, academic. */
 const TypeIcon = {
@@ -59,6 +64,9 @@ const Icon = {
   ),
   notHelpful: (
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+  ),
+  save: (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z" /></svg>
   ),
 };
 
@@ -184,13 +192,6 @@ const SUGGESTED_SEARCH_GROUPS = [
 
 const SAMPLE_SEARCH_STRING =
   '("social media" OR TikTok OR Instagram) AND (adolescent OR teen*) AND ("mental health" OR anxiety OR depression)';
-
-function modeSearchGroups(mode) {
-  return [
-    { label: "Mode terms", terms: mode.termSuffixes.slice(0, 4).join(" OR ") },
-    { label: "Broaden", terms: mode.termStrategies.slice(0, 3).join(" OR ") },
-  ].filter((group) => group.terms);
-}
 
 // Conservatively flag only clearly-primary source types.
 const PRIMARY_TYPES = new Set(["archival_material", "manuscript", "manuscripts", "image", "audio", "realia", "collection"]);
@@ -542,7 +543,24 @@ function resultIds(r) {
   return { doi: r.doi || extractDoi(text), pmid: r.pmid || extractPmid(text) };
 }
 
-function DatabaseStrategySection({ strategy = [], topic = "" }) {
+function SaveResearchButton({ item, onSaveResearchItem, savedResearchItemKeys }) {
+  if (!onSaveResearchItem) return null;
+  const saved = savedResearchItemKeys?.has(researchItemKey(item));
+  return (
+    <button
+      type="button"
+      className={`save-research-btn ${saved ? "saved" : ""}`}
+      onClick={() => onSaveResearchItem(item)}
+      disabled={saved}
+      aria-label={saved ? `${item.title} saved to research trail` : `Save ${item.title} to research trail`}
+    >
+      {Icon.save}
+      <span>{saved ? "Saved" : "Save to trail"}</span>
+    </button>
+  );
+}
+
+function DatabaseStrategySection({ strategy = [], topic = "", onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   const visible = strategy.filter((item) => item?.database).slice(0, 4);
   if (!visible.length) return null;
 
@@ -557,6 +575,8 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
           const searchInside = (item.search_inside || []).filter(Boolean).slice(0, 4);
           const sourceLeads = (item.journals_or_sources || []).filter(Boolean).slice(0, 5);
           const previewImage = databasePreviewImage(item);
+          const databaseUrl = azDatabaseHref(item.database);
+          const savedItem = { kind: "database", title: item.database, url: databaseUrl, detail: item.why || item.az_area || "ZSR database path" };
           return (
             <li key={item.database} className="database-card-item">
               <details className="database-card has-preview">
@@ -579,9 +599,10 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
                   <div className="database-link-row">
                     <a
                       className="database-action"
-                      href={azDatabaseHref(item.database)}
+                      href={databaseUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => onTrackSearch?.({ query: item.database, tool: "ZSR A-Z Databases", url: databaseUrl })}
                     >
                       Search A-Z for this database
                       <span className="ext-icon">{Icon.external}</span>
@@ -592,12 +613,14 @@ function DatabaseStrategySection({ strategy = [], topic = "" }) {
                         href={fillTemplate(LIBRARY_LINKS.zsrArticleSearch, `${topic} ${item.database}`)}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => onTrackSearch?.({ query: `${topic} ${item.database}`, tool: "ZSR Articles", url: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, `${topic} ${item.database}`) })}
                       >
                         Search this topic in ZSR Articles
                         <span className="ext-icon">{Icon.external}</span>
                       </a>
                     )}
                   </div>
+                  <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
                   {item.az_area && (
                     <p className="database-area">
                       <strong>A-Z area:</strong> {item.az_area}
@@ -685,7 +708,12 @@ function TopicOptionsSection({ options = [], onFollowup }) {
                     type="button"
                     className="topic-option-use"
                     onClick={() => onFollowup(
-                      `Chosen request: ${question}. Build a focused ZSR source-finding plan. Do not generate more topic options. Include where to search in ZSR, suggested search terms, and concrete next steps.`,
+                      [
+                        `Chosen request: ${question}.`,
+                        sourceTypes.length ? `Likely source types: ${sourceTypes.join(", ")}.` : "",
+                        terms.length ? `Starter concepts: ${terms.join(" | ")}.` : "",
+                        "Build a focused ZSR source-finding plan. Do not generate more topic options. Include where to search in ZSR, keyword-based search combinations, source evaluation, and concrete next steps.",
+                      ].filter(Boolean).join(" "),
                       { skipPlanner: true }
                     )}
                   >
@@ -788,18 +816,29 @@ function StrategyTermGroup({ label, terms = [], linkBase }) {
   );
 }
 
-function AgentResourceCard({ resource }) {
+function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   const terms = (resource.searchTerms || []).slice(0, 3);
   const href = resource.id === "primo"
     ? fillTemplate(resource.accessUrl, terms[0] || "")
     : resource.accessUrl;
   const previewImage = resourcePreviewImage(resource);
+  const savedItem = {
+    kind: "database",
+    title: resource.name,
+    url: href,
+    detail: resource.whyFits || resource.description || resource.subjectArea,
+  };
   return (
     <li className="agent-resource-card has-preview">
       <img className="agent-resource-preview" src={previewImage} alt="" loading="lazy" />
       <div className="agent-resource-body">
         <div className="agent-resource-head">
-          <a href={href} target="_blank" rel="noopener noreferrer">
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => onTrackSearch?.({ query: terms[0] || resource.name, tool: resource.name, url: href })}
+          >
             {resource.name}
             <span className="ext-icon">{Icon.external}</span>
           </a>
@@ -808,15 +847,22 @@ function AgentResourceCard({ resource }) {
         <p>{resource.description}</p>
         <div className="agent-card-summary">
           <span><strong>Expect:</strong> {resource.expect}</span>
-          <span><strong>Try:</strong> {terms.join(" | ")}</span>
+          {terms.length > 0 ? (
+            <span><strong>Try:</strong> {terms.join(" | ")}</span>
+          ) : (
+            <span><strong>Use it to:</strong> {resource.bestFor}</span>
+          )}
         </div>
         <EvidenceChips
-          items={[
-            "Curated ZSR config",
-            resource.subjectArea ? `${resource.subjectArea} match` : "",
-            "Librarian-reviewable path",
-          ]}
+          items={resource.generalStartingPoint
+            ? ["Curated ZSR config", "General discovery route", "Not a topic-specific match"]
+            : [
+                "Curated ZSR config",
+                resource.subjectArea ? `${resource.subjectArea} match` : "",
+                "Librarian-reviewable path",
+              ]}
         />
+        <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
         <details className="agent-resource-details">
           <summary>More guidance</summary>
           <p><strong>Why it fits:</strong> {resource.whyFits}</p>
@@ -830,18 +876,23 @@ function AgentResourceCard({ resource }) {
   );
 }
 
-function ResearchAgentSection({ plan, compact = false }) {
+function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   if (!plan?.query) return null;
   const firstFour = plan.recommendations.slice(0, 4);
   const remaining = plan.recommendations.slice(4);
+  const otherStartingPoints = plan.otherStartingPoints || [];
+  const showOtherStartingPoints =
+    !plan.navigationOnly &&
+    otherStartingPoints.length > 0 &&
+    (plan.recommendations.length < 4 || liveResultCount < 3);
   const focusLabel = plan.subjectFocus?.label;
   return (
     <section className="research-agent">
-      <SectionHeader icon={Icon.search}>Search plan</SectionHeader>
+      <SectionHeader icon={Icon.search}>{plan.navigationOnly ? "Navigate ZSR" : "Search plan"}</SectionHeader>
 
       <div className="agent-resource-block">
         <div className="agent-block-head">
-          <strong>Recommended ZSR paths</strong>
+          <strong>{plan.navigationOnly ? "Choose what you need to do" : "Recommended ZSR paths"}</strong>
           <span>{plan.transparencyNote}</span>
           {focusLabel && (
             <span className="agent-focus-chip">
@@ -851,7 +902,7 @@ function ResearchAgentSection({ plan, compact = false }) {
         </div>
         <ul className="agent-resource-list">
           {firstFour.map((resource) => (
-            <AgentResourceCard key={resource.id} resource={resource} />
+            <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
           ))}
         </ul>
         {remaining.length > 0 && (
@@ -859,7 +910,20 @@ function ResearchAgentSection({ plan, compact = false }) {
             <summary>Show more ZSR paths</summary>
             <ul className="agent-resource-list">
               {remaining.map((resource) => (
-                <AgentResourceCard key={resource.id} resource={resource} />
+                <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+              ))}
+            </ul>
+          </details>
+        )}
+        {showOtherStartingPoints && (
+          <details className="agent-general-starting-points">
+            <summary>Other potentially helpful ZSR starting points</summary>
+            <p>
+              These are general discovery routes to try when the topic-matched shortlist or live catalog results are limited. They are not additional topic matches.
+            </p>
+            <ul className="agent-resource-list">
+              {otherStartingPoints.map((resource) => (
+                <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
               ))}
             </ul>
           </details>
@@ -868,13 +932,13 @@ function ResearchAgentSection({ plan, compact = false }) {
 
       {!compact && (
         <details className="agent-fallback" open>
-          <summary>If this search fails, try...</summary>
+          <summary>{plan.navigationOnly ? "ZSR task guide" : "If this search fails, try..."}</summary>
           <ul>
             {plan.fallbacks.map((fallback) => (
               <li key={fallback.label}>
                 <strong>{fallback.label}:</strong>{" "}
                 {fallback.href ? (
-                  <a href={fallback.href} target="_blank" rel="noopener noreferrer">
+                  <a href={fallback.href} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: fallback.text, tool: fallback.label, url: fallback.href })}>
                     {fallback.text}
                     <span className="ext-icon">{Icon.external}</span>
                   </a>
@@ -912,7 +976,7 @@ function ResearchAgentSection({ plan, compact = false }) {
   );
 }
 
-function LiveResultsSection({ liveResults = [], compact = false, followup = false }) {
+function LiveResultsSection({ liveResults = [], compact = false, followup = false, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   if (!liveResults.length) return null;
   const visibleResults = liveResults.slice(0, 5);
   const moreResults = liveResults.slice(5, 10);
@@ -924,6 +988,12 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
     const accessLinks = buildAccessLinks({ title: r.title, doi: ids.doi, pmid: ids.pmid })
       .filter((link) => !/full text|pubmed/i.test(link.label))
       .slice(0, 2);
+    const savedItem = {
+      kind: "catalog",
+      title: r.title,
+      url: r.url,
+      detail: [r.type, r.author, r.date].filter(Boolean).join(" · ") || r.description || "ZSR discovery lead",
+    };
     return (
       <li key={`${r.url || r.title}-${i}`} className={`result-row ${r.cover ? "" : "no-thumb"}`}>
         <ResultThumb cover={r.cover} />
@@ -956,22 +1026,23 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
             </details>
           )}
           <div className="result-actions">
+            <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
             {hasId ? (
-              <a className="fulltext-btn" href={libkeyUrl(ids)} target="_blank" rel="noopener noreferrer">
+                <a className="fulltext-btn" href={libkeyUrl(ids)} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR full text", url: libkeyUrl(ids) })}>
                 <svg className="dl-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" />
                 </svg>
                 Find full text through ZSR
               </a>
             ) : (
-              <a className="fulltext-btn" href={fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "")} target="_blank" rel="noopener noreferrer">
+              <a className="fulltext-btn" href={fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "")} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "Google Scholar", url: fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "") })}>
                 <svg className="dl-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
                 </svg>
                 Find via Google Scholar
               </a>
             )}
-            <a href={r.url} target="_blank" rel="noopener noreferrer">Open in ZSR</a>
+            <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR record", url: r.url })}>Open in ZSR</a>
             {ids.pmid && (
               <a href={`https://pubmed.ncbi.nlm.nih.gov/${String(ids.pmid).replace(/\D/g, "")}/`} target="_blank" rel="noopener noreferrer">
                 PubMed record
@@ -990,10 +1061,10 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
 
   return (
     <section className={`live-results ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
-      <SectionHeader icon={Icon.search}>{compact ? "Catalog examples" : "Real results in ZSR's catalog"}</SectionHeader>
+      <SectionHeader icon={Icon.search}>{compact ? "ZSR discovery examples" : "Live ZSR discovery leads"}</SectionHeader>
       {!compact && (
         <p className="found-note">
-          Here's what I found in ZSR's catalog. Treat these as starting leads and open each record to confirm access, format, and fit.
+          These records passed an automated keyword-relevance check. Treat them as starting leads, not endorsements, and open each record to confirm topic fit, access, and format.
         </p>
       )}
       <ul className="results">
@@ -1009,7 +1080,7 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
       )}
       {!compact && (
         <p className="muted terms-hint">
-          Live from ZSR's catalog for your search. Images appear only when ZSR or ISBN metadata provides a real thumbnail.
+          Live metadata from ZSR discovery. Weak matches are intentionally omitted; images appear only when ZSR or ISBN metadata provides a real thumbnail.
         </p>
       )}
     </section>
@@ -1029,6 +1100,9 @@ export default function AssistantMessage({
   isLatest,
   onFollowup,
   onOpenPlanner,
+  onSaveResearchItem,
+  onTrackSearch,
+  savedResearchItemKeys,
 }) {
   const [copied, setCopied] = useState(null); // index of copied term, or "all"
   const [fb, setFb] = useState("idle"); // idle | done
@@ -1051,27 +1125,36 @@ export default function AssistantMessage({
   const byUrlNorm = new Map((matched || []).map((r) => [norm(r.url), r]));
   const lookup = (url) => byUrl.get(url) || byUrlNorm.get(norm(url));
   const showTopicSpecificPlan = !isFollowup && isSocialMediaMentalHealthTopic(topic);
-  const suggestedSearchGroups = showTopicSpecificPlan
-    ? [...SUGGESTED_SEARCH_GROUPS, ...modeSearchGroups(activeMode)]
-    : modeSearchGroups(activeMode);
+  const suggestedSearchGroups = showTopicSpecificPlan ? SUGGESTED_SEARCH_GROUPS : [];
   const startingPoints = showTopicSpecificPlan
     ? SOCIAL_MEDIA_MENTAL_HEALTH_RESOURCES
     : reply.starting_points || [];
   const latestAsk = String(topic || "");
+  const substantiveResearchRequest = isSubstantiveResearchRequest(latestAsk);
   const selectedSourcePlanRequest = /chosen request|source-finding plan|do not generate more topic options|where to search in zsr|suggested search terms/i.test(latestAsk);
-  const rawTopicOptions = (reply.topic_options || [])
-    .filter((option) => option?.title || option?.research_question)
-    .slice(0, 6);
+  const rawTopicOptions = [];
+  const seenTopicOptions = new Set();
+  for (const option of reply.topic_options || []) {
+    if (!option?.title && !option?.research_question) continue;
+    const key = String(option.research_question || option.title).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (!key || seenTopicOptions.has(key)) continue;
+    seenTopicOptions.add(key);
+    rawTopicOptions.push(option);
+    if (rawTopicOptions.length >= 6) break;
+  }
   const optionSearchTerms = uniqueTerms(
     rawTopicOptions.flatMap((option) => option.search_terms || [])
   ).slice(0, 8);
-  const displaySearchTerms = uniqueTerms(
-    reply.search_terms?.length
-      ? reply.search_terms
-      : selectedSourcePlanRequest
-        ? optionSearchTerms
-        : []
-  );
+  const searchTermCandidates = reply.search_terms?.length
+    ? reply.search_terms
+    : selectedSourcePlanRequest
+      ? optionSearchTerms
+      : substantiveResearchRequest
+        ? [...agentPlan.strategy.betterTerms, ...agentPlan.strategy.narrowerTerms.slice(0, 3)]
+        : [];
+  const displaySearchTerms = searchTermCandidates.length
+    ? buildSearchTermSuggestions(latestAsk, searchTermCandidates, subjectFocusId, 8)
+    : [];
   const databaseStrategy = showTopicSpecificPlan
     ? SOCIAL_MEDIA_DATABASE_STRATEGY
     : reply.database_strategy?.length
@@ -1111,11 +1194,13 @@ export default function AssistantMessage({
     wantsCitationHelp ||
     wantsEvaluationHelp ||
     /evidence|sources?|articles?|books?|journals?|database|databases|catalog|find|get|show|provide|pdf|full[-\s]?text/i.test(latestAsk);
-  const allowSourceSections = responseStyle !== "answer" || wantsSourceHeavyHelp;
+  const allowSourceSections = responseStyle !== "answer" || wantsSourceHeavyHelp || substantiveResearchRequest;
   const showAgenticSearchPlan =
     allowSourceSections &&
+    (topicOptions.length === 0 || substantiveResearchRequest) &&
     !wantsOnlyCitationHelp &&
     (wantsSourceHeavyHelp ||
+      substantiveResearchRequest ||
       responseStyle === "hybrid" ||
       responseStyle === "sources" ||
       responseStyle === "plan") &&
@@ -1137,7 +1222,13 @@ export default function AssistantMessage({
     isFollowup &&
     (showCatalogResults ||
       /find|provide|show|get|source|sources|article|articles|book|books|database|primary|peer|recent|journal/i.test(latestAsk));
-  const moreSourceChecks = (reply.source_evaluation || []).filter(Boolean).slice(0, 3);
+  const providedSourceChecks = (reply.source_evaluation || []).filter(Boolean);
+  const moreSourceChecks = (providedSourceChecks.length
+    ? providedSourceChecks
+    : [
+        activeMode.evaluation,
+        "Open the record and verify that its topic, source type, date, and evidence actually fit your assignment before citing it.",
+      ]).slice(0, 3);
   const providedCitationTips = (reply.citation_tips || []).filter(Boolean);
   const moreCitationTips = (providedCitationTips.length
     ? providedCitationTips
@@ -1288,15 +1379,15 @@ export default function AssistantMessage({
       )}
 
       {allowSourceSections && isFollowup && showCatalogResults && (
-        <LiveResultsSection liveResults={liveResults} followup />
+        <LiveResultsSection liveResults={liveResults} followup onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {showAgenticSearchPlan && (
-        <ResearchAgentSection plan={agentPlan} compact={isFollowup} />
+        <ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {showDatabaseStrategy && (
-        <DatabaseStrategySection strategy={databaseStrategy} topic={topic} />
+        <DatabaseStrategySection strategy={databaseStrategy} topic={topic} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {allowSourceSections && showTopicSpecificPlan && (
@@ -1310,6 +1401,7 @@ export default function AssistantMessage({
                 href={zsrSearchHref(group.terms)}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => onTrackSearch?.({ query: group.terms, tool: "ZSR Articles", url: zsrSearchHref(group.terms) })}
                 role="listitem"
                 aria-label={`Search ZSR for ${group.label}: ${group.terms}`}
               >
@@ -1340,7 +1432,7 @@ export default function AssistantMessage({
       )}
 
       {allowSourceSections && !isFollowup && showCatalogResults && (
-        <LiveResultsSection liveResults={liveResults} />
+        <LiveResultsSection liveResults={liveResults} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {showStandaloneFullTextHelp && <FindFullText />}
@@ -1378,6 +1470,11 @@ export default function AssistantMessage({
                   {Icon.copy}
                   <span className="sr-only">{copied === `generated-${i}` ? "Copied" : "Copy"}</span>
                 </button>
+                <SaveResearchButton
+                  item={{ kind: "search", title: term, detail: "Keyword search suggested by the Navigator" }}
+                  onSaveResearchItem={onSaveResearchItem}
+                  savedResearchItemKeys={savedResearchItemKeys}
+                />
                 {tools.map((tool) => (
                   <a
                     key={tool.id}
@@ -1386,6 +1483,7 @@ export default function AssistantMessage({
                     target="_blank"
                     rel="noopener noreferrer"
                     title={`Run this search in ${tool.name}`}
+                    onClick={() => onTrackSearch?.({ query: term, tool: tool.name, url: tool.search_url_template.replace("{q}", encodeURIComponent(term)) })}
                   >
                     ↗ {shortToolName(tool.name)}
                   </a>
@@ -1394,23 +1492,13 @@ export default function AssistantMessage({
             ))}
           </ul>
           <div className="term-combo-advice" role="note">
-            <strong>Try combinations, not the whole list at once.</strong>
-            <span>Start with one core phrase plus one limiter. If results are thin, swap one synonym or remove one limit before changing databases.</span>
+            <strong>Combine concepts deliberately.</strong>
+            <span>Start with the first two concept groups. Use OR for synonyms within one idea and AND between different ideas. If results are thin, swap one synonym or remove one limiter before changing databases.</span>
+            {displaySearchTerms[0] && <code>{displaySearchTerms[0]}</code>}
           </div>
           {tools.length > 0 && (
             <p className="muted terms-hint">Use the copy icon for a single term, or ↗ to run it as a search.</p>
           )}
-        </section>
-      )}
-
-      {allowSourceSections && !showTopicSpecificPlan && reply.source_evaluation?.length > 0 && (!isFollowup || wantsEvaluationHelp || responseStyle === "sources") && (
-        <section>
-          <SectionHeader icon={Icon.evaluate}>Evaluating your sources</SectionHeader>
-          <ul className="eval">
-            {reply.source_evaluation.map((tip, i) => (
-              <li key={i}>{renderRich(tip)}</li>
-            ))}
-          </ul>
         </section>
       )}
 
@@ -1481,15 +1569,27 @@ export default function AssistantMessage({
 
       {showMoreGuidance && (
         <details className="more-guidance">
-          <summary aria-label="Show citation notes, responsible AI notes, and limitations">
-            <span className="more-guidance-title">Citations, limitations & AI</span>
+          <summary aria-label="Show source evaluation, citation notes, responsible AI notes, and limitations">
+            <span className="more-guidance-title">Evaluation, citations, limitations & AI</span>
             <span className="more-guidance-chips" aria-hidden="true">
+              <span>Evaluate</span>
               <span>Citations</span>
               <span>AI use</span>
               <span>Limits</span>
             </span>
           </summary>
           <div className="more-guidance-body">
+            {moreSourceChecks.length > 0 && (
+              <section className="compact-extra">
+                <SectionHeader icon={Icon.evaluate}>Evaluating these sources</SectionHeader>
+                <ul className="eval">
+                  {moreSourceChecks.map((tip, i) => (
+                    <li key={i}>{renderRich(tip)}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             {moreCitationTips.length > 0 && (
               <section className="compact-extra">
                 <SectionHeader icon={Icon.cite}>Citation notes</SectionHeader>

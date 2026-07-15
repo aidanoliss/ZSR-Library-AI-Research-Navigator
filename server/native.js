@@ -21,6 +21,8 @@ import {
 import { rateLimit } from "./ratelimit.js";
 import { screenMessage, blockedReply } from "./screen.js";
 import { searchPrimo } from "./primo.js";
+import { shouldLookupCatalog } from "./catalogIntent.js";
+import { appendRequestContextForAi, requestContextFromBody } from "./requestContext.js";
 import { buildPrimoRequest } from "./primoApi.js";
 import {
   DEFAULT_MODE_ID,
@@ -29,6 +31,12 @@ import {
   getSearchMode,
 } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
+import {
+  buildCatalogKeywordQuery,
+  buildSearchTermSuggestions,
+  isSubstantiveResearchRequest,
+  isZsrNavigationRequest,
+} from "../config/researchAgent.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -90,7 +98,7 @@ function parseChatRequest(body) {
   const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
   const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
   const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
-  return { history, studentText, last, mode, responseStyle, subjectFocusId };
+  return { history, studentText, last, mode, responseStyle, subjectFocusId, ...requestContextFromBody(body) };
 }
 
 function gate(req) {
@@ -118,20 +126,19 @@ function sourceRequestIntent(text) {
   return /\b(find|show|get|give|provide)\b.{0,48}\b(articles?|books?|sources?|evidence|results?|databases?|catalog|journals?|citations?|keywords?)\b/i.test(value);
 }
 
-function catalogSearchText(history, studentText, modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  const mode = getSearchMode(modeId);
+function catalogSearchText(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
-  const focusTerms = subjectFocus.id === "interdisciplinary" ? "" : subjectFocus.keywords.slice(0, 2).join(" ");
+  const focusId = subjectFocus.selectedId || subjectFocus.id;
   const userTurns = history.filter((m) => m.role === "user");
   const latest = userTurns[userTurns.length - 1]?.content || "";
-  if (userTurns.length <= 1) return `${studentText} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+  if (userTurns.length <= 1) return buildCatalogKeywordQuery(studentText, focusId);
   const substantiveWords = latest
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, " ")
     .split(/\s+/)
-    .filter((w) => w.length > 3 && !/^(find|show|give|provide|article|articles|source|sources|about|with|help|peer|reviewed|scholarly)$/.test(w));
-  if (substantiveWords.length >= 2) return `${latest} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
-  return `${userTurns[0]?.content || ""} ${latest} ${focusTerms} ${mode.termSuffixes.slice(0, 2).join(" ")}`.trim();
+    .filter((w) => w.length > 3 && !/^(find|show|give|provide|article|articles|source|sources|about|with|help|peer|reviewed|scholarly|more|good|list|options|ones|please|results)$/.test(w));
+  if (substantiveWords.length >= 2) return buildCatalogKeywordQuery(latest, focusId);
+  return buildCatalogKeywordQuery(userTurns[0]?.content || studentText, focusId);
 }
 
 function stripSourceHeavyFields(reply) {
@@ -150,6 +157,15 @@ function stripSourceHeavyFields(reply) {
   return direct;
 }
 
+function submittedResearchText(history) {
+  const turns = history
+    .filter((message) => message.role === "user")
+    .map((message) => String(message.content || "").trim())
+    .filter(Boolean);
+  const researchTurns = turns.filter((turn) => !isZsrNavigationRequest(turn));
+  return (researchTurns.length ? researchTurns : turns).slice(-4).join(" ");
+}
+
 function withCatalogFoundIntro(reply, liveResults, latestText) {
   if (!reply || !liveResults?.length) return reply;
   if (!sourceRequestIntent(latestText)) return reply;
@@ -165,10 +181,18 @@ function catalogResultFocusedTurn(history, latestText, liveResults) {
 }
 
 function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID) {
-  if (responseStyle === "answer" && !sourceRequestIntent(latestText)) return stripSourceHeavyFields(reply);
+  const researchText = submittedResearchText(history) || latestText;
+  if (reply?.search_terms?.length) {
+    reply = { ...reply, search_terms: buildSearchTermSuggestions(researchText, reply.search_terms) };
+  } else if (isSubstantiveResearchRequest(researchText) && !topicOptionIntent(latestText)) {
+    reply = { ...reply, search_terms: buildSearchTermSuggestions(researchText, [], DEFAULT_SUBJECT_FOCUS_ID, 6) };
+  }
+  if (responseStyle === "answer" && !sourceRequestIntent(latestText) && !isSubstantiveResearchRequest(researchText)) {
+    return stripSourceHeavyFields(reply);
+  }
   const withIntro = withCatalogFoundIntro(reply, liveResults, latestText);
   if (!catalogResultFocusedTurn(history, latestText, liveResults)) return withIntro;
-  const { starting_points, source_evaluation, academic_integrity_note, limitations, key_journals, database_strategy, suggested_followups, ...focused } = withIntro;
+  const { starting_points, academic_integrity_note, limitations, key_journals, database_strategy, suggested_followups, ...focused } = withIntro;
   return focused;
 }
 
@@ -260,18 +284,18 @@ function fallbackTopicOptions(original) {
   }
   return [
     {
-      title: "Mechanism-focused angle",
-      research_question: `What mechanism explains the relationship between ${topic} and the outcome I care about?`,
-      why: "A mechanism gives the search concrete concepts instead of one broad topic phrase.",
+      title: "Process or cause",
+      research_question: `Which processes, causes, or institutions shaped ${topic}, and what evidence best explains them?`,
+      why: "A process or cause gives the search concrete explanatory concepts instead of one broad topic phrase.",
       source_types: ["Peer-reviewed articles", "Theory/background sources"],
-      search_terms: [`${topic} mechanism`, `${topic} effects`],
+      search_terms: [`${topic} causes`, `${topic} process institutions`],
     },
     {
-      title: "Population-focused angle",
-      research_question: `How does ${topic} affect one specific population or community?`,
-      why: "A population limit makes databases and filters much easier to use.",
-      source_types: ["Scholarly articles", "Data/statistics"],
-      search_terms: [`${topic} adolescents`, `${topic} college students`],
+      title: "Define the scope",
+      research_question: `How did ${topic} vary within one defined place, community, or time period?`,
+      why: "A concrete scope makes database terms, date limits, and subject filters easier to choose.",
+      source_types: ["Scholarly articles", "Books/background sources", "Data or primary sources when relevant"],
+      search_terms: [`${topic} case study`, `${topic} historical context`],
     },
     {
       title: "Comparison angle",
@@ -302,7 +326,7 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
   if (/peer|scholarly|article|journal/.test(latest)) {
     return {
       message: "Here's what I found: open the live catalog leads below first, then use the search terms if you need more results.",
-      search_terms: [`"${original}" AND (${mode.termSuffixes.slice(0, 3).join(" OR ")})`, `${original} AND (${mode.termStrategies.slice(0, 3).join(" OR ")})`],
+      search_terms: buildSearchTermSuggestions(original, [], DEFAULT_SUBJECT_FOCUS_ID, 6),
       suggested_followups,
     };
   }
@@ -339,7 +363,7 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
   }
   return {
     message: `Here is a practical ${mode.shortLabel.toLowerCase()} next step: turn the request into two or three searchable concepts, then test those terms in the right ZSR search tool.`,
-    search_terms: [original, `${original} ${mode.termSuffixes[0] || "research"}`, `${original} ${mode.termSuffixes[1] || "evidence"}`],
+    search_terms: buildSearchTermSuggestions(original, [], DEFAULT_SUBJECT_FOCUS_ID, 6),
     suggested_followups,
   };
 }
@@ -401,11 +425,23 @@ function compactLines(items, render, limit = 6) {
   return (items || []).slice(0, limit).map(render).filter(Boolean).join("\n");
 }
 
-function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
+function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes, researchWorkspace }) {
   const terms = compactLines(searchTerms, (term) => `- ${term}`, 10);
   const results = compactLines(liveResults, (item) => `- ${item.title || "Untitled"}${item.type ? ` (${item.type})` : ""}${item.url ? `\n  ${item.url}` : ""}`, 8);
   const resources = compactLines(matchedResources, (item) => `- ${item.name || item.resource_name || item.id}${item.url ? `\n  ${item.url}` : ""}`, 8);
   const routes = compactLines(librarianRoutes, (item) => `- ${item.label || item.unit || "ZSR support"}${item.unit ? ` (${item.unit})` : ""}${item.reason ? `\n  ${item.reason}` : ""}${item.href ? `\n  ${item.href}` : ""}`, 3);
+  const assignment = researchWorkspace?.assignment || {};
+  const assignmentLines = [
+    assignment.course ? `- Course: ${assignment.course}` : "",
+    assignment.assignmentType ? `- Assignment: ${assignment.assignmentType}` : "",
+    assignment.dueDate ? `- Due date: ${assignment.dueDate}` : "",
+    assignment.sourceCount ? `- Source target: ${assignment.sourceCount}` : "",
+    assignment.sourceTypes ? `- Required source types: ${assignment.sourceTypes}` : "",
+    assignment.dateRange ? `- Date expectations: ${assignment.dateRange}` : "",
+    assignment.constraints ? `- Other constraints: ${assignment.constraints}` : "",
+  ].filter(Boolean).join("\n");
+  const savedTrail = compactLines(researchWorkspace?.trail, (item) => `- ${item.title || "Saved lead"} [${item.status || "promising"}]${item.url ? `\n  ${item.url}` : ""}${item.notes ? `\n  Notes: ${item.notes}` : ""}${item.citation ? `\n  Citation details: ${item.citation}` : ""}`, 12);
+  const triedSearches = compactLines(researchWorkspace?.searchHistory, (item) => `- ${item.query || ""}${item.tool ? ` (${item.tool})` : ""}${item.resultNote ? `\n  Result note: ${item.resultNote}` : ""}`, 12);
   return [
     "Hello ZSR,",
     "",
@@ -417,6 +453,12 @@ function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, cont
     subjectFocus ? `Subject focus: ${subjectFocus}` : "",
     contact ? `Student contact: ${contact}` : "",
     note ? `Student note: ${note}` : "",
+    "",
+    assignmentLines ? `Assignment brief:\n${assignmentLines}` : "",
+    "",
+    triedSearches ? `Searches tried:\n${triedSearches}` : "",
+    "",
+    savedTrail ? `Saved research trail:\n${savedTrail}` : "",
     "",
     routes ? `Recommended ZSR support routes:\n${routes}` : "",
     "",
@@ -436,7 +478,8 @@ async function handleChat(req, res, stream = false) {
   const body = await readJson(req);
   const parsed = parseChatRequest(body);
   if (parsed.error) return sendJson(res, 400, { error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext } = parsed;
+  const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   const screen = screenMessage(last.content);
   if (screen.block) {
@@ -452,11 +495,11 @@ async function handleChat(req, res, stream = false) {
   let primoPromise = Promise.resolve([]);
   try {
     resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
-    const shouldLookupCatalog = responseStyle !== "answer" || sourceRequestIntent(last.content);
-    primoPromise = shouldLookupCatalog ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode) : Promise.resolve([]);
+    const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
+    primoPromise = lookupCatalog ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode) : Promise.resolve([]);
 
     if (!stream) {
-      const rawReply = await generateChatResponse(history, resources, mode, responseStyle, subjectFocusId);
+      const rawReply = await generateChatResponse(aiHistory, resources, mode, responseStyle, subjectFocusId);
       const liveResults = await primoPromise;
       const { reply: validatedReply } = validateReply(rawReply, resources);
       const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle);
@@ -466,7 +509,7 @@ async function handleChat(req, res, stream = false) {
 
     sendNdjsonHead(res);
     const write = (obj) => writeNdjson(res, obj);
-    const rawReply = await streamChatResponse(history, resources, (message) => write({ type: "delta", message }), mode, responseStyle, subjectFocusId);
+    const rawReply = await streamChatResponse(aiHistory, resources, (message) => write({ type: "delta", message }), mode, responseStyle, subjectFocusId);
     const liveResults = await primoPromise;
     const { reply: validatedReply } = validateReply(rawReply, resources);
     const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle);
@@ -541,6 +584,29 @@ async function handleApi(req, res, path) {
       liveResults: Array.isArray(body.liveResults) ? body.liveResults : [],
       matchedResources: Array.isArray(body.matchedResources) ? body.matchedResources : [],
       librarianRoutes: Array.isArray(body.librarianRoutes) ? body.librarianRoutes : [],
+      researchWorkspace: body.researchWorkspace && typeof body.researchWorkspace === "object" ? {
+        assignment: body.researchWorkspace.assignment && typeof body.researchWorkspace.assignment === "object" ? {
+          course: String(body.researchWorkspace.assignment.course || "").slice(0, 160),
+          assignmentType: String(body.researchWorkspace.assignment.assignmentType || "").slice(0, 160),
+          dueDate: String(body.researchWorkspace.assignment.dueDate || "").slice(0, 40),
+          sourceCount: String(body.researchWorkspace.assignment.sourceCount || "").slice(0, 80),
+          sourceTypes: String(body.researchWorkspace.assignment.sourceTypes || "").slice(0, 500),
+          dateRange: String(body.researchWorkspace.assignment.dateRange || "").slice(0, 300),
+          constraints: String(body.researchWorkspace.assignment.constraints || "").slice(0, 1000),
+        } : {},
+        trail: Array.isArray(body.researchWorkspace.trail) ? body.researchWorkspace.trail.slice(0, 12).map((item) => ({
+          title: String(item?.title || "").slice(0, 300),
+          url: String(item?.url || "").slice(0, 1000),
+          status: String(item?.status || "").slice(0, 40),
+          notes: String(item?.notes || "").slice(0, 1000),
+          citation: String(item?.citation || "").slice(0, 1000),
+        })) : [],
+        searchHistory: Array.isArray(body.researchWorkspace.searchHistory) ? body.researchWorkspace.searchHistory.slice(0, 12).map((item) => ({
+          query: String(item?.query || "").slice(0, 500),
+          tool: String(item?.tool || "").slice(0, 160),
+          resultNote: String(item?.resultNote || "").slice(0, 500),
+        })) : [],
+      } : {},
     };
     if (!payload.topic.trim()) return sendJson(res, 400, { error: "A topic is required for librarian handoff." });
     await logHandoff(payload);

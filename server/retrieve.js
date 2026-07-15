@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { DEFAULT_MODE_ID, getSearchMode } from "../config/libraryLinks.js";
+import { DEFAULT_MODE_ID } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "../config/subjectFocus.js";
+import { isZsrNavigationRequest } from "../config/researchAgent.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RESOURCES_PATH = join(__dirname, "resources.json");
@@ -114,26 +115,21 @@ export async function retrieveResources(query, limit = 6, modeId = DEFAULT_MODE_
   const all = await loadResources();
   // Pure search tools (e.g. Google Scholar) are never recommended as starting points.
   const resources = all.filter((r) => !r.search_tool_only);
-  const mode = getSearchMode(modeId);
+  if (isZsrNavigationRequest(query)) {
+    const navigationOrder = ["zsr-homepage", "databases-az", "research-guides", "ask-a-librarian"];
+    return navigationOrder
+      .map((id) => resources.find((resource) => resource.id === id))
+      .filter(Boolean)
+      .slice(0, Math.max(0, limit));
+  }
   const subjectFocus = resolveSubjectFocus(subjectFocusId, query);
-  const modeText = [
-    mode.label,
-    mode.description,
-    mode.termStrategies.join(" "),
-    mode.recommended.map(([name]) => name).join(" "),
-    mode.termSuffixes.join(" "),
-    subjectFocus.label,
-    subjectFocus.description,
-    subjectFocus.prompt,
-    (subjectFocus.keywords || []).join(" "),
-  ].join(" ");
-  const tokens = expandTokens(tokenize(`${query} ${modeText}`));
+  const queryTokens = expandTokens(tokenize(query));
   const focusIds = new Set(subjectFocus.resourceIds || []);
 
   const scored = resources
     .map((r) => ({
       resource: r,
-      score: scoreResource(r, tokens) + (focusIds.has(r.id) ? 18 : 0),
+      score: scoreResource(r, queryTokens) + (focusIds.has(r.id) ? 18 : 0),
     }))
     .sort((a, b) => b.score - a.score);
 
