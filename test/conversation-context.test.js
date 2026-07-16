@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { submittedResearchContext } from "../src/conversationContext.js";
+import { activeResearchConversation, submittedResearchContext } from "../src/conversationContext.js";
 
 test("submitted context ignores unsent draft text by accepting messages only", () => {
   const messages = [
@@ -39,4 +39,27 @@ test("assistant responses receive only context submitted before their position",
     submittedResearchContext(messages, 3),
     "surveillance and public trust focus on local government"
   );
+});
+
+test("a complete new topic replaces stale research context", () => {
+  const economics = "Help me explore the differences between Keynesian and Neoclassical economics for this topic and suggest focused research angles I can search in ZSR.";
+  const messages = [
+    { role: "user", content: "the effect of phones on our eyes" },
+    { role: "assistant", content: "Earlier answer" },
+    { role: "user", content: economics },
+  ];
+
+  assert.equal(submittedResearchContext(messages), economics);
+  assert.deepEqual(activeResearchConversation(messages), [messages[2]]);
+});
+
+test("dependent follow-ups keep the active topic and its recent assistant context", () => {
+  const messages = [
+    { role: "user", content: "surveillance and public trust" },
+    { role: "assistant", content: "Choose a government level" },
+    { role: "user", content: "focus on local government" },
+  ];
+
+  assert.equal(activeResearchConversation(messages).length, 3);
+  assert.equal(submittedResearchContext(messages), "surveillance and public trust focus on local government");
 });

@@ -2164,6 +2164,31 @@ code {
   color: #3a2d18;
 }
 
+.source-relevance {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-left: 4px solid #a97813;
+  background: #fffaf0;
+}
+
+.source-relevance .sec-icon {
+  flex: 0 0 auto;
+  color: #8a5d00;
+}
+
+.source-relevance strong {
+  display: block;
+  margin-bottom: 3px;
+  font: 850 0.84rem/1.2 system-ui, sans-serif;
+}
+
+.source-relevance p {
+  margin: 0;
+  color: #4f4638;
+  font: 650 0.84rem/1.4 system-ui, sans-serif;
+}
+
 .limitations-toggle {
   padding: 0;
   border: 0;

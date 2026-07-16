@@ -118,6 +118,42 @@ export const ZSR_RESOURCE_CONFIG = [
     notes: "Share the assignment, topic, searches already tried, and the type of source you need.",
   },
   {
+    id: "academic-search-premier",
+    name: "Academic Search Premier",
+    description: "General-purpose scholarly database covering the social sciences, humanities, education, health, and related disciplines.",
+    subjectArea: "Multidisciplinary Articles",
+    bestFor: "a specific cross-disciplinary article search when no single specialist database clearly owns the topic",
+    notBestFor: "specialized legal documents, company financials, or comprehensive biomedical indexing",
+    accessUrl: azSearch("Academic Search Premier"),
+    tags: ["scholarly", "articles", "multidisciplinary", "social science", "humanities", "education", "health"],
+    priority: 80,
+    notes: "Use a focused Boolean query, then limit to peer-reviewed journals and the assignment's date range.",
+  },
+  {
+    id: "proquest-research-library",
+    name: "ProQuest Research Library",
+    description: "Multidisciplinary database with journal, magazine, and newspaper coverage across business, health, education, psychology, science, and literature.",
+    subjectArea: "Multidisciplinary Research",
+    bestFor: "cross-disciplinary topics that need both scholarly and contextual coverage in one searchable database",
+    notBestFor: "a peer-reviewed-only search unless the scholarly-journal filter is applied",
+    accessUrl: azSearch("ProQuest Research Library"),
+    tags: ["articles", "multidisciplinary", "business", "health", "education", "psychology", "science", "literature"],
+    priority: 78,
+    notes: "Choose Scholarly Journals before treating results as academic evidence; exclude newspapers and magazines when the assignment requires peer review.",
+  },
+  {
+    id: "econlit",
+    name: "EconLit",
+    description: "The American Economic Association's index for economics journals, books, dissertations, working papers, and review literature.",
+    subjectArea: "Economics",
+    bestFor: "economic theory, macroeconomics, microeconomics, policy analysis, political economy, and economics literature reviews",
+    notBestFor: "company profiles, consumer-market reports, or general news coverage",
+    accessUrl: azSearch("EconLit"),
+    tags: ["economics", "economic theory", "macroeconomics", "microeconomics", "keynesian", "neoclassical", "fiscal policy", "monetary policy", "political economy", "scholarly", "articles"],
+    priority: 94,
+    notes: "Open the specific EconLit entry through ZSR, then use subject terms and publication-type filters to distinguish theory, empirical studies, reviews, and working papers.",
+  },
+  {
     id: "psycinfo",
     name: "PsycINFO",
     description: "Psychology index for peer-reviewed work on behavior, development, mental health, and cognition.",
@@ -346,6 +382,42 @@ export const ZSR_RESOURCE_CONFIG = [
     notes: "Use for scholarly context and citation trails; pair with news databases for recent events.",
   },
   {
+    id: "historical-abstracts",
+    name: "Historical Abstracts",
+    description: "Index of journal articles, books, and dissertations on world history from 1450 onward, excluding the United States and Canada.",
+    subjectArea: "World History",
+    bestFor: "historical scholarship, print culture, material culture, European history, and historiography outside the U.S. and Canada",
+    notBestFor: "U.S. or Canadian history, breaking news, or current social-science data",
+    accessUrl: azSearch("Historical Abstracts"),
+    tags: ["scholarly", "history", "world history", "europe", "print culture", "book history", "material culture", "manuscript", "almanac"],
+    priority: 84,
+    notes: "Use subject headings and chronological/geographic filters; for U.S. and Canadian history, use America: History & Life instead.",
+  },
+  {
+    id: "project-muse",
+    name: "Project MUSE",
+    description: "Full-text scholarly journals and books in the humanities and social sciences.",
+    subjectArea: "Humanities / Social Sciences",
+    bestFor: "literature, history, cultural studies, book history, and interdisciplinary humanities scholarship",
+    notBestFor: "breaking news, market data, or clinical biomedical studies",
+    accessUrl: azSearch("Project MUSE"),
+    tags: ["scholarly", "articles", "books", "humanities", "history", "literature", "culture", "book history", "print culture"],
+    priority: 82,
+    notes: "Search two or three core concepts, then use discipline and content-type filters to separate articles from books.",
+  },
+  {
+    id: "proquest-political-science",
+    name: "ProQuest Political Science Database",
+    description: "Political-science and international-relations database with journals, dissertations, working papers, conference proceedings, country profiles, and political news.",
+    subjectArea: "Political Science / International Relations",
+    bestFor: "political trust, governance, international relations, public policy, and cross-national political research",
+    notBestFor: "case law, statutes, or company market research",
+    accessUrl: azSearch("ProQuest Political Science Database"),
+    tags: ["scholarly", "articles", "politics", "political science", "international relations", "government", "public trust", "policy", "surveillance"],
+    priority: 85,
+    notes: "Limit to scholarly journals for academic evidence and use location, date, and document-type filters when relevant.",
+  },
+  {
     id: "cq-researcher",
     name: "CQ Researcher",
     description: "Issue reports with background, timelines, and policy context, when available through ZSR.",
@@ -410,6 +482,24 @@ const INTENT_RULES = [
 
 const TOPIC_PROFILES = [
   {
+    id: "keynesian-neoclassical-economics",
+    pattern: /\bkeynesian\b.*\bneoclassical\b|\bneoclassical\b.*\bkeynesian\b/i,
+    better: [
+      '"Keynesian economics" AND "neoclassical economics"',
+      '(Keynesian OR "New Keynesian") AND neoclassical AND macroeconomic*',
+      'Keynesian AND neoclassical AND (assumptions OR methodology)',
+    ],
+    broader: ["history of economic thought", "macroeconomic schools", "economic methodology"],
+    narrower: [
+      'Keynesian AND neoclassical AND "fiscal policy"',
+      'Keynesian AND neoclassical AND unemployment',
+      '"New Keynesian" AND neoclassical AND price rigidity',
+      'Keynesian AND neoclassical AND "economic crisis"',
+    ],
+    alternate: ["New Keynesian economics", "general equilibrium", "price rigidity", "aggregate demand", "market clearing"],
+    resourceIds: ["econlit", "jstor", "web-of-science", "proquest-research-library"],
+  },
+  {
     id: "surveillance-public-trust",
     pattern: /\b(?:surveillance|survelliance|monitoring)\b.*\b(?:citizens?|public|trust|government|privacy|legitimacy)\b|\b(?:citizens?|public|trust|government|privacy|legitimacy)\b.*\b(?:surveillance|survelliance|monitoring)\b/i,
     better: [
@@ -420,21 +510,38 @@ const TOPIC_PROFILES = [
     broader: ["government monitoring", "political trust", "privacy and civil liberties"],
     narrower: ["mass surveillance AND institutional trust", "police surveillance AND community trust", "online monitoring AND government legitimacy"],
     alternate: ["state surveillance", "public confidence", "institutional legitimacy", "privacy attitudes"],
-    resourceIds: ["socindex", "cq-researcher", "heinonline", "jstor", "research-guides"],
+    resourceIds: ["socindex", "proquest-political-science", "cq-researcher", "heinonline", "jstor"],
+  },
+  {
+    id: "misinformation-public-trust",
+    pattern: /\b(misinformation|disinformation|false information|fake news)\b.*\b(trust|credibility|confidence)\b|\b(trust|credibility|confidence)\b.*\b(misinformation|disinformation|false information|fake news)\b/i,
+    better: [
+      "misinformation AND \"public trust\"",
+      "(misinformation OR disinformation) AND \"institutional trust\"",
+      "\"false information\" AND \"trust in media\"",
+    ],
+    broader: ["disinformation", "media credibility"],
+    narrower: [
+      "misinformation AND \"trust in government\"",
+      "disinformation AND \"news credibility\"",
+      "\"social media misinformation\" AND \"public confidence\"",
+    ],
+    alternate: ["information disorder", "news credibility", "media trust", "institutional confidence"],
+    resourceIds: ["communication-mass-media", "socindex", "proquest-political-science", "psycinfo"],
   },
   {
     id: "rolex",
     pattern: /\b(rolex|luxury watch|watches)\b/i,
-    better: ["luxury goods consumer behavior", "watch industry market share", "premium brand retail strategy"],
+    better: ["\"luxury watches\" AND \"consumer behavior\"", "\"watch industry\" AND \"market share\"", "Rolex AND \"brand positioning\""],
     broader: ["luxury goods", "consumer behavior", "retail market research", "brand equity"],
     narrower: ["Rolex brand positioning", "Swiss watch market", "luxury resale market", "high-income consumer segments"],
     alternate: ["premium watches", "luxury retail", "brand prestige", "conspicuous consumption"],
-    resourceIds: ["business-guide", "mintel", "business-source", "statista"],
+    resourceIds: ["mintel", "business-source", "statista", "proquest-research-library"],
   },
   {
     id: "autism",
     pattern: /\b(autism|autistic|asd)\b/i,
-    better: ["autism spectrum disorder", "autism AND special education", "autism intervention outcomes"],
+    better: ["\"autism spectrum disorder\" AND intervention", "autism AND \"special education\"", "autism AND \"intervention outcomes\""],
     broader: ["neurodevelopmental disorders", "disability studies", "special education", "developmental psychology"],
     narrower: ["early intervention", "inclusive classrooms", "adolescent autism", "autism diagnosis"],
     alternate: ["ASD", "developmental disabilities", "neurodiversity", "educational accommodations"],
@@ -443,38 +550,38 @@ const TOPIC_PROFILES = [
   {
     id: "cost-living",
     pattern: /\b(cost of living|inflation|consumer prices|cpi)\b/i,
-    better: ["consumer price index", "household expenditure inflation", "cost of living economic indicators"],
+    better: ["\"consumer price index\" AND households", "\"household expenditure\" AND inflation", "\"cost of living\" AND wages"],
     broader: ["inflation", "economic indicators", "household spending", "wage growth"],
     narrower: ["regional CPI", "housing affordability", "food prices", "real wages"],
     alternate: ["consumer prices", "living costs", "personal consumption expenditures", "purchasing power"],
-    resourceIds: ["statista", "business-source", "research-guides", "primo"],
+    resourceIds: ["statista", "business-source", "proquest-research-library", "academic-search-premier"],
   },
   {
     id: "ecology-environment",
     pattern: /\b(ecology|ecological|biodiversity|pollinator|pollination|conservation biology|environmental science)\b/i,
-    better: ["ecology AND biodiversity", "pollinator biodiversity", "urban ecology AND conservation"],
+    better: ["ecology AND biodiversity", "pollinator* AND biodiversity", "\"urban ecology\" AND conservation"],
     broader: ["conservation biology", "environmental science", "ecosystem services"],
     narrower: ["urban pollinator diversity", "native pollinator conservation", "community ecology case study"],
     alternate: ["species diversity", "ecosystem services", "conservation ecology"],
-    resourceIds: ["web-of-science", "science-direct", "research-guides", "primo"],
+    resourceIds: ["web-of-science", "science-direct", "academic-search-premier"],
   },
   {
     id: "social-media-mental-health",
-    pattern: /\b(social media|instagram|tiktok|snapchat)\b/i,
-    better: ["social media AND adolescent mental health", "Instagram OR TikTok AND depression anxiety", "social comparison AND teen well-being"],
+    pattern: /\b(social media|instagram|tiktok|snapchat)\b.*\b(mental health|depression|anxiety|well-being|wellbeing|loneliness|body image|sleep|adolescent|teen|youth)\b|\b(mental health|depression|anxiety|well-being|wellbeing|loneliness|body image|sleep|adolescent|teen|youth)\b.*\b(social media|instagram|tiktok|snapchat)\b/i,
+    better: ["\"social media\" AND adolescent* AND \"mental health\"", "(Instagram OR TikTok) AND (depression OR anxiety)", "\"social comparison\" AND adolescent* AND well-being"],
     broader: ["media effects", "adolescent development", "digital culture", "public health"],
-    narrower: ["cyberbullying", "screen time", "body image", "sleep disruption"],
+    narrower: ["\"social media\" AND cyberbullying AND adolescent*", "\"screen time\" AND adolescent* AND sleep", "\"social media\" AND \"body image\" AND teen*", "\"platform use\" AND \"sleep disruption\""],
     alternate: ["online social networking", "platform use", "digital media", "well-being"],
     resourceIds: ["psycinfo", "communication-mass-media", "pubmed-medline", "socindex"],
   },
   {
     id: "protein-disease",
     pattern: /\b(protein folding|protein misfolding|amyloid|prion|neurodegenerative|alzheimer'?s?|biochemistry|molecular biology|genetic mutations?|genetics|biomedical|disease mechanism|pathogenesis)\b|\bprotein\b.*\b(folding|misfolding|disease|genetic|mutation)\b/i,
-    better: ["protein folding disease", "protein misfolding disease mechanism", "protein folding AND genetics"],
+    better: ["\"protein folding\" AND disease", "\"protein misfolding\" AND pathogenesis", "\"protein folding\" AND (genetics OR mutation*)"],
     broader: ["molecular biology", "biochemistry", "disease mechanisms", "biomedical research"],
-    narrower: ["amyloid beta protein folding", "protein aggregation disease", "familial Alzheimer's disease mutations"],
+    narrower: ["\"amyloid beta\" AND \"protein folding\"", "\"protein aggregation\" AND neurodegenerative disease", "\"familial Alzheimer's disease\" AND mutation*"],
     alternate: ["protein misfolding", "pathogenesis", "molecular mechanisms", "genetic variants"],
-    resourceIds: ["pubmed-medline", "web-of-science", "science-direct", "primo"],
+    resourceIds: ["pubmed-medline", "web-of-science", "science-direct"],
   },
   {
     id: "ai-cognitive-offloading",
@@ -482,26 +589,60 @@ const TOPIC_PROFILES = [
     better: [
       '"cognitive offloading" AND artificial intelligence',
       '"cognitive offloading" AND generative AI',
-      "AI tools AND cognition AND learning",
+      "(ChatGPT OR \"generative AI\") AND cognition AND learning",
     ],
     broader: ["cognitive offloading", "human-computer interaction", "educational technology", "metacognition"],
-    narrower: ["generative AI student learning", "AI writing tools cognitive load", "ChatGPT critical thinking"],
+    narrower: ["\"generative AI\" AND \"student learning\"", "\"AI writing tools\" AND \"cognitive load\"", "ChatGPT AND \"critical thinking\""],
     alternate: ["cognitive load", "metacognition", "human-AI interaction", "distributed cognition"],
     resourceIds: ["psycinfo", "eric", "education-source", "web-of-science"],
   },
   {
+    id: "algorithmic-bias",
+    pattern: /\b(algorithmic bias|ai bias|facial recognition|automated decision)\b|\b(racial|gender|demographic)\b.*\b(algorithm|artificial intelligence|facial recognition)\b/i,
+    better: [
+      '"algorithmic bias" AND discrimination',
+      '"facial recognition" AND racial bias',
+      '("artificial intelligence" OR algorithm*) AND fairness AND discrimination',
+    ],
+    broader: ["technology ethics", "automated decision making", "AI governance"],
+    narrower: [
+      '"facial recognition" AND racial discrimination',
+      '"algorithmic fairness" AND demographic bias',
+      '"automated decision making" AND civil rights',
+    ],
+    alternate: ["algorithmic fairness", "AI ethics", "automated discrimination", "technology bias"],
+    resourceIds: ["socindex", "web-of-science", "proquest-political-science", "psycinfo"],
+  },
+  {
+    id: "sleep-academic-performance",
+    pattern: /\b(sleep deprivation|sleep quality|sleep duration)\b.*\b(student|college|university|academic|learning|performance)\b|\b(student|college|university|academic|learning|performance)\b.*\b(sleep deprivation|sleep quality|sleep duration)\b/i,
+    better: [
+      '"sleep deprivation" AND "academic performance"',
+      '"sleep quality" AND "college students" AND learning',
+      '"sleep duration" AND students AND achievement',
+    ],
+    broader: ["student health", "sleep quality", "learning outcomes"],
+    narrower: [
+      '"sleep deprivation" AND undergraduates AND grades',
+      '"sleep quality" AND college students AND cognition',
+      'sleep AND academic achievement AND longitudinal',
+    ],
+    alternate: ["sleep loss", "sleep duration", "academic achievement", "learning outcomes"],
+    resourceIds: ["psycinfo", "eric", "education-source", "pubmed-medline", "web-of-science"],
+  },
+  {
     id: "ai-education",
     pattern: /\b(ai|artificial intelligence|generative ai|chatgpt)\b.*\b(education|school|teaching|learning)\b|\b(education|school|teaching|learning)\b.*\b(ai|artificial intelligence|generative ai|chatgpt)\b/i,
-    better: ["generative AI in education", "artificial intelligence learning outcomes", "AI academic integrity teaching"],
+    better: ["\"generative AI\" AND education", "\"artificial intelligence\" AND \"learning outcomes\"", "AI AND \"academic integrity\" AND teaching"],
     broader: ["education technology", "digital learning", "instructional technology", "academic integrity"],
-    narrower: ["ChatGPT classroom use", "AI writing tools", "student learning outcomes", "teacher adoption"],
+    narrower: ["ChatGPT AND classroom*", "\"AI writing tools\" AND student*", "\"generative AI\" AND \"student learning outcomes\"", "\"artificial intelligence\" AND \"teacher adoption\""],
     alternate: ["edtech", "large language models", "AI literacy", "automated feedback"],
-    resourceIds: ["eric", "education-source", "research-guides", "primo"],
+    resourceIds: ["eric", "education-source", "academic-search-premier", "proquest-research-library"],
   },
   {
     id: "college-mental-health-stats",
     pattern: /\b(college|university|student)\b.*\b(mental health|depression|anxiety|well-being|wellbeing|statistics|data)\b/i,
-    better: ["college student mental health statistics", "student anxiety depression prevalence", "campus mental health survey"],
+    better: ["\"college students\" AND \"mental health\" AND prevalence", "\"college students\" AND (anxiety OR depression) AND survey", "\"campus mental health\" AND utilization"],
     broader: ["young adult mental health", "higher education health", "public health statistics"],
     narrower: ["undergraduate depression prevalence", "campus counseling utilization", "student anxiety trends"],
     alternate: ["college health survey", "student well-being", "mental health prevalence", "survey data"],
@@ -510,47 +651,98 @@ const TOPIC_PROFILES = [
   {
     id: "ukraine-news",
     pattern: /\b(ukraine|war in ukraine|russia ukraine)\b/i,
-    better: ["Ukraine war news coverage", "Russia Ukraine conflict reporting", "Ukraine invasion newspapers"],
+    better: ["Ukraine AND war AND \"news coverage\"", "Russia AND Ukraine AND \"conflict reporting\"", "Ukraine AND invasion AND newspaper*"],
     broader: ["international news", "foreign policy", "war reporting", "conflict coverage"],
     narrower: ["humanitarian aid Ukraine", "NATO Ukraine", "Ukraine refugees", "energy sanctions"],
     alternate: ["Russia-Ukraine war", "invasion of Ukraine", "Eastern Europe conflict"],
-    resourceIds: ["factiva", "proquest-news", "cq-researcher", "primo"],
+    resourceIds: ["factiva", "proquest-news", "cq-researcher", "proquest-political-science"],
   },
   {
     id: "russia-poland-history",
     pattern: /\b(russia|russian|poland|polish|soviet|eastern europe|central europe|cold war|warsaw pact)\b/i,
-    better: ["Russia Poland relations", "Eastern Europe history", "Soviet Polish relations"],
+    better: ["Russia AND Poland AND relations", "\"Eastern Europe\" AND history", "Soviet AND Polish AND relations"],
     broader: ["European history", "international relations", "borderlands", "nationalism"],
     narrower: ["Cold War Eastern Europe", "Polish Soviet War", "Solidarity movement Poland", "Russia Poland diplomacy"],
     alternate: ["Polish-Russian relations", "Central Europe", "post-Soviet Europe", "Soviet Union"],
-    resourceIds: ["jstor", "primo", "research-guides", "proquest-news", "cq-researcher"],
+    resourceIds: ["historical-abstracts", "jstor", "project-muse", "proquest-political-science"],
+  },
+  {
+    id: "print-culture",
+    pattern: /\b(book history|print culture|printing|typograph|watermark|almanac|private(?:ly)? printed|printed ephemera|material culture)\b/i,
+    better: [
+      "watermark* AND almanac*",
+      "(typograph* OR print*) AND almanac*",
+      "\"book history\" AND watermark*",
+    ],
+    broader: ["\"print culture\" AND almanac*", "\"material culture\" AND print*"],
+    narrower: [
+      "\"paper watermark\" AND almanac*",
+      "\"private press\" AND almanac*",
+      "bibliograph* AND \"printed ephemera\"",
+    ],
+    alternate: ["book history", "print culture", "material bibliography", "history of printing"],
+    resourceIds: ["historical-abstracts", "jstor", "project-muse", "academic-search-premier"],
+  },
+  {
+    id: "icelandic-saga-transmission",
+    pattern: /\b(iceland|icelandic|saga|old norse)\b/i,
+    better: [
+      "\"Icelandic sagas\" AND manuscript* AND transmission",
+      "(saga* OR \"Old Norse\") AND manuscript*",
+      "\"textual transmission\" AND Iceland*",
+    ],
+    broader: ["medieval literature AND manuscript*", "book history AND manuscript*"],
+    narrower: [
+      "\"medieval Iceland\" AND saga* AND manuscript*",
+      "\"Old Norse literature\" AND \"textual transmission\"",
+      "codicology AND Iceland* AND saga*",
+    ],
+    alternate: ["codicology", "textual history", "scribal culture", "manuscript tradition"],
+    resourceIds: ["historical-abstracts", "jstor", "project-muse", "academic-search-premier"],
+  },
+  {
+    id: "manuscript-transmission",
+    pattern: /\b(manuscript|textual transmission|medieval text|codicology|scribal culture)\b/i,
+    better: [
+      "\"medieval manuscripts\" AND \"textual transmission\"",
+      "codicology AND manuscript* AND transmission",
+      "manuscript* AND provenance AND medieval",
+    ],
+    broader: ["medieval literature AND manuscript*", "book history AND manuscript*"],
+    narrower: [
+      "scribal culture AND manuscript*",
+      "manuscript tradition AND codicology",
+      "medieval manuscript* AND provenance",
+    ],
+    alternate: ["codicology", "textual history", "scribal culture", "manuscript tradition"],
+    resourceIds: ["historical-abstracts", "jstor", "project-muse", "academic-search-premier"],
   },
   {
     id: "energy-drinks",
-    pattern: /\b(energy drink|red bull|monster beverage|beverage market)\b/i,
-    better: ["energy drinks market data", "functional beverage consumer trends", "energy drink brand share"],
+    pattern: /\b(energy drinks?|red bull|monster beverage|beverage market)\b/i,
+    better: ["\"energy drinks\" AND \"market share\"", "\"functional beverages\" AND \"consumer trends\"", "\"energy drink\" AND brand AND sales"],
     broader: ["beverage industry", "consumer packaged goods", "functional beverages", "retail sales"],
-    narrower: ["college students energy drinks", "caffeine beverage market", "Red Bull market share"],
+    narrower: ["\"energy drinks\" AND \"college students\"", "\"caffeinated beverages\" AND market", "\"Red Bull\" AND \"market share\""],
     alternate: ["sports drinks", "ready-to-drink beverages", "caffeinated beverages"],
-    resourceIds: ["business-guide", "mintel", "statista", "business-source"],
+    resourceIds: ["mintel", "statista", "business-source", "proquest-research-library"],
   },
   {
     id: "company-financials",
     pattern: /\b(company financials?|financial statements?|annual report|10-k|revenue|balance sheet)\b/i,
-    better: ["company financial statements", "annual report 10-K", "company profile financial ratios"],
+    better: ["\"financial statements\" AND company", "\"annual report\" AND \"10-K\"", "\"financial ratios\" AND \"company profile\""],
     broader: ["corporate finance", "industry analysis", "public company filings"],
     narrower: ["income statement", "balance sheet", "segment revenue", "SEC filings"],
     alternate: ["company accounts", "financial ratios", "public filings"],
-    resourceIds: ["business-guide", "mergent", "business-source", "primo"],
+    resourceIds: ["mergent", "business-source", "proquest-research-library"],
   },
   {
     id: "policy-memo",
     pattern: /\b(policy memo|policy brief|public policy|government sources?)\b/i,
-    better: ["policy brief background evidence", "government report policy analysis", "scholarly policy evaluation"],
+    better: ["\"policy brief\" AND evidence", "\"government report\" AND \"policy analysis\"", "policy AND evaluation AND outcomes"],
     broader: ["public policy", "government documents", "issue reports", "legal context"],
     narrower: ["stakeholder impacts", "implementation evidence", "state policy", "federal regulation"],
     alternate: ["policy analysis", "legislative context", "public affairs", "regulatory impact"],
-    resourceIds: ["cq-researcher", "heinonline", "research-guides", "primo"],
+    resourceIds: ["proquest-political-science", "cq-researcher", "heinonline", "jstor"],
   },
 ];
 
@@ -632,9 +824,53 @@ function keywordSearchBase(query) {
   return uniq([...quoted, ...words]).slice(0, 6).join(" ") || q;
 }
 
+function researchTopicBody(query) {
+  return cleanQuery(query)
+    .replace(/^(?:can|could|would|please|help|find|show|give|provide|tell|i need|i want)\b[\s,:-]*/i, "")
+    .replace(/^(?:me\s+)?(?:explore|compare|contrast|understand|research|analy[sz]e|investigate|examine)\b[\s,:-]*/i, "")
+    .replace(/^(?:the\s+)?(?:differences?|similarities?|comparison|contrast)\s+between\s+/i, "")
+    .replace(/^(?:me\s+)?(?:more\s+)?(?:(?:sources?|articles?|research|results?|leads?)\b[\s,:-]*)+/i, "")
+    .replace(/^(?:focused on|about|regarding)\s+/i, "")
+    .replace(/^(?:the\s+)?relationship\s+between\s+/i, "")
+    .replace(/^(?:the\s+)?(?:effects?|impacts?|influence|role)\s+of\s+/i, "")
+    .replace(/^(?:how|why|whether)\s+(?:does|do|did|can|could|might|may|is|are)\s+/i, "")
+    .replace(/\b(?:affect(?:s|ed|ing)?|influenc(?:e|es|ed|ing)|shape(?:s|d|ing))\b/gi, " and ")
+    .replace(/\s+for\s+(?:this|the)\s+(?:research\s+)?topic\b/gi, " ")
+    .replace(/\s+(?:and\s+)?(?:suggest|provide|give|show|include)\b[^?.!]*$/i, "")
+    .replace(/[?.!]+$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function genericTopicConcepts(query) {
+  const topic = researchTopicBody(query);
+  const segments = topic
+    .split(/\s+\b(?:and|versus|vs\.?|on|among|across|within|between|for|in)\b\s+/i)
+    .map((segment) => keywordSearchBase(segment).split(/\s+/).slice(0, 4).join(" "))
+    .filter((segment) => segment && !/^(?:effect|effects|impact|influence|relationship)$/i.test(segment));
+  const concepts = uniq(segments).slice(0, 4);
+  if (concepts.length >= 2) return concepts;
+
+  const words = keywordSearchBase(topic).split(/\s+/).filter(Boolean);
+  if (words.length >= 4) {
+    const midpoint = Math.ceil(words.length / 2);
+    return [words.slice(0, midpoint).join(" "), words.slice(midpoint).join(" ")].filter(Boolean);
+  }
+  return concepts.length ? concepts : [words.join(" ")].filter(Boolean);
+}
+
 function controlledTopicReduction(term) {
   const words = cleanQuery(term).split(/\s+/).filter(Boolean);
   return words.length > 3 ? words.slice(0, Math.max(2, words.length - 2)).join(" ") : cleanQuery(term);
+}
+
+function genericBooleanQuery(query) {
+  const concepts = genericTopicConcepts(query);
+  if (concepts.length >= 2) {
+    return concepts.map(booleanConcept).join(" AND ");
+  }
+  const words = keywordSearchBase(researchTopicBody(query)).split(/\s+/).filter(Boolean);
+  return uniq(words).slice(0, 6).map(booleanConcept).join(" AND ");
 }
 
 function articleTitleLike(query) {
@@ -649,6 +885,17 @@ function articleTitleLike(query) {
 function activeProfiles(query) {
   const q = cleanQuery(query);
   return TOPIC_PROFILES.filter((profile) => profile.pattern.test(q));
+}
+
+function queryContainsTerm(query, term) {
+  const value = String(query || "").toLowerCase();
+  const normalizedTerm = String(term || "").toLowerCase().trim();
+  if (!value || !normalizedTerm) return false;
+  const pattern = normalizedTerm
+    .split(/\s+/)
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("\\s+");
+  return new RegExp(`(?:^|[^a-z0-9])${pattern}(?:$|[^a-z0-9])`, "i").test(value);
 }
 
 export function isZsrNavigationRequest(query) {
@@ -690,10 +937,13 @@ export function classifyResearchIntent(query) {
 function resourceScore(resource, intents, profiles, query, subjectFocus) {
   const q = query.toLowerCase();
   let score = resource.priority || 0;
-  const ids = new Set(profiles.flatMap((profile) => profile.resourceIds || []));
+  const profileOrder = uniq(profiles.flatMap((profile) => profile.resourceIds || []));
+  const profileIndex = profileOrder.indexOf(resource.id);
   const focusIds = new Set(subjectFocus?.resourceIds || []);
-  if (ids.has(resource.id)) score += 90;
-  if (focusIds.has(resource.id)) score += 50;
+  if (profileIndex >= 0) score += 110 - Math.min(40, profileIndex * 8);
+  if (!profiles.length && focusIds.has(resource.id)) {
+    score += subjectFocus?.id === "interdisciplinary" ? 18 : 50;
+  }
   const intentIds = new Set(intents.map((intent) => intent.id));
   const resourceText = [
     resource.name,
@@ -706,9 +956,13 @@ function resourceScore(resource, intents, profiles, query, subjectFocus) {
     const term = String(keyword || "").toLowerCase();
     if (term && resourceText.includes(term)) score += 8;
   }
-  for (const tag of resource.tags || []) {
-    if (q.includes(tag)) score += 10;
-  }
+  const directTags = (resource.tags || []).filter((tag) => {
+    const term = String(tag || "").toLowerCase();
+    return term.length >= 3 &&
+      !/^(scholarly|articles|general|background|books|guides)$/.test(term) &&
+      queryContainsTerm(q, term);
+  });
+  if (directTags.length) score += 55 + Math.min(20, (directTags.length - 1) * 10);
   if (intentIds.has("market") && /business|market|company|consumer/.test(resource.tags.join(" "))) score += 35;
   if (intentIds.has("statistics") && /statistics|data|datasets/.test(resource.tags.join(" "))) score += 35;
   if (intentIds.has("news") && /news|current events/.test(resource.tags.join(" "))) score += 35;
@@ -724,12 +978,12 @@ function resourceIntentMatch(resource, intents) {
   const intentIds = new Set(intents.map((intent) => intent.id));
   const idsByIntent = {
     navigation: ["databases-az", "primo", "research-guides", "ask-a-librarian"],
-    market: ["business-guide", "mintel", "business-source", "mergent", "statista"],
-    statistics: ["icpsr", "statista", "research-guides"],
-    news: ["factiva", "proquest-news", "cq-researcher"],
-    legal: ["cq-researcher", "heinonline", "research-guides", "primo"],
-    books: ["primo", "research-guides", "jstor"],
-    fulltext: ["pubmed-medline", "primo", "research-guides"],
+    market: ["mintel", "business-source", "mergent", "statista", "proquest-research-library"],
+    statistics: ["icpsr", "statista", "academic-search-premier"],
+    news: ["factiva", "proquest-news", "cq-researcher", "proquest-political-science"],
+    legal: ["proquest-political-science", "cq-researcher", "heinonline", "jstor"],
+    books: ["primo", "project-muse", "jstor"],
+    fulltext: ["pubmed-medline", "primo"],
     citation: ["research-guides"],
   };
   return (
@@ -740,28 +994,47 @@ function resourceIntentMatch(resource, intents) {
 }
 
 function resourceQueryMatch(resource, query) {
-  const q = String(query || "").toLowerCase();
   return (resource.tags || []).some((tag) => {
     const term = String(tag || "").toLowerCase();
-    return term.length >= 4 && !/^(scholarly|articles|general|background|books|guides)$/.test(term) && q.includes(term);
+    return term.length >= 4 &&
+      !/^(scholarly|articles|general|background|books|guides)$/.test(term) &&
+      queryContainsTerm(query, term);
   });
 }
 
-const GENERAL_STARTING_POINT_IDS = ["databases-az", "primo", "research-guides", "ask-a-librarian"];
+const GENERIC_NAVIGATION_RESOURCE_IDS = new Set([
+  "databases-az",
+  "ask-a-librarian",
+  "research-guides",
+  "business-guide",
+]);
 
-function generalStartingPointNextStep(resource) {
-  if (resource.id === "databases-az") return "Filter A-Z Databases by subject or source type, then search focused topic keywords inside the selected database.";
-  if (resource.id === "primo") return "Search ZSR Library Search with two or three core concepts, then inspect subjects on the strongest record.";
-  if (resource.id === "research-guides") return "Open the closest subject guide to find librarian-curated databases, collections, and search advice.";
-  return "Share the topic, assignment requirements, and searches already tried with a ZSR librarian.";
-}
+const OTHER_DATABASE_IDS_BY_FOCUS = {
+  "biology-health": ["web-of-science", "science-direct", "academic-search-premier", "proquest-research-library"],
+  "science-engineering": ["web-of-science", "science-direct", "academic-search-premier", "proquest-research-library"],
+  psychology: ["socindex", "academic-search-premier", "proquest-research-library"],
+  "communication-media": ["socindex", "academic-search-premier", "proquest-research-library"],
+  business: ["business-source", "statista", "proquest-research-library", "academic-search-premier"],
+  "history-humanities": ["historical-abstracts", "project-muse", "jstor", "academic-search-premier"],
+  education: ["education-source", "academic-search-premier", "proquest-research-library"],
+  "policy-law": ["proquest-political-science", "jstor", "academic-search-premier"],
+  "data-statistics": ["icpsr", "statista", "academic-search-premier", "proquest-research-library"],
+  interdisciplinary: ["academic-search-premier", "proquest-research-library", "jstor"],
+};
 
-export function buildGeneralStartingPoints(recommendations = [], limit = 3) {
+export function buildGeneralStartingPoints(
+  recommendations = [],
+  limit = 3,
+  subjectFocusId = "interdisciplinary",
+  query = ""
+) {
   const safeLimit = Math.max(0, Math.floor(Number(limit) || 0));
   if (!safeLimit) return [];
   const recommendedIds = new Set((recommendations || []).map((resource) => resource?.id).filter(Boolean));
+  const focus = resolveSubjectFocus(subjectFocusId, query);
+  const ids = OTHER_DATABASE_IDS_BY_FOCUS[focus.id] || OTHER_DATABASE_IDS_BY_FOCUS.interdisciplinary;
 
-  return GENERAL_STARTING_POINT_IDS
+  return ids
     .filter((id) => !recommendedIds.has(id))
     .map((id) => ZSR_RESOURCE_CONFIG.find((resource) => resource.id === id))
     .filter(Boolean)
@@ -769,10 +1042,11 @@ export function buildGeneralStartingPoints(recommendations = [], limit = 3) {
       ...resource,
       generalStartingPoint: true,
       searchTerms: [],
+      filters: [],
       expect: expectForResource(resource),
       caution: resource.notes,
-      whyFits: "This is a general ZSR discovery route offered when topic-specific paths or live catalog records are limited; it is not an additional topic match.",
-      nextStep: generalStartingPointNextStep(resource),
+      whyFits: `This is a named secondary database for the ${focus.shortLabel || focus.label} subject focus. It is shown separately because it was not strong enough for the primary shortlist.`,
+      nextStep: `Open the exact A-Z entry for ${resource.name}, run the assigned query, and apply the suggested filters.`,
     }))
     .slice(0, safeLimit);
 }
@@ -798,7 +1072,8 @@ export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SU
       intentMatch: resourceIntentMatch(resource, intents),
       queryMatch: resourceQueryMatch(resource, q),
       whyFits: whyResourceFits(resource, intents, profiles, rankingFocus),
-      searchTerms: termsForResource(resource, q, profiles, rankingFocus),
+      searchTerms: [],
+      filters: [],
       expect: expectForResource(resource),
       caution: resource.notes,
       nextStep: nextStepForResource(resource, q),
@@ -813,21 +1088,39 @@ export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SU
       .slice(0, safeLimit);
   }
 
-  const useful = ranked.filter((resource) =>
+  if (/\b(citat|cite|apa|mla|chicago|bibliograph|zotero)\b/i.test(q) &&
+      !/\b(research|study|sources?|articles?|books?|topic)\b/i.test(q)) {
+    return ranked.filter((resource) => resource.id === "research-guides").slice(0, safeLimit);
+  }
+
+  const intentIds = new Set(intents.map((intent) => intent.id));
+  const topicEligible = ranked.filter((resource) => {
+    if (GENERIC_NAVIGATION_RESOURCE_IDS.has(resource.id)) return false;
+    if (resource.id === "primo") {
+      return intentIds.has("books") || intentIds.has("known-item") || intentIds.has("fulltext");
+    }
+    return true;
+  });
+
+  const profileResources = topicEligible.filter((resource) => resource.profileMatch);
+  const uncoveredIntents = profiles.length
+    ? intents.filter((intent) => !profileResources.some((resource) => resourceIntentMatch(resource, [intent])))
+    : [];
+  const useful = topicEligible.filter((resource) =>
     profiles.length
-      ? resource.profileMatch || resource.intentMatch
+      ? resource.profileMatch || resourceIntentMatch(resource, uncoveredIntents)
       : resource.focusMatch || resource.intentMatch || resource.queryMatch
   );
 
   if (useful.length) return useful.slice(0, safeLimit);
 
-  const intentIds = new Set(intents.map((intent) => intent.id));
-  const fallbackIds = intentIds.has("citation")
-    ? ["research-guides", "primo"]
-    : intentIds.has("books") || intentIds.has("general")
-      ? ["research-guides", "primo"]
-      : ["research-guides"];
-  return ranked.filter((resource) => fallbackIds.includes(resource.id)).slice(0, safeLimit);
+  const fallbackIds = uniq([
+    ...(rankingFocus.resourceIds || []),
+    "academic-search-premier",
+    "proquest-research-library",
+    "jstor",
+  ]);
+  return topicEligible.filter((resource) => fallbackIds.includes(resource.id)).slice(0, Math.min(safeLimit, 3));
 }
 
 function whyResourceFits(resource, intents, profiles, subjectFocus) {
@@ -838,21 +1131,6 @@ function whyResourceFits(resource, intents, profiles, subjectFocus) {
   }
   const intentLabel = intents[0]?.label || "this research need";
   return `This fits the ${intentLabel} path and is grounded in the local ZSR resource config.`;
-}
-
-function termsForResource(resource, query, profiles, subjectFocus) {
-  if (isZsrNavigationRequest(query)) return [];
-  const profileTerms = profiles.flatMap((profile) => [...profile.better.slice(0, 2), ...profile.alternate.slice(0, 1)]);
-  const base = keywordSearchBase(query);
-  const focusTerms = profiles.length ? [] : (subjectFocus?.keywords || [])
-    .filter((term) => !/^doi|pmid$/i.test(term))
-    .slice(0, 2)
-    .map((term) => `${base} ${term}`);
-  const tagHint = (resource.tags || [])
-    .filter((tag) => !/^(scholarly|articles|general|background|full text|books|guides)$/i.test(tag))
-    .find((tag) => !base.toLowerCase().includes(String(tag).toLowerCase()));
-  const fallback = [base, tagHint ? `${base} ${tagHint}` : ""];
-  return uniq([...profileTerms, ...focusTerms, ...fallback]).slice(0, 4);
 }
 
 function expectForResource(resource) {
@@ -866,7 +1144,7 @@ function expectForResource(resource) {
 
 function nextStepForResource(resource, query) {
   if (resource.id === "primo") return "Search ZSR Library Search, then open records to confirm format, availability, and related subjects.";
-  if (resource.accessUrl?.includes("az.php")) return `Open the A-Z result for ${resource.name}, then search one of the terms below inside that database.`;
+  if (resource.accessUrl?.includes("az.php")) return `Open the exact A-Z result for ${resource.name}, then run the assigned query inside that database.`;
   return `Open ${resource.name} and test one focused search before broadening.`;
 }
 
@@ -890,20 +1168,14 @@ export function buildSearchStrategy(query, subjectFocusId = DEFAULT_SUBJECT_FOCU
   const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const profiles = activeProfiles(q);
   const keywordBase = keywordSearchBase(q);
-  const genericFocusHints = (subjectFocus.keywords || [])
-    .filter((term) => !/^(general|interdisciplinary|overview|background)$/i.test(term))
-    .filter((term) => !keywordBase.toLowerCase().includes(String(term).toLowerCase()))
-    .slice(0, 2);
   const profileTerms = profiles.length
     ? profiles
     : [{
-        better: [keywordBase],
-        broader: [controlledTopicReduction(keywordBase)],
-        narrower: genericFocusHints.length
-          ? genericFocusHints.map((term) => `${keywordBase} ${term}`)
-          : [`${keywordBase} case study`, `${keywordBase} literature review`],
+        better: [genericBooleanQuery(q) || keywordBase],
+        broader: [],
+        narrower: [],
         alternate: [],
-        resourceIds: ["research-guides", "primo"],
+        resourceIds: ["academic-search-premier", "proquest-research-library", "jstor"],
       }];
   const betterTerms = uniq(profileTerms.flatMap((profile) => profile.better)).slice(0, 5);
   const focusTerms = subjectFocus.id === "interdisciplinary" ? [] : (subjectFocus.keywords || []).slice(0, 3);
@@ -955,6 +1227,68 @@ function comparableTerm(term) {
     .trim();
 }
 
+export function normalizeSearchOptionKey(term) {
+  const normalized = String(term || "")
+    .toLowerCase()
+    .replace(/[“”"'`()\[\]{}]/g, " ")
+    .replace(/\b(?:and|or|not)\b/g, (operator) => ` ${operator} `)
+    .replace(/[^a-z0-9*\-\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!normalized) return "";
+
+  return normalized
+    .split(/\s+and\s+/)
+    .map((andPart) =>
+      andPart
+        .split(/\s+or\s+/)
+        .map((part) => part.replace(/\s+/g, " ").trim())
+        .filter(Boolean)
+        .sort()
+        .join(" or ")
+    )
+    .filter(Boolean)
+    .sort()
+    .join(" and ");
+}
+
+function uniqueSearchOptions(items, excludedKeys = new Set()) {
+  const seen = new Set(excludedKeys);
+  const seenOptions = [...excludedKeys]
+    .map((key) => {
+      const normalized = normalizeSearchOptionKey(key);
+      return {
+        key: normalized,
+        tokens: new Set(
+          normalized
+            .split(/\s+/)
+            .filter((token) => token && !/^(?:and|or|not)$/.test(token))
+        ),
+      };
+    })
+    .filter(({ tokens }) => tokens.size > 0);
+  const result = [];
+  for (const item of items || []) {
+    const value = normalizeSearchCandidate(item);
+    const key = normalizeSearchOptionKey(value);
+    const tokens = new Set(
+      key.split(/\s+/).filter((token) => token && !/^(?:and|or|not)$/.test(token))
+    );
+    const nearDuplicate = seenOptions.some((existing) => {
+      const smaller = existing.tokens.size <= tokens.size ? existing.tokens : tokens;
+      const larger = existing.tokens.size <= tokens.size ? tokens : existing.tokens;
+      if (!smaller.size) return false;
+      const isSubset = [...smaller].every((token) => larger.has(token));
+      return isSubset && (existing.key.includes(" or ") || key.includes(" or "));
+    });
+    if (!value || !key || seen.has(key) || nearDuplicate) continue;
+    seen.add(key);
+    seenOptions.push({ key, tokens });
+    result.push(value);
+  }
+  return result;
+}
+
 function booleanConcept(term) {
   const value = cleanQuery(term);
   if (!value) return "";
@@ -982,6 +1316,29 @@ function controlledBroaden(strategy, hasProfile) {
   return `${booleanConcept(broad)} AND ${booleanConcept(anchor)}`;
 }
 
+function anchoredSynonymSearch(strategy, suppliedAlternates = null) {
+  const base = strategy.betterTerms[0] || "";
+  const alternates = uniqueSearchOptions(suppliedAlternates || strategy.alternateTerms).slice(0, 2);
+  const baseParts = booleanParts(base);
+  if (!baseParts.length || !alternates.length) return "";
+
+  const alternateWords = new Set(
+    normalizeSearchOptionKey(alternates.join(" "))
+      .split(/\s+/)
+      .filter((word) => word.length > 3)
+  );
+  const anchor = [...baseParts]
+    .map((part) => ({
+      part,
+      overlap: normalizeSearchOptionKey(part)
+        .split(/\s+/)
+        .filter((word) => alternateWords.has(word)).length,
+    }))
+    .sort((a, b) => a.overlap - b.overlap || b.part.length - a.part.length)[0]?.part;
+  if (!anchor) return "";
+  return `${booleanConcept(anchor)} AND (${alternates.map(booleanConcept).join(" OR ")})`;
+}
+
 function queryLimiters(query, base) {
   const value = cleanQuery(query);
   const baseComparable = comparableTerm(base);
@@ -1005,6 +1362,90 @@ function queryLimiters(query, base) {
   ).slice(0, 2);
 }
 
+const FOCUS_QUERY_QUALIFIERS = {
+  "biology-health": ["systematic review", "disease mechanism", "health outcomes", "population study", "longitudinal study", "case study"],
+  "science-engineering": ["experimental study", "performance", "application", "systematic review", "comparative study", "case study"],
+  psychology: ["empirical study", "behavior", "cognition", "longitudinal study", "qualitative study", "systematic review"],
+  "communication-media": ["media effects", "audience", "content analysis", "discourse analysis", "comparative study", "case study"],
+  economics: ["economic theory", "empirical evidence", "policy analysis", "comparative analysis", "economic history", "literature review"],
+  business: ["consumer behavior", "market trends", "industry analysis", "case study", "comparative study", "forecast"],
+  "history-humanities": ["historical context", "primary sources", "cultural analysis", "historiography", "comparative study", "case study"],
+  education: ["students", "learning outcomes", "higher education", "empirical study", "longitudinal study", "systematic review"],
+  "policy-law": ["policy analysis", "regulation", "stakeholders", "implementation", "comparative policy", "case study"],
+  "data-statistics": ["dataset", "prevalence", "trend", "survey", "longitudinal study", "comparative study"],
+  interdisciplinary: ["systematic review", "empirical study", "comparative study", "case study", "longitudinal study", "qualitative study"],
+};
+
+const RESOURCE_QUERY_QUALIFIERS = {
+  "academic-search-premier": ["empirical study", "systematic review"],
+  "proquest-research-library": ["literature review", "case study"],
+  econlit: ["economic theory", "empirical evidence"],
+  psycinfo: ["cognition", "behavior"],
+  "communication-mass-media": ["media effects", "audience"],
+  "pubmed-medline": ["systematic review", "health outcomes"],
+  "web-of-science": ["systematic review", "comparative study"],
+  "science-direct": ["experimental study", "mechanism"],
+  socindex: ["social context", "inequality"],
+  eric: ["students", "learning outcomes"],
+  "education-source": ["higher education", "pedagogy"],
+  mintel: ["consumer trends", "market forecast"],
+  "business-source": ["industry analysis", "consumer behavior"],
+  mergent: ["company profile", "financial performance"],
+  statista: ["statistics", "trend"],
+  icpsr: ["dataset", "survey"],
+  factiva: ["news coverage", "current events"],
+  "proquest-news": ["newspaper coverage", "news reporting"],
+  jstor: ["historical context", "theory"],
+  "historical-abstracts": ["historiography", "historical context"],
+  "project-muse": ["cultural analysis", "humanities"],
+  "proquest-political-science": ["policy analysis", "governance"],
+  "cq-researcher": ["policy debate", "current issues"],
+  heinonline: ["legal analysis", "regulation"],
+  primo: ["books", "background"],
+};
+
+function appendSearchQualifier(base, qualifier) {
+  const baseKey = normalizeSearchOptionKey(base);
+  const qualifierKey = normalizeSearchOptionKey(qualifier);
+  if (!baseKey || !qualifierKey) return "";
+  const baseTokens = new Set(baseKey.split(/\s+/));
+  const qualifierTokens = qualifierKey.split(/\s+/).filter((token) => !/^(?:and|or|not)$/.test(token));
+  if (qualifierTokens.length && qualifierTokens.every((token) => baseTokens.has(token))) return "";
+  return `${base} AND ${booleanConcept(qualifier)}`;
+}
+
+function genericSearchVariants(query, subjectFocusId) {
+  const base = genericBooleanQuery(query);
+  if (!base) return [];
+  const focus = resolveSubjectFocus(subjectFocusId, query);
+  const qualifiers = uniq([
+    ...(FOCUS_QUERY_QUALIFIERS[focus.id] || []),
+    ...FOCUS_QUERY_QUALIFIERS.interdisciplinary,
+  ]);
+  const concepts = genericTopicConcepts(query);
+  const boundedConceptPairs = concepts.length >= 3
+    ? [
+        concepts.slice(0, 2).map(booleanConcept).join(" AND "),
+        [concepts[0], concepts[concepts.length - 1]].map(booleanConcept).join(" AND "),
+      ]
+    : [];
+  return uniqueSearchOptions([
+    base,
+    ...qualifiers.map((qualifier) => appendSearchQualifier(base, qualifier)),
+    ...boundedConceptPairs,
+  ]);
+}
+
+function resourceSpecificSearches(resource, query, subjectFocusId) {
+  if (activeProfiles(query).length) return [];
+  const base = genericBooleanQuery(query);
+  const focus = resolveSubjectFocus(subjectFocusId, query);
+  const qualifiers = RESOURCE_QUERY_QUALIFIERS[resource.id] ||
+    FOCUS_QUERY_QUALIFIERS[focus.id] ||
+    FOCUS_QUERY_QUALIFIERS.interdisciplinary;
+  return uniqueSearchOptions(qualifiers.map((qualifier) => appendSearchQualifier(base, qualifier)));
+}
+
 export function buildSearchTermSuggestions(
   query,
   candidates = [],
@@ -1015,30 +1456,146 @@ export function buildSearchTermSuggestions(
   if (!q || isZsrNavigationRequest(q)) return [];
   const strategy = buildSearchStrategy(q, subjectFocusId);
   const hasProfile = activeProfiles(q).length > 0;
-  const alternates = strategy.alternateTerms.slice(0, 2);
-  const synonymSwap = hasProfile && alternates.length > 1
-    ? alternates.map(booleanConcept).join(" OR ")
-    : hasProfile ? alternates[0] || "" : "";
+  const genericVariants = !hasProfile && !strategy.isKnownItem
+    ? genericSearchVariants(q, subjectFocusId)
+    : [];
+  const focus = resolveSubjectFocus(subjectFocusId, q);
+  const profileVariants = hasProfile && !strategy.isKnownItem
+    ? uniq([
+        ...(FOCUS_QUERY_QUALIFIERS[focus.id] || []),
+        ...FOCUS_QUERY_QUALIFIERS.interdisciplinary,
+      ]).map((qualifier) => appendSearchQualifier(strategy.betterTerms[0], qualifier))
+    : [];
+  const synonymSwap = hasProfile ? anchoredSynonymSearch(strategy) : "";
   const base = strategy.betterTerms[0] || keywordSearchBase(q);
   const limiterSearches = queryLimiters(q, base).map(
     (limiter) => `${base} AND ${booleanConcept(limiter)}`
   );
-  return uniq([
+  const anchoredAlternates = strategy.alternateTerms
+    .slice(0, 4)
+    .map((alternate) => anchoredSynonymSearch(strategy, [alternate]));
+  return uniqueSearchOptions([
     ...strategy.betterTerms,
+    ...genericVariants,
     ...limiterSearches,
-    ...candidates,
-    ...strategy.narrowerTerms.slice(0, 2),
+    ...strategy.narrowerTerms,
     synonymSwap,
-  ].map(normalizeSearchCandidate))
+    ...anchoredAlternates,
+    hasProfile ? controlledBroaden(strategy, true) : "",
+    ...profileVariants,
+    ...candidates,
+  ])
     .filter((term) => term.split(/\s+/).length >= 2 || /\b(?:doi|pmid)\b/i.test(term))
     .slice(0, limit);
+}
+
+const RESOURCE_FILTERS = {
+  "academic-search-premier": ["Peer reviewed", "Subject terms", "Publication date"],
+  "proquest-research-library": ["Scholarly journals", "Subject", "Publication date"],
+  econlit: ["Subject descriptors", "Publication type", "Classification code", "Publication date"],
+  psycinfo: ["APA Thesaurus subject", "Population or age group", "Methodology", "Peer reviewed"],
+  "communication-mass-media": ["Communication subject", "Peer reviewed", "Publication date"],
+  "pubmed-medline": ["MeSH terms", "Article type", "Age", "Publication date"],
+  "web-of-science": ["Research area", "Document type", "Publication year", "Cited by"],
+  "science-direct": ["Review or research article", "Subject area", "Publication year"],
+  socindex: ["Subject terms", "Peer reviewed", "Population", "Publication date"],
+  eric: ["ERIC descriptors", "Education level", "Publication type", "Peer reviewed"],
+  "education-source": ["Subject terms", "Education level", "Peer reviewed", "Publication date"],
+  mintel: ["Market sector", "Geography", "Report date"],
+  "business-source": ["Industry", "Geography", "Source type", "Publication date"],
+  mergent: ["Company", "Industry code", "Financial period"],
+  statista: ["Geography", "Industry", "Date", "Original source"],
+  icpsr: ["Geography", "Time period", "Unit of analysis", "Study type"],
+  factiva: ["Source", "Region", "Date", "Content type"],
+  "proquest-news": ["Publication", "Location", "Date", "Document type"],
+  jstor: ["Discipline", "Content type", "Publication date", "Language"],
+  "historical-abstracts": ["Subject heading", "Geography", "Historical period", "Document type"],
+  "project-muse": ["Research area", "Journal article or book", "Publication date"],
+  "proquest-political-science": ["Scholarly journals", "Location", "Document type", "Publication date"],
+  "cq-researcher": ["Issue date", "Topic", "Pro/con or chronology section"],
+  heinonline: ["Collection", "Jurisdiction", "Date", "Document type"],
+  primo: ["Resource type", "Subject", "Publication date", "Availability"],
+};
+
+const RESOURCE_QUERY_HINTS = {
+  econlit: /econom|keynes|neoclass|macroeconom|microeconom|fiscal|monetary|political economy/i,
+  psycinfo: /cognit|psycholog|mental|behavio|attitude|well-being|depress|anxiety|trust/i,
+  "communication-mass-media": /media|platform|communication|digital|news|audience/i,
+  "pubmed-medline": /health|disease|clinical|pathogenesis|protein|prevalence|mortality|genetic/i,
+  "web-of-science": /science|citation|protein|ecolog|cognit|biodiversity/i,
+  "science-direct": /protein|molecular|biochem|disease|ecolog|biodiversity/i,
+  socindex: /social|trust|institution|community|inequal|adolescent|public/i,
+  eric: /student|education|learning|classroom|teacher|school/i,
+  "education-source": /student|education|learning|classroom|teacher|school|policy/i,
+  mintel: /consumer|market|brand|retail|sales|trend/i,
+  "business-source": /industry|company|consumer|market|brand|financial/i,
+  mergent: /company|financial|revenue|ratio|annual report|10-k/i,
+  statista: /statistic|market|rate|trend|prevalence|share/i,
+  icpsr: /survey|dataset|prevalence|population|student|social/i,
+  factiva: /news|coverage|reporting|war|company/i,
+  "proquest-news": /news|newspaper|coverage|reporting|invasion/i,
+  jstor: /history|culture|humanities|politic|social|print|book/i,
+  "historical-abstracts": /history|historical|print|book|almanac|watermark|soviet/i,
+  "project-muse": /culture|humanities|history|literature|print|book/i,
+  "proquest-political-science": /policy|politic|government|trust|surveillance|international/i,
+  "cq-researcher": /policy|issue|government|current|regulation/i,
+  heinonline: /law|legal|government|policy|regulation|surveillance/i,
+};
+
+function filtersForResource(resource) {
+  return RESOURCE_FILTERS[resource.id] || ["Subject", "Source type", "Publication date"];
+}
+
+function resourceQueryScore(resource, term, position) {
+  let score = Math.max(0, 30 - position);
+  const hint = RESOURCE_QUERY_HINTS[resource.id];
+  if (hint?.test(term)) score += 35;
+  const value = normalizeSearchOptionKey(term);
+  for (const tag of resource.tags || []) {
+    const tagKey = normalizeSearchOptionKey(tag);
+    if (tagKey.length >= 4 && value.includes(tagKey)) score += 8;
+  }
+  return score;
+}
+
+function assignResourceSearchInstructions(
+  resources,
+  query,
+  subjectFocusId,
+  usedKeys = new Set()
+) {
+  if (isZsrNavigationRequest(query)) return resources;
+  const candidates = buildSearchTermSuggestions(query, [], subjectFocusId, 20);
+  const used = new Set(usedKeys);
+
+  return resources.map((resource) => {
+    const preferred = uniqueSearchOptions(
+      resourceSpecificSearches(resource, query, subjectFocusId),
+      used
+    );
+    const source = preferred.length ? preferred : uniqueSearchOptions(candidates, used);
+    const available = source
+      .map((term, position) => ({ term, position, score: resourceQueryScore(resource, term, position) }))
+      .sort((a, b) => b.score - a.score || a.position - b.position);
+    const selected = available[0]?.term || "";
+    if (selected) used.add(normalizeSearchOptionKey(selected));
+    return {
+      ...resource,
+      searchTerms: selected ? [selected] : [],
+      filters: filtersForResource(resource),
+    };
+  });
 }
 
 export function buildCatalogKeywordQuery(query, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   return buildSearchTermSuggestions(query, [], subjectFocusId, 1)[0] || keywordSearchBase(query);
 }
 
-export function buildFallbackSearches(query, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+export function buildFallbackSearches(
+  query,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  { excludedTerms = [], resources: suppliedResources = [] } = {}
+) {
   const q = cleanQuery(query);
   if (isZsrNavigationRequest(q)) {
     return [
@@ -1049,45 +1606,103 @@ export function buildFallbackSearches(query, subjectFocusId = DEFAULT_SUBJECT_FO
     ];
   }
   const strategy = buildSearchStrategy(q, subjectFocusId);
-  const resources = recommendResources(q, 4, subjectFocusId);
   const hasProfile = activeProfiles(q).length > 0;
-  const keywordBase = strategy.betterTerms[0] || keywordSearchBase(q);
-  const synonymSearch = hasProfile
-    ? uniq(strategy.alternateTerms).slice(0, 2).map(booleanConcept).join(" OR ")
-    : strategy.narrowerTerms[0] || keywordBase;
-  const carefulBroaden = controlledBroaden(strategy, hasProfile) || keywordBase;
-  return [
-    {
-      label: "Start with keywords, not a sentence",
-      text: keywordBase,
-      href: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, keywordBase),
-    },
-    {
-      label: hasProfile ? "Swap in a close synonym" : "Try one narrower variant",
-      text: synonymSearch || keywordBase,
-      href: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, synonymSearch || keywordBase),
-    },
-    {
-      label: "Broaden one concept, keep an anchor",
-      text: carefulBroaden,
-      href: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, carefulBroaden),
-    },
-    {
-      label: "Search likely database names",
-      text: resources.map((resource) => resource.name).slice(0, 3).join(" OR "),
-      href: AZ,
-    },
-    {
-      label: "Try Google Scholar with keywords",
-      text: keywordBase,
-      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, keywordBase),
-    },
-    {
-      label: "Use citation chaining",
-      text: "Open one strong source, then follow its references and cited-by links.",
-      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, keywordBase),
-    },
-  ];
+  const excluded = new Set(excludedTerms.map(normalizeSearchOptionKey).filter(Boolean));
+  const used = new Set(excluded);
+  const resources = suppliedResources.length
+    ? suppliedResources
+    : recommendResources(q, 4, subjectFocusId);
+  const genericVariants = hasProfile ? [] : genericSearchVariants(q, subjectFocusId);
+  const candidatePool = uniqueSearchOptions([
+    ...strategy.narrowerTerms,
+    ...(hasProfile ? [controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)] : []),
+    ...genericVariants,
+    ...buildSearchTermSuggestions(q, [], subjectFocusId, 20),
+  ]);
+
+  const take = (preferred = []) => {
+    const choices = uniqueSearchOptions([...preferred, ...candidatePool], used);
+    const selected = choices[0] || "";
+    if (selected) used.add(normalizeSearchOptionKey(selected));
+    return selected;
+  };
+
+  const genericBaseKey = normalizeSearchOptionKey(genericBooleanQuery(q));
+  const genericNarrowers = genericVariants.filter(
+    (term) => normalizeSearchOptionKey(term) !== genericBaseKey
+  );
+  const narrowQuery = take(hasProfile ? strategy.narrowerTerms : genericNarrowers);
+  const genericConcepts = genericTopicConcepts(q);
+  const boundedBroaden = !hasProfile && genericConcepts.length >= 3
+    ? genericConcepts.slice(0, 2).map(booleanConcept).join(" AND ")
+    : "";
+  const broadenQuery = hasProfile
+    ? take([controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)])
+    : boundedBroaden
+      ? take([boundedBroaden])
+      : "";
+  const switchQuery = take();
+  const scholarQuery = take();
+  const namedDatabases = resources.filter((resource) => !GENERIC_NAVIGATION_RESOURCE_IDS.has(resource.id));
+  const subjectDatabase = namedDatabases[0];
+  const nextDatabase = namedDatabases[1] || namedDatabases[0];
+  const fallbacks = [];
+
+  if (narrowQuery) {
+    fallbacks.push({
+      label: "Too many irrelevant results? Add one precise limiter",
+      text: narrowQuery,
+      query: narrowQuery,
+      href: nextDatabase?.accessUrl || fillTemplate(LIBRARY_LINKS.zsrArticleSearch, narrowQuery),
+    });
+  } else {
+    fallbacks.push({
+      label: "Too many irrelevant results? Add one limiter",
+      text: "Keep the two core concepts, then add one population, place, date range, outcome, or method from the assignment.",
+    });
+  }
+  if (broadenQuery) {
+    fallbacks.push({
+      label: "Too few results? Broaden one concept but keep the topic anchored",
+      text: broadenQuery,
+      query: broadenQuery,
+      href: nextDatabase?.accessUrl || fillTemplate(LIBRARY_LINKS.zsrArticleSearch, broadenQuery),
+    });
+  } else {
+    fallbacks.push({
+      label: "Too few results? Remove only one limiter",
+      text: "Keep both core topic concepts; remove only a population, place, date, or method term, then rerun the search.",
+    });
+  }
+  if (nextDatabase && switchQuery) {
+    fallbacks.push({
+      label: `Switch databases and rerun in ${nextDatabase.name}`,
+      text: switchQuery,
+      query: switchQuery,
+      href: nextDatabase.accessUrl,
+    });
+  }
+  if (scholarQuery) {
+    fallbacks.push({
+      label: "Try a distinct keyword search in Google Scholar",
+      text: scholarQuery,
+      query: scholarQuery,
+      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, scholarQuery),
+    });
+  }
+  if (subjectDatabase) {
+    fallbacks.push({
+      label: `Reuse subject headings from ${subjectDatabase.name}`,
+      text: "Open one relevant record, copy its most specific subject heading, and combine that heading with one core topic concept.",
+      href: subjectDatabase.accessUrl,
+    });
+  }
+  fallbacks.push({
+    label: "Use citation chaining after one strong result",
+    text: "Open its references for earlier research and its cited-by list for newer research.",
+    href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, strategy.betterTerms[0] || keywordSearchBase(q)),
+  });
+  return fallbacks;
 }
 
 export function buildFullTextWorkflow(query) {
@@ -1130,17 +1745,55 @@ export function selectCitationGuides(query) {
 
 export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const q = cleanQuery(query);
+  const navigationOnly = isZsrNavigationRequest(q);
   const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
+  const effectiveFocusId = subjectFocus.selectedId || subjectFocus.id;
   const intents = classifyResearchIntent(q);
-  const strategy = buildSearchStrategy(q, subjectFocus.selectedId || subjectFocus.id);
-  const recommendations = recommendResources(q, limit, subjectFocus.selectedId || subjectFocus.id);
-  const otherStartingPoints = buildGeneralStartingPoints(recommendations, 3);
-  const fallbacks = buildFallbackSearches(q, subjectFocus.selectedId || subjectFocus.id);
+  const strategy = buildSearchStrategy(q, effectiveFocusId);
+  const rawRecommendations = recommendResources(q, limit, effectiveFocusId);
+  const assignedRecommendations = assignResourceSearchInstructions(
+    rawRecommendations,
+    q,
+    effectiveFocusId
+  );
+  const recommendations = navigationOnly
+    ? assignedRecommendations
+    : assignedRecommendations.filter((resource) => resource.searchTerms.length > 0);
+  const reservedKeys = new Set(
+    recommendations.flatMap((resource) => resource.searchTerms || []).map(normalizeSearchOptionKey)
+  );
+  const fallbacks = buildFallbackSearches(q, effectiveFocusId, {
+    excludedTerms: [...reservedKeys],
+    resources: recommendations,
+  });
+  fallbacks
+    .map((fallback) => fallback.query)
+    .filter(Boolean)
+    .forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
+
+  const searchTerms = uniqueSearchOptions(
+    buildSearchTermSuggestions(q, [], effectiveFocusId, 20),
+    reservedKeys
+  ).slice(0, 3);
+  searchTerms.forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
+
+  const rawOtherStartingPoints = navigationOnly
+    ? []
+    : buildGeneralStartingPoints(recommendations, 3, effectiveFocusId, q);
+  const otherStartingPoints = assignResourceSearchInstructions(
+    rawOtherStartingPoints,
+    q,
+    effectiveFocusId,
+    reservedKeys
+  ).filter((resource) => resource.searchTerms.length > 0);
+  otherStartingPoints
+    .flatMap((resource) => resource.searchTerms || [])
+    .forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
   const citationGuides = selectCitationGuides(q);
   const fullText = buildFullTextWorkflow(q);
   return {
     query: q,
-    navigationOnly: isZsrNavigationRequest(q),
+    navigationOnly,
     subjectFocus: {
       id: subjectFocus.id,
       selectedId: subjectFocus.selectedId,
@@ -1151,13 +1804,14 @@ export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUB
     },
     intents,
     strategy,
+    searchTerms,
     recommendations,
     otherStartingPoints,
     fallbacks,
     citationGuides,
     fullText,
-    transparencyNote: isZsrNavigationRequest(q)
+    transparencyNote: navigationOnly
       ? "Choose the path that matches the task. Enter topic keywords only after opening the appropriate search tool."
-      : "These are the strongest topic-matched ZSR search paths from an editable local config plus live link-outs. Shorter lists mean weak matches were intentionally left out.",
+      : "Every item below is a named database selected for this topic. Its link opens the exact ZSR A-Z entry (or the database itself), and each card has a distinct query and database-specific filters. Shorter lists mean weak matches were intentionally omitted.",
   };
 }

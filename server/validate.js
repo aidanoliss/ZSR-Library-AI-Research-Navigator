@@ -13,6 +13,8 @@
  * Returns the cleaned reply plus a small report so the caller can log drops.
  */
 
+import { normalizeSearchOptionKey } from "../config/researchAgent.js";
+
 /** Normalize a URL for forgiving comparison (trailing slash, case, protocol). */
 function normalizeUrl(url) {
   return String(url || "")
@@ -28,9 +30,7 @@ function normalizeName(name) {
 
 export function validateReply(reply, resources) {
   const report = { dropped: [], corrected: [] };
-  if (!reply || !Array.isArray(reply.starting_points)) {
-    return { reply, report };
-  }
+  if (!reply) return { reply, report };
 
   const byUrl = new Map();
   const byName = new Map();
@@ -39,25 +39,75 @@ export function validateReply(reply, resources) {
     byName.set(normalizeName(r.name), r);
   }
 
-  const cleaned = [];
-  for (const sp of reply.starting_points) {
-    const urlMatch = byUrl.get(normalizeUrl(sp.url));
-    if (urlMatch) {
-      cleaned.push(sp);
-      continue;
-    }
+  let cleanedStartingPoints = reply.starting_points;
+  if (Array.isArray(reply.starting_points)) {
+    cleanedStartingPoints = [];
+    for (const sp of reply.starting_points) {
+      const urlMatch = byUrl.get(normalizeUrl(sp.url));
+      if (urlMatch) {
+        cleanedStartingPoints.push(sp);
+        continue;
+      }
 
-    const nameMatch = byName.get(normalizeName(sp.resource_name));
-    if (nameMatch) {
-      // Real resource, wrong/invented URL → snap to the canonical curated URL.
-      report.corrected.push({ name: sp.resource_name, from: sp.url, to: nameMatch.url });
-      cleaned.push({ ...sp, url: nameMatch.url });
-      continue;
-    }
+      const nameMatch = byName.get(normalizeName(sp.resource_name));
+      if (nameMatch) {
+        // Real resource, wrong/invented URL → snap to the canonical curated URL.
+        report.corrected.push({ name: sp.resource_name, from: sp.url, to: nameMatch.url });
+        cleanedStartingPoints.push({ ...sp, url: nameMatch.url });
+        continue;
+      }
 
-    // Matches nothing curated → drop it entirely.
-    report.dropped.push({ name: sp.resource_name, url: sp.url });
+      // Matches nothing curated → drop it entirely.
+      report.dropped.push({ name: sp.resource_name, url: sp.url });
+    }
   }
 
-  return { reply: { ...reply, starting_points: cleaned }, report };
+  const routedResources = resources.filter(
+    (resource) => resource.recommended_query && resource.recommended_filters?.length
+  );
+  let databaseStrategy = reply.database_strategy;
+  if (routedResources.length && Array.isArray(reply.database_strategy)) {
+    const modelByName = new Map(
+      reply.database_strategy.map((entry) => [normalizeName(entry.database), entry])
+    );
+    databaseStrategy = routedResources.map((resource) => {
+      const modelEntry = modelByName.get(normalizeName(resource.name)) || {};
+      return {
+        database: resource.name,
+        az_area: modelEntry.az_area || resource.type,
+        why: modelEntry.why || resource.why || resource.description,
+        search_inside: [
+          resource.recommended_query,
+          ...resource.recommended_filters,
+        ],
+        journals_or_sources: Array.isArray(modelEntry.journals_or_sources)
+          ? modelEntry.journals_or_sources
+          : [],
+      };
+    });
+  }
+
+  let searchTerms = reply.search_terms;
+  if (Array.isArray(reply.search_terms)) {
+    const reserved = new Set(
+      routedResources.map((resource) => normalizeSearchOptionKey(resource.recommended_query))
+    );
+    const seen = new Set(reserved);
+    searchTerms = reply.search_terms.filter((term) => {
+      const key = normalizeSearchOptionKey(term);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  return {
+    reply: {
+      ...reply,
+      ...(Array.isArray(cleanedStartingPoints) ? { starting_points: cleanedStartingPoints } : {}),
+      ...(Array.isArray(databaseStrategy) ? { database_strategy: databaseStrategy } : {}),
+      ...(Array.isArray(searchTerms) ? { search_terms: searchTerms } : {}),
+    },
+    report,
+  };
 }

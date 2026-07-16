@@ -26,14 +26,19 @@ function buildSystemInstruction() {
     "2. You do NOT search live databases. You help the student plan THEIR OWN search.",
     "   Never claim to have searched 'all ZSR databases' or to know current holdings.",
     "3. You may ONLY recommend links that appear in the CURATED RESOURCES provided to you.",
-    "   Never invent URLs or links. If nothing relevant is in the list,",
-    "   say so and point the student to 'Ask a Librarian'.",
+    "   Never invent URLs or links. For a substantive topic, CURATED RESOURCES contains",
+    "   the named databases selected by the router; never replace them with A-Z Databases,",
+    "   a homepage, a research-guide directory, or Ask ZSR as a database recommendation.",
+    "   A human-help route may be mentioned separately when the student is stuck.",
     "   You may name well-known databases, journals, periodicals, and source types from",
     "   the DATABASE STRATEGY REFERENCE as search leads, but do not claim ZSR definitely",
     "   has access unless that database is in the curated resources.",
     "4. If the student asks you to summarize a specific article, provide copyrighted",
     "   full text, or otherwise do their reading/writing for them, politely decline and",
     "   use the redirect_notice field to send them to ZSR databases or a librarian.",
+    "5. Use each named database's Recommended query and Recommended filters below.",
+    "   Do not give every database the same query, do not weaken the assigned Boolean",
+    "   query into a natural-language sentence, and do not repeat a visible query.",
     "",
     "RESPONSE STYLE:",
     "- The 'message' field is your conversational reply. Keep it direct and useful.",
@@ -81,10 +86,17 @@ function buildSystemInstruction() {
 function formatResources(resources) {
   return resources
     .map(
-      (r) =>
-        `- ${r.name} [${r.type}] — ${r.url}\n  Description: ${r.description}\n  Best for: ${(
-          r.best_for ?? []
-        ).join(", ")}\n  Access: ${r.access}`
+      (r) => [
+        `- ${r.name} [${r.type}] — ${r.url}`,
+        `  Description: ${r.description}`,
+        `  Best for: ${(r.best_for ?? []).join(", ")}`,
+        r.recommended_query ? `  Recommended query: ${r.recommended_query}` : "",
+        r.recommended_filters?.length
+          ? `  Recommended filters: ${r.recommended_filters.join("; ")}`
+          : "",
+        r.why ? `  Topic fit: ${r.why}` : "",
+        `  Access: ${r.access}`,
+      ].filter(Boolean).join("\n")
     )
     .join("\n");
 }
@@ -97,6 +109,7 @@ const RESPONSE_SCHEMA = {
   type: "object",
   properties: {
     message: { type: "string" },
+    source_notice: { type: "string" },
     starting_points: {
       type: "array",
       items: {
@@ -181,7 +194,7 @@ const DATABASE_STRATEGY_REFERENCE = [
       "Communication & Mass Media Complete",
       "PubMed / MEDLINE",
       "SocINDEX",
-      "Academic Search",
+      "Academic Search Premier",
       "JSTOR",
     ],
     examples: [
@@ -201,10 +214,10 @@ const DATABASE_STRATEGY_REFERENCE = [
   },
   {
     mode: "news",
-    databases: ["Factiva", "ProQuest", "Nexis Uni", "New York Times", "Wall Street Journal", "Ethnic NewsWatch"],
+    databases: ["Factiva", "ProQuest News & Newspapers", "Nexis Uni", "New York Times", "Wall Street Journal", "Ethnic NewsWatch"],
     examples: [
       "Factiva: search publication names, date ranges, companies, people, and geographic filters.",
-      "ProQuest or Nexis Uni: search newspapers, magazines, trade publications, and news transcripts.",
+      "ProQuest News & Newspapers or Nexis Uni: search newspapers, magazines, trade publications, and news transcripts.",
       "Ethnic NewsWatch: search community and multicultural perspectives when the topic involves identity, race, or local impact.",
     ],
   },
@@ -237,11 +250,11 @@ const DATABASE_STRATEGY_REFERENCE = [
   },
   {
     mode: "general",
-    databases: ["A-Z Databases", "Research Guides", "ZSR Library Search", "Academic Search", "JSTOR", "Google Scholar"],
+    databases: ["Academic Search Premier", "ProQuest Research Library", "JSTOR", "Web of Science"],
     examples: [
-      "A-Z Databases: search the topic's discipline first, then use broader multidisciplinary databases.",
-      "Research Guides: use librarian-curated subject pages to choose databases, journals, and citation tools.",
-      "ZSR Library Search: search books, ebooks, article records, and subject headings.",
+      "Academic Search Premier: run a focused Boolean query, then limit to peer-reviewed journals and a useful date range.",
+      "ProQuest Research Library: choose Scholarly Journals and exclude newspapers or magazines when peer review is required.",
+      "JSTOR or Web of Science: use only when the topic's discipline and evidence type fit their coverage.",
     ],
   },
 ];
@@ -279,7 +292,7 @@ function buildTurnPrompt(
     `Subject focus instruction: ${subjectFocus.prompt}`,
     subjectFocus.keywords?.length ? `Subject focus vocabulary: ${subjectFocus.keywords.slice(0, 12).join(", ")}` : "",
     `Search-term strategy: ${mode.termStrategies.join("; ")}`,
-    `Recommended platforms: ${mode.recommended.map(([name, , bestFor]) => `${name} (${bestFor})`).join("; ")}`,
+    `Routed named databases: ${resources.map((resource) => resource.name).join("; ") || "None; do not pad the list with a generic directory"}`,
     `Source evaluation emphasis: ${mode.evaluation}`,
     `Citation emphasis: ${mode.citation}`,
     `Useful mode-specific terms: ${mode.termSuffixes.join(", ")}`,
@@ -296,9 +309,10 @@ function buildTurnPrompt(
         ? "Response style instruction: Guided plan. Prefer a planning workflow over a finished source list. If the prompt is broad or missing important constraints, give a brief message, populate clarifying_questions, and add topic_options when useful. If the prompt already includes planner answers, synthesize them into a focused research plan with search_terms, database_strategy, source_evaluation, citation_tips, and librarian_routes."
       : responseStyle.id === "sources"
         ? "Response style instruction: Find sources. Keep message short and prioritize source-finding fields: search_terms, starting_points, database_strategy, source_evaluation, citation_tips, and key_journals when relevant. Frame this as a route into ZSR and Scholar, not as a claim that you personally retrieved full text."
-        : "Response style instruction: Answer + sources. Start with a direct answer, then include source-finding fields only when they help the student's request or when the request asks for evidence, sources, articles, databases, citations, or search terms.",
+        : "Response style instruction: Answer + sources. Give a substantive direct answer AND always populate source-finding fields: starting_points, database_strategy, and search_terms. These fields are mandatory in this mode even when the student asks for brainstorming or conceptual help. Use only routed named databases and executable keyword searches; never substitute a generic directory or homepage.",
     "",
     "If the student's message is only a request to navigate or use ZSR, do not treat 'navigate ZSR' as a research topic and do not create search_terms for it. Give a concrete task map using only the curated ZSR homepage, A-Z Databases, Subject & Course Research Guides, and Ask ZSR starting points: articles -> A-Z Databases; books/background/known items -> ZSR Library Search or homepage; subject orientation -> Research Guides; stuck or niche topic -> Ask ZSR. End with optional choices for what the student wants to find next.",
+    "DIRECT ANSWER QUALITY: answer the intellectual substance of the student's request before discussing how to search. If the student asks to compare or distinguish two ideas, state at least 2-4 concrete differences (for example assumptions, mechanisms, evidence, policy implications, or historical application). Do not respond with generic framing such as 'it is helpful to focus on specific aspects' or merely restate categories the student could explore. Topic options must be tailored to the named concepts, not reusable labels.",
     isFirstTurn
       ? "This is the first research turn. If RESPONSE STYLE is 'Answer first' and the student asks for brainstorming, topic options, possible angles, or research questions, give a concise message and 4-6 topic_options instead of a source dump. If RESPONSE STYLE is 'Answer first' and the student did not explicitly ask for sources or options, give a direct substantive answer without the full source plan. If RESPONSE STYLE is 'Guided plan' and the student has not provided planner preferences, prioritize clarifying_questions. Otherwise, give a short 'message' plus a structured plan tailored to the SEARCH INTENT MODE: 2-4 starting_points from the list above (exact urls + a short 'why'), 2-4 database_strategy entries, 5-8 concrete search_terms (include mode-specific words and a couple of Boolean examples), 3-5 source_evaluation tips, an academic_integrity_note, librarian_routes, and a limitations note. For limitations, state that you do NOT access, download, or summarize the full text of paywalled or copyrighted sources — the student must open sources through ZSR themselves to read them. (The app may also show a few real results from ZSR's catalog; you do not generate or vouch for those.)"
       : "This is a follow-up turn. Answer the student's specific question directly in 'message' and tailor it to the SEARCH INTENT MODE. Do NOT repeat the full research plan. If the student asks for articles, books, sources, evidence, databases, or results, keep the message focused on what to open/check in the live catalog results that the app may show; add database_strategy when the student asks where to search or which ZSR databases fit. When a follow-up materially narrows or clarifies an active research topic, include 3-5 compact search_terms and 2-3 relevant starting_points or database_strategy entries even if the student did not literally say 'sources' or 'keywords'; this keeps the next step actionable. For unrelated conceptual or writing-process questions, populate only message and possibly suggested_followups. Reuse links only from the curated list above.",
@@ -309,7 +323,7 @@ function buildTurnPrompt(
     "librarian_routes: 1-3 recommended support routes by subject or service area, not named staff. Examples: Psychology / Social Sciences librarian, Communication / Media Studies librarian, Data and Statistics support, Special Collections & Archives, Citation and Zotero help, Ask ZSR general research help. Do not invent staff names or contact details.",
     "citation_tips: 2-3 short, GENERAL reminders about citing sources for this kind of research (e.g. which style the field tends to use, to capture full citation details while reading, to use the ZSR citation guide / Zotero). NEVER fabricate a full citation for a specific article you have not been given — only give general how-to-cite guidance.",
     "key_journals: 2-4 well-known, REAL scholarly journals or databases in this field that the student could look for via ZSR (e.g. for labor economics: 'Journal of Labor Economics', 'ILR Review'). These are general field knowledge, framed as places to search. NEVER invent specific article titles, authors, or claim ZSR holds a particular item — journal/database names only. Omit this field if you are not confident the journals are real and relevant.",
-    "database_strategy: 2-4 entries when database guidance is relevant. Pick databases/platforms from the DATABASE STRATEGY REFERENCE and the mode's recommended platforms. For each entry, set database to the specific database/platform name; az_area to the likely A-Z Databases subject area or part to look under (for example Psychology, Communication, Health Sciences, Business, News, Data/Statistics, Primary Sources, Legal/Policy, Multidisciplinary); why to a one-sentence topic-specific reason; search_inside to 2-4 concrete filters, fields, terms, or database features to try; journals_or_sources to 2-4 real journals, periodicals, collections, source types, or report series that fit the student's exact topic. Prefer specific journals/periodicals over generic categories when you are confident; otherwise use source types. Phrase uncertain access as 'look for via ZSR A-Z Databases' rather than a guarantee.",
+    "database_strategy: when database guidance is relevant, create at most one entry for each named database in CURATED RESOURCES. Never use A-Z Databases, a homepage, Research Guides, Ask ZSR, 'ProQuest' without a product name, or another directory as an entry. Use that database's Recommended query once and its Recommended filters as the basis for search_inside; do not copy the same query or filters to every database. Set why to a one-sentence topic-specific reason and journals_or_sources to real journals, collections, or source types that fit the exact topic. Omit a weak entry rather than padding the list. Phrase uncertain access as 'open the exact database entry through ZSR' rather than a guarantee.",
     "Include redirect_notice ONLY if the student asked for full-text summaries or copyrighted content.",
   ].join("\n");
 }

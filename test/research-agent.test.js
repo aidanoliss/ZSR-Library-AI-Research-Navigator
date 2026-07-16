@@ -10,6 +10,7 @@ import {
   classifyResearchIntent,
   isSubstantiveResearchRequest,
   isZsrNavigationRequest,
+  normalizeSearchOptionKey,
   recommendResources,
 } from "../config/researchAgent.js";
 
@@ -18,25 +19,25 @@ const cases = [
     query: "I need background on AI and education",
     intent: "books",
     resource: "eric",
-    fallback: /Broaden|Google Scholar|citation chaining/i,
+    fallback: /Too many|Too few|Google Scholar|citation chaining/i,
   },
   {
     query: "I need market data on energy drinks",
     intent: "market",
     resource: "mintel",
-    fallback: /database names/i,
+    fallback: /Too many|Too few|Switch databases|Google Scholar/i,
   },
   {
     query: "I need statistics on college student mental health",
     intent: "statistics",
     resource: "icpsr",
-    fallback: /Broaden|Google Scholar/i,
+    fallback: /Too many|Too few|Google Scholar/i,
   },
   {
     query: "I need news coverage of the war in Ukraine",
     intent: "news",
     resource: "factiva",
-    fallback: /Google Scholar|exact phrase/i,
+    fallback: /Too many|Too few|Google Scholar/i,
   },
   {
     query: "I need scholarly articles on social media and loneliness",
@@ -48,31 +49,31 @@ const cases = [
     query: "I need a citation for a website in APA",
     intent: "citation",
     resource: "research-guides",
-    fallback: /keywords|Google Scholar/i,
+    fallback: /Google Scholar|citation chaining/i,
   },
   {
     query: "I need full text for this DOI 10.1001/jama.2004.1635",
     intent: "fulltext",
     resource: "pubmed-medline",
-    fallback: /Google Scholar/i,
+    fallback: /Google Scholar|citation chaining/i,
   },
   {
     query: "I searched Primo and got nothing for Rolex watches",
     intent: "market",
     resource: "mintel",
-    fallback: /Broaden|database names/i,
+    fallback: /Too many|Too few|Switch databases|Google Scholar/i,
   },
   {
     query: "Where do I find company financials?",
     intent: "market",
     resource: "mergent",
-    fallback: /database names/i,
+    fallback: /Switch databases|Google Scholar|citation chaining/i,
   },
   {
     query: "I need sources for a policy memo",
     intent: "legal",
     resource: "cq-researcher",
-    fallback: /Google Scholar|citation chaining/i,
+    fallback: /Too many|Too few|Google Scholar|citation chaining/i,
   },
 ];
 
@@ -118,8 +119,9 @@ test("AI and cognitive offloading uses psychology and education paths", () => {
   assert.equal(plan.subjectFocus.id, "psychology");
   assert.ok(ids.includes("psycinfo"));
   assert.ok(ids.includes("eric"));
+  assert.ok(ids.includes("education-source"));
   assert.ok(ids.includes("web-of-science"));
-  assert.deepEqual(ids.slice(0, 3), ["psycinfo", "web-of-science", "eric"]);
+  assert.equal(ids[0], "psycinfo");
   assert.deepEqual(
     ids.filter((id) => ["business-guide", "mintel", "business-source"].includes(id)),
     []
@@ -152,31 +154,37 @@ test("long declarative topics remain topics rather than known-item lookups", () 
 test("niche humanities topics use safe, evidence-backed paths", () => {
   const ids = recommendResources("Medieval Icelandic saga manuscript transmission", 6).map((resource) => resource.id);
 
-  assert.deepEqual(ids, ["jstor", "primo", "research-guides"]);
+  assert.equal(ids[0], "historical-abstracts");
+  assert.deepEqual(
+    [...ids].sort(),
+    ["jstor", "historical-abstracts", "project-muse", "academic-search-premier"].sort()
+  );
   assert.deepEqual(
     ids.filter((id) => ["psycinfo", "eric", "communication-mass-media", "business-guide"].includes(id)),
     []
   );
 });
 
-test("unknown niche topics fall back without arbitrary specialist databases", () => {
+test("niche print-culture topics receive named databases instead of navigation pages", () => {
   const plan = buildResearchPlan("typographic watermarks in privately printed almanacs", 6);
   const ids = plan.recommendations.map((resource) => resource.id);
 
-  assert.deepEqual(ids, ["databases-az", "primo", "research-guides"]);
-  assert.deepEqual(plan.otherStartingPoints.map((resource) => resource.id), ["ask-a-librarian"]);
-  assert.equal(plan.otherStartingPoints[0].generalStartingPoint, true);
-  assert.match(plan.otherStartingPoints[0].whyFits, /not an additional topic match/i);
+  assert.deepEqual(ids, ["historical-abstracts", "jstor", "project-muse", "academic-search-premier"]);
+  assert.ok(plan.recommendations.every((resource) => resource.searchTerms.length === 1));
+  assert.ok(plan.recommendations.every((resource) => resource.filters.length >= 3));
+  assert.doesNotMatch(ids.join(" "), /databases-az|research-guides|ask-a-librarian|business-guide/);
 });
 
-test("general ZSR starting points stay separate from topic-matched recommendations", () => {
+test("secondary starting points are named databases, never generic navigation routes", () => {
   const plan = buildResearchPlan("AI and cognitive offloading in college students", 5);
   const recommendedIds = new Set(plan.recommendations.map((resource) => resource.id));
-  const otherIds = plan.otherStartingPoints.map((resource) => resource.id);
+  const secondary = buildGeneralStartingPoints(plan.recommendations, 3, "psychology", plan.query);
+  const otherIds = secondary.map((resource) => resource.id);
 
-  assert.deepEqual(otherIds, ["databases-az", "primo", "research-guides"]);
+  assert.ok(otherIds.length > 0);
   assert.ok(otherIds.every((id) => !recommendedIds.has(id)));
-  assert.ok(plan.otherStartingPoints.every((resource) => resource.generalStartingPoint));
+  assert.doesNotMatch(otherIds.join(" "), /databases-az|primo|research-guides|ask-a-librarian|business-guide/);
+  assert.ok(secondary.every((resource) => resource.generalStartingPoint));
   assert.deepEqual(buildGeneralStartingPoints(plan.recommendations, 0), []);
 });
 
@@ -244,9 +252,10 @@ test("manual subject focus can steer ambiguous prompts", () => {
 test("business paths still appear for actual market research prompts", () => {
   const ids = recommendResources("market data on energy drinks", 5).map((resource) => resource.id);
 
-  assert.ok(ids.includes("business-guide"));
   assert.ok(ids.includes("mintel"));
   assert.ok(ids.includes("statista"));
+  assert.ok(ids.includes("business-source"));
+  assert.doesNotMatch(ids.join(" "), /business-guide|databases-az|research-guides/);
 });
 
 test("citation and known-item routing are explicit", () => {
@@ -286,8 +295,130 @@ test("surveillance and public trust receives focused paths and executable terms"
   assert.doesNotMatch(terms, /impact of|survelliance on citizens/i);
 });
 
+test("substantive plans never use generic navigation pages as database recommendations", () => {
+  const queries = [
+    "AI and cognitive offloading in college students",
+    "protein folding and disease",
+    "market data on energy drinks",
+    "typographic watermarks in privately printed almanacs",
+    "misinformation and public trust",
+    "quantum sensors for precision agriculture",
+  ];
+  const blocked = new Set(["databases-az", "research-guides", "ask-a-librarian", "business-guide"]);
+
+  for (const query of queries) {
+    const plan = buildResearchPlan(query, 5);
+    assert.ok(plan.recommendations.length > 0, `${query} should have at least one named database`);
+    for (const resource of plan.recommendations) {
+      assert.equal(blocked.has(resource.id), false, `${query} should not recommend ${resource.id}`);
+      assert.equal(resource.searchTerms.length, 1, `${resource.name} should have one assigned query`);
+      assert.ok(resource.filters.length >= 3, `${resource.name} should have database-specific filters`);
+      assert.doesNotMatch(resource.name, /A-Z Databases|Research Guides|Business Information Commons|Ask ZSR/i);
+      if (resource.accessUrl.includes("az.php")) {
+        const url = new URL(resource.accessUrl);
+        assert.ok(url.searchParams.get("q"), `${resource.name} should link to its exact A-Z lookup`);
+      }
+    }
+  }
+});
+
+test("every visible search option is globally unique after normalization", () => {
+  const queries = [
+    "AI and cognitive offloading in college students",
+    "protein folding and disease",
+    "market data on energy drinks",
+    "typographic watermarks in privately printed almanacs",
+    "misinformation and public trust",
+  ];
+
+  for (const query of queries) {
+    const plan = buildResearchPlan(query, 5);
+    const options = [
+      ...plan.recommendations.flatMap((resource) => resource.searchTerms),
+      ...plan.searchTerms,
+      ...plan.fallbacks.map((fallback) => fallback.query).filter(Boolean),
+      ...plan.otherStartingPoints.flatMap((resource) => resource.searchTerms),
+    ];
+    const keys = options.map(normalizeSearchOptionKey);
+    assert.equal(new Set(keys).size, keys.length, `${query} should not repeat a search option`);
+  }
+});
+
+test("search-option normalization treats reordered Boolean concepts as duplicates", () => {
+  assert.equal(
+    normalizeSearchOptionKey('"book history" AND watermark*'),
+    normalizeSearchOptionKey('watermark* AND ("book history")')
+  );
+  assert.equal(
+    normalizeSearchOptionKey('(misinformation OR disinformation) AND "public trust"'),
+    normalizeSearchOptionKey('"public trust" AND (disinformation OR misinformation)')
+  );
+});
+
+test("fallback actions are anchored, distinct, and never search for database names", () => {
+  const plan = buildResearchPlan("AI and cognitive offloading in college students", 5);
+  const fallbackText = plan.fallbacks.map((fallback) => `${fallback.label}: ${fallback.text}`).join("\n");
+
+  assert.match(fallbackText, /Too many irrelevant results|Too few results|Google Scholar/i);
+  assert.doesNotMatch(fallbackText, /Search likely database names|Start with keywords, not a sentence/i);
+  assert.doesNotMatch(fallbackText, /Can you help me|How does|I need/i);
+  assert.ok(plan.fallbacks.filter((fallback) => fallback.query).every((fallback) => /\bAND\b/i.test(fallback.query)));
+});
+
+test("unprofiled niche topics keep every relevant named path with distinct searches", () => {
+  const plan = buildResearchPlan("quantum sensors for precision agriculture", 5);
+  const ids = plan.recommendations.map((resource) => resource.id);
+
+  assert.equal(plan.subjectFocus.id, "science-engineering");
+  assert.equal(ids[0], "web-of-science");
+  assert.ok(ids.includes("science-direct"));
+  assert.ok(ids.includes("academic-search-premier"));
+  assert.ok(plan.recommendations.length >= 3);
+  assert.ok(plan.recommendations.every((resource) => resource.searchTerms.length === 1));
+  assert.ok(plan.recommendations.every((resource) => /quantum.*sensor.*precision.*agriculture/i.test(resource.searchTerms[0])));
+  assert.ok(plan.fallbacks.length >= 5);
+  assert.doesNotMatch(ids.join(" "), /databases-az|research-guides|ask-a-librarian|project-muse/);
+});
+
+test("clear cross-disciplinary prompts receive adaptive breadth without a fixed quota", () => {
+  const samples = [
+    "the effects of sleep deprivation on academic performance",
+    "climate change and food insecurity",
+    "music therapy for dementia",
+  ];
+
+  for (const query of samples) {
+    const plan = buildResearchPlan(query, 6);
+    const labels = plan.fallbacks.map((fallback) => fallback.label);
+    assert.ok(plan.recommendations.length >= 3, `${query} should have several defensible database paths`);
+    assert.ok(plan.fallbacks.length >= 5, `${query} should have several distinct recovery tactics`);
+    assert.equal(new Set(labels).size, labels.length, `${query} should not repeat fallback actions`);
+    assert.doesNotMatch(
+      plan.recommendations.map((resource) => resource.id).join(" "),
+      /databases-az|research-guides|ask-a-librarian|business-guide/
+    );
+  }
+});
+
 test("setup prompts are not treated as substantive research topics", () => {
   assert.equal(isSubstantiveResearchRequest("Help me navigate ZSR"), false);
   assert.equal(isSubstantiveResearchRequest("Help me research a topic"), false);
   assert.equal(isSubstantiveResearchRequest("government surveillance and public trust"), true);
+});
+
+test("economics comparisons route to EconLit with clean concept-specific searches", () => {
+  const query = "Help me explore the differences between Keynesian and Neoclassical economics for this topic and suggest focused research angles I can search in ZSR.";
+  const plan = buildResearchPlan(query, 6);
+  const visibleSearches = [
+    ...plan.recommendations.flatMap((resource) => resource.searchTerms),
+    ...plan.searchTerms,
+    ...plan.fallbacks.map((fallback) => fallback.query).filter(Boolean),
+  ];
+
+  assert.equal(plan.subjectFocus.id, "economics");
+  assert.equal(plan.recommendations[0].id, "econlit");
+  assert.ok(plan.recommendations.length >= 3);
+  assert.ok(plan.recommendations.every((resource) => resource.searchTerms.length === 1));
+  assert.ok(visibleSearches.every((term) => /keynesian|neoclassical/i.test(term)));
+  assert.doesNotMatch(visibleSearches.join(" "), /phones?|eyes?|explore the differences|this topic|suggest focused/i);
 });

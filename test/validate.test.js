@@ -74,3 +74,46 @@ test("mixed batch: keeps valid, corrects named, drops invented", () => {
   assert.equal(report.corrected.length, 1);
   assert.equal(report.dropped.length, 1);
 });
+
+test("routed database guard replaces generic and copied model strategies", () => {
+  const routed = [
+    {
+      id: "psycinfo",
+      name: "PsycINFO",
+      type: "database",
+      url: "https://guides.zsr.wfu.edu/az.php?q=PsycINFO",
+      description: "Psychology index.",
+      recommended_query: '"cognitive offloading" AND artificial intelligence',
+      recommended_filters: ["APA Thesaurus subject", "Population", "Peer reviewed"],
+    },
+    {
+      id: "web-of-science",
+      name: "Web of Science",
+      type: "database",
+      url: "https://guides.zsr.wfu.edu/az.php?q=Web%20of%20Science",
+      description: "Citation index.",
+      recommended_query: '"cognitive offloading" AND generative AI',
+      recommended_filters: ["Research area", "Document type", "Cited by"],
+    },
+  ];
+  const reply = {
+    database_strategy: [
+      { database: "A-Z Databases", search_inside: ["AI and cognition"] },
+      { database: "PsycINFO", why: "Psychology fit", search_inside: ["AI and cognition"] },
+      { database: "Web of Science", why: "Citation fit", search_inside: ["AI and cognition"] },
+    ],
+    search_terms: [
+      'artificial intelligence AND "cognitive offloading"',
+      '"student learning" AND generative AI',
+      'generative AI AND "student learning"',
+    ],
+  };
+
+  const { reply: out } = validateReply(reply, routed);
+  assert.deepEqual(out.database_strategy.map((entry) => entry.database), ["PsycINFO", "Web of Science"]);
+  assert.deepEqual(
+    out.database_strategy.map((entry) => entry.search_inside[0]),
+    routed.map((resource) => resource.recommended_query)
+  );
+  assert.deepEqual(out.search_terms, ['"student learning" AND generative AI']);
+});

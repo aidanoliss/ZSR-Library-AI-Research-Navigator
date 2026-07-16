@@ -23,6 +23,7 @@ import { screenMessage, blockedReply } from "./screen.js";
 import { searchPrimo } from "./primo.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
 import { appendRequestContextForAi, requestContextFromBody } from "./requestContext.js";
+import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
 import { buildPrimoRequest } from "./primoApi.js";
 import {
   DEFAULT_MODE_ID,
@@ -33,10 +34,11 @@ import {
 import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
 import {
   buildCatalogKeywordQuery,
+  buildResearchPlan,
   buildSearchTermSuggestions,
   isSubstantiveResearchRequest,
-  isZsrNavigationRequest,
 } from "../config/researchAgent.js";
+import { activeResearchConversation, submittedResearchContext } from "../src/conversationContext.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -45,7 +47,7 @@ const ASK_ZSR_EMAIL = process.env.ASK_ZSR_EMAIL || "askzsr@wfu.edu";
 const DIST_DIR = join(__dirname, "..", "dist");
 
 function sendJson(res, status, payload) {
-  if (res.writableEnded) return;
+  if (res.destroyed || res.writableEnded) return;
   if (res.headersSent) {
     res.end();
     return;
@@ -58,7 +60,7 @@ function sendJson(res, status, payload) {
 }
 
 function sendNdjsonHead(res, status = 200) {
-  if (res.writableEnded) return false;
+  if (res.destroyed || res.writableEnded) return false;
   if (res.headersSent) return true;
   res.writeHead(status, {
     "Content-Type": "application/x-ndjson; charset=utf-8",
@@ -70,7 +72,7 @@ function sendNdjsonHead(res, status = 200) {
 }
 
 function writeNdjson(res, obj) {
-  if (res.writableEnded) return;
+  if (res.destroyed || res.writableEnded) return;
   if (!res.headersSent) sendNdjsonHead(res);
   res.write(JSON.stringify(obj) + "\n");
 }
@@ -90,11 +92,12 @@ function parseChatRequest(body) {
   if (String(last.content).length > 2000) return { error: "That message is very long — please shorten it to under 2000 characters." };
   if (messages.length > 40) return { error: "This conversation is quite long. Please start a new chat." };
 
-  const history = messages
+  const normalizedHistory = messages
     .filter((m) => (m.role === "user" || m.role === "assistant") && String(m.content || "").trim())
     .map((m) => ({ role: m.role, content: String(m.content).trim() }));
+  const history = activeResearchConversation(normalizedHistory);
 
-  const studentText = history.filter((m) => m.role === "user").map((m) => m.content).join(" ");
+  const studentText = submittedResearchContext(history) || String(last.content).trim();
   const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
   const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
   const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
@@ -129,16 +132,7 @@ function sourceRequestIntent(text) {
 function catalogSearchText(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
   const focusId = subjectFocus.selectedId || subjectFocus.id;
-  const userTurns = history.filter((m) => m.role === "user");
-  const latest = userTurns[userTurns.length - 1]?.content || "";
-  if (userTurns.length <= 1) return buildCatalogKeywordQuery(studentText, focusId);
-  const substantiveWords = latest
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 3 && !/^(find|show|give|provide|article|articles|source|sources|about|with|help|peer|reviewed|scholarly|more|good|list|options|ones|please|results)$/.test(w));
-  if (substantiveWords.length >= 2) return buildCatalogKeywordQuery(latest, focusId);
-  return buildCatalogKeywordQuery(userTurns[0]?.content || studentText, focusId);
+  return buildCatalogKeywordQuery(studentText, focusId);
 }
 
 function stripSourceHeavyFields(reply) {
@@ -157,15 +151,6 @@ function stripSourceHeavyFields(reply) {
   return direct;
 }
 
-function submittedResearchText(history) {
-  const turns = history
-    .filter((message) => message.role === "user")
-    .map((message) => String(message.content || "").trim())
-    .filter(Boolean);
-  const researchTurns = turns.filter((turn) => !isZsrNavigationRequest(turn));
-  return (researchTurns.length ? researchTurns : turns).slice(-4).join(" ");
-}
-
 function withCatalogFoundIntro(reply, liveResults, latestText) {
   if (!reply || !liveResults?.length) return reply;
   if (!sourceRequestIntent(latestText)) return reply;
@@ -180,19 +165,26 @@ function catalogResultFocusedTurn(history, latestText, liveResults) {
   return wantsSources && !wantsWhereToSearch;
 }
 
-function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID) {
-  const researchText = submittedResearchText(history) || latestText;
+function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+  const researchText = submittedResearchContext(history) || latestText;
+  const deterministicPlan = isSubstantiveResearchRequest(researchText)
+    ? buildResearchPlan(researchText, 6, subjectFocusId)
+    : null;
   if (reply?.search_terms?.length) {
-    reply = { ...reply, search_terms: buildSearchTermSuggestions(researchText, reply.search_terms) };
+    reply = { ...reply, search_terms: deterministicPlan?.searchTerms || [] };
   } else if (isSubstantiveResearchRequest(researchText) && !topicOptionIntent(latestText)) {
-    reply = { ...reply, search_terms: buildSearchTermSuggestions(researchText, [], DEFAULT_SUBJECT_FOCUS_ID, 6) };
+    reply = { ...reply, search_terms: deterministicPlan?.searchTerms || [] };
   }
   if (responseStyle === "answer" && !sourceRequestIntent(latestText) && !isSubstantiveResearchRequest(researchText)) {
     return stripSourceHeavyFields(reply);
   }
-  const withIntro = withCatalogFoundIntro(reply, liveResults, latestText);
-  if (!catalogResultFocusedTurn(history, latestText, liveResults)) return withIntro;
-  const { starting_points, academic_integrity_note, limitations, key_journals, database_strategy, suggested_followups, ...focused } = withIntro;
+  const withIntro = responseStyle === "hybrid"
+    ? reply
+    : withCatalogFoundIntro(reply, liveResults, latestText);
+  const withSources = applySourceContract(withIntro, resources, deterministicPlan, liveResults, responseStyle);
+  if (["hybrid", "sources"].includes(responseStyle)) return withSources;
+  if (!catalogResultFocusedTurn(history, latestText, liveResults)) return withSources;
+  const { starting_points, academic_integrity_note, limitations, key_journals, database_strategy, suggested_followups, ...focused } = withSources;
   return focused;
 }
 
@@ -212,39 +204,16 @@ function startingPoint(resources, id, why) {
 }
 
 function fallbackDatabaseStrategy(original, modeId = DEFAULT_MODE_ID) {
-  const topic = String(original || "").toLowerCase();
-  if (modeId === "scholarly" && topic.includes("social media") && /(adolescent|teen|youth)/.test(topic)) {
-    return [
-      {
-        database: "PsycINFO",
-        az_area: "Psychology",
-        why: "Best first stop for psychology research on adolescent development, anxiety, depression, and well-being.",
-        search_inside: ["subject terms for adolescents", "peer-reviewed filter", "age group filter"],
-        journals_or_sources: ["Journal of Adolescent Health", "Developmental Psychology", "Journal of Youth and Adolescence"],
-      },
-      {
-        database: "Communication & Mass Media Complete",
-        az_area: "Communication / Media Studies",
-        why: "Best for media-effects, platform-use, and online-behavior research.",
-        search_inside: ["platform names", "media effects terms", "communication research subject terms"],
-        journals_or_sources: ["New Media & Society", "Journal of Computer-Mediated Communication", "Social Media + Society"],
-      },
-      {
-        database: "PubMed / MEDLINE",
-        az_area: "Health Sciences / Medicine",
-        why: "Useful for clinical, public-health, and adolescent-health studies tied to mental-health outcomes.",
-        search_inside: ["adolescent filters", "MeSH-style health terms", "depression or anxiety outcomes"],
-        journals_or_sources: ["JAMA Pediatrics", "Pediatrics", "Journal of Adolescent Health"],
-      },
-    ];
-  }
-  const mode = getSearchMode(modeId);
-  return mode.recommended.slice(0, 3).map(([database, , bestFor]) => ({
-    database,
-    az_area: mode.label,
-    why: bestFor,
-    search_inside: mode.termStrategies.slice(0, 3),
-    journals_or_sources: mode.termSuffixes.slice(0, 4),
+  const plan = buildResearchPlan(original, 4);
+  return plan.recommendations.map((resource) => ({
+    database: resource.name,
+    az_area: resource.subjectArea,
+    why: resource.whyFits,
+    search_inside: [
+      `Run: ${resource.searchTerms[0]}`,
+      ...resource.filters,
+    ].filter(Boolean),
+    journals_or_sources: [resource.expect].filter(Boolean),
   }));
 }
 
@@ -502,7 +471,7 @@ async function handleChat(req, res, stream = false) {
       const rawReply = await generateChatResponse(aiHistory, resources, mode, responseStyle, subjectFocusId);
       const liveResults = await primoPromise;
       const { reply: validatedReply } = validateReply(rawReply, resources);
-      const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle);
+      const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId);
       logQuery({ topic: last.content.trim(), matchedIds: resources.map((r) => r.id) });
       return sendJson(res, 200, { reply, matchedResources: resources, searchTools: await getSearchTools(), liveResults });
     }
@@ -512,16 +481,22 @@ async function handleChat(req, res, stream = false) {
     const rawReply = await streamChatResponse(aiHistory, resources, (message) => write({ type: "delta", message }), mode, responseStyle, subjectFocusId);
     const liveResults = await primoPromise;
     const { reply: validatedReply } = validateReply(rawReply, resources);
-    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle);
+    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId);
     logQuery({ topic: last.content.trim(), matchedIds: resources.map((r) => r.id) });
     write({ type: "done", reply, matchedResources: resources, searchTools: await getSearchTools(), liveResults });
     return res.end();
   } catch (err) {
-    const fallback = followupFallback(history, resources, mode);
+    const errorCode = String(err?.code || "ERROR");
+    const errorDetail = String(err?.message || err || "Unknown chat error")
+      .replace(/\s+/g, " ")
+      .slice(0, 500);
+    console.error(`[chat:${stream ? "stream" : "buffered"}] ${errorCode}: ${errorDetail}`);
+    if (stream && (res.destroyed || res.writableEnded)) return;
+    const fallback = transparentSourceFallback(responseStyle) || followupFallback(history, resources, mode);
     const liveResults = await primoPromise.catch(() => []);
     const reply = fallback || sourceResultsFallback(liveResults, mode);
     if (reply) {
-      const payload = { reply: prepareReply(reply, history, liveResults, last.content, responseStyle), matchedResources: resources, searchTools: await getSearchTools(), liveResults };
+      const payload = { reply: prepareReply(reply, history, liveResults, last.content, responseStyle, resources, subjectFocusId), matchedResources: resources, searchTools: await getSearchTools(), liveResults };
       if (!stream) return sendJson(res, 200, payload);
       writeNdjson(res, { type: "done", ...payload });
       return res.end();

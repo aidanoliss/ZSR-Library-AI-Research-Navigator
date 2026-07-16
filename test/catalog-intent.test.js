@@ -8,10 +8,10 @@ test("first-turn source modes can use catalog discovery", () => {
   assert.equal(shouldLookupCatalog("Find peer-reviewed sources on climate justice", "sources", 1), true);
 });
 
-test("brainstorming and narrowing turns never search the catalog", () => {
-  assert.equal(shouldLookupCatalog("Give me three different research angle options", "hybrid", 2), false);
+test("Answer + sources searches a complete brainstorming topic while planning-only modes can defer", () => {
+  assert.equal(shouldLookupCatalog("Give me three different research angle options about Keynesian economics", "hybrid", 2), true);
   assert.equal(shouldLookupCatalog("Help me narrow this into a research question", "sources", 2), false);
-  assert.equal(shouldLookupCatalog("Brainstorm topics about artificial intelligence", "hybrid", 1), false);
+  assert.equal(shouldLookupCatalog("Brainstorm topics about artificial intelligence", "hybrid", 1), true);
 });
 
 test("follow-ups search only when they explicitly request discovery", () => {

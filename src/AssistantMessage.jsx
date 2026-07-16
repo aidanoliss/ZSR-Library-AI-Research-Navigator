@@ -17,6 +17,7 @@ import {
   buildResearchPlan,
   buildSearchTermSuggestions,
   isSubstantiveResearchRequest,
+  normalizeSearchOptionKey,
 } from "../config/researchAgent.js";
 import { researchItemKey } from "./researchWorkspace.js";
 
@@ -421,22 +422,12 @@ function azDatabaseHref(database) {
   return `https://guides.zsr.wfu.edu/az.php?q=${encodeURIComponent(database || "")}`;
 }
 
-function fallbackDatabaseStrategyForMode(mode) {
-  return (mode.recommended || []).slice(0, 3).map(([database, , bestFor]) => ({
-    database,
-    az_area: mode.label,
-    why: bestFor,
-    search_inside: mode.termStrategies.slice(0, 3),
-    journals_or_sources: mode.termSuffixes.slice(0, 4),
-  }));
-}
-
 function uniqueTerms(terms = []) {
   const seen = new Set();
   const out = [];
   for (const term of terms) {
     const clean = String(term || "").trim();
-    const key = clean.toLowerCase();
+    const key = normalizeSearchOptionKey(clean);
     if (!clean || seen.has(key)) continue;
     seen.add(key);
     out.push(clean);
@@ -817,7 +808,8 @@ function StrategyTermGroup({ label, terms = [], linkBase }) {
 }
 
 function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
-  const terms = (resource.searchTerms || []).slice(0, 3);
+  const terms = (resource.searchTerms || []).slice(0, 1);
+  const filters = (resource.filters || []).filter(Boolean);
   const href = resource.id === "primo"
     ? fillTemplate(resource.accessUrl, terms[0] || "")
     : resource.accessUrl;
@@ -846,16 +838,19 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
         </div>
         <p>{resource.description}</p>
         <div className="agent-card-summary">
-          <span><strong>Expect:</strong> {resource.expect}</span>
           {terms.length > 0 ? (
-            <span><strong>Try:</strong> {terms.join(" | ")}</span>
+            <span><strong>Search inside {resource.name}:</strong> <code>{terms[0]}</code></span>
           ) : (
             <span><strong>Use it to:</strong> {resource.bestFor}</span>
           )}
+          {filters.length > 0 && (
+            <span><strong>Then filter:</strong> {filters.join(" · ")}</span>
+          )}
+          <span><strong>Expect:</strong> {resource.expect}</span>
         </div>
         <EvidenceChips
           items={resource.generalStartingPoint
-            ? ["Curated ZSR config", "General discovery route", "Not a topic-specific match"]
+            ? ["Curated ZSR config", "Named secondary database", "Not top-ranked"]
             : [
                 "Curated ZSR config",
                 resource.subjectArea ? `${resource.subjectArea} match` : "",
@@ -876,7 +871,7 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
   );
 }
 
-function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
+function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visibleSearchTerms = [], onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   if (!plan?.query) return null;
   const firstFour = plan.recommendations.slice(0, 4);
   const remaining = plan.recommendations.slice(4);
@@ -886,6 +881,24 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, onSa
     otherStartingPoints.length > 0 &&
     (plan.recommendations.length < 4 || liveResultCount < 3);
   const focusLabel = plan.subjectFocus?.label;
+  const occupiedQueryKeys = new Set(
+    [
+      ...plan.recommendations,
+      ...otherStartingPoints,
+    ]
+      .flatMap((resource) => resource.searchTerms || [])
+      .concat(visibleSearchTerms)
+      .map(normalizeSearchOptionKey)
+      .filter(Boolean)
+  );
+  const fallbackQueryKeys = new Set();
+  const visibleFallbacks = (plan.fallbacks || []).filter((fallback) => {
+    if (!fallback.query) return true;
+    const key = normalizeSearchOptionKey(fallback.query);
+    if (!key || occupiedQueryKeys.has(key) || fallbackQueryKeys.has(key)) return false;
+    fallbackQueryKeys.add(key);
+    return true;
+  });
   return (
     <section className="research-agent">
       <SectionHeader icon={Icon.search}>{plan.navigationOnly ? "Navigate ZSR" : "Search plan"}</SectionHeader>
@@ -917,9 +930,9 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, onSa
         )}
         {showOtherStartingPoints && (
           <details className="agent-general-starting-points">
-            <summary>Other potentially helpful ZSR starting points</summary>
+            <summary>Other potentially helpful ZSR databases</summary>
             <p>
-              These are general discovery routes to try when the topic-matched shortlist or live catalog results are limited. They are not additional topic matches.
+              These are named secondary databases to try when the strongest matches or live results are limited. Each has its own unused query and filters.
             </p>
             <ul className="agent-resource-list">
               {otherStartingPoints.map((resource) => (
@@ -930,12 +943,12 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, onSa
         )}
       </div>
 
-      {!compact && (
+      {!compact && visibleFallbacks.length > 0 && (
         <details className="agent-fallback" open>
           <summary>{plan.navigationOnly ? "ZSR task guide" : "If this search fails, try..."}</summary>
           <ul>
-            {plan.fallbacks.map((fallback) => (
-              <li key={fallback.label}>
+            {visibleFallbacks.map((fallback) => (
+              <li key={`${fallback.label}-${fallback.query || fallback.text}`}>
                 <strong>{fallback.label}:</strong>{" "}
                 {fallback.href ? (
                   <a href={fallback.href} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: fallback.text, tool: fallback.label, url: fallback.href })}>
@@ -1152,15 +1165,41 @@ export default function AssistantMessage({
       : substantiveResearchRequest
         ? [...agentPlan.strategy.betterTerms, ...agentPlan.strategy.narrowerTerms.slice(0, 3)]
         : [];
-  const displaySearchTerms = searchTermCandidates.length
-    ? buildSearchTermSuggestions(latestAsk, searchTermCandidates, subjectFocusId, 8)
-    : [];
+  const reservedOutsideSearchTerms = new Set(
+    [
+      ...agentPlan.recommendations,
+      ...(agentPlan.otherStartingPoints || []),
+    ]
+      .flatMap((resource) => resource.searchTerms || [])
+      .concat((agentPlan.fallbacks || []).map((fallback) => fallback.query).filter(Boolean))
+      .map(normalizeSearchOptionKey)
+      .filter(Boolean)
+  );
+  const deterministicSearchTerms = agentPlan.searchTerms || [];
+  const displaySearchTerms = uniqueTerms(
+    deterministicSearchTerms.length
+      ? deterministicSearchTerms
+      : searchTermCandidates.length
+        ? buildSearchTermSuggestions(latestAsk, searchTermCandidates, subjectFocusId, 12)
+        : []
+  )
+    .filter((term) => !reservedOutsideSearchTerms.has(normalizeSearchOptionKey(term)))
+    .slice(0, 8);
   const databaseStrategy = showTopicSpecificPlan
     ? SOCIAL_MEDIA_DATABASE_STRATEGY
     : reply.database_strategy?.length
       ? reply.database_strategy
       : selectedSourcePlanRequest
-        ? fallbackDatabaseStrategyForMode(activeMode)
+        ? agentPlan.recommendations.map((resource) => ({
+            database: resource.name,
+            az_area: resource.subjectArea,
+            why: resource.whyFits,
+            search_inside: [
+              `Run: ${resource.searchTerms[0]}`,
+              ...resource.filters,
+            ].filter(Boolean),
+            journals_or_sources: [resource.expect].filter(Boolean),
+          }))
         : [];
   const topicOptions = selectedSourcePlanRequest ? [] : rawTopicOptions;
   const clarifyingQuestions = (reply.clarifying_questions || [])
@@ -1354,6 +1393,16 @@ export default function AssistantMessage({
         <ClarifyingPlannerPrompt questions={clarifyingQuestions} onOpenPlanner={onOpenPlanner} />
       )}
 
+      {["hybrid", "sources"].includes(responseStyle) && reply.source_notice && (
+        <div className="notice source-relevance" role="note">
+          <span className="sec-icon">{Icon.info}</span>
+          <div>
+            <strong>About these source leads</strong>
+            <p>{reply.source_notice}</p>
+          </div>
+        </div>
+      )}
+
       {showModeGuidance && (
         <section className="mode-guidance">
           <div>
@@ -1383,7 +1432,7 @@ export default function AssistantMessage({
       )}
 
       {showAgenticSearchPlan && (
-        <ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+        <ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} visibleSearchTerms={displaySearchTerms} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {showDatabaseStrategy && (
@@ -1494,7 +1543,6 @@ export default function AssistantMessage({
           <div className="term-combo-advice" role="note">
             <strong>Combine concepts deliberately.</strong>
             <span>Start with the first two concept groups. Use OR for synonyms within one idea and AND between different ideas. If results are thin, swap one synonym or remove one limiter before changing databases.</span>
-            {displaySearchTerms[0] && <code>{displaySearchTerms[0]}</code>}
           </div>
           {tools.length > 0 && (
             <p className="muted terms-hint">Use the copy icon for a single term, or ↗ to run it as a search.</p>

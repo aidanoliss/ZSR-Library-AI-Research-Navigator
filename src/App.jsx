@@ -3,6 +3,7 @@ import AdminPanel from "./AdminPanel.jsx";
 import AssistantMessage from "./AssistantMessage.jsx";
 import HandoffModal from "./HandoffModal.jsx";
 import ResearchWorkspace from "./ResearchWorkspace.jsx";
+import { chatFailureMessage, requestChatReply } from "./chatTransport.js";
 import { submittedResearchContext } from "./conversationContext.js";
 import { conversationToMarkdown, downloadText } from "./exportPlan.js";
 import {
@@ -971,50 +972,22 @@ export default function App() {
     setStreamText("");
 
     try {
-      const res = await fetch("/api/chat/stream", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode,
-          responseStyle,
-          subjectFocusId,
-          assignmentContext: requestAssignmentContext,
-          plannerContext: options.plannerContext || "",
-          messages: nextMessages.map((m) => ({
-            role: m.role,
-            content: m.role === "assistant"
-              ? (m.reply?.message || m.content || "")
-              : m.content,
-          })),
-        }),
+      const requestPayload = {
+        mode,
+        responseStyle,
+        subjectFocusId,
+        assignmentContext: requestAssignmentContext,
+        plannerContext: options.plannerContext || "",
+        messages: nextMessages.map((m) => ({
+          role: m.role,
+          content: m.role === "assistant"
+            ? (m.reply?.message || m.content || "")
+            : m.content,
+        })),
+      };
+      const finalPayload = await requestChatReply(requestPayload, {
+        onDelta: (message) => setStreamText(message || ""),
       });
-
-      if (!res.ok || !res.body) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Could not generate a reply right now.");
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let finalPayload = null;
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          const event = JSON.parse(line);
-          if (event.type === "delta") setStreamText(event.message || "");
-          if (event.type === "done") finalPayload = event;
-          if (event.type === "error") throw new Error(event.error || "Could not generate a reply right now.");
-        }
-      }
-
-      if (!finalPayload) throw new Error("The reply did not finish. Please try again.");
       const assistantMessage = {
         role: "assistant",
         content: finalPayload.reply?.message || "",
@@ -1031,15 +1004,21 @@ export default function App() {
       const finished = [...nextMessages, assistantMessage];
       setMessages(finished);
       saveSession(finished, mode, responseStyle, sessionId);
-    } catch {
+    } catch (err) {
       setError("");
+      const failureMessage = chatFailureMessage(err);
       const fallback = [
         ...nextMessages,
         {
           role: "assistant",
-          content: "I could not reach the AI service, but you can still search ZSR with the terms below.",
+          content: failureMessage,
           reply: {
-            message: "I could not reach the AI service, but you can still search ZSR with the terms below.",
+            message: failureMessage,
+            ...(["hybrid", "sources"].includes(responseStyle)
+              ? {
+                  source_notice: "The AI answer was interrupted. The named database routes and locally generated searches below may or may not be fully relevant; verify every result you open.",
+                }
+              : {}),
             search_terms: buildSearchTermSuggestions(content, [], requestFocus.selectedId || requestFocus.id, 6),
             suggested_followups: ["Try a narrower version", "Find source leads", "Get citation help"],
           },

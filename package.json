@@ -14,7 +14,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/native.js",
-    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js test/retrieve.test.js test/primo.test.js test/catalog-intent.test.js test/request-context.test.js test/research-workspace.test.js test/conversation-context.test.js test/log.test.js",
+    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js test/retrieve.test.js test/primo.test.js test/catalog-intent.test.js test/request-context.test.js test/research-workspace.test.js test/conversation-context.test.js test/source-contract.test.js test/chat-transport.test.js test/log.test.js",
     "test:live": "node --test test/adversarial.test.js"
   },
   "dependencies": {
