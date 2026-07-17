@@ -377,14 +377,13 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         ...(disp.subject || []),
         disp.type?.[0],
       ].filter(Boolean).join(" ");
+      const sourceAbstract = abstractExcerpt(addata.abstract || disp.abstract);
       const visibleConceptText = [
         relevanceText,
-        ...(disp.abstract || []),
-        abstractExcerpt(addata.abstract),
+        sourceAbstract,
       ].filter(Boolean).join(" ");
       const titleText = disp.title?.[0] || "";
       const subjects = values(disp.subject, 8);
-      const sourceAbstract = abstractExcerpt(addata.abstract || disp.abstract);
       const authors = authorMetadata(
         [addata.au, addata.addau],
         [disp.creator, disp.contributor]

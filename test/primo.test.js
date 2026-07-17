@@ -276,6 +276,7 @@ test("hidden Primo description and indexing metadata cannot satisfy a required c
         primoDoc({
           title: "Restoration and repair of damaged ecosystems",
           subject: ["Biodiversity", "Ecological restoration"],
+          abstract: "The first sentence discusses biodiversity restoration. The second sentence describes ecosystem repair. A later sentence mentions climate change.",
           description: ["Publisher description mentioning climate change."],
           search: { general: ["Climate change"] },
         }),
