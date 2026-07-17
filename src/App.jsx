@@ -4,7 +4,7 @@ import AssistantMessage from "./AssistantMessage.jsx";
 import HandoffModal from "./HandoffModal.jsx";
 import ResearchWorkspace from "./ResearchWorkspace.jsx";
 import { chatFailureMessage, requestChatReply } from "./chatTransport.js";
-import { submittedResearchContext } from "./conversationContext.js";
+import { submittedResearchTopicContext } from "./conversationContext.js";
 import { conversationToMarkdown, downloadText } from "./exportPlan.js";
 import {
   addResearchItem,
@@ -726,7 +726,7 @@ export default function App() {
 
   const hasConversation = messages.length > 0;
   const activeMode = getSearchMode(mode);
-  const subjectFocusSeed = useMemo(() => submittedResearchContext(messages), [messages]);
+  const subjectFocusSeed = useMemo(() => submittedResearchTopicContext(messages), [messages]);
   const effectiveSubjectFocus = useMemo(
     () => resolveSubjectFocus(subjectFocusId, subjectFocusSeed),
     [subjectFocusId, subjectFocusSeed]
@@ -952,7 +952,7 @@ export default function App() {
       return;
     }
 
-    const focusText = submittedResearchContext([...messages, { role: "user", content }]);
+    const focusText = submittedResearchTopicContext([...messages, { role: "user", content }]);
     const requestFocus = resolveSubjectFocus(subjectFocusId, focusText);
     const requestAssignmentContext = assignmentContext(researchWorkspace.assignment);
     const userMessage = options.plannerContext
@@ -1091,7 +1091,7 @@ export default function App() {
   }
 
   function openPlannerFromAssistant(seed, questions = []) {
-    openPlanner(seed || submittedResearchContext(messages) || input, questions);
+    openPlanner(seed || submittedResearchTopicContext(messages) || input, questions);
   }
 
   if (adminOpen) {
@@ -1248,14 +1248,14 @@ export default function App() {
                       matched={message.matched}
                       searchTools={message.searchTools}
                       liveResults={message.liveResults}
-                      topic={submittedResearchContext(messages, index)}
+                      topic={submittedResearchTopicContext(messages, index)}
                       mode={message.mode || mode}
                       responseStyle={message.responseStyle || responseStyle}
                       subjectFocusId={message.subjectFocusId || messages[index - 1]?.subjectFocusId || effectiveSubjectFocus.id}
                       isFollowup={index > 1}
                       isLatest={index === messages.length - 1 && !loading}
                       onFollowup={send}
-                      onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchContext(messages, index), questions)}
+                      onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchTopicContext(messages, index), questions)}
                       onSaveResearchItem={saveResearchItem}
                       onTrackSearch={trackSearch}
                       savedResearchItemKeys={savedResearchItemKeys}

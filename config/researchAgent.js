@@ -500,6 +500,24 @@ const TOPIC_PROFILES = [
     resourceIds: ["econlit", "jstor", "web-of-science", "proquest-research-library"],
   },
   {
+    id: "authoritarian-political-leadership-psychology",
+    pattern: /\b(?:psycholog|personality|narciss|psychopath|machiavell|dark triad)\w*\b.*\b(?:authoritarian|autocrat|dictator|despot|cruel|powerful|dominant|dominate)\w*\b.*\bleaders?\b|\b(?:authoritarian|autocrat|dictator|despot|cruel|powerful|dominant|dominate)\w*\b.*\bleaders?\b.*\b(?:psycholog|personality|traits?|countries?|regimes?)\w*\b/i,
+    better: [
+      '"authoritarian leaders" AND (narcissism OR psychopathy OR Machiavellianism)',
+      '"political leaders" AND (narcissism OR psychopathy OR Machiavellianism)',
+      '"political leadership" AND "dark triad"',
+    ],
+    broader: ["political psychology", "authoritarian leadership", "political personality"],
+    narrower: [
+      '"authoritarian leaders" AND psychopathy',
+      '"political leaders" AND narcissism',
+      'dictator* AND "political personality"',
+      'autocrat* AND leadership AND psychology',
+    ],
+    alternate: ["authoritarian leadership", "political personality", "dark triad", "destructive leadership"],
+    resourceIds: ["psycinfo", "proquest-political-science", "socindex", "jstor", "academic-search-premier"],
+  },
+  {
     id: "surveillance-public-trust",
     pattern: /\b(?:surveillance|survelliance|monitoring)\b.*\b(?:citizens?|public|trust|government|privacy|legitimacy)\b|\b(?:citizens?|public|trust|government|privacy|legitimacy)\b.*\b(?:surveillance|survelliance|monitoring)\b/i,
     better: [
@@ -557,11 +575,52 @@ const TOPIC_PROFILES = [
     resourceIds: ["statista", "business-source", "proquest-research-library", "academic-search-premier"],
   },
   {
+    id: "biodiversity-climate",
+    pattern: /\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b.*\b(climate change|global warming|climate variability|climate mitigation|climate regulation)\b|\b(climate change|global warming|climate variability|climate mitigation|climate regulation)\b.*\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b/i,
+    supersedes: ["ecology-environment"],
+    better: [
+      "biodiversity AND \"climate change\"",
+      "(\"biological diversity\" OR \"species diversity\") AND \"climate change\"",
+      "biodiversity AND (\"climate regulation\" OR \"carbon sequestration\")",
+    ],
+    broader: ["biological diversity", "species diversity", "ecosystem diversity"],
+    narrower: [
+      "biodiversity AND \"climate change\" AND \"carbon sequestration\"",
+      "biodiversity AND \"climate change\" AND \"ecosystem resilience\"",
+      "\"species diversity\" AND \"climate change\" AND adaptation",
+      "biodiversity AND \"climate mitigation\" AND ecosystems",
+    ],
+    alternate: ["biological diversity", "species diversity", "ecosystem diversity"],
+    recovery: {
+      narrow: "biodiversity AND \"climate change\" AND \"carbon sequestration\"",
+      broaden: "(\"species richness\" OR \"ecosystem diversity\") AND \"climate change\"",
+      switchDatabase: "\"ecosystem biodiversity\" AND \"climate regulation\"",
+      scholar: "biodiversity AND \"climate mitigation\"",
+    },
+    resourceQueries: {
+      "web-of-science": ["biodiversity AND \"climate change\""],
+      "science-direct": ["biodiversity AND (\"climate regulation\" OR \"carbon sequestration\")"],
+      "academic-search-premier": ["(\"biological diversity\" OR \"species diversity\") AND \"climate change\""],
+      "proquest-research-library": ["biodiversity AND \"climate change\" AND \"ecosystem services\""],
+    },
+    resourceIds: ["web-of-science", "science-direct", "academic-search-premier"],
+  },
+  {
+    id: "pollinator-conservation",
+    pattern: /\b(pollinator|pollination|bee diversity|native bees?)\b/i,
+    supersedes: ["ecology-environment"],
+    better: ["pollinator* AND biodiversity", "pollinator* AND \"habitat loss\"", "\"urban pollinator\" AND conservation"],
+    broader: ["pollinator ecology", "insect biodiversity", "ecosystem services"],
+    narrower: ["urban pollinator diversity", "native pollinator conservation", "pollinator habitat restoration"],
+    alternate: ["native bees", "pollination ecology", "insect conservation"],
+    resourceIds: ["web-of-science", "science-direct", "academic-search-premier"],
+  },
+  {
     id: "ecology-environment",
-    pattern: /\b(ecology|ecological|biodiversity|pollinator|pollination|conservation biology|environmental science)\b/i,
-    better: ["ecology AND biodiversity", "pollinator* AND biodiversity", "\"urban ecology\" AND conservation"],
+    pattern: /\b(ecology|ecological|biodiversity|conservation biology|environmental science)\b/i,
+    better: ["ecology AND biodiversity", "biodiversity AND conservation", "\"ecosystem services\" AND biodiversity"],
     broader: ["conservation biology", "environmental science", "ecosystem services"],
-    narrower: ["urban pollinator diversity", "native pollinator conservation", "community ecology case study"],
+    narrower: ["biodiversity AND \"habitat loss\"", "biodiversity AND \"ecosystem resilience\"", "\"species diversity\" AND conservation"],
     alternate: ["species diversity", "ecosystem services", "conservation ecology"],
     resourceIds: ["web-of-science", "science-direct", "academic-search-premier"],
   },
@@ -884,7 +943,9 @@ function articleTitleLike(query) {
 
 function activeProfiles(query) {
   const q = cleanQuery(query);
-  return TOPIC_PROFILES.filter((profile) => profile.pattern.test(q));
+  const matches = TOPIC_PROFILES.filter((profile) => profile.pattern.test(q));
+  const supersededIds = new Set(matches.flatMap((profile) => profile.supersedes || []));
+  return matches.filter((profile) => !supersededIds.has(profile.id));
 }
 
 function queryContainsTerm(query, term) {
@@ -1437,7 +1498,12 @@ function genericSearchVariants(query, subjectFocusId) {
 }
 
 function resourceSpecificSearches(resource, query, subjectFocusId) {
-  if (activeProfiles(query).length) return [];
+  const profiles = activeProfiles(query);
+  if (profiles.length) {
+    return uniqueSearchOptions(
+      profiles.flatMap((profile) => profile.resourceQueries?.[resource.id] || [])
+    );
+  }
   const base = genericBooleanQuery(query);
   const focus = resolveSubjectFocus(subjectFocusId, query);
   const qualifiers = RESOURCE_QUERY_QUALIFIERS[resource.id] ||
@@ -1455,7 +1521,8 @@ export function buildSearchTermSuggestions(
   const q = cleanQuery(query);
   if (!q || isZsrNavigationRequest(q)) return [];
   const strategy = buildSearchStrategy(q, subjectFocusId);
-  const hasProfile = activeProfiles(q).length > 0;
+  const profiles = activeProfiles(q);
+  const hasProfile = profiles.length > 0;
   const genericVariants = !hasProfile && !strategy.isKnownItem
     ? genericSearchVariants(q, subjectFocusId)
     : [];
@@ -1588,7 +1655,38 @@ function assignResourceSearchInstructions(
 }
 
 export function buildCatalogKeywordQuery(query, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  return buildSearchTermSuggestions(query, [], subjectFocusId, 1)[0] || keywordSearchBase(query);
+  return buildCatalogSearchQueries(query, subjectFocusId, 1)[0] || keywordSearchBase(query);
+}
+
+export function buildCatalogSearchQueries(
+  query,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  limit = 6
+) {
+  const q = cleanQuery(query);
+  if (!q || isZsrNavigationRequest(q)) return [];
+  const strategy = buildSearchStrategy(q, subjectFocusId);
+  const profiles = activeProfiles(q);
+  const hasProfile = profiles.length > 0;
+  const concepts = genericTopicConcepts(q);
+  const broadConcepts = (hasProfile ? [] : concepts)
+    .map(booleanConcept)
+    .filter(Boolean);
+  const boundedPairs = !hasProfile && concepts.length >= 2
+    ? [
+        concepts.slice(0, 2).map(booleanConcept).join(" AND "),
+        [concepts[0], concepts[concepts.length - 1]].map(booleanConcept).join(" AND "),
+      ]
+    : [];
+
+  return uniqueSearchOptions([
+    ...strategy.betterTerms,
+    ...boundedPairs,
+    ...strategy.narrowerTerms,
+    ...strategy.broaderTerms.map(booleanConcept),
+    ...buildSearchTermSuggestions(q, [], subjectFocusId, 12),
+    ...broadConcepts,
+  ]).slice(0, Math.max(1, Math.floor(Number(limit) || 1)));
 }
 
 export function buildFallbackSearches(
@@ -1606,7 +1704,9 @@ export function buildFallbackSearches(
     ];
   }
   const strategy = buildSearchStrategy(q, subjectFocusId);
-  const hasProfile = activeProfiles(q).length > 0;
+  const profiles = activeProfiles(q);
+  const hasProfile = profiles.length > 0;
+  const recovery = profiles.find((profile) => profile.recovery)?.recovery || {};
   const excluded = new Set(excludedTerms.map(normalizeSearchOptionKey).filter(Boolean));
   const used = new Set(excluded);
   const resources = suppliedResources.length
@@ -1631,18 +1731,18 @@ export function buildFallbackSearches(
   const genericNarrowers = genericVariants.filter(
     (term) => normalizeSearchOptionKey(term) !== genericBaseKey
   );
-  const narrowQuery = take(hasProfile ? strategy.narrowerTerms : genericNarrowers);
+  const narrowQuery = take(hasProfile ? [recovery.narrow, ...strategy.narrowerTerms] : genericNarrowers);
   const genericConcepts = genericTopicConcepts(q);
   const boundedBroaden = !hasProfile && genericConcepts.length >= 3
     ? genericConcepts.slice(0, 2).map(booleanConcept).join(" AND ")
     : "";
   const broadenQuery = hasProfile
-    ? take([controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)])
+    ? take([recovery.broaden, controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)])
     : boundedBroaden
       ? take([boundedBroaden])
       : "";
-  const switchQuery = take();
-  const scholarQuery = take();
+  const switchQuery = take([recovery.switchDatabase]);
+  const scholarQuery = take([recovery.scholar]);
   const namedDatabases = resources.filter((resource) => !GENERIC_NAVIGATION_RESOURCE_IDS.has(resource.id));
   const subjectDatabase = namedDatabases[0];
   const nextDatabase = namedDatabases[1] || namedDatabases[0];

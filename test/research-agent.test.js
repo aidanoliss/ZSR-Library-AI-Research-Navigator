@@ -5,6 +5,7 @@ import {
   buildFullTextWorkflow,
   buildGeneralStartingPoints,
   buildCatalogKeywordQuery,
+  buildCatalogSearchQueries,
   buildResearchPlan,
   buildSearchTermSuggestions,
   classifyResearchIntent,
@@ -365,6 +366,38 @@ test("fallback actions are anchored, distinct, and never search for database nam
   assert.ok(plan.fallbacks.filter((fallback) => fallback.query).every((fallback) => /\bAND\b/i.test(fallback.query)));
 });
 
+test("biodiversity and climate recovery searches keep both concepts without pollinator contamination", () => {
+  const query = "how biodiversity impacts the climate change";
+  const plan = buildResearchPlan(query, 5);
+  const databaseSearches = plan.recommendations.flatMap((resource) => resource.searchTerms);
+  const secondaryDatabaseSearches = plan.otherStartingPoints.flatMap((resource) => resource.searchTerms);
+  const fallbackSearches = plan.fallbacks.map((fallback) => fallback.query).filter(Boolean);
+  const visibleSearches = [...databaseSearches, ...secondaryDatabaseSearches, ...fallbackSearches, ...plan.searchTerms];
+  const visibleKeys = visibleSearches.map(normalizeSearchOptionKey);
+
+  assert.deepEqual(
+    plan.recommendations.map((resource) => resource.id),
+    ["web-of-science", "science-direct", "academic-search-premier"]
+  );
+  assert.ok(fallbackSearches.length >= 4);
+  assert.ok(fallbackSearches.every((term) => /biodivers|species richness/i.test(term)));
+  assert.ok(fallbackSearches.every((term) => /climate|carbon sequestration/i.test(term)));
+  assert.equal(new Set(visibleKeys).size, visibleKeys.length);
+  assert.doesNotMatch(visibleSearches.join(" "), /pollinat|community ecology|disease mechanism|health outcomes/i);
+});
+
+test("general biodiversity searches do not invent a pollinator subtopic", () => {
+  const plan = buildResearchPlan("biodiversity loss in protected areas", 5);
+  const visibleText = [
+    ...plan.recommendations.flatMap((resource) => resource.searchTerms),
+    ...plan.fallbacks.map((fallback) => fallback.query).filter(Boolean),
+    ...plan.searchTerms,
+  ].join(" ");
+
+  assert.match(visibleText, /biodiversity/i);
+  assert.doesNotMatch(visibleText, /pollinat|native bees/i);
+});
+
 test("unprofiled niche topics keep every relevant named path with distinct searches", () => {
   const plan = buildResearchPlan("quantum sensors for precision agriculture", 5);
   const ids = plan.recommendations.map((resource) => resource.id);
@@ -421,4 +454,20 @@ test("economics comparisons route to EconLit with clean concept-specific searche
   assert.ok(plan.recommendations.every((resource) => resource.searchTerms.length === 1));
   assert.ok(visibleSearches.every((term) => /keynesian|neoclassical/i.test(term)));
   assert.doesNotMatch(visibleSearches.join(" "), /phones?|eyes?|explore the differences|this topic|suggest focused/i);
+});
+
+test("political leadership psychology repairs wording and produces several source queries", () => {
+  const query = "The psychology of powerful and cruel leaders in dominate countries";
+  const plan = buildResearchPlan(query, 6, "psychology");
+  const catalogQueries = buildCatalogSearchQueries(query, "psychology", 6);
+  const ids = plan.recommendations.map((resource) => resource.id);
+
+  assert.equal(plan.subjectFocus.id, "psychology");
+  assert.equal(ids[0], "psycinfo");
+  assert.ok(ids.includes("proquest-political-science"));
+  assert.ok(ids.includes("socindex"));
+  assert.ok(catalogQueries.length >= 4);
+  assert.match(catalogQueries[0], /authoritarian leaders/i);
+  assert.match(catalogQueries.join(" "), /political leaders|dark triad/i);
+  assert.doesNotMatch(catalogQueries.join(" "), /dominate countries|the psychology powerful/i);
 });

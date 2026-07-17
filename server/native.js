@@ -20,7 +20,7 @@ import {
 } from "./log.js";
 import { rateLimit } from "./ratelimit.js";
 import { screenMessage, blockedReply } from "./screen.js";
-import { searchPrimo } from "./primo.js";
+import { searchSourceCandidates } from "./primo.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
 import { appendRequestContextForAi, requestContextFromBody } from "./requestContext.js";
 import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
@@ -33,12 +33,15 @@ import {
 } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
 import {
-  buildCatalogKeywordQuery,
+  buildCatalogSearchQueries,
   buildResearchPlan,
   buildSearchTermSuggestions,
   isSubstantiveResearchRequest,
 } from "../config/researchAgent.js";
-import { activeResearchConversation, submittedResearchContext } from "../src/conversationContext.js";
+import {
+  activeResearchConversation,
+  submittedResearchTopicContext,
+} from "../src/conversationContext.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -97,7 +100,7 @@ function parseChatRequest(body) {
     .map((m) => ({ role: m.role, content: String(m.content).trim() }));
   const history = activeResearchConversation(normalizedHistory);
 
-  const studentText = submittedResearchContext(history) || String(last.content).trim();
+  const studentText = submittedResearchTopicContext(history) || String(last.content).trim();
   const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
   const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
   const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
@@ -129,10 +132,10 @@ function sourceRequestIntent(text) {
   return /\b(find|show|get|give|provide)\b.{0,48}\b(articles?|books?|sources?|evidence|results?|databases?|catalog|journals?|citations?|keywords?)\b/i.test(value);
 }
 
-function catalogSearchText(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+function catalogSearchQueries(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
   const focusId = subjectFocus.selectedId || subjectFocus.id;
-  return buildCatalogKeywordQuery(studentText, focusId);
+  return buildCatalogSearchQueries(studentText, focusId, 6);
 }
 
 function stripSourceHeavyFields(reply) {
@@ -166,7 +169,7 @@ function catalogResultFocusedTurn(history, latestText, liveResults) {
 }
 
 function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  const researchText = submittedResearchContext(history) || latestText;
+  const researchText = submittedResearchTopicContext(history) || latestText;
   const deterministicPlan = isSubstantiveResearchRequest(researchText)
     ? buildResearchPlan(researchText, 6, subjectFocusId)
     : null;
@@ -465,7 +468,9 @@ async function handleChat(req, res, stream = false) {
   try {
     resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
-    primoPromise = lookupCatalog ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode) : Promise.resolve([]);
+    primoPromise = lookupCatalog
+      ? searchSourceCandidates(catalogSearchQueries(history, studentText, mode, subjectFocusId), 10, mode)
+      : Promise.resolve([]);
 
     if (!stream) {
       const rawReply = await generateChatResponse(aiHistory, resources, mode, responseStyle, subjectFocusId);

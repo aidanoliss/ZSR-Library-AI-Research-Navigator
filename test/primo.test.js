@@ -1,9 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { searchPrimo } from "../server/primo.js";
+import { searchPrimo, searchSourceCandidates } from "../server/primo.js";
 
-function primoDoc({ title, type = "article", subject = [], creator = "Test Author", date = "2026" }) {
+function primoDoc({
+  title,
+  type = "article",
+  subject = [],
+  creator = "Test Author",
+  date = "2026",
+  abstract = "",
+  description = [],
+  addata = {},
+}) {
   return {
     context: "PC",
     pnx: {
@@ -14,8 +23,12 @@ function primoDoc({ title, type = "article", subject = [], creator = "Test Autho
         creator: [creator],
         subject,
         creationdate: [date],
+        description,
       },
-      addata: {},
+      addata: {
+        ...addata,
+        ...(abstract ? { abstract: [abstract] } : {}),
+      },
     },
   };
 }
@@ -60,6 +73,123 @@ test("Primo lookup keeps records with strong title and subject overlap", async (
     const results = await searchPrimo("AI cognitive offloading", 5, "scholarly");
     assert.equal(results.length, 1);
     assert.match(results[0].title, /cognitive offloading/i);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Primo exposes only a bounded provider-supplied abstract excerpt", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Artificial intelligence and cognitive offloading in student learning",
+          subject: ["Cognitive offloading", "Artificial intelligence", "Learning"],
+          abstract: "<jats:p>The study examines how students use artificial intelligence to externalize memory tasks. It reports associations between tool use and cognitive offloading behavior. A third sentence should not appear in the excerpt.</jats:p>",
+        }),
+      ],
+    }),
+  });
+
+  try {
+    const [result] = await searchPrimo("AI cognitive offloading", 5, "scholarly");
+    assert.ok(result);
+    assert.equal(result.abstractSource, "ZSR record metadata");
+    assert.match(result.abstractExcerpt, /^The study examines/);
+    assert.match(result.abstractExcerpt, /cognitive offloading behavior\./);
+    assert.doesNotMatch(result.abstractExcerpt, /third sentence/i);
+    assert.doesNotMatch(result.abstractExcerpt, /<jats:/i);
+    assert.ok(result.abstractExcerpt.length <= 363);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Primo does not relabel an unverified display description as an abstract", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Artificial intelligence and cognitive offloading in student learning",
+          subject: ["Cognitive offloading", "Artificial intelligence", "Learning"],
+          description: ["Publisher copy that is not explicitly identified as an abstract."],
+        }),
+      ],
+    }),
+  });
+
+  try {
+    const [result] = await searchPrimo("AI cognitive offloading", 5, "scholarly");
+    assert.ok(result);
+    assert.equal(result.abstractExcerpt, "");
+    assert.equal(result.abstractSource, "");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Primo lookup keeps affiliations and funding noise out of the visible author byline", async () => {
+  const originalFetch = globalThis.fetch;
+  const pollutedCreator = [
+    "Colinet, H",
+    "Ecosystemes, biodiversite, evolution [Rennes] (ECOBIO)",
+    "Universite de Rennes (UR)-Institut Ecologie et Environnement",
+    "Grant Number: Project IPEV 136 Subanteco",
+    "Leclerc, C",
+    "Natural Environment Research Council (NERC)",
+    "Convey, P",
+    "Chown, S",
+  ].join(" ; ");
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Climate change sensitivity across arthropod biodiversity",
+          subject: ["Climate change", "Biodiversity", "Arthropoda"],
+          creator: pollutedCreator,
+          addata: { au: ["Colinet, H", "Leclerc, C", "Convey, P", "Chown, S"] },
+        }),
+      ],
+    }),
+  });
+
+  try {
+    const [result] = await searchPrimo("climate change biodiversity arthropods", 5, "scholarly");
+    assert.ok(result);
+    assert.equal(result.author, "Colinet, H; Leclerc, C et al.");
+    assert.ok(result.author.length < 80);
+    assert.match(result.detailPoints.join(" "), /Authors: Colinet, H; Leclerc, C; Convey, P; Chown, S/);
+    assert.doesNotMatch([result.author, ...result.detailPoints].join(" "), /Universit|Grant Number|Research Council/i);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Primo lookup extracts person names when only a polluted display creator is available", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Climate change and biodiversity redistribution",
+          subject: ["Climate change", "Biodiversity"],
+          creator: "Colinet, H ; Universite de Rennes ; Grant Number: 136 ; Leclerc, C ; British Antarctic Survey ; Chown, S",
+        }),
+      ],
+    }),
+  });
+
+  try {
+    const [result] = await searchPrimo("climate change biodiversity", 5, "scholarly");
+    assert.ok(result);
+    assert.equal(result.author, "Colinet, H; Leclerc, C et al.");
+    assert.doesNotMatch(result.author, /Universit|Grant|Survey/i);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -167,6 +297,73 @@ test("Primo deduplication preserves distinct authors for the same title", async 
   try {
     const results = await searchPrimo("climate justice", 5, "scholarly");
     assert.equal(results.length, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("source retrieval tries semantic ZSR queries after a literal query returns nothing", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const parsed = new URL(url);
+    const query = parsed.searchParams.get("q") || "";
+    const docs = /political leaders/i.test(query)
+      ? Array.from({ length: 5 }, (_, index) => primoDoc({
+          title: `Political leaders, narcissism, and public power ${index + 1}`,
+          subject: ["Political leaders", "Narcissism", "Political psychology"],
+          creator: `Scholar ${index + 1}`,
+        }))
+      : [];
+    return { ok: true, json: async () => ({ docs }) };
+  };
+
+  try {
+    const results = await searchSourceCandidates([
+      '"literal malformed wording" AND psychology',
+      '"political leaders" AND narcissism',
+    ], 10, "scholarly");
+    assert.equal(results.length, 5);
+    assert.ok(results.every((result) => result.sourceProvider === "ZSR discovery"));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("source retrieval uses verified Crossref metadata when ZSR has no records", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes("api.crossref.org")) {
+      return {
+        ok: true,
+        json: async () => ({
+          message: {
+            items: [{
+              DOI: "10.1234/example",
+              title: ["Authoritarian Leaders as Successful Psychopaths"],
+              author: [{ given: "Ada", family: "Scholar" }],
+              abstract: "<jats:p>The article examines psychopathy as a framework for studying authoritarian leadership. It evaluates the limits of applying clinical concepts to political figures. Additional text is not part of the excerpt.</jats:p>",
+              published: { "date-parts": [[2024]] },
+              type: "journal-article",
+              URL: "https://doi.org/10.1234/example",
+              "container-title": ["Political Psychology Review"],
+            }],
+          },
+        }),
+      };
+    }
+    return { ok: true, json: async () => ({ docs: [] }) };
+  };
+
+  try {
+    const results = await searchSourceCandidates([
+      '"authoritarian leaders" AND psychopathy',
+    ], 10, "scholarly");
+    assert.equal(results.length, 1);
+    assert.equal(results[0].sourceProvider, "Crossref scholarly metadata");
+    assert.equal(results[0].doi, "10.1234/example");
+    assert.equal(results[0].abstractSource, "Crossref record metadata");
+    assert.match(results[0].abstractExcerpt, /authoritarian leadership/);
+    assert.doesNotMatch(results[0].abstractExcerpt, /Additional text/);
   } finally {
     globalThis.fetch = originalFetch;
   }

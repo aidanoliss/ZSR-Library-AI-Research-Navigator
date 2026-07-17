@@ -363,6 +363,46 @@ function ResultThumb({ cover }) {
   return null;
 }
 
+function boundedResultText(value, maxLength) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(1, maxLength - 3)).trimEnd()}...`;
+}
+
+const NON_AUTHOR_RESULT_RE = /\b(?:acknowledg|agenc|associat|centre|center|cnrs|contribution|council|depart|ecosyst|facult|foundat|funding|hospital|inrae|institut|laborat|ministry|national|nerc|program|project|recherche|research|school|supported|survey|team|unit|universit|would like)/i;
+
+function looksLikeResultAuthor(value) {
+  const author = String(value || "").replace(/\s+/g, " ").trim();
+  if (!author || author.length > 80 || /\d|https?:|[()[\]{}:]/i.test(author)) return false;
+  if (NON_AUTHOR_RESULT_RE.test(author)) return false;
+  const words = author.replace(/,/g, " ").split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 6) return false;
+  return words.every((word) => /^[\p{L}][\p{L}.'’\-]*$/u.test(word));
+}
+
+function compactResultAuthor(value) {
+  const authors = String(value || "")
+    .split(/\s*;\s*/)
+    .map((author) => author.trim())
+    .filter(Boolean);
+  if (!authors.length) return "";
+  const likelyAuthors = authors.filter(looksLikeResultAuthor);
+  if (!likelyAuthors.length) {
+    return authors.length === 1 ? boundedResultText(authors[0], 80) : "";
+  }
+  const visible = likelyAuthors.slice(0, 2).join("; ");
+  const suffix = likelyAuthors.length > 2 && !/\bet al\.?$/i.test(visible) ? " et al." : "";
+  return boundedResultText(`${visible}${suffix}`, 110);
+}
+
+function resultMetaText(result) {
+  return [
+    boundedResultText(result?.type, 36),
+    compactResultAuthor(result?.author),
+    boundedResultText(result?.date, 24),
+  ].filter(Boolean).join(" · ");
+}
+
 // Render inline **bold** markdown as real <strong> instead of literal asterisks.
 function renderRich(text) {
   return String(text || "")
@@ -993,19 +1033,22 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
   if (!liveResults.length) return null;
   const visibleResults = liveResults.slice(0, 5);
   const moreResults = liveResults.slice(5, 10);
+  const usesMetadataFallback = liveResults.some((result) => /crossref/i.test(result.sourceProvider || ""));
   const renderResult = (r, i) => {
     const ids = resultIds(r);
     const hasId = Boolean(ids.doi || ids.pmid);
+    const isZsrRecord = !/crossref/i.test(r.sourceProvider || "");
     // Secondary links (Scholar, ZSR search, Delivers) — the LibKey/full-text
     // and PubMed links are surfaced as primary buttons below, so drop them here.
     const accessLinks = buildAccessLinks({ title: r.title, doi: ids.doi, pmid: ids.pmid })
       .filter((link) => !/full text|pubmed/i.test(link.label))
       .slice(0, 2);
+    const visibleMeta = resultMetaText(r);
     const savedItem = {
       kind: "catalog",
       title: r.title,
       url: r.url,
-      detail: [r.type, r.author, r.date].filter(Boolean).join(" · ") || r.description || "ZSR discovery lead",
+      detail: visibleMeta || r.description || "ZSR discovery lead",
     };
     return (
       <li key={`${r.url || r.title}-${i}`} className={`result-row ${r.cover ? "" : "no-thumb"}`}>
@@ -1015,29 +1058,7 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
             {r.title}
             <span className="ext-icon">{Icon.external}</span>
           </a>
-          <p className="result-meta">
-            {[r.type, r.author, r.date].filter(Boolean).join(" · ")}
-          </p>
-          <EvidenceChips
-            compact
-            items={[
-              "Live catalog metadata",
-              r.type ? `${r.type}` : "",
-              hasId ? "DOI/PMID detected" : "Title lookup needed",
-              "Confirm access in record",
-            ]}
-          />
-          {r.description && <p className="result-description">{r.description}</p>}
-          {r.detailPoints?.length > 0 && (
-            <details className="result-details">
-              <summary>More details</summary>
-              <ul>
-                {r.detailPoints.map((point, pointIndex) => (
-                  <li key={pointIndex}>{point}</li>
-                ))}
-              </ul>
-            </details>
-          )}
+          {visibleMeta && <p className="result-meta">{visibleMeta}</p>}
           <div className="result-actions">
             <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
             {hasId ? (
@@ -1055,18 +1076,59 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
                 Find via Google Scholar
               </a>
             )}
-            <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR record", url: r.url })}>Open in ZSR</a>
-            {ids.pmid && (
-              <a href={`https://pubmed.ncbi.nlm.nih.gov/${String(ids.pmid).replace(/\D/g, "")}/`} target="_blank" rel="noopener noreferrer">
-                PubMed record
-              </a>
-            )}
-            {accessLinks.map((link) => (
-              <a key={`${r.title}-${link.label}`} href={link.url} target="_blank" rel="noopener noreferrer">
-                {link.label}
-              </a>
-            ))}
+            <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: isZsrRecord ? "ZSR record" : "DOI record", url: r.url })}>
+              {isZsrRecord ? "Open in ZSR" : "Open DOI record"}
+            </a>
           </div>
+          <details className="result-details">
+            <summary>Source details and access</summary>
+            <div className="result-details-body">
+              <EvidenceChips
+                compact
+                items={[
+                  r.sourceProvider || "Live catalog metadata",
+                  r.type ? `${r.type}` : "",
+                  hasId ? "DOI/PMID detected" : "Title lookup needed",
+                  isZsrRecord ? "Confirm access in record" : "Check access through ZSR",
+                ]}
+              />
+              {r.abstractExcerpt ? (
+                <section className="result-abstract" aria-label="Provider-supplied abstract excerpt">
+                  <div className="result-abstract-heading">
+                    <strong>Abstract excerpt</strong>
+                    <span>{r.abstractSource || "Provider metadata"} · not AI-generated</span>
+                  </div>
+                  <p>{r.abstractExcerpt}</p>
+                </section>
+              ) : (
+                <p className="result-abstract-unavailable">
+                  No provider-supplied abstract was available, so no source summary was generated.
+                </p>
+              )}
+              {r.description && <p className="result-description">{r.description}</p>}
+              {r.detailPoints?.length > 0 && (
+                <ul>
+                  {r.detailPoints.map((point, pointIndex) => (
+                    <li key={pointIndex}>{point}</li>
+                  ))}
+                </ul>
+              )}
+              {(ids.pmid || accessLinks.length > 0) && (
+                <div className="result-secondary-links" aria-label="Additional source links">
+                  {ids.pmid && (
+                    <a href={`https://pubmed.ncbi.nlm.nih.gov/${String(ids.pmid).replace(/\D/g, "")}/`} target="_blank" rel="noopener noreferrer">
+                      PubMed record
+                    </a>
+                  )}
+                  {accessLinks.map((link) => (
+                    <a key={`${r.title}-${link.label}`} href={link.url} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </details>
         </div>
       </li>
     );
@@ -1074,10 +1136,16 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
 
   return (
     <section className={`live-results ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
-      <SectionHeader icon={Icon.search}>{compact ? "ZSR discovery examples" : "Live ZSR discovery leads"}</SectionHeader>
+      <SectionHeader icon={Icon.search}>
+        {compact
+          ? usesMetadataFallback ? "Scholarly source examples" : "ZSR discovery examples"
+          : usesMetadataFallback ? "Scholarly source leads" : "Live ZSR discovery leads"}
+      </SectionHeader>
       {!compact && (
         <p className="found-note">
-          These records passed an automated keyword-relevance check. Treat them as starting leads, not endorsements, and open each record to confirm topic fit, access, and format.
+          {usesMetadataFallback
+            ? "These records come from ZSR discovery when available and verified Crossref bibliographic metadata when the ZSR search is too narrow. Treat them as starting leads and confirm topic fit and access through ZSR."
+            : "These records passed an automated keyword-relevance check. Treat them as starting leads, not endorsements, and open each record to confirm topic fit, access, and format."}
         </p>
       )}
       <ul className="results">
@@ -1093,7 +1161,9 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
       )}
       {!compact && (
         <p className="muted terms-hint">
-          Live metadata from ZSR discovery. Weak matches are intentionally omitted; images appear only when ZSR or ISBN metadata provides a real thumbnail.
+          {usesMetadataFallback
+            ? "Live bibliographic metadata. Crossref records do not confirm Wake Forest access; use the provided ZSR and full-text links to check availability."
+            : "Live metadata from ZSR discovery. Weak matches are intentionally omitted; images appear only when ZSR or ISBN metadata provides a real thumbnail."}
         </p>
       )}
     </section>

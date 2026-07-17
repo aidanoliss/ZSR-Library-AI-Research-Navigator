@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { activeResearchConversation, submittedResearchContext } from "../src/conversationContext.js";
+import {
+  activeResearchConversation,
+  isSourceOnlyFollowup,
+  submittedResearchContext,
+  submittedResearchTopicContext,
+} from "../src/conversationContext.js";
 
 test("submitted context ignores unsent draft text by accepting messages only", () => {
   const messages = [
@@ -62,4 +67,26 @@ test("dependent follow-ups keep the active topic and its recent assistant contex
 
   assert.equal(activeResearchConversation(messages).length, 3);
   assert.equal(submittedResearchContext(messages), "surveillance and public trust focus on local government");
+});
+
+test("source-only follow-ups do not become part of the research topic", () => {
+  const topic = "The psychology of powerful and cruel leaders in dominate countries";
+  const messages = [
+    { role: "user", content: topic },
+    { role: "assistant", content: "Here is a starting plan." },
+    { role: "user", content: "can you provide sources i can use?" },
+  ];
+
+  assert.equal(isSourceOnlyFollowup(messages[2].content), true);
+  assert.equal(submittedResearchContext(messages), `${topic} can you provide sources i can use?`);
+  assert.equal(submittedResearchTopicContext(messages), topic);
+});
+
+test("topic-bearing source requests remain part of the research topic", () => {
+  const messages = [
+    { role: "user", content: "Find peer-reviewed sources about climate policy and coastal cities" },
+  ];
+
+  assert.equal(isSourceOnlyFollowup(messages[0].content), false);
+  assert.equal(submittedResearchTopicContext(messages), messages[0].content);
 });

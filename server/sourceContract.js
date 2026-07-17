@@ -15,9 +15,12 @@ export function applySourceContract(reply, resources, plan, liveResults, respons
     search_inside: [resource.recommended_query, ...(resource.recommended_filters || [])],
     journals_or_sources: [resource.expect].filter(Boolean),
   }));
+  const usesCrossrefFallback = liveResults?.some((result) => /crossref/i.test(result.sourceProvider || ""));
   const sourceNotice = liveResults?.length
-    ? "These automated source leads may or may not be fully relevant to your search. Open each record and confirm its topic, evidence, source type, and access before using it."
-    : "No live catalog records passed the relevance check. The named ZSR routes and searches below are still useful starting points, but their results may or may not be fully relevant; verify each item you open.";
+    ? usesCrossrefFallback
+      ? "These source leads may or may not be fully relevant. Some come from Crossref bibliographic metadata because ZSR discovery returned too few records; search each title through ZSR and confirm relevance, source type, and access before using it."
+      : "These automated source leads may or may not be fully relevant to your search. Open each record and confirm its topic, evidence, source type, and access before using it."
+    : "No verified source records were returned after the ZSR and scholarly-metadata searches. Do not treat the database routes below as citations; revise one concept or ask a librarian before using sources.";
 
   return {
     ...reply,

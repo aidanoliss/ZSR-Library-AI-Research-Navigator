@@ -12,6 +12,7 @@ import { DEFAULT_MODE_ID, getSearchMode } from "../config/libraryLinks.js";
 
 const ENABLED = (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off";
 const HOST = process.env.PRIMO_HOST || "https://wfu.primo.exlibrisgroup.com";
+const CROSSREF_HOST = process.env.CROSSREF_HOST || "https://api.crossref.org";
 const INST = process.env.PRIMO_INST || "01WAKE_INST";
 const VID = process.env.PRIMO_VID || "01WAKE_INST:ZSR";
 const SCOPE = process.env.PRIMO_SCOPE || "ZSR";
@@ -73,6 +74,105 @@ function values(value, limit = 6) {
   };
   visit(value);
   return out;
+}
+
+const NON_PERSON_AUTHOR_RE = /\b(?:agenc|associat|centre|center|cnrs|council|depart|ecosyst|facult|foundat|funding|hospital|inrae|institut|laborat|ministry|national|nerc|program|project|recherche|research|school|supported|survey|team|unit|universit)/iu;
+
+function boundedText(value, maxLength = 110) {
+  const text = clean(value);
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(1, maxLength - 3)).trimEnd()}...`;
+}
+
+function decodeTextEntities(value) {
+  const named = {
+    amp: "&",
+    apos: "'",
+    gt: ">",
+    lt: "<",
+    nbsp: " ",
+    quot: '"',
+  };
+  return String(value || "").replace(/&(#x[0-9a-f]+|#\d+|amp|apos|gt|lt|nbsp|quot);/gi, (match, entity) => {
+    const key = entity.toLowerCase();
+    if (named[key] != null) return named[key];
+    const codePoint = key.startsWith("#x")
+      ? Number.parseInt(key.slice(2), 16)
+      : Number.parseInt(key.slice(1), 10);
+    if (!Number.isInteger(codePoint) || codePoint < 0 || codePoint > 0x10ffff) return match;
+    return String.fromCodePoint(codePoint);
+  });
+}
+
+function providerText(value) {
+  let text = firstValue(value);
+  if (!text) return "";
+  const primoValues = [...text.matchAll(/\$\$V([^$]+)/g)].map((match) => match[1]);
+  if (primoValues.length) text = primoValues.join(" ");
+  return decodeTextEntities(text)
+    .replace(/<[^>]+>/g, " ")
+    .replace(/^\s*(?:abstract|summary)\s*[:.\-]\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function abstractExcerpt(value, maxLength = 360) {
+  const text = providerText(value);
+  if (!text) return "";
+  const sentences = typeof Intl?.Segmenter === "function"
+    ? [...new Intl.Segmenter("en", { granularity: "sentence" }).segment(text)]
+        .map((segment) => segment.segment.trim())
+        .filter(Boolean)
+    : text.match(/[^.!?]+(?:[.!?]+|$)/g)?.map((sentence) => sentence.trim()).filter(Boolean) || [text];
+  const selected = sentences.slice(0, 2).join(" ") || text;
+  if (selected.length > maxLength) {
+    const slice = selected.slice(0, maxLength - 3);
+    const lastSpace = slice.lastIndexOf(" ");
+    const clipped = lastSpace > maxLength * 0.65 ? slice.slice(0, lastSpace) : slice;
+    return `${clipped.trimEnd()}...`;
+  }
+  return selected.length < text.length ? `${selected} ...` : selected;
+}
+
+function looksLikePersonName(value) {
+  const author = clean(value);
+  if (!author || author.length > 80 || /\d|https?:|[()[\]{}:]/i.test(author)) return false;
+  if (NON_PERSON_AUTHOR_RE.test(author)) return false;
+  const words = author
+    .replace(/,/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (words.length < 2 || words.length > 6) return false;
+  return words.every((word) => /^[\p{L}][\p{L}.'’\-]*$/u.test(word));
+}
+
+function authorMetadata(structured, display) {
+  const candidates = values(structured, 30);
+  const fallbackCandidates = values(display, 30);
+  const structuredAuthors = candidates.filter(looksLikePersonName);
+  const likelyAuthors = structuredAuthors.length
+    ? structuredAuthors
+    : fallbackCandidates.filter(looksLikePersonName);
+  const seen = new Set();
+  const authors = likelyAuthors.filter((author) => {
+    const key = author.toLowerCase().replace(/[^\p{L}]+/gu, " ").trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  if (!authors.length) {
+    const fallback = boundedText(firstValue(structured) || fallbackCandidates[0] || firstValue(display), 80);
+    return { summary: fallback, detail: "" };
+  }
+
+  const visible = authors.slice(0, 2).join("; ");
+  const summary = boundedText(`${visible}${authors.length > 2 ? " et al." : ""}`, 110);
+  const detailed = authors.slice(0, 6).join("; ");
+  const detail = authors.length > 2
+    ? `Authors: ${detailed}${authors.length > 6 ? "; et al." : ""}`
+    : "";
+  return { summary, detail };
 }
 
 function resultDescription({ title, type, date, subjects }) {
@@ -280,6 +380,11 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       ].filter(Boolean).join(" ");
       const titleText = disp.title?.[0] || "";
       const subjects = values(disp.subject, 8);
+      const sourceAbstract = abstractExcerpt(addata.abstract || disp.abstract);
+      const authors = authorMetadata(
+        [addata.au, addata.addau],
+        [disp.creator, disp.contributor]
+      );
       const description = resultDescription({
         title: titleText,
         type: disp.type?.[0],
@@ -300,7 +405,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       const pmid = identifier(addata.pmid || addata.pubmedid || addata.pubmed);
       return {
         title: clean(disp.title?.[0]) || "(untitled)",
-        author: clean(disp.creator?.[0] || disp.contributor?.[0] || ""),
+        author: authors.summary,
         type: clean(disp.type?.[0] || ""),
         date: clean(disp.creationdate?.[0] || ""),
         url: record,
@@ -308,10 +413,14 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         doi,
         pmid,
         description,
+        abstractExcerpt: sourceAbstract,
+        abstractSource: sourceAbstract ? "ZSR record metadata" : "",
         detailPoints: [
+          authors.detail,
           subjects.length ? `Subject terms: ${subjects.slice(0, 6).join("; ")}` : "",
           "Access: use the ZSR record to check full text, PDF availability, and database login.",
         ].filter(Boolean),
+        sourceProvider: "ZSR discovery",
         relevance: relevanceScore(relevanceText, tokens),
         titleRelevance: relevanceScore(titleText, tokens),
         strongRelevance: matchedStrongTokens(relevanceText, tokens).length,
@@ -341,4 +450,139 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+function crossrefQuery(query) {
+  return clean(query)
+    .replace(/\b(?:AND|OR|NOT)\b/gi, " ")
+    .replace(/[()"“”]/g, " ")
+    .replace(/\*/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function crossrefAuthors(authors = []) {
+  const names = authors
+    .map((author) => [author.given, author.family].filter(Boolean).join(" ").trim())
+    .filter(Boolean);
+  return authorMetadata(names, []);
+}
+
+function crossrefDate(item) {
+  const parts = item?.published?.["date-parts"]?.[0] || item?.issued?.["date-parts"]?.[0] || [];
+  return parts.filter(Boolean).join("-");
+}
+
+export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID) {
+  const q = crossrefQuery(query);
+  if (!q) return [];
+  const mode = getSearchMode(modeId);
+  const params = new URLSearchParams({
+    "query.title": q,
+    rows: String(Math.min(30, Math.max(limit * 3, 15))),
+    select: "DOI,title,author,published,issued,type,URL,container-title,abstract",
+  });
+  if (mode.id === "scholarly") params.set("filter", "type:journal-article");
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 6000);
+  try {
+    const res = await fetch(`${CROSSREF_HOST}/works?${params}`, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "ZSR-Research-Navigator/1.0 (mailto:askzsr@wfu.edu)",
+      },
+      signal: controller.signal,
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const tokens = queryTokens(q);
+    const minimumMatches = tokens.length <= 1 ? 1 : 2;
+    const rows = (data?.message?.items || [])
+      .map((item) => {
+        const title = clean(item?.title?.[0]);
+        const container = clean(item?.["container-title"]?.[0]);
+        const doi = identifier(item?.DOI);
+        const authors = crossrefAuthors(item?.author);
+        const sourceAbstract = abstractExcerpt(item?.abstract);
+        const searchable = [title, container, sourceAbstract].filter(Boolean).join(" ");
+        return {
+          title,
+          author: authors.summary,
+          type: clean(item?.type || "scholarly work").replace(/-/g, " "),
+          date: crossrefDate(item),
+          url: doi ? `https://doi.org/${doi}` : clean(item?.URL),
+          cover: null,
+          doi,
+          pmid: "",
+          description: `Bibliographic metadata from Crossref${container ? ` for a work in ${container}` : ""}. Search the exact title in ZSR to confirm access and fit.`,
+          abstractExcerpt: sourceAbstract,
+          abstractSource: sourceAbstract ? "Crossref record metadata" : "",
+          detailPoints: [
+            authors.detail,
+            container ? `Publication: ${container}` : "",
+            "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access.",
+          ].filter(Boolean),
+          sourceProvider: "Crossref scholarly metadata",
+          relevance: relevanceScore(searchable, tokens),
+          titleRelevance: relevanceScore(title, tokens),
+        };
+      })
+      .filter((item) => item.title && item.url && item.relevance >= minimumMatches)
+      .sort((a, b) => b.titleRelevance - a.titleRelevance || b.relevance - a.relevance);
+
+    const seen = new Set();
+    return rows
+      .filter((item) => {
+        const key = item.doi?.toLowerCase() || resultKey(item);
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, limit)
+      .map(({ relevance, titleRelevance, ...item }) => item);
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function mergedSourceKey(result) {
+  return String(result?.doi || "").toLowerCase() || resultKey(result);
+}
+
+function mergeSourceResults(groups, limit) {
+  const seen = new Set();
+  const merged = [];
+  for (const group of groups) {
+    for (const result of group || []) {
+      const key = mergedSourceKey(result);
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      merged.push(result);
+      if (merged.length >= limit) return merged;
+    }
+  }
+  return merged;
+}
+
+export async function searchSourceCandidates(queries, limit = 10, modeId = DEFAULT_MODE_ID) {
+  const queryList = [...new Set((queries || []).map((query) => clean(query)).filter(Boolean))].slice(0, 5);
+  if (!queryList.length) return [];
+
+  const target = Math.min(5, Math.max(1, limit));
+  const primary = await searchPrimo(queryList[0], limit, modeId);
+  if (primary.length >= target) return primary.slice(0, limit);
+
+  const zsrFallbacks = await Promise.all(
+    queryList.slice(1).map((query) => searchPrimo(query, limit, modeId))
+  );
+  const zsrResults = mergeSourceResults([primary, ...zsrFallbacks], limit);
+  if (zsrResults.length >= target) return zsrResults;
+
+  const crossrefFallbacks = await Promise.all(
+    queryList.slice(0, 2).map((query) => searchCrossref(query, limit, modeId))
+  );
+  return mergeSourceResults([zsrResults, ...crossrefFallbacks], limit);
 }

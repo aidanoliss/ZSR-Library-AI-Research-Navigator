@@ -19,7 +19,7 @@ import {
 } from "./log.js";
 import { rateLimit } from "./ratelimit.js";
 import { screenMessage, blockedReply } from "./screen.js";
-import { searchPrimo } from "./primo.js";
+import { searchSourceCandidates } from "./primo.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
 import { appendRequestContextForAi, requestContextFromBody } from "./requestContext.js";
 import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
@@ -32,12 +32,15 @@ import {
 } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
 import {
-  buildCatalogKeywordQuery,
+  buildCatalogSearchQueries,
   buildResearchPlan,
   buildSearchTermSuggestions,
   isSubstantiveResearchRequest,
 } from "../config/researchAgent.js";
-import { activeResearchConversation, submittedResearchContext } from "../src/conversationContext.js";
+import {
+  activeResearchConversation,
+  submittedResearchTopicContext,
+} from "../src/conversationContext.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -181,7 +184,7 @@ function parseChatRequest(body) {
     .map((m) => ({ role: m.role, content: String(m.content).trim() }));
   const history = activeResearchConversation(normalizedHistory);
 
-  const studentText = submittedResearchContext(history) || String(last.content).trim();
+  const studentText = submittedResearchTopicContext(history) || String(last.content).trim();
 
   const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
   const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
@@ -217,10 +220,10 @@ function startingPoint(resources, id, why) {
   return { resource_name: resource.name, url: resource.url, why };
 }
 
-function catalogSearchText(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+function catalogSearchQueries(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
   const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
   const focusId = subjectFocus.selectedId || subjectFocus.id;
-  return buildCatalogKeywordQuery(studentText, focusId);
+  return buildCatalogSearchQueries(studentText, focusId, 6);
 }
 
 function withCatalogFoundIntro(reply, liveResults, latestText) {
@@ -273,7 +276,7 @@ function catalogResultFocusedTurn(history, latestText, liveResults) {
 }
 
 function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  const researchText = submittedResearchContext(history) || latestText;
+  const researchText = submittedResearchTopicContext(history) || latestText;
   const deterministicPlan = isSubstantiveResearchRequest(researchText)
     ? buildResearchPlan(researchText, 6, subjectFocusId)
     : null;
@@ -495,7 +498,7 @@ app.post("/api/chat", async (req, res) => {
     // Run the AI plan and the live ZSR catalog lookup in parallel.
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode)
+      ? searchSourceCandidates(catalogSearchQueries(history, studentText, mode, subjectFocusId), 10, mode)
       : Promise.resolve([]);
     const rawReply = await generateChatResponse(aiHistory, resources, mode, responseStyle, subjectFocusId);
     const liveResults = await primoPromise;
@@ -573,7 +576,7 @@ app.post("/api/chat/stream", async (req, res) => {
   try {
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchPrimo(catalogSearchText(history, studentText, mode, subjectFocusId), 10, mode)
+      ? searchSourceCandidates(catalogSearchQueries(history, studentText, mode, subjectFocusId), 10, mode)
       : Promise.resolve([]); // in parallel with streaming
     const rawReply = await streamChatResponse(
       aiHistory,
