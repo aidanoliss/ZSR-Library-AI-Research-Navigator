@@ -25,6 +25,8 @@ const STOPWORDS = new Set([
 const WEAK_TOPIC_TOKENS = new Set(["impact", "effect", "effects", "ment", "health"]);
 const AI_CONCEPT_RE = /\b(ai|artificial intelligence|generative ai|chatgpt|large language models?|llms?)\b/i;
 const OFFLOADING_CONCEPT_RE = /\b(cognitive offload(?:ing)?|offload(?:ing)?|cognitive load|external memory|distributed cognition|human-ai interaction)\b/i;
+const BIODIVERSITY_CONCEPT_RE = /\b(biodiversity|biological diversity|species diversity|ecosystem diversity|species richness)\b/i;
+const CLIMATE_CONCEPT_RE = /\b(climate change|climate resilience|climate adaptation|climate impacts?|climate mitigation|climate regulation|global warming|carbon sequestration)\b/i;
 
 function clean(s) {
   return String(s || "")
@@ -272,6 +274,9 @@ function conceptRequirements(query) {
   const requirements = [];
   if (AI_CONCEPT_RE.test(query)) requirements.push(AI_CONCEPT_RE);
   if (/\b(cognitive offload(?:ing)?|offload(?:ing)?)\b/i.test(query)) requirements.push(OFFLOADING_CONCEPT_RE);
+  if (BIODIVERSITY_CONCEPT_RE.test(query) && CLIMATE_CONCEPT_RE.test(query)) {
+    requirements.push(BIODIVERSITY_CONCEPT_RE, CLIMATE_CONCEPT_RE);
+  }
   return requirements;
 }
 

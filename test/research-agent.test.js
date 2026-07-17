@@ -386,6 +386,25 @@ test("biodiversity and climate recovery searches keep both concepts without poll
   assert.doesNotMatch(visibleSearches.join(" "), /pollinat|community ecology|disease mechanism|health outcomes/i);
 });
 
+test("climate resilience phrasing uses the biodiversity-climate profile", () => {
+  const query = "How does biodiversity affect climate resilience? Suggest focused research angles, named ZSR databases, executable search terms, and relevant sources.";
+  const plan = buildResearchPlan(query, 5);
+  const visibleSearches = [
+    ...plan.recommendations.flatMap((resource) => resource.searchTerms),
+    ...plan.otherStartingPoints.flatMap((resource) => resource.searchTerms),
+    ...plan.fallbacks.map((fallback) => fallback.query).filter(Boolean),
+    ...plan.searchTerms,
+  ];
+
+  assert.deepEqual(
+    plan.recommendations.map((resource) => resource.id),
+    ["web-of-science", "science-direct", "academic-search-premier"]
+  );
+  assert.ok(visibleSearches.every((term) => /biodivers|biological diversity|species diversity|species richness|ecosystem diversity/i.test(term)));
+  assert.ok(visibleSearches.every((term) => /climate|carbon sequestration/i.test(term)));
+  assert.doesNotMatch(visibleSearches.join(" "), /disease mechanism|health outcomes|pollinat/i);
+});
+
 test("general biodiversity searches do not invent a pollinator subtopic", () => {
   const plan = buildResearchPlan("biodiversity loss in protected areas", 5);
   const visibleText = [

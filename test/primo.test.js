@@ -237,6 +237,34 @@ test("Primo lookup requires both concepts in short multi-concept queries", async
   }
 });
 
+test("Primo biodiversity-climate searches reject records missing the climate concept", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Groundwater biodiversity and ecosystem services",
+          subject: ["Biodiversity", "Groundwater ecology", "Ecosystem services"],
+        }),
+        primoDoc({
+          title: "Biodiversity and ecosystem resilience under climate change",
+          subject: ["Biodiversity", "Climate change", "Ecosystem resilience"],
+        }),
+      ],
+    }),
+  });
+
+  try {
+    const results = await searchPrimo("biodiversity AND climate resilience", 5, "scholarly");
+    assert.deepEqual(results.map((result) => result.title), [
+      "Biodiversity and ecosystem resilience under climate change",
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("Primo lookup can use exact subject metadata when a title is opaque", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => ({

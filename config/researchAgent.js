@@ -576,7 +576,7 @@ const TOPIC_PROFILES = [
   },
   {
     id: "biodiversity-climate",
-    pattern: /\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b.*\b(climate change|global warming|climate variability|climate mitigation|climate regulation)\b|\b(climate change|global warming|climate variability|climate mitigation|climate regulation)\b.*\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b/i,
+    pattern: /\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b.*\b(climate change|climate resilience|climate adaptation|climate impacts?|climate mitigation|climate regulation|global warming|climate variability)\b|\b(climate change|climate resilience|climate adaptation|climate impacts?|climate mitigation|climate regulation|global warming|climate variability)\b.*\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b/i,
     supersedes: ["ecology-environment"],
     better: [
       "biodiversity AND \"climate change\"",
