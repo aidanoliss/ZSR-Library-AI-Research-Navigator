@@ -370,12 +370,11 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
     const results = (data.docs || []).map((d) => {
       const disp = d.pnx?.display || {};
       const addata = d.pnx?.addata || {};
+      const subjects = values(disp.subject, 8);
+      const displayedSubjects = subjects.slice(0, 6);
       const relevanceText = [
         disp.title?.[0],
-        disp.creator?.[0],
-        disp.contributor?.[0],
-        ...(disp.subject || []),
-        disp.type?.[0],
+        ...displayedSubjects,
       ].filter(Boolean).join(" ");
       const sourceAbstract = abstractExcerpt(addata.abstract || disp.abstract);
       const visibleConceptText = [
@@ -383,7 +382,6 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         sourceAbstract,
       ].filter(Boolean).join(" ");
       const titleText = disp.title?.[0] || "";
-      const subjects = values(disp.subject, 8);
       const authors = authorMetadata(
         [addata.au, addata.addau],
         [disp.creator, disp.contributor]
@@ -420,7 +418,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         abstractSource: sourceAbstract ? "ZSR record metadata" : "",
         detailPoints: [
           authors.detail,
-          subjects.length ? `Subject terms: ${subjects.slice(0, 6).join("; ")}` : "",
+          displayedSubjects.length ? `Subject terms: ${displayedSubjects.join("; ")}` : "",
           "Access: use the ZSR record to check full text, PDF availability, and database login.",
         ].filter(Boolean),
         sourceProvider: "ZSR discovery",
