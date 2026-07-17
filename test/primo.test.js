@@ -267,7 +267,7 @@ test("Primo biodiversity-climate searches reject records missing the climate con
   }
 });
 
-test("hidden Primo indexing metadata cannot satisfy a required climate concept", async () => {
+test("hidden Primo description and indexing metadata cannot satisfy a required climate concept", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => ({
     ok: true,
@@ -276,6 +276,7 @@ test("hidden Primo indexing metadata cannot satisfy a required climate concept",
         primoDoc({
           title: "Restoration and repair of damaged ecosystems",
           subject: ["Biodiversity", "Ecological restoration"],
+          description: ["Publisher description mentioning climate change."],
           search: { general: ["Climate change"] },
         }),
       ],

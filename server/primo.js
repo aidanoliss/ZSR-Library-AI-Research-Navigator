@@ -379,7 +379,6 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       ].filter(Boolean).join(" ");
       const visibleConceptText = [
         relevanceText,
-        ...(disp.description || []),
         ...(disp.abstract || []),
         abstractExcerpt(addata.abstract),
       ].filter(Boolean).join(" ");
