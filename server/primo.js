@@ -377,11 +377,11 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         ...(disp.subject || []),
         disp.type?.[0],
       ].filter(Boolean).join(" ");
-      const conceptText = [
+      const visibleConceptText = [
         relevanceText,
         ...(disp.description || []),
         ...(disp.abstract || []),
-        ...(values(d.pnx?.search, 8) || []),
+        abstractExcerpt(addata.abstract),
       ].filter(Boolean).join(" ");
       const titleText = disp.title?.[0] || "";
       const subjects = values(disp.subject, 8);
@@ -430,7 +430,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         titleRelevance: relevanceScore(titleText, tokens),
         strongRelevance: matchedStrongTokens(relevanceText, tokens).length,
         titleStrongRelevance: matchedStrongTokens(titleText, tokens).length,
-        requiredConceptMatch: passesConceptRequirements(conceptText, requirements),
+        requiredConceptMatch: passesConceptRequirements(visibleConceptText, requirements),
       };
     });
     const relevantResults = tokens.length ? results.filter((result) => isRelevantResult(result, tokens)) : results;

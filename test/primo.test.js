@@ -12,6 +12,7 @@ function primoDoc({
   abstract = "",
   description = [],
   addata = {},
+  search = {},
 }) {
   return {
     context: "PC",
@@ -29,6 +30,7 @@ function primoDoc({
         ...addata,
         ...(abstract ? { abstract: [abstract] } : {}),
       },
+      search,
     },
   };
 }
@@ -260,6 +262,29 @@ test("Primo biodiversity-climate searches reject records missing the climate con
     assert.deepEqual(results.map((result) => result.title), [
       "Biodiversity and ecosystem resilience under climate change",
     ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("hidden Primo indexing metadata cannot satisfy a required climate concept", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Restoration and repair of damaged ecosystems",
+          subject: ["Biodiversity", "Ecological restoration"],
+          search: { general: ["Climate change"] },
+        }),
+      ],
+    }),
+  });
+
+  try {
+    const results = await searchPrimo("biodiversity AND climate resilience", 5, "scholarly");
+    assert.deepEqual(results, []);
   } finally {
     globalThis.fetch = originalFetch;
   }
