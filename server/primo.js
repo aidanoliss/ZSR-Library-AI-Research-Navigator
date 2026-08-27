@@ -519,8 +519,14 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       const addata = d.pnx?.addata || {};
       const subjects = values(disp.subject, 8);
       const displayedSubjects = subjects.slice(0, 6);
+      const titleText = disp.title?.[0] || "";
+      const authors = authorMetadata(
+        [addata.au, addata.addau],
+        [disp.creator, disp.contributor]
+      );
       const relevanceText = [
-        disp.title?.[0],
+        titleText,
+        ...authors.authors,
         ...displayedSubjects,
       ].filter(Boolean).join(" ");
       const sourceAbstract = abstractExcerpt(addata.abstract || disp.abstract);
@@ -528,11 +534,6 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         relevanceText,
         sourceAbstract,
       ].filter(Boolean).join(" ");
-      const titleText = disp.title?.[0] || "";
-      const authors = authorMetadata(
-        [addata.au, addata.addau],
-        [disp.creator, disp.contributor]
-      );
       const description = resultDescription({
         title: titleText,
         type: disp.type?.[0],

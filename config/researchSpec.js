@@ -210,6 +210,63 @@ function methodFacet(text) {
   );
 }
 
+function stripOuterQuotes(value) {
+  return clean(value).replace(/^["“”']+|["“”']+$/g, "").trim();
+}
+
+function plausiblePersonalAuthor(value) {
+  const author = stripOuterQuotes(value).replace(/[?.!,;:]+$/, "").trim();
+  if (!author || author.length > 120) return "";
+  const words = author.split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 8) return "";
+  if (/\b(?:about|articles?|books?|copies|edition|sources?|subject|topic)\b/i.test(author)) return "";
+  return author;
+}
+
+/**
+ * Parse an explicit known-title request without treating ordinary topical book
+ * searches as known items. A trailing author is the strongest signal; quoted
+ * or explicitly named titles are also accepted after a singular item type.
+ */
+export function extractKnownItemRequest(query) {
+  const input = clean(query).replace(/[?.!]+$/, "").trim();
+  if (!input) return null;
+
+  const sourceMatch = input.match(
+    /^(?:(?:can|could|would)\s+you\s+|please\s+|help\s+me\s+|i(?:'m| am)\s+looking\s+for\s+|i\s+(?:need|want)\s+|do\s+you\s+have\s+|find\s+|locate\s+|search\s+for\s+|get\s+|show\s+me\s+)?(?:an?\s+|the\s+)?(book|e-?book|copy|article|paper|title|work)\s+(?:(called|titled|named)\s+)?(.+)$/i
+  );
+  if (!sourceMatch) return null;
+
+  const kind = /^(?:book|e-?book|copy)$/i.test(sourceMatch[1]) ? "book" : "article";
+  const explicitlyNamed = Boolean(sourceMatch[2]);
+  const remainder = clean(sourceMatch[3]);
+  let title = "";
+  let author = "";
+
+  const quoted = remainder.match(/^["“]([^"”]{2,300})["”](?:\s+by\s+(.+))?$/i);
+  if (quoted) {
+    title = stripOuterQuotes(quoted[1]);
+    author = quoted[2] ? plausiblePersonalAuthor(quoted[2]) : "";
+  } else {
+    const byIndex = remainder.toLowerCase().lastIndexOf(" by ");
+    if (byIndex > 1) {
+      const candidateAuthor = plausiblePersonalAuthor(remainder.slice(byIndex + 4));
+      if (candidateAuthor) {
+        title = stripOuterQuotes(remainder.slice(0, byIndex));
+        author = candidateAuthor;
+      }
+    }
+    if (!title && explicitlyNamed) title = stripOuterQuotes(remainder);
+  }
+
+  if (!title || title.length > 300) return null;
+  return {
+    kind,
+    title,
+    author,
+  };
+}
+
 function researchTopicBody(query) {
   return clean(query)
     .replace(/^(?:can|could|would|please|help|find|show|give|provide|tell|i need|i want)\b[\s,:-]*/i, "")
@@ -303,13 +360,32 @@ export function buildResearchSpec(
   const focus = resolveSubjectFocus(subjectFocusId, topic);
   const focusId = focus.selectedId || focus.id;
   const disciplines = contextDisciplines(`${topic} ${context}`, focusId);
-  const concepts = extractConcepts(topic);
+  const knownItem = extractKnownItemRequest(topic);
+  const concepts = knownItem
+    ? [
+        {
+          id: "known-item-title",
+          preferredTerm: knownItem.title,
+          synonyms: [],
+          required: true,
+          source: "known-item-title",
+        },
+        ...(knownItem.author ? [{
+          id: "known-item-author",
+          preferredTerm: knownItem.author,
+          synonyms: [],
+          required: true,
+          source: "known-item-author",
+        }] : []),
+      ]
+    : extractConcepts(topic);
   const sourceContract = getSourceModeContract(inferredMode);
   const spec = {
     topic,
     mode: inferredMode,
     disciplines: disciplines.length ? disciplines : [focusId || "interdisciplinary"],
     concepts,
+    knownItem,
     facets: {
       population: populationFacet(`${topic} ${context}`),
       geography: geographyFacet(`${topic} ${context}`),
@@ -352,6 +428,7 @@ function suppliedDisciplineId(value) {
 export function mergeSuppliedResearchSpec(baseSpec, supplied) {
   if (!supplied || typeof supplied !== "object" || Array.isArray(supplied)) return baseSpec;
   const topic = bounded(supplied.topic, 500) || baseSpec.topic;
+  const knownItem = extractKnownItemRequest(topic);
   const candidateMode = bounded(supplied.modeId || supplied.mode || supplied.sourceMode, 40);
   const mode = Object.hasOwn(SOURCE_MODE_CONTRACTS, candidateMode) ? candidateMode : baseSpec.mode;
   const contract = getSourceModeContract(mode);
@@ -393,6 +470,7 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
     mode,
     disciplines: disciplines.length ? disciplines : baseSpec.disciplines,
     concepts: concepts.length ? concepts : baseSpec.concepts,
+    knownItem,
     facets: {
       population: facet("population", baseSpec.facets.population),
       geography: facet("geography", baseSpec.facets.geography),
@@ -415,6 +493,14 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
 }
 
 export function researchSpecQuery(spec, { includeFacets = true } = {}) {
+  const knownTitle = clean(spec?.knownItem?.title);
+  const knownAuthor = clean(spec?.knownItem?.author);
+  if (knownTitle) {
+    return [knownTitle, knownAuthor]
+      .filter(Boolean)
+      .map((value) => `"${value.replace(/["“”]/g, "")}"`)
+      .join(" AND ");
+  }
   const concepts = (spec?.concepts || [])
     .filter((concept) => concept.required !== false && concept.preferredTerm)
     .slice(0, 4)

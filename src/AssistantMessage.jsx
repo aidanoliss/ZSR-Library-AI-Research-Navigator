@@ -1488,7 +1488,8 @@ export default function AssistantMessage({
     !showTopicSpecificPlan &&
     displaySearchTerms.length > 0 &&
     (!isFollowup || wantsSearchHelp || wantsDatabaseStrategyHelp || responseStyle === "sources" || responseStyle === "plan");
-  const showCatalogResults = liveResults?.length > 0;
+  const showCatalogResults =
+    liveResults?.length > 0 || Boolean(sourceDiscovery?.lanes?.openAccess?.requested);
   const benefitsFromRefinement =
     isFollowup &&
     (showCatalogResults ||

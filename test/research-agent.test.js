@@ -268,6 +268,27 @@ test("citation and known-item routing are explicit", () => {
   assert.ok(resources.includes("research-guides"));
 });
 
+test("known-item book requests preserve the exact title and author", () => {
+  const query = "Find the book The Warmth of Other Suns by Isabel Wilkerson";
+  const exact = '"The Warmth of Other Suns" AND "Isabel Wilkerson"';
+  const plan = buildResearchPlan(query, 5, "auto", "books");
+
+  assert.equal(plan.modeId, "books");
+  assert.equal(plan.strategy.isKnownItem, true);
+  assert.deepEqual(plan.researchSpec.knownItem, {
+    kind: "book",
+    title: "The Warmth of Other Suns",
+    author: "Isabel Wilkerson",
+  });
+  assert.deepEqual(
+    plan.researchSpec.concepts.map((concept) => concept.preferredTerm),
+    ["The Warmth of Other Suns", "Isabel Wilkerson"]
+  );
+  assert.equal(plan.recommendations.find((resource) => resource.id === "primo")?.searchTerms[0], exact);
+  assert.equal(buildCatalogSearchQueries(query, "auto", 5, "books")[0], exact);
+  assert.doesNotMatch(JSON.stringify(plan), /book Warmth Other Suns Isabel|case study/i);
+});
+
 test("ZSR navigation is task based and never becomes a fake topic search", () => {
   const query = "Help me navigate ZSR";
   const plan = buildResearchPlan(query, 5);

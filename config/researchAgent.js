@@ -8,7 +8,13 @@ import {
   resourceSupportsMode,
   withResourceCapabilities,
 } from "./resourceCapabilities.js";
-import { buildResearchSpec, deterministicHash, inferExplicitModeRequest, mergeSuppliedResearchSpec } from "./researchSpec.js";
+import {
+  buildResearchSpec,
+  deterministicHash,
+  extractKnownItemRequest,
+  inferExplicitModeRequest,
+  mergeSuppliedResearchSpec,
+} from "./researchSpec.js";
 import {
   compileFallbackQueries,
   compileResourceQuery,
@@ -1050,6 +1056,8 @@ const QUERY_STOPWORDS = new Set([
 
 function keywordSearchBase(query) {
   const q = cleanQuery(query);
+  const knownItem = extractKnownItemRequest(q);
+  if (knownItem) return knownItemSearchQuery(knownItem);
   if (articleTitleLike(q)) return `"${q.replace(/^"|"$/g, "")}"`;
   const quoted = [...q.matchAll(/"([^"]{3,80})"/g)].map((match) => match[1].trim());
   const words = q
@@ -1114,11 +1122,24 @@ function genericBooleanQuery(query) {
 
 function articleTitleLike(query) {
   const q = cleanQuery(query);
+  if (extractKnownItemRequest(q)) return true;
   if (extractDoi(q) || extractPmid(q)) return true;
   if (/^".+"$/.test(q)) return true;
   if (/\b(?:article|paper|book)\s+(?:called|titled|named)\b/i.test(q)) return true;
   if (/\b(?:19|20)\d{2}\b/.test(q) && /\b[A-Z][a-z'’-]+\s+[A-Z]{1,3}\b/.test(q)) return true;
   return false;
+}
+
+function exactPhrase(value) {
+  const text = cleanQuery(value).replace(/["“”]/g, "");
+  return text ? `"${text}"` : "";
+}
+
+function knownItemSearchQuery(knownItem, { includeAuthor = true } = {}) {
+  return [
+    exactPhrase(knownItem?.title),
+    includeAuthor ? exactPhrase(knownItem?.author) : "",
+  ].filter(Boolean).join(" AND ");
 }
 
 function activeProfiles(query) {
@@ -1482,6 +1503,27 @@ export function buildSearchStrategy(query, subjectFocusId = DEFAULT_SUBJECT_FOCU
       },
     };
   }
+  const knownItem = extractKnownItemRequest(q);
+  if (knownItem) {
+    const exactQuery = knownItemSearchQuery(knownItem);
+    const titleOnly = knownItemSearchQuery(knownItem, { includeAuthor: false });
+    return {
+      isKnownItem: true,
+      knownItem,
+      betterTerms: [exactQuery],
+      broaderTerms: titleOnly && titleOnly !== exactQuery ? [titleOnly] : [],
+      narrowerTerms: [],
+      alternateTerms: [],
+      likelyDatabaseCategories: knownItem.kind === "book"
+        ? ["Catalog / Books"]
+        : ["Catalog / Articles"],
+      links: {
+        googleScholar: fillTemplate(LIBRARY_LINKS.googleScholarSearch, exactQuery),
+        zsrCatalog: fillTemplate(LIBRARY_LINKS.zsrPrimoSearch, exactQuery),
+        zsrArticles: fillTemplate(LIBRARY_LINKS.zsrArticleSearch, exactQuery),
+      },
+    };
+  }
   const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
   const profiles = activeProfiles(q);
   const keywordBase = keywordSearchBase(q);
@@ -1778,6 +1820,15 @@ export function buildSearchTermSuggestions(
   const q = cleanQuery(query);
   if (!q || isZsrNavigationRequest(q)) return [];
   const strategy = buildSearchStrategy(q, subjectFocusId);
+  if (strategy.knownItem) {
+    const spec = researchSpec || buildResearchSpec(q, { subjectFocusId });
+    const compiled = compileFallbackQueries(spec);
+    return uniqueSearchOptions([
+      compiled.canonical,
+      ...strategy.betterTerms,
+      compiled.broaden,
+    ]).slice(0, limit);
+  }
   const profiles = activeProfiles(q);
   const hasProfile = profiles.length > 0;
   const genericVariants = !hasProfile && !strategy.isKnownItem
@@ -1956,6 +2007,13 @@ export function buildCatalogSearchQueries(
   const researchSpec = suppliedSpec || buildResearchSpec(q, { modeId, subjectFocusId });
   const compiled = compileFallbackQueries(researchSpec);
   const strategy = buildSearchStrategy(q, subjectFocusId);
+  if (strategy.knownItem) {
+    return uniqueSearchOptions([
+      compiled.canonical,
+      ...strategy.betterTerms,
+      compiled.broaden,
+    ]).slice(0, Math.max(1, Math.floor(Number(limit) || 1)));
+  }
   const profiles = activeProfiles(q);
   const hasProfile = profiles.length > 0;
   const concepts = genericTopicConcepts(q);
@@ -2012,6 +2070,30 @@ export function buildFallbackSearches(
   const resources = suppliedResources.length
     ? suppliedResources
     : recommendResources(q, 4, subjectFocusId, researchSpec.mode);
+  if (strategy.knownItem) {
+    const exactQuery = compiledRecovery.canonical;
+    const titleOnly = compiledRecovery.broaden;
+    const catalog = resources.find((resource) => resource.id === "primo");
+    return [
+      {
+        label: "Search the exact title and author in ZSR Library Search",
+        text: exactQuery,
+        query: exactQuery,
+        href: catalog?.accessUrl || fillTemplate(LIBRARY_LINKS.zsrPrimoSearch, exactQuery),
+      },
+      ...(titleOnly && normalizeSearchOptionKey(titleOnly) !== normalizeSearchOptionKey(exactQuery) ? [{
+        label: "Too few results? Search the exact title without the author",
+        text: titleOnly,
+        query: titleOnly,
+        href: fillTemplate(LIBRARY_LINKS.zsrPrimoSearch, titleOnly),
+      }] : []),
+      {
+        label: "No local copy? Check request options",
+        text: "Open the catalog record first, then use ZSR Delivers if the item is unavailable.",
+        href: LIBRARY_LINKS.zsrDelivers,
+      },
+    ];
+  }
   const genericVariants = hasProfile ? [] : genericSearchVariants(q, subjectFocusId);
   const candidatePool = uniqueSearchOptions([
     ...strategy.narrowerTerms,

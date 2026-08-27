@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 
 import {
   searchSourceCandidatesForScope,
@@ -126,4 +127,13 @@ test("missing OpenAlex configuration is a visible safe-disabled status", async (
     if (originalKey == null) delete process.env.OPENALEX_API_KEY;
     else process.env.OPENALEX_API_KEY = originalKey;
   }
+});
+
+test("the interface renders a requested open-access lane even when it has no results", async () => {
+  const jsx = await readFile(new URL("../src/AssistantMessage.jsx", import.meta.url), "utf8");
+  assert.match(
+    jsx,
+    /liveResults\?\.length > 0 \|\| Boolean\(sourceDiscovery\?\.lanes\?\.openAccess\?\.requested\)/
+  );
+  assert.match(jsx, /OpenAlex is not configured on this deployment/);
 });

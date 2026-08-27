@@ -123,3 +123,25 @@ test("article mode avoids delivery lookup and does not add book fulfillment", as
     globalThis.fetch = originalFetch;
   }
 });
+
+test("known-item relevance uses author metadata as well as the exact title", async () => {
+  const originalFetch = globalThis.fetch;
+  const doc = bookDoc();
+  doc.pnx.display.title = ["Beloved"];
+  doc.pnx.display.creator = ["Morrison, Toni"];
+  doc.pnx.addata.au = ["Toni Morrison"];
+  doc.pnx.addata.btitle = ["Beloved"];
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({ docs: [doc] }),
+  });
+
+  try {
+    const [result] = await searchPrimo('"Beloved" AND "Toni Morrison"', 5, "books");
+    assert.ok(result, "the title plus matching author should survive relevance filtering");
+    assert.equal(result.title, "Beloved");
+    assert.deepEqual(result.authors, ["Toni Morrison"]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

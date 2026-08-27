@@ -100,6 +100,15 @@ export function validateCompiledQuery(query, spec) {
 export function compileFallbackQueries(spec) {
   const concepts = (spec?.concepts || []).filter((concept) => concept.required !== false).slice(0, 4);
   const canonical = researchSpecQuery(spec);
+  if (spec?.knownItem?.title) {
+    const titleOnly = quoted(spec.knownItem.title);
+    return {
+      canonical,
+      narrow: canonical,
+      broaden: titleOnly,
+      controlledReduction: titleOnly,
+    };
+  }
   const population = clean(spec?.facets?.population);
   const timePeriod = clean(spec?.facets?.timePeriod);
   const geography = clean(spec?.facets?.geography);
