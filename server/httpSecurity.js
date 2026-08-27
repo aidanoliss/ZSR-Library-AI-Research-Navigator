@@ -188,6 +188,6 @@ export function releaseMetadata() {
   ).trim();
   return {
     releaseId: releaseId === "local" ? releaseId : releaseId.slice(0, 12),
-    version: String(process.env.APP_VERSION || "1.0.0").slice(0, 40),
+    version: String(process.env.APP_VERSION || "1.1.0").slice(0, 40),
   };
 }
