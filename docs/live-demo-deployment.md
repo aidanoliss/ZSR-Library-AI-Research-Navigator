@@ -24,6 +24,8 @@ Use the included `render.yaml`, or configure manually:
   - `LOG_QUERIES`: `off` for privacy-sensitive demos
   - `HANDOFF_STORE_CONTACT`: `off` unless ZSR approves retaining contact details
   - `PRIMO_LIVE`: optional, use `off` if Primo lookup is slow/unavailable
+  - `OPENALEX_LIVE`: optional, use `off` to disable the open-access lane
+  - `OPENALEX_API_KEY`: optional, server-side only; without it the OA lane remains visibly disabled and sends no provider request
   - `ASK_ZSR_EMAIL`: default `askzsr@wfu.edu`
 
 Render's Web Service runtime expects the app to bind to `0.0.0.0` on the configured port. This app reads `HOST` and `PORT` in `server/native.js`, and `render.yaml` sets those explicitly.

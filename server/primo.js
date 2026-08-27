@@ -8,7 +8,7 @@
  * Fails safe: any error / timeout returns [] so the core plan still works.
  * Disable with PRIMO_LIVE=off.
  */
-import { DEFAULT_MODE_ID, getSearchMode } from "../config/libraryLinks.js";
+import { DEFAULT_MODE_ID, LIBRARY_LINKS, getSearchMode } from "../config/libraryLinks.js";
 import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
 
 const ENABLED = (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off";
@@ -166,7 +166,7 @@ function authorMetadata(structured, display) {
 
   if (!authors.length) {
     const fallback = boundedText(firstValue(structured) || fallbackCandidates[0] || firstValue(display), 80);
-    return { summary: fallback, detail: "" };
+    return { summary: fallback, detail: "", authors: fallback ? [fallback] : [] };
   }
 
   const visible = authors.slice(0, 2).join("; ");
@@ -175,7 +175,7 @@ function authorMetadata(structured, display) {
   const detail = authors.length > 2
     ? `Authors: ${detailed}${authors.length > 6 ? "; et al." : ""}`
     : "";
-  return { summary, detail };
+  return { summary, detail, authors };
 }
 
 function resultDescription({ title, type, date, subjects }) {
@@ -408,10 +408,61 @@ function resultScore(result, wantsArticles) {
   return score;
 }
 
-function identifier(value) {
-  return clean(firstValue(value))
-    .replace(/^doi:\s*/i, "")
-    .replace(/^pmid:\s*/i, "");
+function identifierText(value) {
+  if (Array.isArray(value)) return value.map(identifierText).filter(Boolean).join(" ");
+  if (value && typeof value === "object") return Object.values(value).map(identifierText).filter(Boolean).join(" ");
+  return String(value || "");
+}
+
+function doiIdentifier(value) {
+  const match = identifierText(value).match(/10\.\d{4,9}\/[-._;()/:a-z0-9]+/i);
+  return match ? match[0].replace(/[.,;:)}\]]+$/, "") : "";
+}
+
+function pmidIdentifier(value) {
+  const text = identifierText(value);
+  const labeled = text.match(/(?:\$\$C)?(?:PMID|PUBMED(?:ID)?)\s*(?:\$\$V|[:#])?\s*(\d{4,9})/i);
+  if (labeled) return labeled[1];
+  const direct = clean(firstValue(value));
+  return /^\d{4,9}$/.test(direct) ? direct : "";
+}
+
+function citationPages(addata = {}) {
+  const direct = clean(firstValue(addata.pages));
+  if (direct) return direct;
+  const start = clean(firstValue(addata.spage));
+  const end = clean(firstValue(addata.epage));
+  return [start, end].filter(Boolean).join(start && end ? "-" : "");
+}
+
+function physicalFulfillment(doc, recordUrl, modeId) {
+  if (modeId !== "books") return null;
+  const best = doc?.delivery?.bestlocation || doc?.delivery?.holding?.[0] || null;
+  const status = clean(best?.availabilityStatus).toLowerCase();
+  const statusLabel = status === "available"
+    ? "Available when checked"
+    : status === "unavailable"
+      ? "Unavailable when checked"
+      : status === "check_holdings"
+        ? "Check holdings"
+        : "Check location and availability";
+  const location = [clean(best?.mainLocation), clean(best?.subLocation)]
+    .filter(Boolean)
+    .filter((value, index, items) => items.findIndex((item) => item.toLowerCase() === value.toLowerCase()) === index)
+    .join(" · ");
+  const callNumber = clean(best?.callNumber);
+  return {
+    status: status || "unknown",
+    statusLabel,
+    location,
+    callNumber,
+    availabilityChecked: Boolean(status),
+    checkedAt: status ? new Date().toISOString() : "",
+    recordUrl,
+    requestUrl: LIBRARY_LINKS.zsrDelivers,
+    actionLabel: location || callNumber ? "Open record for current availability" : "Check location and availability",
+    requestLabel: "Request through ZSR Delivers",
+  };
 }
 
 export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
@@ -425,6 +476,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
   const requestLimit = wantsArticles ? Math.max(limit * 4, 30) : Math.max(limit * 3, 24);
   const tab = profile.tab;
   const scope = profile.scope;
+  const includeDelivery = mode.id === "books";
 
   const params = new URLSearchParams({
     acTriggered: "false",
@@ -438,7 +490,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
     newspapersActive: String(profile.newspapers),
     newspapersSearch: String(profile.newspapers),
     offset: "0",
-    pcAvailability: "false",
+    pcAvailability: String(includeDelivery),
     q: `any,contains,${q}`,
     qExclude: "",
     qInclude: "",
@@ -446,7 +498,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
     refEntryActive: "false",
     rtaLinks: "true",
     scope,
-    skipDelivery: "Y",
+    skipDelivery: includeDelivery ? "N" : "Y",
     sort: "rank",
     tab,
     vid: VID,
@@ -497,26 +549,45 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       // ?default=false → 404 when no cover exists, so the UI can fall back cleanly.
       const isbn = (addata.isbn?.[0] || "").replace(/[^0-9Xx]/g, "");
       const cover = thumbnailFromDoc(d) || (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false` : null);
-      const doi = identifier(addata.doi || disp.identifier);
-      const pmid = identifier(addata.pmid || addata.pubmedid || addata.pubmed);
+      const doi = doiIdentifier(addata.doi || disp.identifier);
+      const pmid = pmidIdentifier(addata.pmid || addata.pubmedid || addata.pubmed || disp.identifier);
+      const fulfillment = physicalFulfillment(d, record, mode.id);
+      const issn = clean(firstValue(addata.issn)).replace(/[^0-9Xx-]/g, "");
+      const publisher = clean(firstValue(addata.pub || disp.publisher));
+      const containerTitle = clean(firstValue(addata.jtitle || addata.btitle));
       return {
         title: clean(disp.title?.[0]) || "(untitled)",
         author: authors.summary,
+        authors: authors.authors,
         type: clean(disp.type?.[0] || ""),
         date: clean(disp.creationdate?.[0] || ""),
         url: record,
         cover,
         doi,
         pmid,
+        isbn,
+        issn,
+        containerTitle,
+        publisher,
+        edition: clean(firstValue(addata.edition || disp.edition)),
+        volume: clean(firstValue(addata.volume)),
+        issue: clean(firstValue(addata.issue)),
+        pages: citationPages(addata),
+        fulfillment,
         description,
         abstractExcerpt: sourceAbstract,
         abstractSource: sourceAbstract ? "ZSR record metadata" : "",
         detailPoints: [
           authors.detail,
           displayedSubjects.length ? `Subject terms: ${displayedSubjects.join("; ")}` : "",
-          "Access: use the ZSR record to check full text, PDF availability, and database login.",
+          fulfillment?.location ? `Location when checked: ${fulfillment.location}` : "",
+          fulfillment?.callNumber ? `Call number: ${fulfillment.callNumber}` : "",
+          mode.id === "books"
+            ? "Availability can change. Open the ZSR record before visiting the shelf or placing a request."
+            : "Access: use the ZSR record to check full text, PDF availability, and database login.",
         ].filter(Boolean),
         sourceProvider: "ZSR discovery",
+        accessScope: "library",
         sourceKind: inferredSourceKind({
           title: clean(disp.title?.[0]),
           type: clean(disp.type?.[0] || ""),
@@ -594,7 +665,7 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
   const params = new URLSearchParams({
     "query.title": q,
     rows: String(Math.min(30, Math.max(limit * 3, 15))),
-    select: "DOI,title,author,published,issued,type,URL,container-title,abstract",
+    select: "DOI,title,author,published,issued,type,URL,container-title,abstract,volume,issue,page,publisher,ISBN,ISSN",
   });
   if (mode.id === "scholarly") params.set("filter", "type:journal-article");
 
@@ -616,19 +687,29 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
       .map((item) => {
         const title = clean(item?.title?.[0]);
         const container = clean(item?.["container-title"]?.[0]);
-        const doi = identifier(item?.DOI);
+        const doi = doiIdentifier(item?.DOI);
         const authors = crossrefAuthors(item?.author);
         const sourceAbstract = abstractExcerpt(item?.abstract);
         const searchable = [title, container, sourceAbstract].filter(Boolean).join(" ");
         return {
           title,
           author: authors.summary,
+          authors: authors.authors,
           type: clean(item?.type || "scholarly work").replace(/-/g, " "),
           date: crossrefDate(item),
           url: doi ? `https://doi.org/${doi}` : clean(item?.URL),
           cover: null,
           doi,
           pmid: "",
+          isbn: clean(firstValue(item?.ISBN)),
+          issn: clean(firstValue(item?.ISSN)),
+          containerTitle: container,
+          publisher: clean(item?.publisher),
+          edition: "",
+          volume: clean(item?.volume),
+          issue: clean(item?.issue),
+          pages: clean(item?.page),
+          fulfillment: null,
           description: `Bibliographic metadata from Crossref${container ? ` for a work in ${container}` : ""}. Search the exact title in ZSR to confirm access and fit.`,
           abstractExcerpt: sourceAbstract,
           abstractSource: sourceAbstract ? "Crossref record metadata" : "",
@@ -638,6 +719,7 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
             "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access.",
           ].filter(Boolean),
           sourceProvider: "Crossref scholarly metadata",
+          accessScope: "library",
           sourceKind: SOURCE_KINDS.SCHOLARLY_ARTICLE,
           sourceMode: mode.id,
           provenance: {

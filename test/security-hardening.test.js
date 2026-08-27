@@ -221,6 +221,7 @@ test("chat fallback remains deterministic and exposes an auditable release plan"
   assert.equal(payload.planMeta.planHash, payload.researchPlan.planHash);
   assert.equal(payload.planMeta.validation.valid, true);
   assert.ok(payload.researchPlan.recommendations.length > 0);
+  assert.ok(payload.researchPlan.recommendations.every((resource) => resource.name && resource.accessUrl));
 });
 
 test("a bounded student-corrected ResearchSpec governs the returned plan trace", async () => {

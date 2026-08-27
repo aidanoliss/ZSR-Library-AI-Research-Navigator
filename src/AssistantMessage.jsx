@@ -21,6 +21,7 @@ import {
   normalizeSearchOptionKey,
 } from "../config/researchAgent.js";
 import { researchItemKey } from "./researchWorkspace.js";
+import { downloadRis } from "./ris.js";
 
 /* Monochrome inline icon per resource type — restrained, academic. */
 const TypeIcon = {
@@ -891,9 +892,10 @@ function StrategyTermGroup({ label, terms = [], linkBase }) {
 function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   const terms = (resource.searchTerms || []).slice(0, 1);
   const filters = (resource.filters || []).filter(Boolean);
+  const accessUrl = resource.accessUrl || resource.url || (resource.id === "primo" ? LIBRARY_LINKS.zsrPrimoSearch : "");
   const href = resource.id === "primo"
-    ? fillTemplate(resource.accessUrl, terms[0] || "")
-    : resource.accessUrl;
+    ? fillTemplate(accessUrl, terms[0] || "")
+    : accessUrl;
   const previewImage = resourcePreviewImage(resource);
   const savedItem = {
     kind: "database",
@@ -1072,17 +1074,19 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
   );
 }
 
-function LiveResultsSection({ liveResults = [], compact = false, followup = false, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
-  if (!liveResults.length) return null;
-  const visibleResults = liveResults.slice(0, 5);
-  const moreResults = liveResults.slice(5, 10);
-  const usesMetadataFallback = liveResults.some((result) => /crossref/i.test(result.sourceProvider || ""));
-  const renderResult = (r, i) => {
+function LiveResultsSection({ liveResults = [], sourceDiscovery = null, compact = false, followup = false, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
+  const openAccessStatus = sourceDiscovery?.lanes?.openAccess;
+  const libraryResults = liveResults.filter((result) => result?.accessScope !== "open-access");
+  const openAccessResults = liveResults.filter((result) => result?.accessScope === "open-access");
+  if (!libraryResults.length && !openAccessResults.length && !openAccessStatus?.requested) return null;
+
+  const renderResult = (r, i, laneId) => {
     const ids = resultIds(r);
     const hasId = Boolean(ids.doi || ids.pmid);
-    const isZsrRecord = !/crossref/i.test(r.sourceProvider || "");
-    // Secondary links (Scholar, ZSR search, Delivers) — the LibKey/full-text
-    // and PubMed links are surfaced as primary buttons below, so drop them here.
+    const isOpenAccess = r.accessScope === "open-access";
+    const isZsrRecord = /zsr discovery/i.test(r.sourceProvider || "");
+    const hasBookFulfillment = Boolean(r.fulfillment);
+    const reportedOpenUrl = r.openAccess?.landingPageUrl || r.openAccess?.pdfUrl || r.url;
     const accessLinks = buildAccessLinks({ title: r.title, doi: ids.doi, pmid: ids.pmid })
       .filter((link) => !/full text|pubmed/i.test(link.label))
       .slice(0, 2);
@@ -1091,10 +1095,11 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
       kind: "catalog",
       title: r.title,
       url: r.url,
-      detail: visibleMeta || r.description || "ZSR discovery lead",
+      detail: visibleMeta || r.description || (isOpenAccess ? "Open-access metadata lead" : "ZSR discovery lead"),
     };
+
     return (
-      <li key={`${r.url || r.title}-${i}`} className={`result-row ${r.cover ? "" : "no-thumb"}`}>
+      <li key={`${laneId}-${r.url || r.title}-${i}`} className={`result-row ${r.cover ? "" : "no-thumb"}`}>
         <ResultThumb cover={r.cover} />
         <div className="result-body">
           <a className="result-title" href={r.url} target="_blank" rel="noopener noreferrer">
@@ -1102,10 +1107,42 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
             <span className="ext-icon">{Icon.external}</span>
           </a>
           {visibleMeta && <p className="result-meta">{visibleMeta}</p>}
+          {isOpenAccess && (
+            <div className="open-access-provenance" aria-label="Open-access provenance">
+              <strong>OpenAlex reports an open-access location</strong>
+              {r.openAccess?.license && <span>License: {r.openAccess.license}</span>}
+              {r.openAccess?.version && <span>Version: {r.openAccess.version}</span>}
+              <small>The linked work keeps its own copyright and license. The navigator has not retrieved or summarized its full text.</small>
+            </div>
+          )}
+          {hasBookFulfillment && (
+            <div className="book-fulfillment" aria-label="Book location and availability guidance">
+              <strong>{r.fulfillment.statusLabel || "Check location and availability"}</strong>
+              {r.fulfillment.location && <span>{r.fulfillment.location}</span>}
+              {r.fulfillment.callNumber && <span>Call number: {r.fulfillment.callNumber}</span>}
+              <small>Availability can change. Confirm in the ZSR record before visiting or requesting.</small>
+            </div>
+          )}
           <div className="result-actions">
             <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
-            {hasId ? (
-                <a className="fulltext-btn" href={libkeyUrl(ids)} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR full text", url: libkeyUrl(ids) })}>
+            <button
+              type="button"
+              className="ris-export-btn"
+              onClick={() => downloadRis([r], { filename: r.title || "research-source" })}
+              aria-label={`Download RIS citation for ${r.title || "this source"}`}
+            >
+              Download RIS
+            </button>
+            {isOpenAccess ? (
+              <a className="fulltext-btn" href={reportedOpenUrl} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "OpenAlex open-access location", url: reportedOpenUrl })}>
+                Open reported open-access copy
+              </a>
+            ) : hasBookFulfillment ? (
+              <a className="fulltext-btn" href={r.fulfillment.recordUrl || r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR book record", url: r.fulfillment.recordUrl || r.url })}>
+                {r.fulfillment.actionLabel || "Check location and availability"}
+              </a>
+            ) : hasId ? (
+              <a className="fulltext-btn" href={libkeyUrl(ids)} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR full text", url: libkeyUrl(ids) })}>
                 <svg className="dl-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" />
                 </svg>
@@ -1113,15 +1150,19 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
               </a>
             ) : (
               <a className="fulltext-btn" href={fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "")} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "Google Scholar", url: fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "") })}>
-                <svg className="dl-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
-                </svg>
                 Find via Google Scholar
               </a>
             )}
-            <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: isZsrRecord ? "ZSR record" : "DOI record", url: r.url })}>
-              {isZsrRecord ? "Open in ZSR" : "Open DOI record"}
-            </a>
+            {!isOpenAccess && (
+              <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: isZsrRecord ? "ZSR record" : "DOI record", url: r.url })}>
+                {isZsrRecord ? "Open in ZSR" : "Open DOI record"}
+              </a>
+            )}
+            {hasBookFulfillment && (
+              <a href={r.fulfillment.requestUrl || LIBRARY_LINKS.zsrDelivers} target="_blank" rel="noopener noreferrer">
+                {r.fulfillment.requestLabel || "Request through ZSR Delivers"}
+              </a>
+            )}
           </div>
           <details className="result-details">
             <summary>Source details and access</summary>
@@ -1131,8 +1172,10 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
                 items={[
                   r.sourceProvider || "Live catalog metadata",
                   r.type ? `${r.type}` : "",
-                  hasId ? "DOI/PMID detected" : "Title lookup needed",
-                  isZsrRecord ? "Confirm access in record" : "Check access through ZSR",
+                  isOpenAccess ? "OA reported by OpenAlex" : hasId ? "DOI/PMID detected" : "Title lookup needed",
+                  isOpenAccess
+                    ? r.openAccess?.license ? `License: ${r.openAccess.license}` : "No reusable-content license supplied"
+                    : isZsrRecord ? "Confirm access in record" : "Check access through ZSR",
                 ]}
               />
               {r.abstractExcerpt ? (
@@ -1145,7 +1188,11 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
                 </section>
               ) : (
                 <p className="result-abstract-unavailable">
-                  No provider-supplied abstract was available, so no source summary was generated.
+                  {isOpenAccess
+                    ? r.summaryEligible
+                      ? "This location may qualify for a later rights-controlled summary pilot, but no full text was retrieved and no summary was generated."
+                      : "No permissive summary license was confirmed for this location, so no full text was retrieved and no summary was generated."
+                    : "No provider-supplied abstract was available, so no source summary was generated."}
                 </p>
               )}
               {r.description && <p className="result-description">{r.description}</p>}
@@ -1177,39 +1224,81 @@ function LiveResultsSection({ liveResults = [], compact = false, followup = fals
     );
   };
 
+  const renderLane = (results, laneId) => {
+    if (!results.length) {
+      if (laneId !== "open-access" || !openAccessStatus?.requested) return null;
+      return (
+        <section className={`live-results open-access-lane ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
+          <SectionHeader icon={Icon.search}>Open-access source lane</SectionHeader>
+          <p className="found-note">
+            {!openAccessStatus.enabled
+              ? "OpenAlex is not configured on this deployment, so no open-access search was sent. A server-side OpenAlex API key is required and is never exposed to the browser."
+              : "OpenAlex returned no strong open-access matches for this search. Try revising one concept or broaden the source mode."}
+          </p>
+        </section>
+      );
+    }
+
+    const isOpenAccessLane = laneId === "open-access";
+    const usesMetadataFallback = !isOpenAccessLane && results.some((result) => /crossref/i.test(result.sourceProvider || ""));
+    const visibleResults = results.slice(0, 5);
+    const moreResults = results.slice(5, 10);
+    const heading = isOpenAccessLane
+      ? compact ? "Open-access examples" : "Open-access source leads"
+      : compact
+        ? usesMetadataFallback ? "Scholarly source examples" : "ZSR discovery examples"
+        : usesMetadataFallback ? "Scholarly source leads" : "Live ZSR discovery leads";
+
+    return (
+      <section className={`live-results ${isOpenAccessLane ? "open-access-lane" : "library-lane"} ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
+        <div className="live-results-heading-row">
+          <SectionHeader icon={Icon.search}>{heading}</SectionHeader>
+          <button
+            type="button"
+            className="ris-export-btn"
+            onClick={() => downloadRis(results, { filename: isOpenAccessLane ? "open-access-source-leads" : "library-source-leads" })}
+          >
+            Export lane RIS
+          </button>
+        </div>
+        {!compact && (
+          <p className="found-note">
+            {isOpenAccessLane
+              ? "OpenAlex reports these source locations as open access. Confirm topic fit, access, version, and the linked work's license before using or sharing it."
+              : usesMetadataFallback
+                ? "These records come from ZSR discovery when available and verified Crossref bibliographic metadata when the ZSR search is too narrow. Treat them as starting leads and confirm topic fit and access through ZSR."
+                : "These records passed an automated keyword-relevance check. Treat them as starting leads, not endorsements, and open each record to confirm topic fit, access, and format."}
+          </p>
+        )}
+        <ul className="results">
+          {visibleResults.map((result, index) => renderResult(result, index, laneId))}
+        </ul>
+        {moreResults.length > 0 && (
+          <details className="more-results">
+            <summary>Show {moreResults.length} more {isOpenAccessLane ? "open-access" : "ZSR"} results</summary>
+            <ul className="results">
+              {moreResults.map((result, index) => renderResult(result, index + visibleResults.length, laneId))}
+            </ul>
+          </details>
+        )}
+        {!compact && (
+          <p className="muted terms-hint">
+            {isOpenAccessLane
+              ? "OpenAlex metadata is CC0. Linked articles and PDFs retain their own copyright and licenses; the navigator does not retrieve their full text."
+              : usesMetadataFallback
+                ? "Live bibliographic metadata. Crossref records do not confirm Wake Forest access; use the provided ZSR and full-text links to check availability."
+                : "Live metadata from ZSR discovery. Weak matches are intentionally omitted; images appear only when ZSR or ISBN metadata provides a real thumbnail."}
+          </p>
+        )}
+      </section>
+    );
+  };
+
   return (
-    <section className={`live-results ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
-      <SectionHeader icon={Icon.search}>
-        {compact
-          ? usesMetadataFallback ? "Scholarly source examples" : "ZSR discovery examples"
-          : usesMetadataFallback ? "Scholarly source leads" : "Live ZSR discovery leads"}
-      </SectionHeader>
-      {!compact && (
-        <p className="found-note">
-          {usesMetadataFallback
-            ? "These records come from ZSR discovery when available and verified Crossref bibliographic metadata when the ZSR search is too narrow. Treat them as starting leads and confirm topic fit and access through ZSR."
-            : "These records passed an automated keyword-relevance check. Treat them as starting leads, not endorsements, and open each record to confirm topic fit, access, and format."}
-        </p>
-      )}
-      <ul className="results">
-        {visibleResults.map(renderResult)}
-      </ul>
-      {moreResults.length > 0 && (
-        <details className="more-results">
-          <summary>Show {moreResults.length} more ZSR results</summary>
-          <ul className="results">
-            {moreResults.map((r, i) => renderResult(r, i + visibleResults.length))}
-          </ul>
-        </details>
-      )}
-      {!compact && (
-        <p className="muted terms-hint">
-          {usesMetadataFallback
-            ? "Live bibliographic metadata. Crossref records do not confirm Wake Forest access; use the provided ZSR and full-text links to check availability."
-            : "Live metadata from ZSR discovery. Weak matches are intentionally omitted; images appear only when ZSR or ISBN metadata provides a real thumbnail."}
-        </p>
-      )}
-    </section>
+    <>
+      {renderLane(libraryResults, "library")}
+      {renderLane(openAccessResults, "open-access")}
+    </>
   );
 }
 
@@ -1218,6 +1307,7 @@ export default function AssistantMessage({
   matched,
   searchTools,
   liveResults,
+  sourceDiscovery,
   topic,
   mode = DEFAULT_MODE_ID,
   responseStyle = DEFAULT_RESPONSE_STYLE_ID,
@@ -1260,10 +1350,14 @@ export default function AssistantMessage({
     : localAgentPlan;
   const matchedById = new Map((matched || []).filter((resource) => resource?.id).map((resource) => [resource.id, resource]));
   const matchedByName = new Map((matched || []).filter((resource) => resource?.name).map((resource) => [String(resource.name).toLowerCase(), resource]));
-  const enrichResource = (resource) => ({
-    ...resource,
-    ...(matchedById.get(resource.id) || matchedByName.get(String(resource.name || "").toLowerCase()) || {}),
-  });
+  const enrichResource = (resource) => {
+    const matchedResource = matchedById.get(resource.id) || matchedByName.get(String(resource.name || "").toLowerCase()) || {};
+    const enriched = { ...resource, ...matchedResource };
+    return {
+      ...enriched,
+      accessUrl: enriched.accessUrl || enriched.url || "",
+    };
+  };
   const agentPlan = {
     ...providedAgentPlan,
     recommendations: (providedAgentPlan.recommendations || []).map(enrichResource),
@@ -1588,7 +1682,7 @@ export default function AssistantMessage({
       )}
 
       {allowSourceSections && isFollowup && showCatalogResults && (
-        <LiveResultsSection liveResults={liveResults} followup onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+        <LiveResultsSection liveResults={liveResults} sourceDiscovery={sourceDiscovery} followup onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {showAgenticSearchPlan && (
@@ -1641,7 +1735,7 @@ export default function AssistantMessage({
       )}
 
       {allowSourceSections && !isFollowup && showCatalogResults && (
-        <LiveResultsSection liveResults={liveResults} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+        <LiveResultsSection liveResults={liveResults} sourceDiscovery={sourceDiscovery} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
       )}
 
       {showStandaloneFullTextHelp && <FindFullText />}

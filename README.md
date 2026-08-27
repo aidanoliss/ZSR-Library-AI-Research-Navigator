@@ -1,10 +1,17 @@
 # Wake Forest ZSR Library AI Research Navigator
 
-Prototype research navigator for Wake Forest Z. Smith Reynolds Library workflows. The app helps students turn a topic into search terms, mode-specific research strategies, ZSR starting points, live ZSR catalog leads where available, citation guidance, and honest full-text access next steps.
+Prototype research navigator for Wake Forest Z. Smith Reynolds Library workflows. The app helps students turn a topic into search terms, mode-specific research strategies, ZSR starting points, live source leads where available, citation guidance, and honest full-text access next steps. Source leads can be limited to the library lane, the OpenAlex open-access lane, or both; the two lanes remain visibly separate.
 
 Topic-matched ZSR recommendations are kept separate from general discovery routes. If a matched path or live catalog list is small, the interface offers a collapsed `Other potentially helpful ZSR starting points` group without presenting those general services as additional topic matches.
 
-This is a prototype, not a production ZSR integration. It uses Gemini through the server API, curated ZSR-style resource metadata, and a best-effort live Primo lookup. It does not log students into ZSR, bypass paywalls, control LibKey Nomad, or expose private keys in the browser.
+This is a prototype, not a production ZSR integration. It uses Gemini through the server API, curated ZSR-style resource metadata, a best-effort live Primo lookup, Crossref bibliographic fallback where appropriate, and an optional server-keyed OpenAlex metadata lane. It does not log students into ZSR, bypass paywalls, retrieve or summarize OpenAlex-linked full text, control LibKey Nomad, or expose private keys in the browser.
+
+Current source-workflow additions include:
+
+- per-result and per-lane RIS export using only returned citation metadata
+- deterministic named subject-librarian routing from a reviewed-window directory, with Ask ZSR fallback
+- book location, call-number, and provider-reported availability guidance when Primo supplies delivery metadata
+- an optional, separately labelled OpenAlex open-access metadata lane with exact license and version provenance
 
 ## Research Modes
 
@@ -25,7 +32,7 @@ The selected mode affects search-term suggestions, recommended platforms, Primo/
 Each chat has a browser-local research workspace with:
 
 - an optional assignment brief and course presets
-- saved ZSR paths, catalog leads, and search strings
+- saved ZSR paths, source leads, and search strings
 - source statuses, notes, and citation details
 - search iteration history and result notes
 - a copy/download review packet for librarian handoff
@@ -71,6 +78,7 @@ Suggested demo framing:
 Live demo readiness checklist:
 
 - Set `GEMINI_API_KEY` only on the server host.
+- To enable the open-access lane, set `OPENALEX_API_KEY` only on the server host. Without it, the interface shows a safe disabled state and sends no OpenAlex request.
 - Confirm `.env` is not committed and no API key appears in browser-visible files.
 - For Render, deploy as a Web Service with build `npm ci --include=dev && npm run build`, start `npm start`, `HOST=0.0.0.0`, and `PORT=10000`.
 - Run `npm run build` before sharing.
@@ -119,7 +127,7 @@ Values that should be confirmed with ZSR before a public pilot:
 - ZSR Delivers / ILL: `https://zsr.wfu.edu/delivers/ill/`
 - Official Primo API endpoint/key, if ZSR wants API-backed search rather than public Primo lookup
 
-## Future Primo / MCP Integration TODO
+## External Provider And MCP Boundaries
 
 The current agentic behavior is intentionally local-config based: classify the student's need, generate better search terms, recommend likely ZSR paths, and link out to Primo, A-Z Databases, Google Scholar, LibKey Nomad, and ZSR help pages.
 
@@ -130,6 +138,10 @@ Do not build a full MCP server until ZSR can provide official access details. A 
 - Wake Forest LibKey / Third Iron library ID or API details
 - Librarian-reviewed citation guide URLs for APA, MLA, Chicago, and Zotero
 - Logging/privacy rules approved for student research queries
+
+OpenAlex is implemented as a metadata-only, separately labelled open-access lane. OpenAlex metadata licensing does not grant rights to a linked article or PDF. Full-text summaries remain unimplemented and gated by exact-version rights checks, privacy approval, retention rules, and librarian evaluation. Scite MCP remains unintegrated until subscription permission, OAuth/data-flow privacy, and institutional pilot ownership are confirmed. See `docs/provider-integration-roadmap.md`.
+
+The repository deliberately has no software license yet. Public visibility alone is not represented as open-source permission.
 
 ## LibKey Nomad Support
 
@@ -145,7 +157,7 @@ This is not a LibKey API integration and does not control the browser extension.
 
 Open `/?admin=1` to reach the restricted librarian QA gate. The client does not request protected data until an operator enters the deployment-configured access code. The server requires `Authorization: Bearer <ADMIN_TOKEN>` and denies the route when the token is absent or invalid; the code is held only for that request and is not saved in browser storage. The authorized view is read-only and does not write resource configuration.
 
-Use the envelope handoff icon to package a student's topic, suggested search terms, matched ZSR paths, and live catalog leads into an Ask ZSR email draft. Handoff contact details are not retained by default. Retaining them requires both `HANDOFF_STORE_DETAIL=on` and `HANDOFF_STORE_CONTACT=on`, and should happen only after privacy review.
+Use the envelope handoff icon to package a student's topic, suggested search terms, matched ZSR paths, and live source leads into an Ask ZSR email draft. Handoff contact details are not retained by default. Retaining them requires both `HANDOFF_STORE_DETAIL=on` and `HANDOFF_STORE_CONTACT=on`, and should happen only after privacy review.
 
 Query logging is off by default for safer demos. Set `LOG_QUERIES=on` only after ZSR approves retention and student notice language.
 
@@ -170,6 +182,7 @@ For library technical staff review, use:
 - `docs/duke-readiness-packet.md`
 - `docs/duke-demo-10-minute.md`
 - `docs/technical-correction-note.md`
+- `docs/provider-integration-roadmap.md`
 
 ## Useful Commands
 

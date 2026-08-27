@@ -18,7 +18,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: APP_VERSION
-        value: "1.0.0"
+        value: "1.1.0"
       - key: HOST
         value: 0.0.0.0
       - key: PORT
@@ -65,5 +65,9 @@ services:
         value: "30000"
       - key: PRIMO_LIVE
         value: "on"
+      - key: OPENALEX_LIVE
+        value: "on"
+      - key: OPENALEX_API_KEY
+        sync: false # optional; the OA lane shows a safe disabled state until configured
       - key: ASK_ZSR_EMAIL
         value: askzsr@wfu.edu

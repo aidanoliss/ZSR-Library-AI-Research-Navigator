@@ -7,6 +7,7 @@ import {
   parseChatRequest,
 } from "../server/chatRequest.js";
 import { buildResearchPlan } from "../config/researchAgent.js";
+import { fillTemplate } from "../config/libraryLinks.js";
 import { applySourceContract } from "../server/sourceContract.js";
 import {
   ChatRequestError,
@@ -61,8 +62,24 @@ test("chat parser normalizes history and constrains model-only request context",
   assert.equal(parsed.mode, "scholarly");
   assert.equal(parsed.responseStyle, "hybrid");
   assert.equal(parsed.subjectFocusId, "auto");
+  assert.equal(parsed.accessScope, "library");
   assert.equal(parsed.assignmentContext.length, 2400);
   assert.equal(parsed.plannerContext.length, 2400);
+});
+
+test("chat parser accepts only governed source-access scopes", () => {
+  const request = (accessScope) => parseChatRequest({
+    accessScope,
+    messages: [{ role: "user", content: "climate change and biodiversity" }],
+  });
+  assert.equal(request("both").accessScope, "both");
+  assert.equal(request("open-access").accessScope, "open-access");
+  assert.equal(request("not-a-scope").accessScope, "library");
+});
+
+test("missing optional link templates fail closed instead of crashing the interface", () => {
+  assert.equal(fillTemplate(undefined, "student topic"), "");
+  assert.equal(fillTemplate(null, "student topic"), "");
 });
 
 test("a new independent topic cannot inherit the previous topic", () => {

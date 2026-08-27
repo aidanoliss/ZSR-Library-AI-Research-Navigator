@@ -14,6 +14,10 @@
 - Per-chat folders and browser-local research workspaces
 - Assignment briefs, saved trails, search history, and librarian review packets
 - Restricted, read-only librarian QA with local review-packet export
+- RIS export from returned citation metadata
+- Governed named-librarian routing with generic fallback
+- Provider-reported book location, call number, and availability guidance
+- Optional separate OpenAlex open-access metadata lane with rights provenance
 
 ## Next pilot priorities
 
@@ -22,6 +26,7 @@
 3. Conduct manual keyboard-only, screen-reader, zoom, contrast, reduced-motion, and mobile usability review.
 4. Add configuration writes, approval, import, and rollback only after institutional authentication, authorization, persistence, and audit ownership exist. The current QA console is intentionally read-only.
 5. Run the narrow two-discipline student pilot described in `docs/duke-readiness-packet.md`.
+6. Sample and librarian-score OpenAlex relevance, OA-location accuracy, and license/version display before making the combined lane the default.
 
 ## Hardening completed on the pilot branch
 
@@ -44,6 +49,10 @@
 - Replace hand-maintained database metadata with a reviewed LibGuides/A-Z export when available.
 - Use an approved Primo API endpoint and key rather than relying only on public discovery requests.
 - Confirm LibKey/Third Iron configuration and preferred full-text workflow.
+- Obtain and monitor a server-side OpenAlex API key if the OA lane is enabled in a shared deployment.
+- Pilot full-text summaries only after exact-version rights enforcement, privacy/retention approval, and citation-preserving summary evaluation exist.
+- Integrate Scite MCP only after subscription permission, OAuth/data-flow privacy review, and an institution-owned pilot are approved.
+- Select a repository software license strategically; do not describe a visible repository as open source before that decision.
 - Decide whether authentication, course-system context, or account sync is appropriate.
 - Approve student notice, retention, logging, support ownership, branding, and incident-response policies before production use.
 

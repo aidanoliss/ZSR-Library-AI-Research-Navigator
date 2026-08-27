@@ -30,7 +30,10 @@ import {
   releaseMetadata,
 } from "./httpSecurity.js";
 import { screenMessage, blockedReply } from "./screen.js";
-import { searchSourceCandidates } from "./primo.js";
+import {
+  searchSourceCandidatesForScope,
+  sourceDiscoveryStatus,
+} from "./sourceDiscovery.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
 import { appendRequestContextForAi } from "./requestContext.js";
 import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
@@ -42,6 +45,11 @@ import {
   getSearchMode,
 } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID } from "../config/subjectFocus.js";
+import { getOpenAlexStatus } from "./openalex.js";
+import {
+  RESEARCH_INTEGRATION_POLICY,
+  RESEARCH_INTEGRATION_POLICY_VERSION,
+} from "../config/researchIntegrationPolicy.js";
 import {
   buildResearchPlan,
   buildSearchTermSuggestions,
@@ -154,8 +162,14 @@ function responsePlanContext(plan) {
       researchSpec: plan.researchSpec,
       recommendations: (plan.recommendations || []).map((resource) => ({
         id: resource.id,
+        name: resource.name,
+        description: resource.description,
+        subjectArea: resource.subjectArea,
+        whyFits: resource.whyFits,
+        accessUrl: resource.accessUrl,
         searchTerms: resource.searchTerms,
         filters: resource.filters,
+        expect: resource.expect,
         queryValidation: resource.queryValidation,
         provenance: resource.provenance,
       })),
@@ -208,7 +222,10 @@ function prepareReply(reply, history, liveResults, latestText, responseStyle = D
   const withIntro = responseStyle === "hybrid"
     ? reply
     : withCatalogFoundIntro(reply, liveResults, latestText);
-  const withSources = applySourceContract(withIntro, resources, deterministicPlan, liveResults, responseStyle);
+  const withSources = applySourceContract(withIntro, resources, deterministicPlan, liveResults, responseStyle, {
+    topic: latestText,
+    modeId: mode,
+  });
   if (["hybrid", "sources"].includes(responseStyle)) return withSources;
   if (!catalogResultFocusedTurn(history, latestText, liveResults)) return withSources;
   const { starting_points, academic_integrity_note, limitations, key_journals, database_strategy, suggested_followups, ...focused } = withSources;
@@ -347,7 +364,7 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID, determin
 
   if (/peer|scholarly|article|journal/.test(latest)) {
     return {
-      message: "Here's what I found: open the live catalog leads below first, then use the search terms if you need more results.",
+      message: "Here's what I found: open the live source leads below first, then use the search terms if you need more results.",
       search_terms: buildSearchTermSuggestions(original, [], DEFAULT_SUBJECT_FOCUS_ID, 6),
       suggested_followups,
     };
@@ -430,6 +447,11 @@ function integrationStatus() {
       libraryIdConfigured: envConfigured("VITE_WFU_LIBKEY_LIBRARY_ID") || envConfigured("WFU_LIBKEY_LIBRARY_ID"),
       note: "Without a Wake Forest LibKey library ID, the app uses LibKey choose-library links.",
     },
+    openAlex: getOpenAlexStatus(),
+    governedFutureCapabilities: {
+      policyVersion: RESEARCH_INTEGRATION_POLICY_VERSION,
+      ...RESEARCH_INTEGRATION_POLICY,
+    },
   };
 }
 
@@ -490,7 +512,7 @@ function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, cont
     "",
     resources ? `Recommended ZSR paths:\n${resources}` : "",
     "",
-    results ? `Catalog leads to review:\n${results}` : "",
+    results ? `Source leads to review:\n${results}` : "",
     "",
     "Please help me confirm the best databases, search terms, and next steps.",
   ].filter((line) => line !== "").join("\n");
@@ -505,16 +527,16 @@ async function handleChat(req, res, stream = false) {
   const body = await readJsonBody(req);
   const parsed = parseChatRequest(body);
   if (parsed.error) return sendJson(res, 400, { error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext, researchSpec } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, accessScope, assignmentContext, plannerContext, researchSpec } = parsed;
   const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   const screen = screenMessage(last.content);
   if (screen.block) {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
-    if (!stream) return sendJson(res, 200, { reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) });
+    if (!stream) return sendJson(res, 200, { reply: blockedReply(screen.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
     sendNdjsonHead(res);
     writeNdjson(res, { type: "delta", message: screen.message });
-    writeNdjson(res, { type: "done", reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) });
+    writeNdjson(res, { type: "done", reply: blockedReply(screen.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
     return res.end();
   }
 
@@ -539,7 +561,7 @@ async function handleChat(req, res, stream = false) {
     const effectiveMode = plan?.modeId || mode;
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchSourceCandidates(liveSearchQueries(plan, studentText), 10, effectiveMode)
+      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal })
       : Promise.resolve([]);
 
     if (!stream) {
@@ -553,6 +575,7 @@ async function handleChat(req, res, stream = false) {
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
         ...responsePlanContext(plan),
       });
     }
@@ -570,6 +593,7 @@ async function handleChat(req, res, stream = false) {
       matchedResources: resources,
       searchTools: await getSearchTools(),
       liveResults,
+      sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
       ...responsePlanContext(plan),
     });
     return res.end();
@@ -590,6 +614,7 @@ async function handleChat(req, res, stream = false) {
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
         ...responsePlanContext(plan),
       };
       if (!stream) return sendJson(res, 200, payload);

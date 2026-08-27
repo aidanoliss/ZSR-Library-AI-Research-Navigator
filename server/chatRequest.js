@@ -13,6 +13,7 @@ import {
   submittedResearchTopicContext,
 } from "../src/conversationContext.js";
 import { requestContextFromBody } from "./requestContext.js";
+import { getAccessScope } from "../config/accessScope.js";
 
 export const MAX_CHAT_MESSAGE_LENGTH = 2000;
 export const MAX_CHAT_TURNS = 40;
@@ -60,6 +61,7 @@ export function parseChatRequest(body) {
   const subjectFocusId = getSubjectFocus(
     body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID
   ).id;
+  const accessScope = getAccessScope(body?.accessScope).id;
 
   return {
     history,
@@ -68,6 +70,7 @@ export function parseChatRequest(body) {
     mode,
     responseStyle,
     subjectFocusId,
+    accessScope,
     ...requestContextFromBody(body),
   };
 }

@@ -14,6 +14,7 @@ function IntegrationList({ integrations = {} }) {
     ["Public Primo lookup", integrations.primoPublicLookup?.configured, integrations.primoPublicLookup?.note],
     ["Official Primo API", integrations.primoApi?.configured, integrations.primoApi?.configured ? "Approved endpoint configured" : "Not integrated"],
     ["LibKey library ID", integrations.libkey?.libraryIdConfigured, integrations.libkey?.note],
+    ["OpenAlex OA lane", integrations.openAlex?.enabled, integrations.openAlex?.enabled ? "Server-side provider configured" : `Not ready: ${integrations.openAlex?.reason || "status unavailable"}`],
   ];
 
   return (

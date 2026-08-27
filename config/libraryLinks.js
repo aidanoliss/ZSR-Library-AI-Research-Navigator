@@ -221,7 +221,8 @@ export function getResponseStyle(styleId) {
 }
 
 export function fillTemplate(template, query) {
-  return template.replace("{q}", encodeURIComponent(query || ""));
+  const value = String(template || "").trim();
+  return value ? value.replace("{q}", encodeURIComponent(query || "")) : "";
 }
 
 export function buildAccessLinks({ title, doi, pmid } = {}) {

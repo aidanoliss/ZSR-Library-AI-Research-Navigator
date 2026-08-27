@@ -23,6 +23,11 @@ import {
   getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
+import {
+  ACCESS_SCOPES,
+  DEFAULT_ACCESS_SCOPE_ID,
+  getAccessScope,
+} from "../config/accessScope.js";
 import { buildResearchPlan, buildSearchTermSuggestions } from "../config/researchAgent.js";
 import { recommendLibrarianRoutes } from "../config/librarianRoutes.js";
 import {
@@ -81,7 +86,7 @@ const Icon = {
   sources: <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3" /><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5" /><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" /></svg>,
 };
 
-function makeSession(messages = [], mode = DEFAULT_MODE_ID, responseStyle = DEFAULT_RESPONSE_STYLE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+function makeSession(messages = [], mode = DEFAULT_MODE_ID, responseStyle = DEFAULT_RESPONSE_STYLE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID, accessScope = DEFAULT_ACCESS_SCOPE_ID) {
   const firstUser = messages.find((m) => m.role === "user")?.content || "New research topic";
   return {
     id: crypto.randomUUID(),
@@ -89,6 +94,7 @@ function makeSession(messages = [], mode = DEFAULT_MODE_ID, responseStyle = DEFA
     mode,
     responseStyle,
     subjectFocusId,
+    accessScope: getAccessScope(accessScope).id,
     researchWorkspace: createResearchWorkspace(),
     folderId: DEFAULT_FOLDER_ID,
     messages,
@@ -114,6 +120,7 @@ function readSessions() {
         folderId: session.folderId || DEFAULT_FOLDER_ID,
         pinned: Boolean(session.pinned),
         subjectFocusId: session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID,
+        accessScope: getAccessScope(session.accessScope).id,
         researchWorkspace: normalizeResearchWorkspace(session.researchWorkspace),
         messages: Array.isArray(session.messages) ? session.messages : [],
         updatedAt: session.updatedAt || 0,
@@ -151,8 +158,9 @@ function LoadingBubble() {
   );
 }
 
-function ModeSelector({ value, onChange, responseStyle, onResponseStyleChange, compact = false }) {
+function ModeSelector({ value, onChange, accessScope, onAccessScopeChange, responseStyle, onResponseStyleChange, compact = false }) {
   const active = getSearchMode(value);
+  const activeAccessScope = getAccessScope(accessScope);
   const activeStyle = getResponseStyle(responseStyle);
   return (
     <section className={`mode-panel ${compact ? "compact" : ""}`} aria-labelledby={compact ? "mode-label-compact" : "mode-label"}>
@@ -171,6 +179,21 @@ function ModeSelector({ value, onChange, responseStyle, onResponseStyleChange, c
           <option key={mode.id} value={mode.id}>{mode.label}</option>
         ))}
       </select>
+      <div className="access-scope-control">
+        <div>
+          <label htmlFor={compact ? "access-scope-compact" : "access-scope"}>Source access</label>
+          {!compact && <p>{activeAccessScope.description}</p>}
+        </div>
+        <select
+          id={compact ? "access-scope-compact" : "access-scope"}
+          value={activeAccessScope.id}
+          onChange={(event) => onAccessScopeChange(event.target.value)}
+        >
+          {ACCESS_SCOPES.map((scope) => (
+            <option key={scope.id} value={scope.id}>{scope.label}</option>
+          ))}
+        </select>
+      </div>
       <div className="response-style" role="radiogroup" aria-label="Response style">
         <div>
           <span>Response style</span>
@@ -720,6 +743,7 @@ export default function App() {
   const [mode, setMode] = useState(DEFAULT_MODE_ID);
   const [responseStyle, setResponseStyle] = useState(DEFAULT_RESPONSE_STYLE_ID);
   const [subjectFocusId, setSubjectFocusId] = useState(DEFAULT_SUBJECT_FOCUS_ID);
+  const [accessScope, setAccessScope] = useState(DEFAULT_ACCESS_SCOPE_ID);
   const [researchWorkspace, setResearchWorkspace] = useState(() => createResearchWorkspace());
   const [researchWorkspaceOpen, setResearchWorkspaceOpen] = useState(false);
   const [sessions, setSessions] = useState(() => readSessions());
@@ -774,6 +798,7 @@ export default function App() {
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
     setSubjectFocusId(session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID);
+    setAccessScope(getAccessScope(session.accessScope).id);
     setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
@@ -823,7 +848,7 @@ export default function App() {
     [researchWorkspace.trail]
   );
 
-  function saveSession(nextMessages, nextMode = mode, nextResponseStyle = responseStyle, sessionId = activeSessionId, nextSubjectFocusId = subjectFocusId, nextResearchWorkspace = researchWorkspace) {
+  function saveSession(nextMessages, nextMode = mode, nextResponseStyle = responseStyle, sessionId = activeSessionId, nextSubjectFocusId = subjectFocusId, nextResearchWorkspace = researchWorkspace, nextAccessScope = accessScope) {
     const id = sessionId || crypto.randomUUID();
     if (!activeSessionId || activeSessionId !== id) setActiveSessionId(id);
     setSessions((current) => {
@@ -837,6 +862,7 @@ export default function App() {
         mode: nextMode,
         responseStyle: nextResponseStyle,
         subjectFocusId: nextSubjectFocusId,
+        accessScope: getAccessScope(nextAccessScope).id,
         researchWorkspace: normalizeResearchWorkspace(nextResearchWorkspace),
         messages: nextMessages,
         pinned: Boolean(existing?.pinned),
@@ -923,6 +949,7 @@ export default function App() {
     setMessages([]);
     setInput("");
     setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
+    setAccessScope(DEFAULT_ACCESS_SCOPE_ID);
     setResearchWorkspace(createResearchWorkspace());
     setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
@@ -938,6 +965,7 @@ export default function App() {
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
     setSubjectFocusId(session.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID);
+    setAccessScope(getAccessScope(session.accessScope).id);
     setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
@@ -954,6 +982,7 @@ export default function App() {
     setMode(DEFAULT_MODE_ID);
     setResponseStyle(DEFAULT_RESPONSE_STYLE_ID);
     setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
+    setAccessScope(DEFAULT_ACCESS_SCOPE_ID);
     setResearchWorkspace(createResearchWorkspace());
     setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
@@ -1009,6 +1038,7 @@ export default function App() {
     try {
       const requestPayload = {
         mode: requestMode,
+        accessScope,
         responseStyle,
         subjectFocusId,
         assignmentContext: requestAssignmentContext,
@@ -1031,6 +1061,7 @@ export default function App() {
         matched: finalPayload.matchedResources || [],
         searchTools: finalPayload.searchTools || [],
         liveResults: finalPayload.liveResults || [],
+        sourceDiscovery: finalPayload.sourceDiscovery || null,
         researchSpec:
           finalPayload.researchSpec ||
           finalPayload.reply?.researchSpec ||
@@ -1054,6 +1085,7 @@ export default function App() {
         subjectFocusId: requestFocus.id,
         subjectFocusLabel: requestFocus.label,
         subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
+        accessScope,
       };
       const finished = [...nextMessages, assistantMessage];
       setMessages(finished);
@@ -1240,7 +1272,7 @@ export default function App() {
               {latestReleaseId && <span className="hero-release">Release {latestReleaseId}</span>}
             </p>
             <h1><span className="title-zsr">ZSR</span> Research Navigator</h1>
-            <p>Shape a topic into searchable terms, ZSR starting points, live catalog leads, and citation-aware next steps.</p>
+            <p>Shape a topic into searchable terms, ZSR starting points, live library and open-access leads, and citation-aware next steps.</p>
           </div>
         </header>
 
@@ -1261,6 +1293,8 @@ export default function App() {
               <ModeSelector
                 value={mode}
                 onChange={setMode}
+                accessScope={accessScope}
+                onAccessScopeChange={setAccessScope}
                 responseStyle={responseStyle}
                 onResponseStyleChange={setResponseStyle}
               />
@@ -1306,6 +1340,8 @@ export default function App() {
               <ModeSelector
                 value={mode}
                 onChange={setMode}
+                accessScope={accessScope}
+                onAccessScopeChange={setAccessScope}
                 responseStyle={responseStyle}
                 onResponseStyleChange={setResponseStyle}
                 compact
@@ -1329,6 +1365,7 @@ export default function App() {
                       matched={message.matched}
                       searchTools={message.searchTools}
                       liveResults={message.liveResults}
+                      sourceDiscovery={message.sourceDiscovery}
                       topic={submittedResearchTopicContext(messages, index)}
                       mode={message.mode || mode}
                       responseStyle={message.responseStyle || responseStyle}

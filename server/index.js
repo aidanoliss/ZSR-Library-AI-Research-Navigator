@@ -28,7 +28,10 @@ import {
   trustProxyHops,
 } from "./httpSecurity.js";
 import { screenMessage, blockedReply } from "./screen.js";
-import { searchSourceCandidates } from "./primo.js";
+import {
+  searchSourceCandidatesForScope,
+  sourceDiscoveryStatus,
+} from "./sourceDiscovery.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
 import { appendRequestContextForAi } from "./requestContext.js";
 import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
@@ -40,6 +43,11 @@ import {
   getSearchMode,
 } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID } from "../config/subjectFocus.js";
+import { getOpenAlexStatus } from "./openalex.js";
+import {
+  RESEARCH_INTEGRATION_POLICY,
+  RESEARCH_INTEGRATION_POLICY_VERSION,
+} from "../config/researchIntegrationPolicy.js";
 import {
   buildResearchPlan,
   buildSearchTermSuggestions,
@@ -150,6 +158,11 @@ function integrationStatus() {
     libkey: {
       libraryIdConfigured: envConfigured("VITE_WFU_LIBKEY_LIBRARY_ID") || envConfigured("WFU_LIBKEY_LIBRARY_ID"),
       note: "Without a Wake Forest LibKey library ID, the app uses LibKey choose-library links.",
+    },
+    openAlex: getOpenAlexStatus(),
+    governedFutureCapabilities: {
+      policyVersion: RESEARCH_INTEGRATION_POLICY_VERSION,
+      ...RESEARCH_INTEGRATION_POLICY,
     },
   };
 }
@@ -265,8 +278,14 @@ function responsePlanContext(plan) {
       researchSpec: plan.researchSpec,
       recommendations: (plan.recommendations || []).map((resource) => ({
         id: resource.id,
+        name: resource.name,
+        description: resource.description,
+        subjectArea: resource.subjectArea,
+        whyFits: resource.whyFits,
+        accessUrl: resource.accessUrl,
         searchTerms: resource.searchTerms,
         filters: resource.filters,
+        expect: resource.expect,
         queryValidation: resource.queryValidation,
         provenance: resource.provenance,
       })),
@@ -338,7 +357,10 @@ function prepareReply(reply, history, liveResults, latestText, responseStyle = D
   const withIntro = responseStyle === "hybrid"
     ? reply
     : withCatalogFoundIntro(reply, liveResults, latestText);
-  const withSources = applySourceContract(withIntro, resources, deterministicPlan, liveResults, responseStyle);
+  const withSources = applySourceContract(withIntro, resources, deterministicPlan, liveResults, responseStyle, {
+    topic: latestText,
+    modeId: mode,
+  });
   if (["hybrid", "sources"].includes(responseStyle)) return withSources;
   if (!catalogResultFocusedTurn(history, latestText, liveResults)) return withSources;
 
@@ -489,7 +511,7 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID, determin
   if (/peer|scholarly|article|journal/.test(latest)) {
     return {
       message:
-        "Here's what I found: open the live catalog leads below first, then use the search terms if you need more results.",
+        "Here's what I found: open the live source leads below first, then use the search terms if you need more results.",
       search_terms: buildSearchTermSuggestions(original, [], DEFAULT_SUBJECT_FOCUS_ID, 6),
       suggested_followups,
     };
@@ -554,14 +576,14 @@ app.post("/api/chat", async (req, res) => {
   if (gate(req, res, "chat")) return;
   const parsed = parseChatRequest(req.body);
   if (parsed.error) return res.status(400).json({ error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext, researchSpec } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, accessScope, assignmentContext, plannerContext, researchSpec } = parsed;
   const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
   const screen = screenMessage(last.content);
   if (screen.block) {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
-    return res.json({ reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) });
+    return res.json({ reply: blockedReply(screen.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
   }
 
   const providerAbort = new AbortController();
@@ -586,7 +608,7 @@ app.post("/api/chat", async (req, res) => {
     // Run the AI plan and the live ZSR catalog lookup in parallel.
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchSourceCandidates(liveSearchQueries(plan, studentText), 10, effectiveMode)
+      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal })
       : Promise.resolve([]);
     const rawReply = await generateChatResponse(aiHistory, resources, effectiveMode, responseStyle, subjectFocusId, { signal: providerAbort.signal });
     const liveResults = await primoPromise;
@@ -603,6 +625,7 @@ app.post("/api/chat", async (req, res) => {
       matchedResources: resources,
       searchTools: await getSearchTools(),
       liveResults,
+      sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
       ...responsePlanContext(plan),
     });
   } catch (err) {
@@ -619,6 +642,7 @@ app.post("/api/chat", async (req, res) => {
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
         ...responsePlanContext(plan),
       });
     }
@@ -630,6 +654,7 @@ app.post("/api/chat", async (req, res) => {
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
         ...responsePlanContext(plan),
       });
     }
@@ -649,7 +674,7 @@ app.post("/api/chat/stream", async (req, res) => {
   if (gate(req, res, "chat")) return;
   const parsed = parseChatRequest(req.body);
   if (parsed.error) return res.status(400).json({ error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext, researchSpec } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, accessScope, assignmentContext, plannerContext, researchSpec } = parsed;
   const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
@@ -658,7 +683,7 @@ app.post("/api/chat/stream", async (req, res) => {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
     res.setHeader("Content-Type", "application/x-ndjson");
     res.write(JSON.stringify({ type: "delta", message: screen.message }) + "\n");
-    res.write(JSON.stringify({ type: "done", reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) }) + "\n");
+    res.write(JSON.stringify({ type: "done", reply: blockedReply(screen.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) }) + "\n");
     return res.end();
   }
 
@@ -694,7 +719,7 @@ app.post("/api/chat/stream", async (req, res) => {
     const effectiveMode = plan?.modeId || mode;
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchSourceCandidates(liveSearchQueries(plan, studentText), 10, effectiveMode)
+      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal })
       : Promise.resolve([]); // in parallel with streaming
     const rawReply = await streamChatResponse(
       aiHistory,
@@ -720,6 +745,7 @@ app.post("/api/chat/stream", async (req, res) => {
       matchedResources: resources,
       searchTools: await getSearchTools(),
       liveResults,
+      sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
       ...responsePlanContext(plan),
     });
     res.end();
@@ -738,6 +764,7 @@ app.post("/api/chat/stream", async (req, res) => {
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
         ...responsePlanContext(plan),
       });
       return res.end();
@@ -751,6 +778,7 @@ app.post("/api/chat/stream", async (req, res) => {
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        sourceDiscovery: sourceDiscoveryStatus(accessScope, liveResults),
         ...responsePlanContext(plan),
       });
       return res.end();
@@ -847,7 +875,7 @@ function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, cont
     "",
     resources ? `Recommended ZSR paths:\n${resources}` : "",
     "",
-    results ? `Catalog leads to review:\n${results}` : "",
+    results ? `Source leads to review:\n${results}` : "",
     "",
     "Please help me confirm the best databases, search terms, and next steps.",
   ].filter((line) => line !== "").join("\n");

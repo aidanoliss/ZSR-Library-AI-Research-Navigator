@@ -14,7 +14,7 @@ function summarizePayload(payload) {
     payload.topic,
     payload.subjectFocus ? `Subject: ${payload.subjectFocus}` : "",
     `${payload.searchTerms?.length || 0} search terms`,
-    `${payload.liveResults?.length || 0} catalog leads`,
+    `${payload.liveResults?.length || 0} source leads`,
     `${payload.matchedResources?.length || 0} ZSR paths`,
     `${payload.librarianRoutes?.length || 0} support routes`,
     `${payload.researchWorkspace?.trail?.length || 0} saved trail items`,
@@ -145,7 +145,10 @@ export default function HandoffModal({ open, onClose, payload }) {
                   <strong>{route.label}</strong>
                   <p>{route.reason}</p>
                   <div className="handoff-route-actions">
-                    {route.href && <a href={route.href} target="_blank" rel="noopener noreferrer">Open route</a>}
+                    {route.profileUrl && <a href={route.profileUrl} target="_blank" rel="noopener noreferrer">View profile</a>}
+                    {route.email && <a href={`mailto:${route.email}`}>Email</a>}
+                    {route.appointmentUrl && <a href={route.appointmentUrl} target="_blank" rel="noopener noreferrer">Schedule</a>}
+                    {!route.profileUrl && !route.appointmentUrl && route.href && <a href={route.href} target="_blank" rel="noopener noreferrer">Open route</a>}
                     <button type="button" onClick={() => addRouteToNote(route)}>Add to request</button>
                   </div>
                 </article>

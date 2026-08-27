@@ -4,6 +4,10 @@
 - Gemini does not browse library pages, search licensed databases, retrieve full text, verify holdings, or produce an exhaustive evidence synthesis.
 - Public Primo lookup is best effort and does not use an institution-issued API key.
 - Crossref is public bibliographic metadata, not confirmation of library access, peer-review status, or topical relevance.
+- OpenAlex OA status and location metadata are provider reports, not a new entitlement check or blanket reuse permission. The app does not retrieve or summarize linked full text.
+- Book location and availability are a point-in-time public Primo response and must be confirmed in the record before a shelf visit or request.
+- Named librarian records are public-directory-checked prototype configuration unless explicitly marked librarian-approved, and stale/invalid records fall back to Ask ZSR.
+- Scite MCP and OA full-text summaries are not implemented. The repository has no selected software license and is not represented as open source.
 - Open Library cover images are optional cosmetic metadata.
 - Resource capabilities, ownership, review dates, and links remain local prototype configuration until librarians approve them.
 - The WFU institution profile is a prototype record, not formal approval. The Duke profile is an unconfigured and unapproved template.

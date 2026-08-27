@@ -1,5 +1,17 @@
-export function applySourceContract(reply, resources, plan, liveResults, responseStyle) {
-  if (!reply || !["hybrid", "sources"].includes(responseStyle)) return reply;
+import { recommendLibrarianRoutes } from "../config/librarianRoutes.js";
+
+export function applySourceContract(reply, resources, plan, liveResults, responseStyle, context = {}) {
+  if (!reply) return reply;
+
+  const topic = plan?.researchSpec?.topic || context.topic || "";
+  const modeId = context.modeId || plan?.modeId || plan?.researchSpec?.mode || "scholarly";
+  // Contact names and links come only from the governed directory. Model output
+  // cannot invent or override a person-level librarian route.
+  const governedReply = {
+    ...reply,
+    librarian_routes: recommendLibrarianRoutes(topic, modeId, resources || []),
+  };
+  if (!["hybrid", "sources"].includes(responseStyle)) return governedReply;
 
   const sourceRoutes = resources || [];
   const routedDatabases = sourceRoutes.filter((resource) => resource.recommended_query);
@@ -23,11 +35,11 @@ export function applySourceContract(reply, resources, plan, liveResults, respons
     : "No verified source records were returned after the ZSR and scholarly-metadata searches. Do not treat the database routes below as citations; revise one concept or ask a librarian before using sources.";
 
   return {
-    ...reply,
+    ...governedReply,
     source_notice: sourceNotice,
     starting_points: startingPoints,
     database_strategy: databaseStrategy,
-    search_terms: plan?.searchTerms || reply.search_terms || [],
+    search_terms: plan?.searchTerms || governedReply.search_terms || [],
   };
 }
 

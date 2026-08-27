@@ -7,7 +7,7 @@ This inventory describes application fields and their default destinations. It i
 | Data | Example fields | Location | Leaves browser automatically? | Deletion / retention |
 | --- | --- | --- | --- | --- |
 | Draft composer | Current unsent topic text | Browser `localStorage` | No | Replaced as the draft changes; removable through browser site-data controls |
-| Chat sessions | Session ID, title, mode, response style, subject focus, messages, timestamps, pinned/folder state | Browser `localStorage`, up to 60 sessions in the current client | Submitted conversation turns are sent when the student sends the next chat request | No server sync; removable in the interface where offered or through browser site-data controls |
+| Chat sessions | Session ID, title, mode, source-access scope, response style, subject focus, messages, timestamps, pinned/folder state | Browser `localStorage`, up to 60 sessions in the current client | Submitted conversation turns and selected scope are sent when the student sends the next chat request | No server sync; removable in the interface where offered or through browser site-data controls |
 | Research workspace | Assignment brief, “use in AI requests” choice, saved paths/results/searches, notes, citation details, search status/history | Stored inside the browser-local session | Assignment constraints leave the browser only when the student enables their use in AI requests; workspace content enters the email draft only after handoff | No remote backup; browser-controlled retention |
 | Folder labels | Folder ID and student-created name | Browser `localStorage` | No | Browser-controlled retention |
 | Active session | Session ID | Browser `localStorage` | No | Removed when the session is cleared or site data is deleted |
@@ -19,14 +19,15 @@ Browser `localStorage` is origin-scoped but is not application-level encryption.
 
 | Recipient / processor | Fields sent | Purpose | Default storage controlled here? | Important boundary |
 | --- | --- | --- | --- | --- |
-| Node application server | Normalized user/assistant message history, selected mode, response style, subject focus, and enabled assignment/planner context | Validate request, construct ResearchSpec, route resources, build the model prompt | Query logging defaults off | No institutional identity or SSO field is attached by the app |
+| Node application server | Normalized user/assistant message history, selected mode, source-access scope, response style, subject focus, and enabled assignment/planner context | Validate request, construct ResearchSpec, route resources, choose discovery lanes, and build the model prompt | Query logging defaults off | No institutional identity or SSO field is attached by the app |
 | Google Gemini API | Conversation content retained by the active-context filter, selected mode/style/focus instructions, and compact curated resource metadata | Generate structured research-orientation prose | Provider handling is governed by the configured Google API account and terms, not browser `localStorage` settings | Gemini is not given a library login and does not browse library links |
 | WFU public Primo surface | Compiled discovery query plus public Primo view/scope parameters | Return bibliographic metadata leads | No application-side response persistence by default | Not an official credentialed Primo API integration |
 | Crossref | Compiled article-compatible query, row/select/filter parameters, and a generic application user-agent | Bibliographic fallback when appropriate discovery results are sparse | No application-side response persistence by default | Crossref does not confirm ZSR access or holdings |
+| OpenAlex | First compiled discovery query, OA/retraction filters, result limit, and server-side API key | Optional open-access metadata lane when the student selects OA or combined scope | Short process-local metadata cache; no application-side durable response persistence | The key is never returned to the browser; OpenAlex metadata is CC0, while linked works retain their own rights; no full text is retrieved |
 | Open Library Covers | ISBN embedded in a cover-image URL | Optional cover image | Browser/cache behavior is controlled by the browser and provider | The cover request is separate from chat text and is cosmetic |
 | External library/database/help sites | URL and query parameters only after the student opens a link | Continue research outside the prototype | Controlled by the destination site | The app does not authenticate the student into those sites |
 
-The server stores `GEMINI_API_KEY` and optional `ADMIN_TOKEN` only as deployment environment variables. They must not be returned by health/status endpoints, embedded in frontend assets, logged, or included in release evidence.
+The server stores `GEMINI_API_KEY`, optional `OPENALEX_API_KEY`, and optional `ADMIN_TOKEN` only as deployment environment variables. They must not be returned by health/status endpoints, embedded in frontend assets, logged, or included in release evidence.
 
 ## Optional server-side JSONL records
 

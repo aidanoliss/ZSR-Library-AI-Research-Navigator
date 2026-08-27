@@ -1,6 +1,20 @@
 import { LIBRARY_LINKS } from "./libraryLinks.js";
+import {
+  WFU_LIBRARIAN_DIRECTORY,
+  getActiveLibrarianRecords,
+  validateLibrarianRecord,
+} from "./librarianDirectory.js";
 
 const ROUTES = [
+  {
+    id: "history-humanities",
+    label: "History / Humanities librarian",
+    unit: "Subject research support",
+    href: LIBRARY_LINKS.zsrAsk,
+    patterns: [/history|historical|historiography|medieval|middle ages|archives?|primary sources?|manuscripts?|literature|humanities|jazz|cultural identity/i],
+    modes: ["scholarly", "books", "primary", "general"],
+    reason: "Best fit for historical context, humanities scholarship, books, and primary-source research strategy.",
+  },
   {
     id: "psychology-social-sciences",
     label: "Psychology / Social Sciences librarian",
@@ -67,29 +81,127 @@ const ROUTES = [
 ];
 
 function routeScore(route, text, modeId, matchedResources = []) {
-  let score = 0;
-  if (route.modes.includes(modeId)) score += 2;
+  let topicalScore = 0;
   for (const pattern of route.patterns) {
-    if (pattern.test(text)) score += 3;
+    if (pattern.test(text)) topicalScore += 3;
   }
   for (const resource of matchedResources) {
     const haystack = `${resource?.name || ""} ${resource?.description || ""} ${(resource?.tags || []).join(" ")}`;
     for (const pattern of route.patterns) {
-      if (pattern.test(haystack)) score += 1;
+      if (pattern.test(haystack)) topicalScore += 1;
     }
   }
-  return score;
+  return topicalScore > 0 ? topicalScore + (route.modes.includes(modeId) ? 2 : 0) : 0;
 }
 
-export function recommendLibrarianRoutes(topic, modeId = "scholarly", matchedResources = []) {
+function directoryScore(record, text, modeId, matchedResources = []) {
+  let topicalScore = 0;
+  for (const patternText of record.subjectPatterns || []) {
+    const pattern = new RegExp(patternText, "i");
+    if (pattern.test(text)) topicalScore += 4;
+    for (const resource of matchedResources) {
+      const haystack = `${resource?.name || ""} ${resource?.description || ""} ${(resource?.tags || []).join(" ")}`;
+      if (pattern.test(haystack)) topicalScore += 1;
+    }
+  }
+  for (const tag of record.subjectTags || []) {
+    if (tag && text.includes(String(tag).toLowerCase())) topicalScore += 2;
+  }
+  return topicalScore > 0 ? topicalScore + (record.modes?.includes(modeId) ? 1 : 0) : 0;
+}
+
+function namedRoute(route, record) {
+  return {
+    id: record.id,
+    routeId: route.id,
+    label: record.personName,
+    unit: record.title,
+    href: record.appointmentUrl,
+    reason: `${route.reason} Contact information is sourced from ZSR's public directory and has not been marked as librarian-approved for this prototype.`,
+    institutionId: record.institutionId,
+    personName: record.personName,
+    title: record.title,
+    profileUrl: record.profileUrl,
+    email: record.email,
+    appointmentUrl: record.appointmentUrl,
+    reviewStatus: record.reviewStatus,
+    librarianApproved: record.librarianApproved,
+    lastReviewedDate: record.lastReviewedDate,
+    nextReviewDate: record.nextReviewDate,
+    sourceUrl: record.sourceUrl,
+    directoryRecordId: record.id,
+  };
+}
+
+function fallbackRouteFromDirectory(record) {
+  if (!record) return ROUTES.find((route) => route.id === "ask-zsr");
+  return {
+    id: "ask-zsr",
+    label: record.title,
+    unit: record.unit,
+    href: record.profileUrl || LIBRARY_LINKS.zsrAsk,
+    reason: "Fallback route when the topic spans multiple departments or the best subject owner is unclear.",
+    institutionId: record.institutionId,
+    email: record.email,
+    appointmentUrl: record.appointmentUrl,
+    reviewStatus: record.reviewStatus,
+    librarianApproved: record.librarianApproved,
+    lastReviewedDate: record.lastReviewedDate,
+    nextReviewDate: record.nextReviewDate,
+    sourceUrl: record.sourceUrl,
+    directoryRecordId: record.id,
+  };
+}
+
+function selectNamedRecord(route, activeNamedRecords, text, modeId, matchedResources) {
+  return activeNamedRecords
+    .filter((record) => record.routeIds.includes(route.id))
+    .map((record) => ({
+      record,
+      score: directoryScore(record, text, modeId, matchedResources),
+    }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || a.record.personName.localeCompare(b.record.personName))[0]?.record || null;
+}
+
+/**
+ * Deterministic routing only. No model or network request participates.
+ * The optional fourth argument exists for institution adapters and tests; the
+ * original three-argument call and output fields remain supported.
+ */
+export function recommendLibrarianRoutes(
+  topic,
+  modeId = "scholarly",
+  matchedResources = [],
+  {
+    institutionId = "wfu-zsr-prototype",
+    directory = WFU_LIBRARIAN_DIRECTORY,
+    asOf = new Date(),
+  } = {}
+) {
   const text = String(topic || "").toLowerCase();
   const ranked = ROUTES
     .map((route) => ({ ...route, score: routeScore(route, text, modeId, matchedResources) }))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.score - a.score || ROUTES.findIndex((item) => item.id === a.id) - ROUTES.findIndex((item) => item.id === b.id));
 
-  const selected = ranked.filter((route) => route.score > 0).slice(0, 3);
-  if (!selected.some((route) => route.id === "ask-zsr")) {
-    selected.push(ROUTES.find((route) => route.id === "ask-zsr"));
+  const activeRecords = getActiveLibrarianRecords({ institutionId, records: directory, asOf });
+  const activeNamedRecords = activeRecords.filter((record) => validateLibrarianRecord(record, { asOf }).eligibleForNamedRouting);
+  const genericFallback = activeRecords.find((record) => record.genericFallback);
+
+  const selected = [];
+  const selectedRouteOwners = new Set();
+  for (const route of ranked.filter((candidate) => candidate.id !== "ask-zsr" && candidate.score > 0)) {
+    const named = selectNamedRecord(route, activeNamedRecords, text, modeId, matchedResources);
+    const candidate = named
+      ? namedRoute(route, named)
+      : (({ score, patterns, modes, ...genericRoute }) => genericRoute)(route);
+    const ownerKey = String(candidate.directoryRecordId || candidate.id || candidate.label || "").toLowerCase();
+    if (!ownerKey || selectedRouteOwners.has(ownerKey)) continue;
+    selectedRouteOwners.add(ownerKey);
+    selected.push(candidate);
+    if (selected.length >= 2) break;
   }
-  return selected.filter(Boolean).slice(0, 3).map(({ score, patterns, modes, ...route }) => route);
+
+  selected.push(fallbackRouteFromDirectory(genericFallback));
+  return selected.filter(Boolean).slice(0, 3);
 }

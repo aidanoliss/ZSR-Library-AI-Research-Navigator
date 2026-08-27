@@ -80,6 +80,41 @@ test("Primo lookup keeps records with strong title and subject overlap", async (
   }
 });
 
+test("Primo never treats an ISSN display identifier as a DOI or PMID", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      docs: [
+        primoDoc({
+          title: "Climate change and biodiversity conservation",
+          subject: ["Climate change", "Biodiversity"],
+          addata: {},
+          search: {},
+        }),
+      ].map((doc) => ({
+        ...doc,
+        pnx: {
+          ...doc.pnx,
+          display: {
+            ...doc.pnx.display,
+            identifier: ["$$CISSN$$V2310-1490"],
+          },
+        },
+      })),
+    }),
+  });
+
+  try {
+    const [result] = await searchPrimo("climate change biodiversity", 5, "scholarly");
+    assert.ok(result);
+    assert.equal(result.doi, "");
+    assert.equal(result.pmid, "");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("Primo exposes only a bounded provider-supplied abstract excerpt", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => ({
