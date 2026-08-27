@@ -5,6 +5,7 @@ services:
     name: zsr-research-navigator
     runtime: node
     plan: free
+    healthCheckPath: /api/health
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     envVars:
@@ -16,14 +17,52 @@ services:
         value: "22.16.0"
       - key: NODE_ENV
         value: production
+      - key: APP_VERSION
+        value: "1.0.0"
       - key: HOST
         value: 0.0.0.0
       - key: PORT
         value: "10000"
       - key: LOG_QUERIES
         value: "off"
+      - key: LOG_QUERY_TEXT
+        value: "off"
+      - key: FEEDBACK_STORE_TEXT
+        value: "off"
+      - key: FEEDBACK_STORE_TOPIC
+        value: "off"
+      - key: HANDOFF_STORE_DETAIL
+        value: "off"
       - key: HANDOFF_STORE_CONTACT
         value: "off"
+      - key: LOG_RETENTION_DAYS
+        value: "30"
+      - key: LOG_MAX_RECORDS
+        value: "1000"
+      - key: ADMIN_TOKEN
+        sync: false # optional; admin read routes remain hidden until configured
+      - key: TRUST_PROXY
+        value: "1"
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://zsr-library-ai-research-navigator-1.onrender.com
+      - key: JSON_BODY_LIMIT_BYTES
+        value: "131072"
+      - key: RATE_CHAT_MAX
+        value: "30"
+      - key: RATE_FEEDBACK_MAX
+        value: "20"
+      - key: RATE_HANDOFF_MAX
+        value: "10"
+      - key: RATE_WINDOW_MS
+        value: "600000"
+      - key: GEMINI_TIMEOUT_MS
+        value: "20000"
+      - key: GEMINI_MAX_RETRIES
+        value: "2"
+      - key: GEMINI_CIRCUIT_FAILURES
+        value: "4"
+      - key: GEMINI_CIRCUIT_COOLDOWN_MS
+        value: "30000"
       - key: PRIMO_LIVE
         value: "on"
       - key: ASK_ZSR_EMAIL

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { retrieveResources } from "../server/retrieve.js";
+import { retrieveResearchContext, retrieveResources } from "../server/retrieve.js";
 import { buildResearchPlan, normalizeSearchOptionKey } from "../config/researchAgent.js";
 
 test("navigation retrieval returns only task-oriented ZSR entry points", async () => {
@@ -41,14 +41,13 @@ test("server retrieval uses the authoritative named-database plan", async () => 
     const expected = buildResearchPlan(query, 6).recommendations.map((resource) => resource.id);
     const resources = await retrieveResources(query, 6);
     const ids = resources.map((resource) => resource.id);
-    const queryKeys = resources.map((resource) => normalizeSearchOptionKey(resource.recommended_query));
 
     assert.deepEqual(ids, expected, `${query} should use the deterministic routed shortlist`);
     assert.ok(resources.length > 0, `${query} should have at least one named database`);
     assert.ok(resources.every((resource) => !genericIds.has(resource.id)));
     assert.ok(resources.every((resource) => resource.recommended_query));
     assert.ok(resources.every((resource) => resource.recommended_filters.length >= 3));
-    assert.equal(new Set(queryKeys).size, queryKeys.length, `${query} should assign distinct database queries`);
+    assert.ok(resources.every((resource) => resource.queryValidation?.valid), `${query} should preserve every required concept in each database query`);
   }
 });
 
@@ -56,4 +55,21 @@ test("citation utility requests can still return citation help without becoming 
   const ids = (await retrieveResources("How do I cite a website in APA?", 6)).map((resource) => resource.id);
 
   assert.deepEqual(ids, ["citation-zotero", "research-guides"]);
+});
+
+test("single-plan research context preserves navigation and citation utilities", async () => {
+  const navigation = await retrieveResearchContext("Help me navigate ZSR", 6);
+  const citation = await retrieveResearchContext("How do I cite a website in APA?", 6);
+
+  assert.equal(navigation.plan.navigationOnly, true);
+  assert.deepEqual(navigation.resources.map((resource) => resource.id), [
+    "zsr-homepage",
+    "databases-az",
+    "research-guides",
+    "ask-a-librarian",
+  ]);
+  assert.deepEqual(citation.resources.map((resource) => resource.id), [
+    "citation-zotero",
+    "research-guides",
+  ]);
 });

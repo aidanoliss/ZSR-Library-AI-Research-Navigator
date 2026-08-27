@@ -1,4 +1,4 @@
-import { appendFile, mkdir, readFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -12,6 +12,15 @@ const HANDOFF_LOG = join(DATA_DIR, "handoffs.jsonl");
 // need and where the curated collection has gaps. Keep off by default for demos.
 const QUERIES_ENABLED = (process.env.LOG_QUERIES || "off").toLowerCase() === "on";
 const STORE_HANDOFF_CONTACT = (process.env.HANDOFF_STORE_CONTACT || "off").toLowerCase() === "on";
+const STORE_QUERY_TEXT = (process.env.LOG_QUERY_TEXT || "off").toLowerCase() === "on";
+const STORE_FEEDBACK_TEXT = (process.env.FEEDBACK_STORE_TEXT || "off").toLowerCase() === "on";
+const STORE_FEEDBACK_TOPIC = (process.env.FEEDBACK_STORE_TOPIC || "off").toLowerCase() === "on";
+const STORE_HANDOFF_DETAIL = (process.env.HANDOFF_STORE_DETAIL || "off").toLowerCase() === "on";
+const FEEDBACK_ENABLED = (process.env.LOG_FEEDBACK || "on").toLowerCase() !== "off";
+const HANDOFFS_ENABLED = (process.env.LOG_HANDOFFS || "on").toLowerCase() !== "off";
+const RETENTION_DAYS = Math.min(Math.max(Number.parseInt(process.env.LOG_RETENTION_DAYS || "30", 10) || 30, 1), 365);
+const MAX_RECORDS = Math.min(Math.max(Number.parseInt(process.env.LOG_MAX_RECORDS || "1000", 10) || 1000, 50), 100_000);
+const appendQueues = new Map();
 
 function redactText(value, max = 2000) {
   return String(value || "")
@@ -21,46 +30,110 @@ function redactText(value, max = 2000) {
     .slice(0, max);
 }
 
-async function append(file, record) {
+async function appendRecord(file, record) {
   await mkdir(DATA_DIR, { recursive: true });
+  await prune(file);
   await appendFile(file, JSON.stringify({ ts: new Date().toISOString(), ...record }) + "\n");
+}
+
+async function withFileQueue(file, operation) {
+  const previous = appendQueues.get(file) || Promise.resolve();
+  const current = previous.catch(() => {}).then(operation);
+  appendQueues.set(file, current);
+  try {
+    return await current;
+  } finally {
+    if (appendQueues.get(file) === current) appendQueues.delete(file);
+  }
+}
+
+async function append(file, record) {
+  return withFileQueue(file, () => appendRecord(file, record));
+}
+
+function retainedRecords(raw) {
+  const cutoff = Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000;
+  return String(raw || "")
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .flatMap((line) => {
+      try {
+        const record = JSON.parse(line);
+        const timestamp = Date.parse(record.ts || "");
+        return Number.isFinite(timestamp) && timestamp >= cutoff ? [record] : [];
+      } catch {
+        return [];
+      }
+    })
+    .slice(-MAX_RECORDS);
+}
+
+async function prune(file) {
+  try {
+    const raw = await readFile(file, "utf8");
+    const records = retainedRecords(raw).slice(-(MAX_RECORDS - 1));
+    const normalized = records.map((record) => JSON.stringify(record)).join("\n");
+    const next = normalized ? `${normalized}\n` : "";
+    if (next !== raw) await writeFile(file, next);
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
 }
 
 async function readJsonl(file, limit = 100) {
   try {
-    const raw = await readFile(file, "utf-8");
-    const lines = raw.trim().split("\n").filter(Boolean);
-    return lines
-      .slice(-limit)
-      .reverse()
-      .map((line) => JSON.parse(line));
+    return await withFileQueue(file, async () => {
+      if (process.env.NODE_ENV === "production") await prune(file);
+      const raw = await readFile(file, "utf-8");
+      return retainedRecords(raw)
+        .slice(-Math.min(Math.max(Number(limit) || 100, 1), MAX_RECORDS))
+        .reverse();
+    });
   } catch {
     return [];
   }
+}
+
+if (process.env.NODE_ENV === "production") {
+  const pruneAll = () => Promise.all(
+    [QUERIES_LOG, FEEDBACK_LOG, HANDOFF_LOG].map((file) => withFileQueue(file, () => prune(file)))
+  ).catch(() => {});
+  pruneAll();
+  setInterval(pruneAll, 6 * 60 * 60 * 1000).unref?.();
 }
 
 /** Log the topic of a turn plus which curated resources matched (for gap analysis). */
 export async function logQuery({ topic, matchedIds, blocked = false }) {
   if (!QUERIES_ENABLED) return;
   try {
-    await append(QUERIES_LOG, { type: "query", topic: redactText(topic), matchedIds, blocked: Boolean(blocked) });
+    await append(QUERIES_LOG, {
+      type: "query",
+      ...(STORE_QUERY_TEXT ? { topic: redactText(topic) } : { topicProvided: Boolean(String(topic || "").trim()) }),
+      matchedIds: (matchedIds || []).slice(0, 12).map((id) => String(id || "").slice(0, 120)),
+      blocked: Boolean(blocked),
+    });
   } catch (err) {
-    console.warn("[log] could not write query:", err.message);
+    console.warn("[log] could not write aggregate query event");
   }
 }
 
 /** Log a student's thumbs up/down or "gap" report on a reply. */
 export async function logFeedback({ rating, note, topic }) {
+  if (!FEEDBACK_ENABLED) return;
   await append(FEEDBACK_LOG, {
     type: "feedback",
     rating,
-    note: redactText(note, 1000),
-    topic: redactText(topic, 2000),
+    noteProvided: Boolean(String(note || "").trim()),
+    topicProvided: Boolean(String(topic || "").trim()),
+    ...(STORE_FEEDBACK_TEXT ? { note: redactText(note, 1000) } : {}),
+    ...(STORE_FEEDBACK_TOPIC ? { topic: redactText(topic, 2000) } : {}),
   });
 }
 
 /** Log an explicit librarian handoff package. Contact details are not retained by default. */
 export async function logHandoff({ topic, mode, responseStyle, note, contact, searchTerms, liveResults, matchedResources, librarianRoutes }) {
+  if (!HANDOFFS_ENABLED) return;
   const safeResults = (liveResults || []).slice(0, 8).map((item) => ({
     title: redactText(item.title, 240),
     type: item.type || "",
@@ -82,16 +155,23 @@ export async function logHandoff({ topic, mode, responseStyle, note, contact, se
 
   await append(HANDOFF_LOG, {
     type: "handoff",
-    topic: redactText(topic, 2000),
     mode: mode || "",
     responseStyle: responseStyle || "",
-    note: redactText(note, 1000),
-    contact: STORE_HANDOFF_CONTACT ? redactText(contact, 300) : "",
+    topicProvided: Boolean(String(topic || "").trim()),
+    noteProvided: Boolean(String(note || "").trim()),
     contactProvided: Boolean(String(contact || "").trim()),
-    searchTerms: (searchTerms || []).slice(0, 12).map((term) => redactText(term, 220)),
-    liveResults: safeResults,
-    matchedResources: safeResources,
-    librarianRoutes: safeRoutes,
+    resultCount: safeResults.length,
+    matchedResourceIds: safeResources.map((item) => item.id).filter(Boolean),
+    librarianRouteIds: safeRoutes.map((item) => item.id).filter(Boolean),
+    ...(STORE_HANDOFF_DETAIL ? {
+      topic: redactText(topic, 2000),
+      note: redactText(note, 1000),
+      contact: STORE_HANDOFF_CONTACT ? redactText(contact, 300) : "",
+      searchTerms: (searchTerms || []).slice(0, 12).map((term) => redactText(term, 220)),
+      liveResults: safeResults,
+      matchedResources: safeResources,
+      librarianRoutes: safeRoutes,
+    } : {}),
   });
 }
 
@@ -141,7 +221,16 @@ export async function readQuerySummary(limit = 200) {
 export function loggingStatus() {
   return {
     queryLoggingEnabled: QUERIES_ENABLED,
-    handoffContactStorageEnabled: STORE_HANDOFF_CONTACT,
+    queryTextStorageEnabled: QUERIES_ENABLED && STORE_QUERY_TEXT,
+    feedbackLoggingEnabled: FEEDBACK_ENABLED,
+    feedbackTextStorageEnabled: FEEDBACK_ENABLED && STORE_FEEDBACK_TEXT,
+    feedbackTopicStorageEnabled: FEEDBACK_ENABLED && STORE_FEEDBACK_TOPIC,
+    handoffLoggingEnabled: HANDOFFS_ENABLED,
+    handoffDetailStorageEnabled: HANDOFFS_ENABLED && STORE_HANDOFF_DETAIL,
+    handoffContactStorageEnabled: HANDOFFS_ENABLED && STORE_HANDOFF_DETAIL && STORE_HANDOFF_CONTACT,
     queryLoggingDefault: "off",
+    textStorageDefault: "off",
+    retentionDays: RETENTION_DAYS,
+    maxRecordsPerLog: MAX_RECORDS,
   };
 }

@@ -8,6 +8,10 @@ export function requestContextFromBody(body = {}) {
   return {
     assignmentContext: cleanContext(body.assignmentContext),
     plannerContext: cleanContext(body.plannerContext),
+    researchSpec:
+      body.researchSpec && typeof body.researchSpec === "object" && !Array.isArray(body.researchSpec)
+        ? body.researchSpec
+        : null,
   };
 }
 

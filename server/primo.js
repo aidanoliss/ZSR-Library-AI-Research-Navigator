@@ -9,6 +9,7 @@
  * Disable with PRIMO_LIVE=off.
  */
 import { DEFAULT_MODE_ID, getSearchMode } from "../config/libraryLinks.js";
+import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
 
 const ENABLED = (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off";
 const HOST = process.env.PRIMO_HOST || "https://wfu.primo.exlibrisgroup.com";
@@ -229,6 +230,99 @@ function articleIntent(query, modeId = DEFAULT_MODE_ID) {
   return ARTICLE_RE.test(text) && !/\b(books?|ebooks?|e-books?)\b/i.test(text);
 }
 
+const DISCOVERY_PROFILES = Object.freeze({
+  scholarly: {
+    tab: "Articles",
+    scope: "CentralIndex",
+    newspapers: false,
+    sourceKind: SOURCE_KINDS.SCHOLARLY_ARTICLE,
+    crossrefFallback: true,
+  },
+  books: {
+    tab: "LibraryCatalog",
+    scope: SCOPE,
+    newspapers: false,
+    sourceKind: SOURCE_KINDS.CATALOG_RECORD,
+    crossrefFallback: false,
+  },
+  news: {
+    tab: "Articles",
+    scope: "CentralIndex",
+    newspapers: true,
+    sourceKind: SOURCE_KINDS.NEWS,
+    crossrefFallback: false,
+  },
+  data: {
+    tab: "Articles",
+    scope: "CentralIndex",
+    newspapers: false,
+    sourceKind: SOURCE_KINDS.DATASET,
+    crossrefFallback: false,
+  },
+  primary: {
+    tab: "LibraryCatalog",
+    scope: SCOPE,
+    newspapers: false,
+    sourceKind: SOURCE_KINDS.PRIMARY_SOURCE,
+    crossrefFallback: false,
+  },
+  "legal-policy": {
+    tab: "Articles",
+    scope: "CentralIndex",
+    newspapers: false,
+    sourceKind: SOURCE_KINDS.LEGAL_SECONDARY,
+    crossrefFallback: false,
+  },
+});
+
+function discoveryProfile(modeId, query) {
+  const selected = DISCOVERY_PROFILES[modeId];
+  if (selected) return selected;
+  return articleIntent(query, modeId)
+    ? DISCOVERY_PROFILES.scholarly
+    : DISCOVERY_PROFILES.books;
+}
+
+function resultModeText(result) {
+  return [
+    result.title,
+    result.type,
+    result.subjects?.join(" "),
+    result.abstractExcerpt,
+  ].filter(Boolean).join(" ");
+}
+
+function inferredSourceKind(result, modeId) {
+  const text = resultModeText(result).toLowerCase();
+  const type = String(result.type || "").toLowerCase();
+  if (/newspaper|news article|newswire|magazine|trade publication|press release/.test(type)) return SOURCE_KINDS.NEWS;
+  if (/dataset|data set|statistic|statistical|survey data|numeric data/.test(text)) return SOURCE_KINDS.DATASET;
+  if (/case law|court decision|statute|legislation|regulation|legal document|law review/.test(text)) {
+    return /case law|court decision|statute|legislation|regulation|legal document/.test(text)
+      ? SOURCE_KINDS.LEGAL_PRIMARY
+      : SOURCE_KINDS.LEGAL_SECONDARY;
+  }
+  if (/archiv|manuscript|correspondence|letters?\b|diar(?:y|ies)|oral histor|photograph|personal papers|primary source|government document|speech|interview/.test(text)) {
+    return SOURCE_KINDS.PRIMARY_SOURCE;
+  }
+  if (/book chapter|chapter/.test(type)) return SOURCE_KINDS.BOOK_CHAPTER;
+  if (/book|ebook|e-book|reference entry|encyclopedia/.test(type)) return SOURCE_KINDS.BOOK;
+  if (/article|journal|review/.test(type)) return SOURCE_KINDS.SCHOLARLY_ARTICLE;
+  if (modeId === "books") return SOURCE_KINDS.CATALOG_RECORD;
+  return "unknown";
+}
+
+function resultMatchesMode(result, modeId) {
+  const kind = result.sourceKind || inferredSourceKind(result, modeId);
+  if (modeId === "scholarly") return [SOURCE_KINDS.SCHOLARLY_ARTICLE, SOURCE_KINDS.BOOK_CHAPTER].includes(kind);
+  if (modeId === "books") return [SOURCE_KINDS.BOOK, SOURCE_KINDS.BOOK_CHAPTER, SOURCE_KINDS.CATALOG_RECORD].includes(kind);
+  if (modeId === "news") return kind === SOURCE_KINDS.NEWS;
+  if (modeId === "data") return [SOURCE_KINDS.DATASET, SOURCE_KINDS.STATISTICS].includes(kind);
+  if (modeId === "primary") return [SOURCE_KINDS.PRIMARY_SOURCE, SOURCE_KINDS.ARCHIVAL, SOURCE_KINDS.LEGAL_PRIMARY].includes(kind);
+  if (modeId === "legal-policy") return [SOURCE_KINDS.LEGAL_PRIMARY, SOURCE_KINDS.LEGAL_SECONDARY].includes(kind);
+  return true;
+}
+
 function normalizeCatalogQuery(query) {
   return clean(query)
     .replace(/\b(can you|could you|please|find|provide|show|get|give me|list|recommend)\b/gi, " ")
@@ -322,14 +416,15 @@ function identifier(value) {
 
 export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
   const mode = getSearchMode(modeId);
+  const profile = discoveryProfile(mode.id, query);
   const q = normalizeCatalogQuery(query);
   if (!ENABLED || !q) return [];
-  const wantsArticles = articleIntent(query, mode.id);
+  const wantsArticles = profile.tab === "Articles";
   const tokens = queryTokens(q);
   const requirements = conceptRequirements(q);
   const requestLimit = wantsArticles ? Math.max(limit * 4, 30) : Math.max(limit * 3, 24);
-  const tab = wantsArticles ? "Articles" : "LibraryCatalog";
-  const scope = wantsArticles ? "CentralIndex" : SCOPE;
+  const tab = profile.tab;
+  const scope = profile.scope;
 
   const params = new URLSearchParams({
     acTriggered: "false",
@@ -340,8 +435,8 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
     lang: "en",
     limit: String(requestLimit),
     mode: "basic",
-    newspapersActive: "false",
-    newspapersSearch: "false",
+    newspapersActive: String(profile.newspapers),
+    newspapersSearch: String(profile.newspapers),
     offset: "0",
     pcAvailability: "false",
     q: `any,contains,${q}`,
@@ -422,6 +517,20 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
           "Access: use the ZSR record to check full text, PDF availability, and database login.",
         ].filter(Boolean),
         sourceProvider: "ZSR discovery",
+        sourceKind: inferredSourceKind({
+          title: clean(disp.title?.[0]),
+          type: clean(disp.type?.[0] || ""),
+          subjects: displayedSubjects,
+          abstractExcerpt: sourceAbstract,
+        }, mode.id),
+        sourceMode: mode.id,
+        provenance: {
+          provider: "ZSR discovery",
+          recordType: clean(disp.type?.[0] || "") || "unspecified",
+          accessVerified: false,
+          metadataOnly: true,
+        },
+        subjects: displayedSubjects,
         relevance: relevanceScore(relevanceText, tokens),
         titleRelevance: relevanceScore(titleText, tokens),
         strongRelevance: matchedStrongTokens(relevanceText, tokens).length,
@@ -430,11 +539,14 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
       };
     });
     const relevantResults = tokens.length ? results.filter((result) => isRelevantResult(result, tokens)) : results;
-    const articleUsefulResults = wantsArticles
-      ? relevantResults.filter((result) => !/newsletter|newspaper|magazine|trade/i.test(String(result.type || "")))
-      : relevantResults;
+    // Source mode is a retrieval contract. A result of the wrong type is not
+    // allowed to leak in merely because its title happens to match the topic.
+    const modeResults = relevantResults.filter((result) => resultMatchesMode(result, mode.id));
+    const articleUsefulResults = mode.id === "scholarly"
+      ? modeResults.filter((result) => !/newsletter|newspaper|magazine|trade/i.test(String(result.type || "")))
+      : modeResults;
     const seen = new Set();
-    const displayResults = wantsArticles ? articleUsefulResults : relevantResults;
+    const displayResults = mode.id === "scholarly" ? articleUsefulResults : modeResults;
     return displayResults
       .sort((a, b) => resultScore(b, wantsArticles) - resultScore(a, wantsArticles))
       .filter((result) => !looksLikeNewswireRecord(result))
@@ -445,7 +557,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
         return true;
       })
       .slice(0, limit)
-      .map(({ relevance, titleRelevance, strongRelevance, titleStrongRelevance, requiredConceptMatch, ...result }) => result);
+      .map(({ relevance, titleRelevance, strongRelevance, titleStrongRelevance, requiredConceptMatch, subjects: _subjects, ...result }) => result);
   } catch {
     return []; // network error / timeout / abort → degrade gracefully
   } finally {
@@ -478,6 +590,7 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
   const q = crossrefQuery(query);
   if (!q) return [];
   const mode = getSearchMode(modeId);
+  if (mode.id !== "scholarly") return [];
   const params = new URLSearchParams({
     "query.title": q,
     rows: String(Math.min(30, Math.max(limit * 3, 15))),
@@ -525,6 +638,14 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
             "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access.",
           ].filter(Boolean),
           sourceProvider: "Crossref scholarly metadata",
+          sourceKind: SOURCE_KINDS.SCHOLARLY_ARTICLE,
+          sourceMode: mode.id,
+          provenance: {
+            provider: "Crossref",
+            recordType: clean(item?.type || "journal article").replace(/-/g, " "),
+            accessVerified: false,
+            metadataOnly: true,
+          },
           relevance: relevanceScore(searchable, tokens),
           titleRelevance: relevanceScore(title, tokens),
         };
@@ -581,6 +702,9 @@ export async function searchSourceCandidates(queries, limit = 10, modeId = DEFAU
   );
   const zsrResults = mergeSourceResults([primary, ...zsrFallbacks], limit);
   if (zsrResults.length >= target) return zsrResults;
+
+  const profile = discoveryProfile(getSearchMode(modeId).id, queryList[0]);
+  if (!profile.crossrefFallback) return zsrResults;
 
   const crossrefFallbacks = await Promise.all(
     queryList.slice(0, 2).map((query) => searchCrossref(query, limit, modeId))

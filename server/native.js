@@ -6,8 +6,8 @@ import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 
-import { retrieveResources, loadResources, getSearchTools } from "./retrieve.js";
-import { generateChatResponse, streamChatResponse } from "./gemini.js";
+import { retrieveResearchContext, loadResources, getSearchTools } from "./retrieve.js";
+import { generateChatResponse, geminiResilienceStatus, streamChatResponse } from "./gemini.js";
 import { validateReply } from "./validate.js";
 import {
   logFeedback,
@@ -19,27 +19,35 @@ import {
   readQuerySummary,
 } from "./log.js";
 import { rateLimit } from "./ratelimit.js";
+import {
+  RequestBodyError,
+  applySecurityHeaders,
+  clientKey,
+  corsHeaders,
+  isAdminAuthorized,
+  isCorsRequestAllowed,
+  readJsonBody,
+  releaseMetadata,
+} from "./httpSecurity.js";
 import { screenMessage, blockedReply } from "./screen.js";
 import { searchSourceCandidates } from "./primo.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
-import { appendRequestContextForAi, requestContextFromBody } from "./requestContext.js";
+import { appendRequestContextForAi } from "./requestContext.js";
 import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
 import { buildPrimoRequest } from "./primoApi.js";
+import { parseChatRequest } from "./chatRequest.js";
 import {
   DEFAULT_MODE_ID,
   DEFAULT_RESPONSE_STYLE_ID,
-  getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
-import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
+import { DEFAULT_SUBJECT_FOCUS_ID } from "../config/subjectFocus.js";
 import {
-  buildCatalogSearchQueries,
   buildResearchPlan,
   buildSearchTermSuggestions,
   isSubstantiveResearchRequest,
 } from "../config/researchAgent.js";
 import {
-  activeResearchConversation,
   submittedResearchTopicContext,
 } from "../src/conversationContext.js";
 
@@ -57,7 +65,8 @@ function sendJson(res, status, payload) {
   }
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
-    "Access-Control-Allow-Origin": "*",
+    "Cache-Control": "no-store",
+    ...corsHeaders(res.__request),
   });
   res.end(JSON.stringify(payload));
 }
@@ -69,7 +78,7 @@ function sendNdjsonHead(res, status = 200) {
     "Content-Type": "application/x-ndjson; charset=utf-8",
     "Cache-Control": "no-cache, no-transform",
     "X-Accel-Buffering": "no",
-    "Access-Control-Allow-Origin": "*",
+    ...corsHeaders(res.__request),
   });
   return true;
 }
@@ -80,39 +89,12 @@ function writeNdjson(res, obj) {
   res.write(JSON.stringify(obj) + "\n");
 }
 
-async function readJson(req) {
-  let raw = "";
-  for await (const chunk of req) raw += chunk;
-  if (!raw) return {};
-  return JSON.parse(raw);
-}
-
-function parseChatRequest(body) {
-  const messages = Array.isArray(body?.messages) ? body.messages : null;
-  if (!messages || messages.length === 0) return { error: "Please enter a research topic or question to get started." };
-  const last = messages[messages.length - 1];
-  if (!last || last.role !== "user" || !String(last.content || "").trim()) return { error: "The latest message must be from the student." };
-  if (String(last.content).length > 2000) return { error: "That message is very long — please shorten it to under 2000 characters." };
-  if (messages.length > 40) return { error: "This conversation is quite long. Please start a new chat." };
-
-  const normalizedHistory = messages
-    .filter((m) => (m.role === "user" || m.role === "assistant") && String(m.content || "").trim())
-    .map((m) => ({ role: m.role, content: String(m.content).trim() }));
-  const history = activeResearchConversation(normalizedHistory);
-
-  const studentText = submittedResearchTopicContext(history) || String(last.content).trim();
-  const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
-  const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
-  const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
-  return { history, studentText, last, mode, responseStyle, subjectFocusId, ...requestContextFromBody(body) };
-}
-
-function gate(req) {
-  const key = req.socket?.remoteAddress || "unknown";
-  const limit = rateLimit(key);
+function gate(req, scope = "chat") {
+  const limit = rateLimit(clientKey(req), { scope });
   if (limit.allowed) return null;
   return {
     status: 429,
+    retryAfter: limit.retryAfter,
     payload: {
       error: `You've sent a lot of requests in a short time. Please wait about ${Math.ceil(limit.retryAfter / 60)} minute(s) and try again.`,
     },
@@ -132,10 +114,55 @@ function sourceRequestIntent(text) {
   return /\b(find|show|get|give|provide)\b.{0,48}\b(articles?|books?|sources?|evidence|results?|databases?|catalog|journals?|citations?|keywords?)\b/i.test(value);
 }
 
-function catalogSearchQueries(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
-  const focusId = subjectFocus.selectedId || subjectFocus.id;
-  return buildCatalogSearchQueries(studentText, focusId, 6);
+function liveSearchQueries(plan, fallbackText = "") {
+  if (!plan) return [fallbackText].filter(Boolean);
+  const catalogQueries = (plan.recommendations || [])
+    .filter((resource) => resource.id === "primo")
+    .flatMap((resource) => resource.searchTerms || []);
+  const planQueries = [
+    ...(plan.searchTerms || []),
+    ...(plan.fallbacks || []).map((fallback) => fallback.query),
+    ...(plan.recommendations || []).flatMap((resource) => resource.searchTerms || []),
+  ];
+  const compiled = [...new Set([...catalogQueries, ...planQueries].map((query) => String(query || "").trim()).filter(Boolean))]
+    .slice(0, 5);
+  return compiled.length ? compiled : [fallbackText].filter(Boolean);
+}
+
+function responsePlanContext(plan) {
+  const releaseId = releaseMetadata().releaseId;
+  if (!plan) return { releaseId };
+  const planMeta = {
+    modeId: plan.modeId,
+    configVersion: plan.configVersion,
+    planHash: plan.planHash,
+    sourceMode: plan.sourceMode,
+    safety: plan.safety,
+    safeFailure: plan.safeFailure,
+    validation: plan.validation,
+  };
+  return {
+    releaseId,
+    researchSpec: {
+      ...plan.researchSpec,
+      planHash: plan.planHash,
+      configVersion: plan.configVersion,
+    },
+    planMeta,
+    researchPlan: {
+      ...planMeta,
+      researchSpec: plan.researchSpec,
+      recommendations: (plan.recommendations || []).map((resource) => ({
+        id: resource.id,
+        searchTerms: resource.searchTerms,
+        filters: resource.filters,
+        queryValidation: resource.queryValidation,
+        provenance: resource.provenance,
+      })),
+      fallbacks: plan.fallbacks,
+      transparencyNote: plan.transparencyNote,
+    },
+  };
 }
 
 function stripSourceHeavyFields(reply) {
@@ -168,11 +195,8 @@ function catalogResultFocusedTurn(history, latestText, liveResults) {
   return wantsSources && !wantsWhereToSearch;
 }
 
-function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID, mode = DEFAULT_MODE_ID, deterministicPlan = null) {
   const researchText = submittedResearchTopicContext(history) || latestText;
-  const deterministicPlan = isSubstantiveResearchRequest(researchText)
-    ? buildResearchPlan(researchText, 6, subjectFocusId)
-    : null;
   if (reply?.search_terms?.length) {
     reply = { ...reply, search_terms: deterministicPlan?.searchTerms || [] };
   } else if (isSubstantiveResearchRequest(researchText) && !topicOptionIntent(latestText)) {
@@ -200,14 +224,40 @@ function sourceResultsFallback(liveResults, modeId = DEFAULT_MODE_ID) {
   };
 }
 
+function deterministicPlanFallback(plan, resources = []) {
+  if (!plan) return null;
+  const premiseNotice = plan.safety?.requiresPremiseCheck
+    ? " The wording includes a premise that should be tested rather than accepted; compare appropriate evidence and keep correlation, causation, and uncertainty distinct."
+    : "";
+  return {
+    message: `The generated research orientation is temporarily unavailable. The routes and searches below are a deterministic plan built from the governed resource registry, not a research conclusion.${premiseNotice}`,
+    search_terms: plan.searchTerms || [],
+    starting_points: resources.map((resource) => ({
+      resource_name: resource.name,
+      url: resource.url,
+      why: resource.why || resource.description,
+    })),
+    database_strategy: resources
+      .filter((resource) => resource.recommended_query)
+      .map((resource) => ({
+        database: resource.name,
+        az_area: resource.type,
+        why: resource.why || resource.description,
+        search_inside: [resource.recommended_query, ...(resource.recommended_filters || [])],
+        journals_or_sources: [resource.expect].filter(Boolean),
+      })),
+    limitations: "No provider-generated overview was substituted. Verify each route, result, and claim, and ask a librarian when the plan does not fit the assignment.",
+  };
+}
+
 function startingPoint(resources, id, why) {
   const resource = resources.find((r) => r.id === id);
   if (!resource) return null;
   return { resource_name: resource.name, url: resource.url, why };
 }
 
-function fallbackDatabaseStrategy(original, modeId = DEFAULT_MODE_ID) {
-  const plan = buildResearchPlan(original, 4);
+function fallbackDatabaseStrategy(original, modeId = DEFAULT_MODE_ID, deterministicPlan = null) {
+  const plan = deterministicPlan || buildResearchPlan(original, 4, DEFAULT_SUBJECT_FOCUS_ID, modeId);
   return plan.recommendations.map((resource) => ({
     database: resource.name,
     az_area: resource.subjectArea,
@@ -279,7 +329,7 @@ function fallbackTopicOptions(original) {
   ];
 }
 
-function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
+function followupFallback(history, resources, modeId = DEFAULT_MODE_ID, deterministicPlan = null) {
   const userTurns = history.filter((m) => m.role === "user").length;
   if (userTurns <= 1) return null;
   const latest = String(history[history.length - 1]?.content || "").toLowerCase();
@@ -329,7 +379,7 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
         startingPoint(resources, "communication-mass-media-complete", "Communication and media-effects research."),
         startingPoint(resources, "pubmed-medline", "Health and clinical research."),
       ].filter(Boolean),
-      database_strategy: fallbackDatabaseStrategy(original, modeId),
+      database_strategy: fallbackDatabaseStrategy(original, modeId, deterministicPlan),
       suggested_followups,
     };
   }
@@ -358,13 +408,15 @@ function resourceSummary(resources = []) {
 }
 
 function envConfigured(name) {
-  return Boolean(String(process.env[name] || "").trim());
+  const value = String(process.env[name] || "").trim();
+  if (name === "GEMINI_API_KEY" && value === "your_api_key_here") return false;
+  return Boolean(value);
 }
 
 function integrationStatus() {
   const primoRequest = buildPrimoRequest("test", DEFAULT_MODE_ID);
   return {
-    gemini: { configured: envConfigured("GEMINI_API_KEY"), model: process.env.GEMINI_MODEL || "gemini-2.5-flash" },
+    gemini: { configured: envConfigured("GEMINI_API_KEY"), ...geminiResilienceStatus() },
     primoPublicLookup: {
       configured: (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off",
       note: "Best-effort public Primo lookup; not an approved authenticated ZSR API.",
@@ -386,7 +438,7 @@ async function pilotStatusPayload() {
   return {
     ok: true,
     prototype: true,
-    canonicalPath: "/Users/aidanoliss/Desktop/ZSR AI Assistant",
+    ...releaseMetadata(),
     privacy: loggingStatus(),
     resources: resourceSummary(resources),
     integrations: integrationStatus(),
@@ -445,93 +497,152 @@ function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, cont
 }
 
 async function handleChat(req, res, stream = false) {
-  const blocked = gate(req);
-  if (blocked) return sendJson(res, blocked.status, blocked.payload);
-  const body = await readJson(req);
+  const blocked = gate(req, "chat");
+  if (blocked) {
+    res.setHeader("Retry-After", String(blocked.retryAfter));
+    return sendJson(res, blocked.status, blocked.payload);
+  }
+  const body = await readJsonBody(req);
   const parsed = parseChatRequest(body);
   if (parsed.error) return sendJson(res, 400, { error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext, researchSpec } = parsed;
   const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   const screen = screenMessage(last.content);
   if (screen.block) {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
-    if (!stream) return sendJson(res, 200, { reply: blockedReply(screen.message), matchedResources: [] });
+    if (!stream) return sendJson(res, 200, { reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) });
     sendNdjsonHead(res);
     writeNdjson(res, { type: "delta", message: screen.message });
-    writeNdjson(res, { type: "done", reply: blockedReply(screen.message), matchedResources: [] });
+    writeNdjson(res, { type: "done", reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) });
     return res.end();
   }
 
+  const providerAbort = new AbortController();
+  const abortProvider = () => providerAbort.abort(new DOMException("Client disconnected", "AbortError"));
+  const abortIfIncomplete = () => {
+    if (!res.writableEnded) abortProvider();
+  };
+  req.once("aborted", abortProvider);
+  res.once("close", abortIfIncomplete);
   let resources = [];
+  let plan = null;
   let primoPromise = Promise.resolve([]);
   try {
-    resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
+    const researchContext = await retrieveResearchContext(studentText, 6, mode, subjectFocusId, {
+      assignmentContext,
+      plannerContext,
+      researchSpec,
+    });
+    plan = researchContext.plan;
+    resources = researchContext.resources;
+    const effectiveMode = plan?.modeId || mode;
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchSourceCandidates(catalogSearchQueries(history, studentText, mode, subjectFocusId), 10, mode)
+      ? searchSourceCandidates(liveSearchQueries(plan, studentText), 10, effectiveMode)
       : Promise.resolve([]);
 
     if (!stream) {
-      const rawReply = await generateChatResponse(aiHistory, resources, mode, responseStyle, subjectFocusId);
+      const rawReply = await generateChatResponse(aiHistory, resources, effectiveMode, responseStyle, subjectFocusId, { signal: providerAbort.signal });
       const liveResults = await primoPromise;
       const { reply: validatedReply } = validateReply(rawReply, resources);
-      const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId);
+      const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan);
       logQuery({ topic: last.content.trim(), matchedIds: resources.map((r) => r.id) });
-      return sendJson(res, 200, { reply, matchedResources: resources, searchTools: await getSearchTools(), liveResults });
+      return sendJson(res, 200, {
+        reply,
+        matchedResources: resources,
+        searchTools: await getSearchTools(),
+        liveResults,
+        ...responsePlanContext(plan),
+      });
     }
 
     sendNdjsonHead(res);
     const write = (obj) => writeNdjson(res, obj);
-    const rawReply = await streamChatResponse(aiHistory, resources, (message) => write({ type: "delta", message }), mode, responseStyle, subjectFocusId);
+    const rawReply = await streamChatResponse(aiHistory, resources, (message) => write({ type: "delta", message }), effectiveMode, responseStyle, subjectFocusId, { signal: providerAbort.signal });
     const liveResults = await primoPromise;
     const { reply: validatedReply } = validateReply(rawReply, resources);
-    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId);
+    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan);
     logQuery({ topic: last.content.trim(), matchedIds: resources.map((r) => r.id) });
-    write({ type: "done", reply, matchedResources: resources, searchTools: await getSearchTools(), liveResults });
+    write({
+      type: "done",
+      reply,
+      matchedResources: resources,
+      searchTools: await getSearchTools(),
+      liveResults,
+      ...responsePlanContext(plan),
+    });
     return res.end();
   } catch (err) {
+    if (res.destroyed || res.writableEnded || providerAbort.signal.aborted) return;
     const errorCode = String(err?.code || "ERROR");
-    const errorDetail = String(err?.message || err || "Unknown chat error")
-      .replace(/\s+/g, " ")
-      .slice(0, 500);
-    console.error(`[chat:${stream ? "stream" : "buffered"}] ${errorCode}: ${errorDetail}`);
+    console.error(`[chat:${stream ? "stream" : "buffered"}] ${errorCode}`);
     if (stream && (res.destroyed || res.writableEnded)) return;
-    const fallback = transparentSourceFallback(responseStyle) || followupFallback(history, resources, mode);
+    const effectiveMode = plan?.modeId || mode;
+    const fallback = transparentSourceFallback(responseStyle)
+      || followupFallback(history, resources, effectiveMode, plan)
+      || deterministicPlanFallback(plan, resources);
     const liveResults = await primoPromise.catch(() => []);
-    const reply = fallback || sourceResultsFallback(liveResults, mode);
+    const reply = fallback || sourceResultsFallback(liveResults, effectiveMode);
     if (reply) {
-      const payload = { reply: prepareReply(reply, history, liveResults, last.content, responseStyle, resources, subjectFocusId), matchedResources: resources, searchTools: await getSearchTools(), liveResults };
+      const payload = {
+        reply: prepareReply(reply, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan),
+        matchedResources: resources,
+        searchTools: await getSearchTools(),
+        liveResults,
+        ...responsePlanContext(plan),
+      };
       if (!stream) return sendJson(res, 200, payload);
       writeNdjson(res, { type: "done", ...payload });
       return res.end();
     }
     const msg = err.code === "NO_API_KEY"
-      ? "The server is missing a Gemini API key. Add GEMINI_API_KEY to your .env file (see .env.example)."
+      ? "AI generation is not configured on this deployment."
       : "Could not generate a reply right now. Please try again.";
     if (!stream) return sendJson(res, err.code === "NO_API_KEY" ? 503 : 502, { error: msg });
     if (!res.headersSent) sendNdjsonHead(res, 502);
     writeNdjson(res, { type: "error", error: msg });
     return res.end();
+  } finally {
+    req.removeListener("aborted", abortProvider);
+    res.removeListener("close", abortIfIncomplete);
   }
 }
 
-async function handleApi(req, res, path) {
+export async function handleApi(req, res, path) {
+  if (!isCorsRequestAllowed(req)) {
+    return sendJson(res, 403, { error: "Origin is not allowed." });
+  }
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type",
+      ...corsHeaders(req),
+      "Access-Control-Allow-Headers": "Authorization, Content-Type",
       "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+      "Access-Control-Max-Age": "600",
     });
     return res.end();
   }
 
   if (req.method === "GET" && path === "/api/health") {
+    return sendJson(res, 200, { ok: true, ...releaseMetadata() });
+  }
+  if (req.method === "GET" && path === "/api/ready") {
     const resources = await loadResources();
-    return sendJson(res, 200, { ok: true, resourceCount: resources.length });
+    const gemini = geminiResilienceStatus();
+    const configured = envConfigured("GEMINI_API_KEY");
+    const ready = resources.length > 0 && configured;
+    return sendJson(res, ready ? 200 : 503, {
+      ok: ready,
+      ...releaseMetadata(),
+      checks: {
+        resources: { ok: resources.length > 0, count: resources.length },
+        gemini: { configured, circuit: gemini.circuit.state },
+      },
+    });
   }
   if (req.method === "GET" && path === "/api/pilot/status") return sendJson(res, 200, await pilotStatusPayload());
   if (req.method === "GET" && path === "/api/admin/summary") {
+    if (!isAdminAuthorized(req)) return sendJson(res, 404, { error: "Not found." });
     const [status, feedback, handoffs, querySummary] = await Promise.all([pilotStatusPayload(), readFeedback(100), readHandoffs(50), readQuerySummary(200)]);
     const feedbackCounts = feedback.reduce((counts, item) => {
       counts[item.rating] = (counts[item.rating] || 0) + 1;
@@ -544,15 +655,34 @@ async function handleApi(req, res, path) {
       querySummary,
     });
   }
-  if (req.method === "GET" && path === "/api/feedback") return sendJson(res, 200, { feedback: await readFeedback() });
+  if (req.method === "GET" && path === "/api/feedback") {
+    if (!isAdminAuthorized(req)) return sendJson(res, 404, { error: "Not found." });
+    return sendJson(res, 200, { feedback: await readFeedback() });
+  }
   if (req.method === "POST" && path === "/api/feedback") {
-    const { rating, note, topic } = await readJson(req);
+    const blocked = gate(req, "feedback");
+    if (blocked) {
+      res.setHeader("Retry-After", String(blocked.retryAfter));
+      return sendJson(res, blocked.status, blocked.payload);
+    }
+    const submitted = await readJsonBody(req);
+    const { rating, note, topic } = submitted && typeof submitted === "object" && !Array.isArray(submitted)
+      ? submitted
+      : {};
     if (!["up", "down", "gap"].includes(rating)) return sendJson(res, 400, { error: "Invalid rating." });
     await logFeedback({ rating, note: String(note || "").slice(0, 1000), topic: String(topic || "").slice(0, 2000) });
     return sendJson(res, 200, { ok: true });
   }
   if (req.method === "POST" && path === "/api/handoff") {
-    const body = await readJson(req);
+    const blocked = gate(req, "handoff");
+    if (blocked) {
+      res.setHeader("Retry-After", String(blocked.retryAfter));
+      return sendJson(res, blocked.status, blocked.payload);
+    }
+    const submitted = await readJsonBody(req);
+    const body = submitted && typeof submitted === "object" && !Array.isArray(submitted)
+      ? submitted
+      : {};
     const payload = {
       topic: String(body.topic || "").slice(0, 2000),
       mode: String(body.mode || "").slice(0, 80),
@@ -589,7 +719,7 @@ async function handleApi(req, res, path) {
       } : {},
     };
     if (!payload.topic.trim()) return sendJson(res, 400, { error: "A topic is required for librarian handoff." });
-    await logHandoff(payload);
+    await logHandoff(payload).catch(() => console.warn("[handoff] aggregate event was not retained"));
     const subject = `Research help request: ${payload.topic.slice(0, 80)}`;
     const bodyText = handoffEmailBody(payload);
     return sendJson(res, 200, {
@@ -626,15 +756,24 @@ async function serveStatic(res, pathname) {
 }
 
 export const server = http.createServer(async (req, res) => {
+  res.__request = req;
+  applySecurityHeaders(res);
   try {
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
     if (url.pathname.startsWith("/api/")) return await handleApi(req, res, url.pathname);
     return await serveStatic(res, url.pathname);
   } catch (err) {
-    console.error("[native]", err.message);
+    const status = err instanceof RequestBodyError ? err.status : 500;
+    console.error(`[native] ${err?.code || "INTERNAL_ERROR"}`);
     if (res.writableEnded) return;
     if (res.headersSent) return res.end();
-    return sendJson(res, 500, { error: "Internal server error." });
+    return sendJson(res, status, {
+      error: status === 413
+        ? "Request body is too large."
+        : status === 400
+          ? "Request body must be valid JSON."
+          : "Internal server error.",
+    });
   }
 });
 

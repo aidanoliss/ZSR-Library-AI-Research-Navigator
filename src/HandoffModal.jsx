@@ -1,4 +1,13 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "textarea:not([disabled])",
+  "select:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
 
 function summarizePayload(payload) {
   const parts = [
@@ -15,11 +24,54 @@ function summarizePayload(payload) {
 }
 
 export default function HandoffModal({ open, onClose, payload }) {
+  const dialogRef = useRef(null);
+  const previousFocusRef = useRef(null);
   const [note, setNote] = useState("");
   const [contact, setContact] = useState("");
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const [prepared, setPrepared] = useState(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    previousFocusRef.current = document.activeElement;
+    const dialog = dialogRef.current;
+    const focusable = () =>
+      [...(dialog?.querySelectorAll(FOCUSABLE_SELECTOR) || [])].filter(
+        (element) => !element.hasAttribute("disabled")
+      );
+    window.requestAnimationFrame(() => focusable()[0]?.focus());
+
+    function onKeyDown(event) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      if (!items.length) {
+        event.preventDefault();
+        dialog?.focus();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      previousFocusRef.current?.focus?.();
+    };
+  }, [open, onClose]);
 
   if (!open) return null;
 
@@ -61,7 +113,15 @@ export default function HandoffModal({ open, onClose, payload }) {
 
   return (
     <div className="modal-backdrop no-print" role="presentation">
-      <section className="handoff-modal" role="dialog" aria-modal="true" aria-labelledby="handoff-title">
+      <section
+        ref={dialogRef}
+        className="handoff-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="handoff-title"
+        aria-describedby="handoff-privacy"
+        tabIndex={-1}
+      >
         <div className="handoff-head">
           <div>
             <span>Librarian Handoff</span>
@@ -71,7 +131,7 @@ export default function HandoffModal({ open, onClose, payload }) {
         </div>
 
         <p className="handoff-summary">{summarizePayload(payload)}</p>
-        <p className="handoff-privacy">
+        <p className="handoff-privacy" id="handoff-privacy">
           This creates a review package and opens your email client. Your assignment brief and research trail are included only in this draft. Contact details and workspace notes are not retained by the app unless the server explicitly enables contact storage.
         </p>
 

@@ -1,15 +1,14 @@
-# Limitations
+# Current Prototype Limitations
 
-Venture Radar is an MVP using fictional sample data. It demonstrates the product architecture and analyst workflow, not live investment coverage.
-
-Known limitations:
-
-- Sample startup and investor records are placeholders.
-- Live public-source ingestion is stubbed until official APIs or permitted source routes are configured.
-- LLM calls are behind an abstraction and disabled until reviewed server-side adapters are added.
-- Scores are deterministic estimates based on structured inputs and should be challenged by a human analyst.
-- The product does not verify funding, revenue, customers, founder credentials, or investor interest unless a reliable source supports those facts.
-- Investor matching means thesis relevance, not investor intent.
-- Supabase policies are suitable only for a single authenticated analyst workspace in the MVP.
-
-Human diligence is required before any investment decision, recommendation, or outreach based on the product output.
+- No institutional login, SSO, student account, entitlement check, or user authorization is implemented.
+- Gemini does not browse library pages, search licensed databases, retrieve full text, verify holdings, or produce an exhaustive evidence synthesis.
+- Public Primo lookup is best effort and does not use an institution-issued API key.
+- Crossref is public bibliographic metadata, not confirmation of library access, peer-review status, or topical relevance.
+- Open Library cover images are optional cosmetic metadata.
+- Resource capabilities, ownership, review dates, and links remain local prototype configuration until librarians approve them.
+- The WFU institution profile is a prototype record, not formal approval. The Duke profile is an unconfigured and unapproved template.
+- Browser-local workspaces are not encrypted by the app, backed up, synced, or suitable for shared-device confidentiality.
+- Lightweight server-log redaction is not de-identification. Privacy approval and a student notice do not yet exist.
+- Automated tests do not replace librarian relevance scoring, assistive-technology testing, penetration testing, load testing, or measured student outcomes.
+- The Render Blueprint does not guarantee the currently circulated hostname. URL continuity depends on deploying to the existing service.
+- The application is not yet an official library service and has no institutional support commitment.

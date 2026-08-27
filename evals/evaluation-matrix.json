@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "Metamorphic routing matrix. Each paraphrase is evaluated in every governed source mode; automated passage is not librarian approval.",
+  "modes": {
+    "scholarly": {
+      "label": "Scholarly articles",
+      "topN": 3,
+      "minInTopN": 2,
+      "requiredKinds": ["scholarly-article"],
+      "resourceIds": []
+    },
+    "books": {
+      "label": "Books and background",
+      "topN": 3,
+      "minInTopN": 2,
+      "requiredKinds": ["book", "catalog-record"],
+      "resourceIds": ["primo", "project-muse", "jstor"]
+    },
+    "news": {
+      "label": "News and current events",
+      "topN": 3,
+      "minInTopN": 2,
+      "requiredKinds": ["news"],
+      "resourceIds": ["factiva", "proquest-news"]
+    },
+    "data": {
+      "label": "Data and statistics",
+      "topN": 3,
+      "minInTopN": 2,
+      "requiredKinds": ["dataset", "statistics"],
+      "resourceIds": ["icpsr", "statista"]
+    },
+    "primary": {
+      "label": "Primary sources",
+      "topN": 3,
+      "minInTopN": 2,
+      "requiredKinds": ["primary-source", "archival-material", "legal-primary"],
+      "resourceIds": ["special-collections", "digital-collections", "proquest-news", "heinonline", "primo"]
+    },
+    "legal-policy": {
+      "label": "Legal and policy",
+      "topN": 3,
+      "minInTopN": 2,
+      "requiredKinds": ["legal-primary", "legal-secondary"],
+      "resourceIds": ["heinonline", "proquest-political-science", "cq-researcher"]
+    }
+  },
+  "disciplines": [
+    {
+      "id": "psychology-adolescent-media",
+      "discipline": "Psychology",
+      "subjectFocusId": "psychology",
+      "expectedFocusIds": ["psychology"],
+      "prompts": [
+        "How does social media use relate to depression and anxiety among adolescents?",
+        "What is the relationship between online social networking and teen mental health?",
+        "Association between platform use, depression, and anxiety in teenagers"
+      ],
+      "requiredConceptGroups": [
+        ["social media", "online social networking", "platform use"],
+        ["adolescent", "teen", "teenager"],
+        ["mental health", "depression", "anxiety"]
+      ],
+      "modeResourceIds": {
+        "scholarly": ["psycinfo", "communication-mass-media", "pubmed-medline", "socindex"]
+      }
+    },
+    {
+      "id": "history-jazz-identity",
+      "discipline": "History",
+      "subjectFocusId": "history-humanities",
+      "expectedFocusIds": ["history-humanities"],
+      "prompts": [
+        "Jazz clubs and urban cultural identity in the United States during the 1950s",
+        "How did 1950s American jazz venues shape city identity?",
+        "Urban identity and jazz-club culture in mid-twentieth-century America"
+      ],
+      "requiredConceptGroups": [
+        ["jazz", "jazz club", "jazz venue"],
+        ["urban", "city"],
+        ["identity", "culture"],
+        ["1950", "mid-twentieth-century"]
+      ],
+      "modeResourceIds": {
+        "scholarly": ["historical-abstracts", "jstor", "project-muse"]
+      }
+    },
+    {
+      "id": "business-supply-chain-reporting",
+      "discipline": "Business",
+      "subjectFocusId": "business",
+      "expectedFocusIds": ["business"],
+      "prompts": [
+        "Corporate supply-chain sustainability reporting in multinational firms",
+        "How do global companies disclose environmental performance across their supply chains?",
+        "ESG disclosure and sustainable sourcing by multinational corporations"
+      ],
+      "requiredConceptGroups": [
+        ["supply chain", "sourcing"],
+        ["sustainability", "environmental", "esg"],
+        ["reporting", "disclosure", "disclose"],
+        ["multinational", "global companies", "corporations"]
+      ],
+      "modeResourceIds": {
+        "scholarly": ["business-source", "proquest-research-library"]
+      }
+    }
+  ]
+}

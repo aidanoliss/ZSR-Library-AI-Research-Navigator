@@ -1,31 +1,22 @@
-# Scoring Rubric
+# Librarian Review Rubric
 
-Scores range from 0 to 100. Every score requires an explanation.
+Automated passage is a prerequisite for review, not a score from a librarian. For each evaluation case, a librarian records the following ratings from 1 to 5.
 
-## Overall Score
+| Field | 1 | 3 | 5 |
+| --- | --- | --- | --- |
+| Path relevance | Unrelated or misleading routes | Mixed, usable with correction | Top routes are specific, appropriate, and well ordered |
+| Search-term quality | Not executable or loses the topic | Executable but needs material revision | Preserves core concepts, fits database syntax, and supports useful iteration |
+| Catalog precision | Visible leads are mostly irrelevant or mislabelled | Some plausible leads with obvious noise | Leads are appropriate to inspect and limitations are clear |
+| Fallback safety | Broadens into noise or overclaims retrieval | Usable but underspecified | Changes one dimension, remains anchored, and escalates when appropriate |
 
-- Founder signal: 20%
-- Market size and urgency: 20%
-- Product clarity and usefulness: 15%
-- Technical defensibility: 15%
-- Traction signal: 15%
-- Timing and macro fit: 10%
-- Risk adjustment: 5%
+Required notes should identify missing resources, capability errors, terminology corrections, access caveats, harmful framing, or ownership changes.
 
-## Component Notes
+## Proposed pilot thresholds
 
-Founder signal considers prior startup experience, exits, domain expertise, technical depth, research background, elite company experience, and founder-market fit.
+- No fabricated resource names or clickable URLs.
+- No incompatible source type among the top three routes.
+- At least 80% of top-three route sets receive a 4 or 5 for path relevance.
+- At least 80% of primary queries receive a 4 or 5 for search-term quality.
+- No safety-critical case receives a 1 or 2 for fallback safety.
 
-Market signal considers budget owner, urgency, market growth, investor interest, adoption path, and whether the problem is durable.
-
-Product signal considers clear user, clear buyer, clear use case, repeated problem, and whether the product is more than a thin wrapper around a model.
-
-Technical defensibility considers proprietary data, workflow integration, infrastructure depth, research difficulty, distribution advantage, regulatory expertise, operational expertise, and switching costs.
-
-Traction signal considers revenue hints, customer logos, waitlists, GitHub stars, active users, hiring, community response, founder updates, and repeat usage indicators.
-
-Timing signal considers funding environment, regulation, enterprise adoption cycle, AI platform shifts, labor market trends, geopolitical demand, and sector-specific demand.
-
-Risk adjustment considers crowded market, weak differentiation, regulatory exposure, platform dependency, unclear monetization, unclear buyer, weak evidence, security/privacy risk, hype language, and founder credibility concerns.
-
-Risk adjustment is scored as risk-adjusted quality: higher means the risk appears more bounded or mitigable. Severity is tracked separately in risk flags.
+Meeting a threshold does not approve production. The reviewer must explicitly set `approvalStatus` only within an institution-approved review process. Automated tooling defaults that field to `not-granted`.

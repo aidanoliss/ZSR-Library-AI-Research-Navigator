@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ResearchRoadmap from "./ResearchRoadmap.jsx";
+import ResearchInterpretationPanel from "./ResearchInterpretationPanel.jsx";
 import {
   buildAccessLinks,
   CITATION_LINKS,
@@ -431,6 +432,46 @@ function EvidenceChips({ items = [], compact = false }) {
         <span key={item}>{item}</span>
       ))}
     </div>
+  );
+}
+
+function provenanceText(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).join(", ");
+  if (value && typeof value === "object") {
+    return Object.entries(value)
+      .filter(([, item]) => item != null && item !== "")
+      .map(([key, item]) => `${key.replace(/([A-Z])/g, " $1").toLowerCase()}: ${provenanceText(item)}`)
+      .join("; ");
+  }
+  return String(value || "").trim();
+}
+
+function ResourceProvenance({ resource }) {
+  const provenance = resource.provenance || {};
+  const rows = [
+    ["Why this route", resource.whyFits],
+    ["Source kinds", provenance.sourceKinds || resource.sourceKinds],
+    ["Query dialect", provenance.queryDialect || resource.queryDialect],
+    ["Matched source mode", provenance.matchedSourceMode],
+    ["Matched subject", provenance.matchedSubject],
+    ["Not best for", resource.notBestFor],
+    ["Metadata source", provenance.metadataSource || resource.metadataSource],
+    ["Maintenance owner", provenance.maintenanceOwner || resource.maintenanceOwner],
+    ["Review status", provenance.reviewStatus || resource.reviewStatus],
+    ["Configuration reviewed", provenance.configReviewedOn || resource.configReviewedOn],
+    ["Librarian reviewed", provenance.librarianReviewedOn || resource.librarianReviewedOn],
+    ["Configuration version", provenance.configVersion || resource.configVersion],
+  ].map(([label, value]) => [label, provenanceText(value)]).filter(([, value]) => value);
+  if (!rows.length) return null;
+  return (
+    <dl className="resource-provenance">
+      {rows.map(([label, value]) => (
+        <div key={label}>
+          <dt>{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -894,17 +935,19 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
             : [
                 "Curated ZSR config",
                 resource.subjectArea ? `${resource.subjectArea} match` : "",
+                provenanceText(resource.sourceKinds),
                 "Librarian-reviewable path",
               ]}
         />
         <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
         <details className="agent-resource-details">
-          <summary>More guidance</summary>
+          <summary>Why this was recommended and provenance</summary>
           <p><strong>Why it fits:</strong> {resource.whyFits}</p>
           <p><strong>Best for:</strong> {resource.bestFor}</p>
           <p><strong>Not best for:</strong> {resource.notBestFor}</p>
           <p><strong>Caution:</strong> {resource.caution}</p>
           <p><strong>Next step:</strong> {resource.nextStep}</p>
+          <ResourceProvenance resource={resource} />
         </details>
       </div>
     </li>
@@ -1179,9 +1222,13 @@ export default function AssistantMessage({
   mode = DEFAULT_MODE_ID,
   responseStyle = DEFAULT_RESPONSE_STYLE_ID,
   subjectFocusId,
+  researchSpec,
+  researchPlan,
+  releaseId,
   isFollowup = false,
   isLatest,
   onFollowup,
+  onRerunInterpretation,
   onOpenPlanner,
   onSaveResearchItem,
   onTrackSearch,
@@ -1200,7 +1247,28 @@ export default function AssistantMessage({
     .filter(Boolean);
   const tools = searchTools || [];
   const activeMode = getSearchMode(mode);
-  const agentPlan = buildResearchPlan(topic || reply.message || "", 5, subjectFocusId);
+  const localAgentPlan = buildResearchPlan(topic || reply.message || "", 5, subjectFocusId, mode);
+  const providedAgentPlan = researchPlan && Array.isArray(researchPlan.recommendations)
+    ? {
+        ...localAgentPlan,
+        ...researchPlan,
+        strategy: { ...localAgentPlan.strategy, ...(researchPlan.strategy || {}) },
+        recommendations: researchPlan.recommendations,
+        otherStartingPoints: researchPlan.otherStartingPoints || [],
+        fallbacks: researchPlan.fallbacks || localAgentPlan.fallbacks,
+      }
+    : localAgentPlan;
+  const matchedById = new Map((matched || []).filter((resource) => resource?.id).map((resource) => [resource.id, resource]));
+  const matchedByName = new Map((matched || []).filter((resource) => resource?.name).map((resource) => [String(resource.name).toLowerCase(), resource]));
+  const enrichResource = (resource) => ({
+    ...resource,
+    ...(matchedById.get(resource.id) || matchedByName.get(String(resource.name || "").toLowerCase()) || {}),
+  });
+  const agentPlan = {
+    ...providedAgentPlan,
+    recommendations: (providedAgentPlan.recommendations || []).map(enrichResource),
+    otherStartingPoints: (providedAgentPlan.otherStartingPoints || []).map(enrichResource),
+  };
 
   // Enrich each recommended link with curated metadata (type, access) by URL.
   const byUrl = new Map((matched || []).map((r) => [r.url, r]));
@@ -1447,7 +1515,29 @@ export default function AssistantMessage({
 
   return (
     <div className="bubble assistant">
-      {reply.message && <p className="msg plan-intro">{reply.message}</p>}
+      {researchSpec && (
+        <ResearchInterpretationPanel
+          researchSpec={researchSpec}
+          fallbackTopic={topic}
+          fallbackMode={mode}
+          releaseId={releaseId}
+          isLatest={isLatest}
+          onRerun={onRerunInterpretation || onFollowup}
+          onRefine={onFollowup}
+        />
+      )}
+
+      {reply.message && (
+        <section className="research-orientation" aria-label="AI-generated research orientation">
+          {substantiveResearchRequest && (
+            <div className="research-orientation-label">
+              <strong>Research orientation</strong>
+              <span>Starting context, not a research conclusion</span>
+            </div>
+          )}
+          <p className="msg plan-intro">{reply.message}</p>
+        </section>
+      )}
 
       {reply.redirect_notice && (
         <div className="notice redirect" role="note">

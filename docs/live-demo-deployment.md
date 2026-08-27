@@ -4,6 +4,8 @@
 
 This project is easiest to share as a Render Web Service because it has a Node API server. Static-only hosting such as Netlify or Vercel is not enough unless the API is converted to serverless functions or hosted separately.
 
+The currently circulated production URL is `https://zsr-library-ai-research-navigator-1.onrender.com/`. Preserve it by deploying to that existing Render service. `render.yaml` describes a service named `zsr-research-navigator`; creating a new Blueprint from it may create a different service and hostname. The file does not reserve or guarantee the circulated URL.
+
 ## Render settings
 
 Use the included `render.yaml`, or configure manually:
@@ -35,6 +37,8 @@ Render's Web Service runtime expects the app to bind to `0.0.0.0` on the configu
 5. Confirm `LOG_QUERIES=off` and `HANDOFF_STORE_CONTACT=off` before sharing the first link.
 6. Deploy.
 7. Test the public URL with the demo prompts in `docs/demo-script.md`.
+
+For ongoing releases, create a separate staging service, verify the release there, then deploy the exact reviewed commit to the existing production service. Run health, chat safe-failure, static-asset, and hostname smoke checks after promotion. Keep the prior deploy available for rollback.
 
 ## Backup plan
 

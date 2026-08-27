@@ -137,7 +137,8 @@ test("fallback searches avoid natural-language queries and broad concept dumps",
   assert.match(text, /cognitive offloading|artificial intelligence|generative AI/i);
   assert.doesNotMatch(text, /Can you help me|how AI affects/i);
   assert.match(broad.text, /\bAND\b/i, "broaden fallback should retain an anchor concept");
-  assert.doesNotMatch(broad.text, /\s+OR\s+/i, "broaden fallback should not dump unrelated broad concepts");
+  assert.match(broad.text, /cognitive offloading|external memory/i, "broaden fallback should vary one controlled concept");
+  assert.match(broad.text, /artificial intelligence|\bAI\b/i, "broaden fallback should retain the other core concept");
 });
 
 test("long declarative topics remain topics rather than known-item lookups", () => {
@@ -195,7 +196,7 @@ test("mixed-discipline topics preserve both subject lenses", () => {
 
   assert.match(plan.subjectFocus.label, /Psychology.*Policy/i);
   assert.ok(ids.includes("psycinfo"));
-  assert.ok(ids.includes("heinonline") || ids.includes("cq-researcher"));
+  assert.ok(ids.includes("heinonline") || ids.includes("cq-researcher") || ids.includes("proquest-political-science"));
 });
 
 test("search-term suggestions keep core concepts and useful qualifiers", () => {
@@ -323,7 +324,7 @@ test("substantive plans never use generic navigation pages as database recommend
   }
 });
 
-test("every visible search option is globally unique after normalization", () => {
+test("shared database queries stay valid while non-database search moves remain distinct", () => {
   const queries = [
     "AI and cognitive offloading in college students",
     "protein folding and disease",
@@ -334,14 +335,13 @@ test("every visible search option is globally unique after normalization", () =>
 
   for (const query of queries) {
     const plan = buildResearchPlan(query, 5);
+    assert.ok(plan.recommendations.every((resource) => resource.queryValidation?.valid));
     const options = [
-      ...plan.recommendations.flatMap((resource) => resource.searchTerms),
       ...plan.searchTerms,
       ...plan.fallbacks.map((fallback) => fallback.query).filter(Boolean),
-      ...plan.otherStartingPoints.flatMap((resource) => resource.searchTerms),
     ];
     const keys = options.map(normalizeSearchOptionKey);
-    assert.equal(new Set(keys).size, keys.length, `${query} should not repeat a search option`);
+    assert.equal(new Set(keys).size, keys.length, `${query} should not repeat a generic or fallback move`);
   }
 });
 
@@ -373,7 +373,7 @@ test("biodiversity and climate recovery searches keep both concepts without poll
   const secondaryDatabaseSearches = plan.otherStartingPoints.flatMap((resource) => resource.searchTerms);
   const fallbackSearches = plan.fallbacks.map((fallback) => fallback.query).filter(Boolean);
   const visibleSearches = [...databaseSearches, ...secondaryDatabaseSearches, ...fallbackSearches, ...plan.searchTerms];
-  const visibleKeys = visibleSearches.map(normalizeSearchOptionKey);
+  const nonDatabaseKeys = [...fallbackSearches, ...plan.searchTerms].map(normalizeSearchOptionKey);
 
   assert.deepEqual(
     plan.recommendations.map((resource) => resource.id),
@@ -382,7 +382,7 @@ test("biodiversity and climate recovery searches keep both concepts without poll
   assert.ok(fallbackSearches.length >= 4);
   assert.ok(fallbackSearches.every((term) => /biodivers|species richness/i.test(term)));
   assert.ok(fallbackSearches.every((term) => /climate|carbon sequestration/i.test(term)));
-  assert.equal(new Set(visibleKeys).size, visibleKeys.length);
+  assert.equal(new Set(nonDatabaseKeys).size, nonDatabaseKeys.length);
   assert.doesNotMatch(visibleSearches.join(" "), /pollinat|community ecology|disease mechanism|health outcomes/i);
 });
 

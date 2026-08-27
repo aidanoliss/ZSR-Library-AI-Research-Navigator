@@ -1,4 +1,20 @@
 import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "./subjectFocus.js";
+import { DEFAULT_MODE_ID } from "./libraryLinks.js";
+import {
+  RESOURCE_CONFIG_VERSION,
+  getResourceCapability,
+  getSourceModeContract,
+  modeCompatibilityScore,
+  resourceSupportsMode,
+  withResourceCapabilities,
+} from "./resourceCapabilities.js";
+import { buildResearchSpec, deterministicHash, inferExplicitModeRequest, mergeSuppliedResearchSpec } from "./researchSpec.js";
+import {
+  compileFallbackQueries,
+  compileResourceQuery,
+  sourceModeValidation,
+  validateCompiledQuery,
+} from "./queryCompiler.js";
 
 const AZ = "https://guides.zsr.wfu.edu/az.php";
 const azSearch = (name) => `${AZ}?q=${encodeURIComponent(name)}`;
@@ -92,7 +108,7 @@ export const CITATION_GUIDES = [
   },
 ];
 
-export const ZSR_RESOURCE_CONFIG = [
+const ZSR_RESOURCE_CONFIG_BASE = [
   {
     id: "databases-az",
     name: "A-Z Databases",
@@ -116,6 +132,30 @@ export const ZSR_RESOURCE_CONFIG = [
     tags: ["navigation", "librarian", "help", "consultation", "general"],
     priority: 74,
     notes: "Share the assignment, topic, searches already tried, and the type of source you need.",
+  },
+  {
+    id: "special-collections",
+    name: "Special Collections & Archives",
+    description: "Rare books, manuscripts, University Archives, and the NC Baptist Historical Collection for original primary-source research.",
+    subjectArea: "Archives / Primary Sources",
+    bestFor: "archival research, manuscripts, rare materials, Wake Forest history, North Carolina history, and original primary sources",
+    notBestFor: "quick peer-reviewed article searches or remote access to every collection",
+    accessUrl: "https://zsr.wfu.edu/special/",
+    tags: ["primary sources", "archives", "manuscripts", "rare books", "history", "wake forest", "north carolina"],
+    priority: 92,
+    notes: "Review collection descriptions and contact Special Collections staff before assuming an item is digitized or available without an appointment.",
+  },
+  {
+    id: "digital-collections",
+    name: "ZSR Digital Collections",
+    description: "Digitized photographs, documents, audiovisual materials, and other primary-source collections available through ZSR.",
+    subjectArea: "Digital Primary Sources",
+    bestFor: "digitized primary sources, historical photographs, documents, and remotely accessible collection material",
+    notBestFor: "comprehensive scholarly article searching or claims that every archival collection is online",
+    accessUrl: "https://zsr.wfu.edu/special/collections/digital/",
+    tags: ["primary sources", "digital collections", "archives", "photographs", "documents", "history", "open access"],
+    priority: 90,
+    notes: "Search collection metadata and open the item record to confirm provenance, date, rights, and citation details.",
   },
   {
     id: "academic-search-premier",
@@ -161,7 +201,7 @@ export const ZSR_RESOURCE_CONFIG = [
     bestFor: "scholarly psychology articles, adolescent development, depression, anxiety, autism, and well-being",
     notBestFor: "market share data, legal documents, or newspaper coverage",
     accessUrl: azSearch("PsycINFO"),
-    tags: ["scholarly", "articles", "psychology", "mental health", "autism", "adolescents", "loneliness"],
+    tags: ["scholarly", "articles", "psychology", "mental health", "autism", "adolescents", "loneliness", "antidepressant", "ssri", "psychotherapy"],
     priority: 95,
     notes: "Use subject terms and age/population filters when available.",
     previewImage: "/preview-psycinfo.png",
@@ -205,6 +245,8 @@ export const ZSR_RESOURCE_CONFIG = [
       "statistics",
       "mental health",
       "autism",
+      "antidepressant",
+      "ssri",
       "doi",
       "pmid",
     ],
@@ -467,12 +509,25 @@ export const ZSR_RESOURCE_CONFIG = [
   },
 ];
 
+export const RESOURCE_REVIEW_DEFAULTS = Object.freeze({
+  maintenanceOwner: "Unassigned - ZSR decision needed",
+  reviewStatus: "pending-zsr-review",
+  metadataSource: "prototype-local-config",
+  configReviewedOn: "2026-07-29",
+  librarianReviewedOn: null,
+});
+
+export const ZSR_RESOURCE_CONFIG = ZSR_RESOURCE_CONFIG_BASE.map((resource) => withResourceCapabilities({
+  ...RESOURCE_REVIEW_DEFAULTS,
+  ...resource,
+}));
+
 const INTENT_RULES = [
   { id: "navigation", label: "ZSR navigation help", pattern: /\b(?:navigate|use|start (?:in|with))\b.{0,24}\bzsr\b|\bwhere (?:do|should|can) i start\b.{0,24}\b(?:zsr|library)\b/i },
   { id: "citation", label: "citation help", pattern: /\b(citat|cite|apa|mla|chicago|bibliograph|zotero)\b/i },
   { id: "fulltext", label: "full-text access help", pattern: /\b(full[-\s]?text|pdf|doi|pmid|pubmed id|access this|find this article)\b/i },
   { id: "market", label: "market or business data", pattern: /\b(market|industry|consumer|brand|retail|company financial|financials|revenue|share|rolex|energy drinks?)\b/i },
-  { id: "statistics", label: "statistics or datasets", pattern: /\b(statistics?|dataset|data|prevalence|rates?|survey|cpi|inflation|cost of living|economic indicators?)\b/i },
+  { id: "statistics", label: "statistics or datasets", pattern: /\b(statistics?|dataset|data|prevalence|rates?|survey|cpi|cost of living|economic indicators?)\b/i },
   { id: "legal", label: "legal or government sources", pattern: /\b(policy|policy memo|legal|law|court|case law|statute|regulation|government|legislation|public policy)\b/i },
   { id: "news", label: "news or current events", pattern: /\b(news|newspaper|coverage|current events?|war in ukraine|ukraine)\b/i },
   { id: "evaluation", label: "source evaluation", pattern: /\b(evaluat|credible|peer[-\s]?reviewed|scholarly source|quality)\b/i },
@@ -522,6 +577,7 @@ const TOPIC_PROFILES = [
     pattern: /\b(?:surveillance|survelliance|monitoring)\b.*\b(?:citizens?|public|trust|government|privacy|legitimacy)\b|\b(?:citizens?|public|trust|government|privacy|legitimacy)\b.*\b(?:surveillance|survelliance|monitoring)\b/i,
     better: [
       '"government surveillance" AND "public trust"',
+      '"government surveillance" AND "democratic institutions"',
       '(surveillance OR monitoring) AND "trust in government"',
       '"digital surveillance" AND legitimacy',
     ],
@@ -550,7 +606,7 @@ const TOPIC_PROFILES = [
   {
     id: "rolex",
     pattern: /\b(rolex|luxury watch|watches)\b/i,
-    better: ["\"luxury watches\" AND \"consumer behavior\"", "\"watch industry\" AND \"market share\"", "Rolex AND \"brand positioning\""],
+    better: ["Rolex AND \"brand positioning\" AND \"younger consumers\"", "\"luxury watches\" AND \"consumer behavior\"", "\"watch industry\" AND \"market share\""],
     broader: ["luxury goods", "consumer behavior", "retail market research", "brand equity"],
     narrower: ["Rolex brand positioning", "Swiss watch market", "luxury resale market", "high-income consumer segments"],
     alternate: ["premium watches", "luxury retail", "brand prestige", "conspicuous consumption"],
@@ -567,7 +623,7 @@ const TOPIC_PROFILES = [
   },
   {
     id: "cost-living",
-    pattern: /\b(cost of living|inflation|consumer prices|cpi)\b/i,
+    pattern: /\b(cost of living|consumer prices|cpi)\b|\binflation\b.*\b(households?|living costs?|consumer prices?|purchasing power)\b/i,
     better: ["\"consumer price index\" AND households", "\"household expenditure\" AND inflation", "\"cost of living\" AND wages"],
     broader: ["inflation", "economic indicators", "household spending", "wage growth"],
     narrower: ["regional CPI", "housing affordability", "food prices", "real wages"],
@@ -575,8 +631,26 @@ const TOPIC_PROFILES = [
     resourceIds: ["statista", "business-source", "proquest-research-library", "academic-search-premier"],
   },
   {
+    id: "inflation-monetary-policy",
+    pattern: /\b(inflation targeting|monetary tightening|monetary policy)\b.*\b(unemployment|employment|labor market|recession|output)\b|\b(unemployment|employment|labor market|recession|output)\b.*\b(inflation targeting|monetary tightening|monetary policy)\b/i,
+    supersedes: ["cost-living"],
+    better: [
+      '"inflation targeting" AND unemployment',
+      '"monetary tightening" AND employment',
+      '"monetary policy" AND "labor market outcomes"',
+    ],
+    broader: ["monetary policy", "inflation", "labor market"],
+    narrower: [
+      '"inflation targeting" AND unemployment AND recession',
+      '"monetary tightening" AND unemployment AND panel data',
+      '"monetary policy shocks" AND employment',
+    ],
+    alternate: ["monetary policy shocks", "price stability", "labor market outcomes"],
+    resourceIds: ["econlit", "web-of-science", "jstor", "proquest-research-library"],
+  },
+  {
     id: "biodiversity-climate",
-    pattern: /\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b.*\b(climate change|climate resilience|climate adaptation|climate impacts?|climate mitigation|climate regulation|global warming|climate variability)\b|\b(climate change|climate resilience|climate adaptation|climate impacts?|climate mitigation|climate regulation|global warming|climate variability)\b.*\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b/i,
+    pattern: /\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b.*\b(climate[-\s]+change|climate[-\s]+resilience|climate[-\s]+adaptation|climate[-\s]+impacts?|climate[-\s]+mitigation|climate[-\s]+regulation|global[-\s]+warming|climate[-\s]+variability|carbon[-\s]+sequestration)\b|\b(climate[-\s]+change|climate[-\s]+resilience|climate[-\s]+adaptation|climate[-\s]+impacts?|climate[-\s]+mitigation|climate[-\s]+regulation|global[-\s]+warming|climate[-\s]+variability|carbon[-\s]+sequestration)\b.*\b(biodiversity|biological diversity|species diversity|ecosystem diversity)\b/i,
     supersedes: ["ecology-environment"],
     better: [
       "biodiversity AND \"climate change\"",
@@ -602,7 +676,27 @@ const TOPIC_PROFILES = [
       "science-direct": ["biodiversity AND (\"climate regulation\" OR \"carbon sequestration\")"],
       "academic-search-premier": ["(\"biological diversity\" OR \"species diversity\") AND \"climate change\""],
       "proquest-research-library": ["biodiversity AND \"climate change\" AND \"ecosystem services\""],
+      "proquest-political-science": ["\"carbon sequestration\" AND biodiversity AND policy"],
+      "cq-researcher": ["\"carbon sequestration\" AND biodiversity AND policy"],
     },
+    resourceIds: ["web-of-science", "science-direct", "academic-search-premier"],
+  },
+  {
+    id: "pollinator-extreme-heat",
+    pattern: /\b(pollinator|pollination|native bees?)\b.*\b(extreme heat|heat wave|heat stress|urban heat)\b|\b(extreme heat|heat wave|heat stress|urban heat)\b.*\b(pollinator|pollination|native bees?)\b/i,
+    supersedes: ["pollinator-conservation", "ecology-environment"],
+    better: [
+      'pollinator* AND "extreme heat"',
+      '"urban pollinator" AND "heat stress"',
+      '("native bees" OR pollinator*) AND "urban heat"',
+    ],
+    broader: ["pollinator ecology", "climate stress", "urban ecology"],
+    narrower: [
+      'pollinator* AND "heat wave" AND survival',
+      '"urban pollinator diversity" AND temperature',
+      '"native bees" AND "heat stress"',
+    ],
+    alternate: ["thermal stress", "heat tolerance", "urban heat island"],
     resourceIds: ["web-of-science", "science-direct", "academic-search-premier"],
   },
   {
@@ -634,6 +728,74 @@ const TOPIC_PROFILES = [
     resourceIds: ["psycinfo", "communication-mass-media", "pubmed-medline", "socindex"],
   },
   {
+    id: "antimicrobial-resistance",
+    pattern: /\b(antibiotic|antimicrobial)\s+resistance\b|\bdrug[-\s]+resistant\b.*\b(infection|bacteria|pathogen)\b/i,
+    better: [
+      '"antimicrobial resistance" AND hospitals',
+      '"antibiotic resistance" AND "healthcare-associated infections"',
+      '("drug-resistant bacteria" OR antimicrobial resistance) AND inpatient*',
+    ],
+    broader: ["antimicrobial resistance", "hospital epidemiology", "infection control"],
+    narrower: [
+      '"antimicrobial resistance" AND hospitals AND prevalence',
+      '"antibiotic stewardship" AND inpatient*',
+      '"healthcare-associated infections" AND "drug resistance"',
+    ],
+    alternate: ["antibiotic stewardship", "nosocomial infection", "drug-resistant pathogens"],
+    resourceIds: ["pubmed-medline", "web-of-science", "science-direct"],
+  },
+  {
+    id: "blue-light-circadian",
+    pattern: /\b(blue[-\s]?light|screen exposure|light-emitting devices?)\b.*\b(circadian|sleep|melatonin)\b|\b(circadian|melatonin)\b.*\b(blue[-\s]?light|screen exposure|light-emitting devices?)\b/i,
+    better: [
+      '"blue light" AND adolescent* AND "circadian rhythm"',
+      '"screen exposure" AND adolescent* AND melatonin',
+      '("blue light" OR "evening screen use") AND adolescent* AND sleep',
+    ],
+    broader: ["light exposure", "circadian rhythm", "adolescent sleep"],
+    narrower: [
+      '"blue light" AND adolescent* AND "sleep onset"',
+      '"evening screen use" AND adolescent* AND melatonin',
+      '"light-emitting devices" AND "circadian phase"',
+    ],
+    alternate: ["evening screen use", "circadian phase", "sleep onset"],
+    resourceIds: ["pubmed-medline", "psycinfo", "science-direct", "web-of-science"],
+  },
+  {
+    id: "literary-trauma",
+    pattern: /\b(trauma|ptsd)\b.*\b(novels?|fiction|literature|literary|narrative)\b|\b(novels?|fiction|literature|literary|narrative)\b.*\b(trauma|ptsd)\b/i,
+    better: [
+      'trauma AND "postwar fiction"',
+      '"trauma narrative" AND novels',
+      '"cultural memory" AND trauma AND literature',
+    ],
+    broader: ["trauma studies", "memory studies", "postwar literature"],
+    narrower: [
+      '"postwar novels" AND trauma',
+      '"literary trauma" AND narrative',
+      '"collective memory" AND postwar fiction',
+    ],
+    alternate: ["trauma narrative", "cultural memory", "memory studies"],
+    resourceIds: ["project-muse", "jstor", "historical-abstracts", "academic-search-premier"],
+  },
+  {
+    id: "ai-moral-responsibility",
+    pattern: /\b(moral responsibility|ethical responsibility|accountability)\b.*\b(ai|artificial intelligence|generative ai|algorithm)\b|\b(ai|artificial intelligence|generative ai|algorithm)\b.*\b(moral responsibility|ethical responsibility|accountability)\b/i,
+    better: [
+      '"moral responsibility" AND "generative AI"',
+      'accountability AND "artificial intelligence" AND decisions',
+      '"machine agency" AND moral responsibility',
+    ],
+    broader: ["AI ethics", "machine agency", "algorithmic accountability"],
+    narrower: [
+      '"generative AI" AND "moral agency"',
+      '"human-AI decision making" AND accountability',
+      '"automated decisions" AND moral responsibility',
+    ],
+    alternate: ["machine agency", "algorithmic accountability", "human oversight"],
+    resourceIds: ["jstor", "project-muse", "web-of-science", "academic-search-premier"],
+  },
+  {
     id: "protein-disease",
     pattern: /\b(protein folding|protein misfolding|amyloid|prion|neurodegenerative|alzheimer'?s?|biochemistry|molecular biology|genetic mutations?|genetics|biomedical|disease mechanism|pathogenesis)\b|\bprotein\b.*\b(folding|misfolding|disease|genetic|mutation)\b/i,
     better: ["\"protein folding\" AND disease", "\"protein misfolding\" AND pathogenesis", "\"protein folding\" AND (genetics OR mutation*)"],
@@ -656,8 +818,25 @@ const TOPIC_PROFILES = [
     resourceIds: ["psycinfo", "eric", "education-source", "web-of-science"],
   },
   {
+    id: "algorithmic-employment-discrimination",
+    pattern: /\b(ai|artificial intelligence|algorithm(?:ic)?)\b.*\b(employment law|hiring|job applicants?|workplace)\b|\b(employment law|hiring|job applicants?|workplace)\b.*\b(ai|artificial intelligence|algorithm(?:ic)?|discrimination|bias)\b/i,
+    better: [
+      '"algorithmic discrimination" AND "employment law"',
+      '(algorithm* OR "artificial intelligence") AND hiring AND discrimination AND legal',
+      '"automated employment decision" AND bias AND law',
+    ],
+    broader: ["employment discrimination law", "automated hiring", "algorithmic accountability"],
+    narrower: [
+      '"algorithmic discrimination" AND hiring AND regulation',
+      '"automated employment decision tools" AND legal',
+      '"employment discrimination" AND algorithm* AND audit',
+    ],
+    alternate: ["automated hiring bias", "employment algorithms", "AI hiring regulation"],
+    resourceIds: ["heinonline", "proquest-political-science", "socindex", "web-of-science", "psycinfo"],
+  },
+  {
     id: "algorithmic-bias",
-    pattern: /\b(algorithmic bias|ai bias|facial recognition|automated decision)\b|\b(racial|gender|demographic)\b.*\b(algorithm|artificial intelligence|facial recognition)\b/i,
+    pattern: /\b(algorithmic bias|ai bias|facial recognition|automated decision)\b|\b(racial|gender|demographic)\b.*\b(algorithm|artificial intelligence|facial recognition)\b|\b(ai|artificial intelligence|algorithm(?:ic)?)\b.*\b(discriminat\w*|bias(?:ed)?|fairness|hiring|job applicants?)\b|\b(discriminat\w*|bias(?:ed)?|fairness|hiring|job applicants?)\b.*\b(ai|artificial intelligence|algorithm(?:ic)?)\b/i,
     better: [
       '"algorithmic bias" AND discrimination',
       '"facial recognition" AND racial bias',
@@ -691,10 +870,10 @@ const TOPIC_PROFILES = [
   },
   {
     id: "ai-education",
-    pattern: /\b(ai|artificial intelligence|generative ai|chatgpt)\b.*\b(education|school|teaching|learning)\b|\b(education|school|teaching|learning)\b.*\b(ai|artificial intelligence|generative ai|chatgpt)\b/i,
-    better: ["\"generative AI\" AND education", "\"artificial intelligence\" AND \"learning outcomes\"", "AI AND \"academic integrity\" AND teaching"],
+    pattern: /\b(ai|artificial intelligence|generative ai|chatgpt)\b.*\b(education|school|teaching|learning|literacy|writing courses?|classroom|curriculum)\b|\b(education|school|teaching|learning|literacy|writing courses?|classroom|curriculum)\b.*\b(ai|artificial intelligence|generative ai|chatgpt)\b/i,
+    better: ["\"generative AI\" AND \"critical literacy\" AND \"writing courses\"", "\"generative AI\" AND education", "\"artificial intelligence\" AND \"learning outcomes\"", "AI AND \"academic integrity\" AND teaching"],
     broader: ["education technology", "digital learning", "instructional technology", "academic integrity"],
-    narrower: ["ChatGPT AND classroom*", "\"AI writing tools\" AND student*", "\"generative AI\" AND \"student learning outcomes\"", "\"artificial intelligence\" AND \"teacher adoption\""],
+    narrower: ["\"generative AI\" AND \"first-year writing\"", "ChatGPT AND classroom*", "\"AI writing tools\" AND student*", "\"generative AI\" AND \"student learning outcomes\"", "\"artificial intelligence\" AND \"teacher adoption\""],
     alternate: ["edtech", "large language models", "AI literacy", "automated feedback"],
     resourceIds: ["eric", "education-source", "academic-search-premier", "proquest-research-library"],
   },
@@ -788,11 +967,11 @@ const TOPIC_PROFILES = [
   {
     id: "company-financials",
     pattern: /\b(company financials?|financial statements?|annual report|10-k|revenue|balance sheet)\b/i,
-    better: ["\"financial statements\" AND company", "\"annual report\" AND \"10-K\"", "\"financial ratios\" AND \"company profile\""],
+    better: ["\"financial statements\" AND company", "\"annual report\" AND \"10-K\"", "\"financial ratios\" AND \"company profile\"", "merger AND revenue AND debt"],
     broader: ["corporate finance", "industry analysis", "public company filings"],
     narrower: ["income statement", "balance sheet", "segment revenue", "SEC filings"],
     alternate: ["company accounts", "financial ratios", "public filings"],
-    resourceIds: ["mergent", "business-source", "proquest-research-library"],
+    resourceIds: ["mergent", "statista", "business-source", "proquest-research-library"],
   },
   {
     id: "policy-memo",
@@ -886,7 +1065,8 @@ function keywordSearchBase(query) {
 function researchTopicBody(query) {
   return cleanQuery(query)
     .replace(/^(?:can|could|would|please|help|find|show|give|provide|tell|i need|i want)\b[\s,:-]*/i, "")
-    .replace(/^(?:me\s+)?(?:explore|compare|contrast|understand|research|analy[sz]e|investigate|examine)\b[\s,:-]*/i, "")
+    .replace(/^(?:me\s+)?(?:explore|compare|contrast|understand|research|analy[sz]e|investigate|examine|navigate|use)\b[\s,:-]*/i, "")
+    .replace(/^(?:the\s+)?zsr(?:\s+library)?\s+(?:for|with|on)\s+/i, "")
     .replace(/^(?:the\s+)?(?:differences?|similarities?|comparison|contrast)\s+between\s+/i, "")
     .replace(/^(?:me\s+)?(?:more\s+)?(?:(?:sources?|articles?|research|results?|leads?)\b[\s,:-]*)+/i, "")
     .replace(/^(?:focused on|about|regarding)\s+/i, "")
@@ -963,7 +1143,8 @@ export function isZsrNavigationRequest(query) {
   const q = cleanQuery(query);
   if (!q) return false;
   return /^(?:please\s+)?(?:help me\s+)?(?:navigate|use)\s+(?:the\s+)?zsr(?:\s+(?:library|website|site))?[?.!]*$/i.test(q) ||
-    /^(?:please\s+)?(?:show|tell) me (?:how|where) to (?:start|search) (?:in|with|on) (?:the )?zsr(?: library)?[?.!]*$/i.test(q);
+    /^(?:please\s+)?(?:show|tell) me (?:how|where) to (?:start|search) (?:in|with|on) (?:the )?zsr(?: library)?[?.!]*$/i.test(q) ||
+    /^where should i start (?:in|with|on) (?:the )?zsr\b.*\bif\b.*[?.!]*$/i.test(q);
 }
 
 export function isSubstantiveResearchRequest(query) {
@@ -995,13 +1176,14 @@ export function classifyResearchIntent(query) {
   }).slice(0, 4);
 }
 
-function resourceScore(resource, intents, profiles, query, subjectFocus) {
+function resourceScore(resource, intents, profiles, query, subjectFocus, modeId = DEFAULT_MODE_ID) {
   const q = query.toLowerCase();
   let score = resource.priority || 0;
   const profileOrder = uniq(profiles.flatMap((profile) => profile.resourceIds || []));
   const profileIndex = profileOrder.indexOf(resource.id);
   const focusIds = new Set(subjectFocus?.resourceIds || []);
   if (profileIndex >= 0) score += 110 - Math.min(40, profileIndex * 8);
+  if (profileIndex === 0) score += 20;
   if (!profiles.length && focusIds.has(resource.id)) {
     score += subjectFocus?.id === "interdisciplinary" ? 18 : 50;
   }
@@ -1032,6 +1214,7 @@ function resourceScore(resource, intents, profiles, query, subjectFocus) {
   if (intentIds.has("scholarly") && /scholarly|articles/.test(resource.tags.join(" "))) score += 25;
   if (intentIds.has("fulltext") && /full text|doi|pmid|catalog/.test(resource.tags.join(" "))) score += 20;
   if (intentIds.has("citation") && /citation|guides|general/.test(resource.tags.join(" "))) score += 60;
+  score += modeCompatibilityScore(resource, modeId);
   return score;
 }
 
@@ -1044,13 +1227,12 @@ function resourceIntentMatch(resource, intents) {
     news: ["factiva", "proquest-news", "cq-researcher", "proquest-political-science"],
     legal: ["proquest-political-science", "cq-researcher", "heinonline", "jstor"],
     books: ["primo", "project-muse", "jstor"],
+    primary: ["special-collections", "digital-collections", "proquest-news", "heinonline", "primo"],
     fulltext: ["pubmed-medline", "primo"],
     citation: ["research-guides"],
   };
-  return (
-    Object.entries(idsByIntent).some(
-      ([intentId, resourceIds]) => intentIds.has(intentId) && resourceIds.includes(resource.id)
-    )
+  return Object.entries(idsByIntent).some(
+    ([intentId, resourceIds]) => intentIds.has(intentId) && resourceIds.includes(resource.id)
   );
 }
 
@@ -1087,7 +1269,8 @@ export function buildGeneralStartingPoints(
   recommendations = [],
   limit = 3,
   subjectFocusId = "interdisciplinary",
-  query = ""
+  query = "",
+  modeId = DEFAULT_MODE_ID
 ) {
   const safeLimit = Math.max(0, Math.floor(Number(limit) || 0));
   if (!safeLimit) return [];
@@ -1098,7 +1281,7 @@ export function buildGeneralStartingPoints(
   return ids
     .filter((id) => !recommendedIds.has(id))
     .map((id) => ZSR_RESOURCE_CONFIG.find((resource) => resource.id === id))
-    .filter(Boolean)
+    .filter((resource) => resource && resourceSupportsMode(resource, modeId))
     .map((resource) => ({
       ...resource,
       generalStartingPoint: true,
@@ -1112,12 +1295,37 @@ export function buildGeneralStartingPoints(
     .slice(0, safeLimit);
 }
 
-export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+function sourceModeIntent(modeId) {
+  const byMode = {
+    books: { id: "books", label: "books or background sources" },
+    scholarly: { id: "scholarly", label: "scholarly articles" },
+    news: { id: "news", label: "news and current events" },
+    data: { id: "statistics", label: "data and statistics" },
+    primary: { id: "primary", label: "primary sources" },
+    "legal-policy": { id: "legal", label: "legal or policy sources" },
+  };
+  return byMode[modeId] || null;
+}
+
+function withSourceModeIntent(intents, modeId) {
+  const modeIntent = sourceModeIntent(modeId);
+  if (!modeIntent || intents.some((intent) => intent.id === modeIntent.id)) return intents;
+  return [modeIntent, ...intents].slice(0, 4);
+}
+
+export function recommendResources(
+  query,
+  limit = 5,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  modeId = DEFAULT_MODE_ID
+) {
   const q = cleanQuery(query);
-  const safeLimit = Math.max(0, Math.floor(Number(limit) || 0));
+  const safeLimit = Math.min(5, Math.max(0, Math.floor(Number(limit) || 0)));
   if (!safeLimit) return [];
+  const effectiveModeId = inferExplicitModeRequest(q, modeId);
   const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
-  const intents = classifyResearchIntent(q);
+  const intents = withSourceModeIntent(classifyResearchIntent(q), effectiveModeId);
+  const sourceContract = getSourceModeContract(effectiveModeId);
   const profiles = activeProfiles(q);
   const rankingFocus = subjectFocus.id === "interdisciplinary" && profiles.length
     ? { ...subjectFocus, resourceIds: [], keywords: [] }
@@ -1127,12 +1335,12 @@ export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SU
   const ranked = ZSR_RESOURCE_CONFIG
     .map((resource) => ({
       ...resource,
-      score: resourceScore(resource, intents, profiles, q, rankingFocus),
+      score: resourceScore(resource, intents, profiles, q, rankingFocus, effectiveModeId),
       profileMatch: profileResourceIds.has(resource.id),
       focusMatch: focusResourceIds.has(resource.id),
       intentMatch: resourceIntentMatch(resource, intents),
       queryMatch: resourceQueryMatch(resource, q),
-      whyFits: whyResourceFits(resource, intents, profiles, rankingFocus),
+      whyFits: whyResourceFits(resource, intents, profiles, rankingFocus, sourceContract),
       searchTerms: [],
       filters: [],
       expect: expectForResource(resource),
@@ -1154,44 +1362,92 @@ export function recommendResources(query, limit = 5, subjectFocusId = DEFAULT_SU
     return ranked.filter((resource) => resource.id === "research-guides").slice(0, safeLimit);
   }
 
-  const intentIds = new Set(intents.map((intent) => intent.id));
   const topicEligible = ranked.filter((resource) => {
     if (GENERIC_NAVIGATION_RESOURCE_IDS.has(resource.id)) return false;
-    if (resource.id === "primo") {
-      return intentIds.has("books") || intentIds.has("known-item") || intentIds.has("fulltext");
-    }
-    return true;
+    return resourceSupportsMode(resource, effectiveModeId);
   });
 
-  const profileResources = topicEligible.filter((resource) => resource.profileMatch);
+  const profileOrder = uniq(profiles.flatMap((profile) => profile.resourceIds || []));
+  const profileMatches = profileOrder
+    .map((id) => topicEligible.find((resource) => resource.id === id))
+    .filter(Boolean);
   const uncoveredIntents = profiles.length
-    ? intents.filter((intent) => !profileResources.some((resource) => resourceIntentMatch(resource, [intent])))
-    : [];
-  const useful = topicEligible.filter((resource) =>
-    profiles.length
-      ? resource.profileMatch || resourceIntentMatch(resource, uncoveredIntents)
-      : resource.focusMatch || resource.intentMatch || resource.queryMatch
+    ? intents.filter((intent) => !profileMatches.some((resource) => resourceIntentMatch(resource, [intent])))
+    : intents;
+  const uncoveredMatches = topicEligible.filter((resource) =>
+    resourceIntentMatch(resource, uncoveredIntents) && !profileMatches.some((match) => match.id === resource.id)
   );
-
-  if (useful.length) return useful.slice(0, safeLimit);
-
-  const fallbackIds = uniq([
+  const focusOrder = rankingFocus.resourceIds || [];
+  const focusMatches = focusOrder
+    .map((id) => topicEligible.find((resource) => resource.id === id))
+    .filter(Boolean);
+  const meaningfulIntentMatches = topicEligible.filter((resource) => resource.intentMatch);
+  const additionalMatches = topicEligible.filter((resource) =>
+    resource.intentMatch &&
+    !focusMatches.some((match) => match.id === resource.id)
+  );
+  const topical = profiles.length
+    ? [...profileMatches, ...uncoveredMatches]
+    : meaningfulIntentMatches.length
+      ? [focusMatches[0], meaningfulIntentMatches[0], ...focusMatches.slice(1), ...meaningfulIntentMatches.slice(1), ...additionalMatches].filter(Boolean)
+      : [...focusMatches, ...additionalMatches];
+  const preferred = sourceContract.preferredResourceIds
+    .map((id) => topicEligible.find((resource) => resource.id === id))
+    .filter(Boolean);
+  const seen = new Set();
+  const fallbackIds = new Set([
     ...(rankingFocus.resourceIds || []),
-    "academic-search-premier",
-    "proquest-research-library",
-    "jstor",
+    ...sourceContract.preferredResourceIds,
   ]);
-  return topicEligible.filter((resource) => fallbackIds.includes(resource.id)).slice(0, Math.min(safeLimit, 3));
+  const boundedFallback = topicEligible.filter((resource) => fallbackIds.has(resource.id));
+  // Scholarly routes stay narrow and topic-led. Other modes add only their
+  // declared provider family so the selected source type is actually usable.
+  const backfillCount = {
+    books: 3,
+    news: 2,
+    data: 2,
+    primary: 2,
+    "legal-policy": 3,
+  }[effectiveModeId] || 0;
+  const requiredTopical = topical.filter((resource) => {
+    const capability = getResourceCapability(resource);
+    return capability.sourceKinds.some((kind) => sourceContract.requiredKinds.includes(kind));
+  });
+  const requiredLead = sourceContract.mustLeadWith
+    ? topicEligible.find((resource) => resource.id === sourceContract.mustLeadWith)
+    : null;
+  const governedModeFamily = [requiredLead, ...requiredTopical, ...preferred].filter(Boolean).filter((resource, index, items) =>
+    items.findIndex((candidate) => candidate.id === resource.id) === index
+  );
+  const modeBackfill = effectiveModeId === "scholarly"
+    ? (topical.length ? [] : boundedFallback.slice(0, 3))
+    : governedModeFamily.slice(0, backfillCount);
+  let ordered = effectiveModeId === "scholarly"
+    ? [...topical, ...modeBackfill]
+    : [...modeBackfill, ...topical];
+  ordered = ordered
+    .filter((resource) => {
+      if (!resource || seen.has(resource.id)) return false;
+      seen.add(resource.id);
+      return true;
+    });
+  if (sourceContract.mustLeadWith) {
+    const lead = ordered.find((resource) => resource.id === sourceContract.mustLeadWith);
+    ordered = [lead, ...ordered.filter((resource) => resource.id !== sourceContract.mustLeadWith)].filter(Boolean);
+  }
+  return ordered.slice(0, safeLimit);
 }
 
-function whyResourceFits(resource, intents, profiles, subjectFocus) {
+function whyResourceFits(resource, intents, profiles, subjectFocus, sourceContract = null) {
+  const capability = getResourceCapability(resource);
+  const sourceKinds = capability.sourceKinds.join(", ");
   const profileMatch = profiles.find((profile) => profile.resourceIds?.includes(resource.id));
-  if (profileMatch) return `This fits because the topic maps to ${resource.subjectArea.toLowerCase()} research rather than only a literal keyword search.`;
+  if (profileMatch) return `This fits the topic's ${resource.subjectArea.toLowerCase()} profile and supports ${sourceKinds || sourceContract?.label?.toLowerCase() || "the selected source type"}.`;
   if (subjectFocus?.resourceIds?.includes(resource.id)) {
-    return `This fits the ${subjectFocus.shortLabel || subjectFocus.label} subject focus and is grounded in the local ZSR resource config.`;
+    return `This fits the ${subjectFocus.shortLabel || subjectFocus.label} subject focus and the ${sourceContract?.label?.toLowerCase() || "selected source"} contract.`;
   }
   const intentLabel = intents[0]?.label || "this research need";
-  return `This fits the ${intentLabel} path and is grounded in the local ZSR resource config.`;
+  return `This is a reviewed capability match for the ${intentLabel} path${sourceKinds ? ` (${sourceKinds})` : ""}.`;
 }
 
 function expectForResource(resource) {
@@ -1516,7 +1772,8 @@ export function buildSearchTermSuggestions(
   query,
   candidates = [],
   subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
-  limit = 8
+  limit = 8,
+  researchSpec = null
 ) {
   const q = cleanQuery(query);
   if (!q || isZsrNavigationRequest(q)) return [];
@@ -1541,7 +1798,11 @@ export function buildSearchTermSuggestions(
   const anchoredAlternates = strategy.alternateTerms
     .slice(0, 4)
     .map((alternate) => anchoredSynonymSearch(strategy, [alternate]));
+  const compiled = researchSpec ? compileFallbackQueries(researchSpec) : null;
   return uniqueSearchOptions([
+    compiled?.canonical,
+    compiled?.narrow,
+    compiled?.broaden,
     ...strategy.betterTerms,
     ...genericVariants,
     ...limiterSearches,
@@ -1629,18 +1890,25 @@ function assignResourceSearchInstructions(
   resources,
   query,
   subjectFocusId,
-  usedKeys = new Set()
+  usedKeys = new Set(),
+  researchSpec = null
 ) {
   if (isZsrNavigationRequest(query)) return resources;
-  const candidates = buildSearchTermSuggestions(query, [], subjectFocusId, 20);
+  const candidates = buildSearchTermSuggestions(query, [], subjectFocusId, 20, researchSpec);
   const used = new Set(usedKeys);
 
-  return resources.map((resource) => {
+  return resources.map((resource, routeIndex) => {
+    const compiled = researchSpec ? compileResourceQuery(resource, researchSpec, routeIndex) : "";
+    const compiledValidation = researchSpec
+      ? validateCompiledQuery(compiled, researchSpec)
+      : { valid: false, missingConceptIds: [], naturalLanguage: false };
     const preferred = uniqueSearchOptions(
       resourceSpecificSearches(resource, query, subjectFocusId),
       used
     );
-    const source = preferred.length ? preferred : uniqueSearchOptions(candidates, used);
+    const source = compiledValidation.valid
+      ? [compiled]
+      : preferred.length ? preferred : uniqueSearchOptions(candidates, used);
     const available = source
       .map((term, position) => ({ term, position, score: resourceQueryScore(resource, term, position) }))
       .sort((a, b) => b.score - a.score || a.position - b.position);
@@ -1649,22 +1917,44 @@ function assignResourceSearchInstructions(
     return {
       ...resource,
       searchTerms: selected ? [selected] : [],
-      filters: filtersForResource(resource),
+      filters: resource.capabilityFilters?.length ? resource.capabilityFilters : filtersForResource(resource),
+      queryValidation: researchSpec ? validateCompiledQuery(selected, researchSpec) : null,
+      provenance: {
+        matchedSubject: subjectFocusId,
+        matchedSourceMode: researchSpec?.mode || DEFAULT_MODE_ID,
+        sourceKinds: resource.sourceKinds || [],
+        queryDialect: resource.queryDialect || "keyword",
+        metadataSource: resource.metadataSource,
+        maintenanceOwner: resource.maintenanceOwner,
+        reviewStatus: resource.reviewStatus,
+        configReviewedOn: resource.configReviewedOn,
+        librarianReviewedOn: resource.librarianReviewedOn,
+        configVersion: resource.configVersion || RESOURCE_CONFIG_VERSION,
+      },
     };
   });
 }
 
-export function buildCatalogKeywordQuery(query, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  return buildCatalogSearchQueries(query, subjectFocusId, 1)[0] || keywordSearchBase(query);
+export function buildCatalogKeywordQuery(
+  query,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  modeId = DEFAULT_MODE_ID,
+  researchSpec = null
+) {
+  return buildCatalogSearchQueries(query, subjectFocusId, 1, modeId, researchSpec)[0] || keywordSearchBase(query);
 }
 
 export function buildCatalogSearchQueries(
   query,
   subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
-  limit = 6
+  limit = 6,
+  modeId = DEFAULT_MODE_ID,
+  suppliedSpec = null
 ) {
   const q = cleanQuery(query);
   if (!q || isZsrNavigationRequest(q)) return [];
+  const researchSpec = suppliedSpec || buildResearchSpec(q, { modeId, subjectFocusId });
+  const compiled = compileFallbackQueries(researchSpec);
   const strategy = buildSearchStrategy(q, subjectFocusId);
   const profiles = activeProfiles(q);
   const hasProfile = profiles.length > 0;
@@ -1680,6 +1970,9 @@ export function buildCatalogSearchQueries(
     : [];
 
   return uniqueSearchOptions([
+    compiled.canonical,
+    compiled.narrow,
+    compiled.broaden,
     ...strategy.betterTerms,
     ...boundedPairs,
     ...strategy.narrowerTerms,
@@ -1692,7 +1985,12 @@ export function buildCatalogSearchQueries(
 export function buildFallbackSearches(
   query,
   subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
-  { excludedTerms = [], resources: suppliedResources = [] } = {}
+  {
+    excludedTerms = [],
+    resources: suppliedResources = [],
+    modeId = DEFAULT_MODE_ID,
+    researchSpec: suppliedSpec = null,
+  } = {}
 ) {
   const q = cleanQuery(query);
   if (isZsrNavigationRequest(q)) {
@@ -1704,6 +2002,8 @@ export function buildFallbackSearches(
     ];
   }
   const strategy = buildSearchStrategy(q, subjectFocusId);
+  const researchSpec = suppliedSpec || buildResearchSpec(q, { modeId, subjectFocusId });
+  const compiledRecovery = compileFallbackQueries(researchSpec);
   const profiles = activeProfiles(q);
   const hasProfile = profiles.length > 0;
   const recovery = profiles.find((profile) => profile.recovery)?.recovery || {};
@@ -1711,13 +2011,15 @@ export function buildFallbackSearches(
   const used = new Set(excluded);
   const resources = suppliedResources.length
     ? suppliedResources
-    : recommendResources(q, 4, subjectFocusId);
+    : recommendResources(q, 4, subjectFocusId, researchSpec.mode);
   const genericVariants = hasProfile ? [] : genericSearchVariants(q, subjectFocusId);
   const candidatePool = uniqueSearchOptions([
     ...strategy.narrowerTerms,
     ...(hasProfile ? [controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)] : []),
     ...genericVariants,
-    ...buildSearchTermSuggestions(q, [], subjectFocusId, 20),
+    compiledRecovery.narrow,
+    compiledRecovery.broaden,
+    ...buildSearchTermSuggestions(q, [], subjectFocusId, 20, researchSpec),
   ]);
 
   const take = (preferred = []) => {
@@ -1731,18 +2033,20 @@ export function buildFallbackSearches(
   const genericNarrowers = genericVariants.filter(
     (term) => normalizeSearchOptionKey(term) !== genericBaseKey
   );
-  const narrowQuery = take(hasProfile ? [recovery.narrow, ...strategy.narrowerTerms] : genericNarrowers);
+  const narrowQuery = take([compiledRecovery.narrow, recovery.narrow, ...(hasProfile ? strategy.narrowerTerms : genericNarrowers)]);
   const genericConcepts = genericTopicConcepts(q);
   const boundedBroaden = !hasProfile && genericConcepts.length >= 3
     ? genericConcepts.slice(0, 2).map(booleanConcept).join(" AND ")
     : "";
   const broadenQuery = hasProfile
-    ? take([recovery.broaden, controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)])
+    ? take([compiledRecovery.broaden, recovery.broaden, controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)])
     : boundedBroaden
-      ? take([boundedBroaden])
-      : "";
-  const switchQuery = take([recovery.switchDatabase]);
-  const scholarQuery = take([recovery.scholar]);
+      ? take([compiledRecovery.broaden, boundedBroaden])
+      : take([compiledRecovery.broaden]);
+  const switchQuery = take([compiledRecovery.canonical, recovery.switchDatabase]);
+  const scholarQuery = ["scholarly", "books", "legal-policy"].includes(researchSpec.mode)
+    ? take([compiledRecovery.controlledReduction, recovery.scholar])
+    : "";
   const namedDatabases = resources.filter((resource) => !GENERIC_NAVIGATION_RESOURCE_IDS.has(resource.id));
   const subjectDatabase = namedDatabases[0];
   const nextDatabase = namedDatabases[1] || namedDatabases[0];
@@ -1843,18 +2147,40 @@ export function selectCitationGuides(query) {
     .slice(0, 3);
 }
 
-export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  const q = cleanQuery(query);
-  const navigationOnly = isZsrNavigationRequest(q);
-  const subjectFocus = resolveSubjectFocus(subjectFocusId, q);
-  const effectiveFocusId = subjectFocus.selectedId || subjectFocus.id;
-  const intents = classifyResearchIntent(q);
+export function buildResearchPlan(
+  query,
+  limit = 5,
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  modeId = DEFAULT_MODE_ID,
+  requestContext = {}
+) {
+  const requestQuery = cleanQuery(query);
+  const baseResearchSpec = buildResearchSpec(requestQuery, {
+    modeId,
+    subjectFocusId,
+    assignmentContext: requestContext.assignmentContext,
+    plannerContext: requestContext.plannerContext,
+  });
+  const researchSpec = mergeSuppliedResearchSpec(baseResearchSpec, requestContext.researchSpec);
+  const q = requestContext.researchSpec ? cleanQuery(researchSpec.topic) : requestQuery;
+  const navigationOnly = !requestContext.researchSpec && isZsrNavigationRequest(q);
+  const effectiveModeId = researchSpec.mode;
+  const correctedFocusId = requestContext.researchSpec && researchSpec.disciplines?.length
+    ? researchSpec.disciplines[0]
+    : subjectFocusId;
+  const subjectFocus = resolveSubjectFocus(correctedFocusId, q);
+  const effectiveFocusId = subjectFocus.selectedId && subjectFocus.selectedId !== DEFAULT_SUBJECT_FOCUS_ID
+    ? subjectFocus.selectedId
+    : DEFAULT_SUBJECT_FOCUS_ID;
+  const intents = withSourceModeIntent(classifyResearchIntent(q), effectiveModeId);
   const strategy = buildSearchStrategy(q, effectiveFocusId);
-  const rawRecommendations = recommendResources(q, limit, effectiveFocusId);
+  const rawRecommendations = recommendResources(q, limit, effectiveFocusId, effectiveModeId);
   const assignedRecommendations = assignResourceSearchInstructions(
     rawRecommendations,
     q,
-    effectiveFocusId
+    effectiveFocusId,
+    new Set(),
+    researchSpec
   );
   const recommendations = navigationOnly
     ? assignedRecommendations
@@ -1865,6 +2191,8 @@ export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUB
   const fallbacks = buildFallbackSearches(q, effectiveFocusId, {
     excludedTerms: [...reservedKeys],
     resources: recommendations,
+    modeId: effectiveModeId,
+    researchSpec,
   });
   fallbacks
     .map((fallback) => fallback.query)
@@ -1872,28 +2200,44 @@ export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUB
     .forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
 
   const searchTerms = uniqueSearchOptions(
-    buildSearchTermSuggestions(q, [], effectiveFocusId, 20),
+    buildSearchTermSuggestions(q, [], effectiveFocusId, 20, researchSpec),
     reservedKeys
   ).slice(0, 3);
   searchTerms.forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
 
   const rawOtherStartingPoints = navigationOnly
     ? []
-    : buildGeneralStartingPoints(recommendations, 3, effectiveFocusId, q);
+    : buildGeneralStartingPoints(recommendations, 3, effectiveFocusId, q, effectiveModeId);
   const otherStartingPoints = assignResourceSearchInstructions(
     rawOtherStartingPoints,
     q,
     effectiveFocusId,
-    reservedKeys
+    reservedKeys,
+    researchSpec
   ).filter((resource) => resource.searchTerms.length > 0);
   otherStartingPoints
     .flatMap((resource) => resource.searchTerms || [])
     .forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
   const citationGuides = selectCitationGuides(q);
   const fullText = buildFullTextWorkflow(q);
-  return {
+  const sourceMode = getSourceModeContract(effectiveModeId);
+  const modeValidation = sourceModeValidation(recommendations, effectiveModeId);
+  const queryValidation = recommendations.map((resource) => ({
+    resourceId: resource.id,
+    ...validateCompiledQuery(resource.searchTerms?.[0] || "", researchSpec),
+  }));
+  const planCore = {
     query: q,
     navigationOnly,
+    modeId: effectiveModeId,
+    sourceMode: {
+      id: sourceMode.id,
+      label: sourceMode.label,
+      requiredKinds: [...sourceMode.requiredKinds],
+      allowedKinds: [...sourceMode.allowedKinds],
+    },
+    researchSpec,
+    configVersion: RESOURCE_CONFIG_VERSION,
     subjectFocus: {
       id: subjectFocus.id,
       selectedId: subjectFocus.selectedId,
@@ -1910,8 +2254,29 @@ export function buildResearchPlan(query, limit = 5, subjectFocusId = DEFAULT_SUB
     fallbacks,
     citationGuides,
     fullText,
+    safety: researchSpec.safety,
+    safeFailure: {
+      deterministicPlanAvailable: recommendations.length > 0 || navigationOnly,
+      liveResultsRequired: false,
+      modelRequiredForRoutes: false,
+      librarianEscalationAvailable: true,
+    },
+    validation: {
+      sourceMode: modeValidation,
+      queries: queryValidation,
+      valid: navigationOnly || (modeValidation.valid && queryValidation.every((entry) => entry.valid)),
+    },
     transparencyNote: navigationOnly
       ? "Choose the path that matches the task. Enter topic keywords only after opening the appropriate search tool."
-      : "Every item below is a named database selected for this topic. Its link opens the exact ZSR A-Z entry (or the database itself), and each card has a distinct query and database-specific filters. Shorter lists mean weak matches were intentionally omitted.",
+      : "Every route is selected from the governed resource registry, must support the requested source type, and receives a topic-preserving query plus provider-specific filters. Live records remain leads that the student must verify.",
+  };
+  return {
+    ...planCore,
+    planHash: deterministicHash({
+      configVersion: RESOURCE_CONFIG_VERSION,
+      researchSpec,
+      routes: recommendations.map((resource) => ({ id: resource.id, query: resource.searchTerms?.[0], filters: resource.filters })),
+      fallbacks: fallbacks.map((fallback) => fallback.query || fallback.text),
+    }),
   };
 }

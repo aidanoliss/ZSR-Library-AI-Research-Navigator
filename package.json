@@ -5,7 +5,7 @@
   "description": "Prototype AI research navigator for Wake Forest ZSR Library workflows.",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
     "dev": "concurrently -n server,client -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
@@ -14,19 +14,27 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/native.js",
-    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js test/retrieve.test.js test/primo.test.js test/catalog-intent.test.js test/request-context.test.js test/research-workspace.test.js test/conversation-context.test.js test/source-contract.test.js test/chat-transport.test.js test/log.test.js",
-    "test:live": "node --test test/adversarial.test.js"
+    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js test/retrieve.test.js test/primo.test.js test/catalog-intent.test.js test/request-context.test.js test/research-workspace.test.js test/conversation-context.test.js test/source-contract.test.js test/chat-transport.test.js test/log.test.js test/reliability.test.js test/resource-config.test.js test/pilot-evaluation.test.js test/loaded-questions.test.js test/accessibility-contract.test.js test/evaluation-matrix.test.js test/institution-profile.test.js test/librarian-qa-ui.test.js test/provider-resilience.test.js test/research-interpretation-ui.test.js test/research-spec-corrections.test.js test/security-hardening.test.js",
+    "test:live": "node --test test/adversarial.test.js",
+    "eval:pilot": "node scripts/run-librarian-evals.mjs",
+    "eval:pilot:strict": "node scripts/run-librarian-evals.mjs --strict",
+    "eval:matrix": "node --test test/evaluation-matrix.test.js",
+    "evidence:release": "node scripts/build-release-evidence.mjs",
+    "diff:institution": "node scripts/diff-institution-config.mjs",
+    "audit:resources": "node scripts/audit-resource-config.mjs",
+    "audit:resources:live": "node scripts/audit-resource-config.mjs --live",
+    "qa:pilot": "npm test && npm run audit:resources && npm run eval:pilot && npm run build"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "vite": "^5.4.2"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@vitejs/plugin-react": "^6.0.5",
+    "concurrently": "^8.2.2",
+    "vite": "^8.2.1"
   }
 }

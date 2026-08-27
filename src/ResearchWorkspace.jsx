@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadText } from "./exportPlan.js";
 import {
   COURSE_TEMPLATES,
@@ -39,6 +39,8 @@ function EmptyState({ children }) {
 }
 
 export default function ResearchWorkspace({ open, workspace, topic, onChange, onClose, onHandoff }) {
+  const closeButtonRef = useRef(null);
+  const previousFocusRef = useRef(null);
   const [tab, setTab] = useState("brief");
   const [templateId, setTemplateId] = useState("");
   const [manualQuery, setManualQuery] = useState("");
@@ -49,11 +51,16 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
 
   useEffect(() => {
     if (!open) return undefined;
+    previousFocusRef.current = document.activeElement;
+    window.requestAnimationFrame(() => closeButtonRef.current?.focus());
     function onKeyDown(event) {
       if (event.key === "Escape") onClose();
     }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      previousFocusRef.current?.focus?.();
+    };
   }, [open, onClose]);
 
   if (!open) return null;
@@ -125,25 +132,34 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
   }
 
   return (
-    <aside className="research-workspace-drawer no-print" aria-label="Research workspace">
+    <aside
+      className="research-workspace-drawer no-print"
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="research-workspace-title"
+    >
       <header className="research-workspace-head">
         <div>
           <span>Saved with this chat</span>
-          <h2>Research workspace</h2>
+          <h2 id="research-workspace-title">Research workspace</h2>
         </div>
-        <button type="button" onClick={onClose} aria-label="Close research workspace">{Icon.close}</button>
+        <button ref={closeButtonRef} type="button" onClick={onClose} aria-label="Close research workspace">{Icon.close}</button>
       </header>
 
       <p className="workspace-local-note">Stored only in this browser. Nothing here is sent to ZSR unless you choose a librarian handoff.</p>
 
-      <nav className="research-workspace-tabs" aria-label="Research workspace sections">
+      <nav className="research-workspace-tabs" role="tablist" aria-label="Research workspace sections">
         {TABS.map((item) => (
           <button
             key={item.id}
+            id={`workspace-tab-${item.id}`}
             type="button"
+            role="tab"
             className={tab === item.id ? "active" : ""}
             onClick={() => setTab(item.id)}
-            aria-current={tab === item.id ? "page" : undefined}
+            aria-selected={tab === item.id}
+            aria-controls={`workspace-panel-${item.id}`}
+            tabIndex={tab === item.id ? 0 : -1}
           >
             {item.icon}
             <span>{item.label}</span>
@@ -153,7 +169,12 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
 
       <div className="research-workspace-body">
         {tab === "brief" && (
-          <section className="workspace-section" aria-labelledby="workspace-brief-title">
+          <section
+            id="workspace-panel-brief"
+            className="workspace-section"
+            role="tabpanel"
+            aria-labelledby="workspace-tab-brief"
+          >
             <div className="workspace-section-head">
               <div>
                 <span>Assignment constraints</span>
@@ -216,7 +237,12 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
         )}
 
         {tab === "trail" && (
-          <section className="workspace-section" aria-labelledby="workspace-trail-title">
+          <section
+            id="workspace-panel-trail"
+            className="workspace-section"
+            role="tabpanel"
+            aria-labelledby="workspace-tab-trail"
+          >
             <div className="workspace-section-head">
               <div>
                 <span>{current.trail.length} saved</span>
@@ -261,7 +287,12 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
         )}
 
         {tab === "history" && (
-          <section className="workspace-section" aria-labelledby="workspace-history-title">
+          <section
+            id="workspace-panel-history"
+            className="workspace-section"
+            role="tabpanel"
+            aria-labelledby="workspace-tab-history"
+          >
             <div className="workspace-section-head">
               <div>
                 <span>{current.searchHistory.length} recorded</span>
@@ -298,7 +329,12 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
         )}
 
         {tab === "review" && (
-          <section className="workspace-section" aria-labelledby="workspace-review-title">
+          <section
+            id="workspace-panel-review"
+            className="workspace-section"
+            role="tabpanel"
+            aria-labelledby="workspace-tab-review"
+          >
             <div className="workspace-section-head">
               <div>
                 <span>Librarian-ready summary</span>

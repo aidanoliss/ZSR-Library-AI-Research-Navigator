@@ -12,6 +12,7 @@ test("request metadata is sanitized separately from the student's topic", () => 
   assert.deepEqual(context, {
     assignmentContext: "Use 8 peer-reviewed sources.",
     plannerContext: "Last 5 years",
+    researchSpec: null,
   });
 });
 

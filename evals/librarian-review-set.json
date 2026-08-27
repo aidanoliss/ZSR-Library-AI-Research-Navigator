@@ -1,0 +1,715 @@
+[
+  {
+    "id": "psy-001",
+    "discipline": "Psychology",
+    "prompt": "How does social media use affect adolescent mental health?",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["psycinfo", "communication-mass-media", "pubmed-medline"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["psychology", "communication-media"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["social media", "online social networking"], ["adolescent", "teen"], ["mental health", "depression", "anxiety"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "psy-002",
+    "discipline": "Psychology",
+    "prompt": "AI and cognitive offloading in college students",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["psycinfo", "eric", "education-source", "web-of-science"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["psychology"],
+      "minRecommendations": 3,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["artificial intelligence", "generative ai", "ai"], ["cognitive offloading", "external memory"], ["college students", "undergraduate"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "psy-003",
+    "discipline": "Psychology",
+    "prompt": "Sleep deprivation and executive function among first-year college students",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["psycinfo", "pubmed-medline"],
+      "forbiddenResourceIds": ["mintel", "factiva", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["psychology"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["sleep deprivation", "sleep"], ["executive function", "cognition"], ["college students", "undergraduate"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "hum-001",
+    "discipline": "Literature",
+    "prompt": "Representations of trauma in postwar novels",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["project-muse", "jstor", "historical-abstracts"],
+      "forbiddenResourceIds": ["pubmed-medline", "mintel", "mergent"],
+      "expectedSubjectFocusIds": ["history-humanities"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["trauma"], ["postwar"], ["novels", "literature"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "hum-002",
+    "discipline": "History",
+    "prompt": "Medieval Icelandic saga manuscript transmission",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["historical-abstracts", "jstor", "project-muse"],
+      "forbiddenResourceIds": ["psycinfo", "mintel", "pubmed-medline"],
+      "expectedSubjectFocusIds": ["history-humanities"],
+      "minRecommendations": 3,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["medieval"], ["icelandic saga", "saga"], ["manuscript transmission", "manuscript"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "hum-003",
+    "discipline": "Book History",
+    "prompt": "Typographic watermarks in privately printed almanacs",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["historical-abstracts", "jstor", "project-muse"],
+      "forbiddenResourceIds": ["psycinfo", "mintel", "pubmed-medline"],
+      "expectedSubjectFocusIds": ["history-humanities"],
+      "minRecommendations": 3,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["typographic", "printing"], ["watermarks", "watermark"], ["almanacs", "almanac"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "hum-004",
+    "discipline": "Music History",
+    "prompt": "Jazz clubs and urban cultural identity in the 1950s",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["historical-abstracts", "jstor", "project-muse"],
+      "forbiddenResourceIds": ["pubmed-medline", "mergent", "icpsr"],
+      "expectedSubjectFocusIds": ["history-humanities"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["jazz"], ["urban"], ["cultural identity", "identity"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "hum-005",
+    "discipline": "Philosophy",
+    "prompt": "Moral responsibility for decisions made with generative AI",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["jstor", "project-muse", "academic-search-premier"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["history-humanities", "science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["moral responsibility", "ethics"], ["generative ai", "artificial intelligence"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "eco-001",
+    "discipline": "Economics",
+    "prompt": "Compare Keynesian and Neoclassical economics during recessions",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["econlit", "jstor", "web-of-science"],
+      "forbiddenResourceIds": ["psycinfo", "pubmed-medline", "mintel"],
+      "expectedSubjectFocusIds": ["economics"],
+      "minRecommendations": 3,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["keynesian"], ["neoclassical"], ["recession", "economic crisis"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "eco-002",
+    "discipline": "Economics",
+    "prompt": "Inflation targeting and unemployment after monetary tightening",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["econlit", "web-of-science", "jstor"],
+      "forbiddenResourceIds": ["psycinfo", "mintel", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["economics", "data-statistics"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["inflation"], ["unemployment"], ["monetary tightening", "monetary policy"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bus-001",
+    "discipline": "Business",
+    "prompt": "Nike supply chains and ESG reporting",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["business-source", "mergent", "proquest-research-library"],
+      "forbiddenResourceIds": ["psycinfo", "pubmed-medline", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["business"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["nike"], ["supply chain"], ["esg", "sustainability reporting"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bus-002",
+    "discipline": "Market Research",
+    "prompt": "Consumer preferences and market growth for energy drinks",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["mintel", "statista", "business-source"],
+      "forbiddenResourceIds": ["pubmed-medline", "historical-abstracts", "heinonline"],
+      "expectedSubjectFocusIds": ["business"],
+      "minRecommendations": 3,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["energy drinks", "energy drink"], ["consumer"], ["market"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bus-003",
+    "discipline": "Company Research",
+    "prompt": "Rolex brand positioning among younger luxury consumers",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["mintel", "business-source", "statista"],
+      "forbiddenResourceIds": ["pubmed-medline", "eric", "heinonline"],
+      "expectedSubjectFocusIds": ["business"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["rolex"], ["brand positioning", "brand"], ["younger", "generation z", "luxury consumers"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bus-004",
+    "discipline": "Company Research",
+    "prompt": "Compare revenue and debt trends for two public companies before a merger",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["mergent", "business-source"],
+      "forbiddenResourceIds": ["psycinfo", "eric", "project-muse"],
+      "expectedSubjectFocusIds": ["business"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["revenue"], ["debt", "financial"], ["merger"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bio-001",
+    "discipline": "Medicine",
+    "prompt": "Antibiotic resistance in hospital settings",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline", "web-of-science", "science-direct"],
+      "forbiddenResourceIds": ["jstor", "mintel", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["antibiotic resistance", "antimicrobial resistance"], ["hospital", "healthcare-associated"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bio-002",
+    "discipline": "Biochemistry",
+    "prompt": "Protein folding and disease",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline", "web-of-science", "science-direct"],
+      "forbiddenResourceIds": ["business-source", "communication-mass-media", "mintel"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 3,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["protein folding", "protein misfolding"], ["disease", "pathology"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bio-003",
+    "discipline": "Sleep Medicine",
+    "prompt": "Blue-light exposure and adolescent circadian rhythms",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline", "psycinfo", "science-direct"],
+      "forbiddenResourceIds": ["jstor", "mintel", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["biology-health", "psychology"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["blue light", "screen exposure"], ["adolescent", "teen"], ["circadian rhythm", "sleep"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bio-004",
+    "discipline": "Public Health",
+    "prompt": "Racial disparities in maternal mortality across rural southern communities",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline", "socindex", "web-of-science"],
+      "forbiddenResourceIds": ["mintel", "mergent", "project-muse"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["maternal mortality"], ["racial disparities", "race"], ["rural", "southern"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bio-005",
+    "discipline": "Nursing",
+    "prompt": "Telemedicine follow-up and medication adherence in rural nursing practice",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline", "web-of-science", "science-direct"],
+      "forbiddenResourceIds": ["mintel", "historical-abstracts", "factiva"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["telemedicine", "telehealth"], ["medication adherence"], ["rural", "nursing"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "sci-001",
+    "discipline": "Environmental Science",
+    "prompt": "How biodiversity affects climate-change resilience",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["web-of-science", "science-direct", "academic-search-premier"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["biology-health", "science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["biodiversity", "species diversity"], ["climate change", "climate resilience"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "sci-002",
+    "discipline": "Ecology",
+    "prompt": "Urban pollinator diversity under extreme heat",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["web-of-science", "science-direct", "academic-search-premier"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["pollinator"], ["urban"], ["extreme heat", "heat"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "sci-003",
+    "discipline": "Engineering",
+    "prompt": "Machine-learning sensors for precision agriculture",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["web-of-science", "science-direct"],
+      "forbiddenResourceIds": ["psycinfo", "mintel", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["machine learning"], ["sensor"], ["precision agriculture", "agriculture"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "edu-001",
+    "discipline": "Education",
+    "prompt": "Generative AI and critical literacy in first-year writing courses",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["eric", "education-source"],
+      "forbiddenResourceIds": ["mintel", "mergent", "heinonline"],
+      "expectedSubjectFocusIds": ["education", "science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["generative ai", "artificial intelligence"], ["critical literacy"], ["first year writing", "writing courses"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "edu-002",
+    "discipline": "Education",
+    "prompt": "Universal design for learning in higher education",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["eric", "education-source"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["education"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["universal design for learning", "universal design"], ["higher education", "college", "university"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "edu-003",
+    "discipline": "Education",
+    "prompt": "Teacher burnout and retention in rural schools",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["eric", "education-source", "psycinfo"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["education"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["teacher burnout", "burnout"], ["retention", "turnover"], ["rural schools", "rural"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "edu-004",
+    "discipline": "Education Policy",
+    "prompt": "School-finance reform and student achievement",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["eric", "education-source", "proquest-political-science"],
+      "forbiddenResourceIds": ["mintel", "mergent", "pubmed-medline", "project-muse"],
+      "expectedSubjectFocusIds": ["education"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["school finance", "education finance"], ["student achievement", "academic achievement"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "com-001",
+    "discipline": "Communication",
+    "prompt": "Misinformation sharing on social media during elections",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["communication-mass-media", "socindex", "proquest-political-science"],
+      "forbiddenResourceIds": ["mintel", "mergent", "pubmed-medline"],
+      "expectedSubjectFocusIds": ["communication-media"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["misinformation"], ["social media"], ["election"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "com-002",
+    "discipline": "Communication",
+    "prompt": "TikTok use, body image, and social comparison among teenagers",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["communication-mass-media", "psycinfo", "socindex"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["psychology", "communication-media"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["tiktok"], ["body image"], ["social comparison"], ["teen", "adolescent"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "news-001",
+    "discipline": "News",
+    "prompt": "Compare US and European newspaper coverage of the war in Ukraine",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["factiva", "proquest-news"],
+      "forbiddenResourceIds": ["pubmed-medline", "psycinfo", "mintel"],
+      "expectedSubjectFocusIds": ["history-humanities", "policy-law", "communication-media", "interdisciplinary"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["ukraine"], ["newspaper", "news coverage"], ["european", "europe"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "news-002",
+    "discipline": "Current Events",
+    "prompt": "News coverage of local climate-adaptation policy since 2022",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["factiva", "proquest-news", "cq-researcher"],
+      "forbiddenResourceIds": ["psycinfo", "mintel", "education-source", "project-muse"],
+      "expectedSubjectFocusIds": ["science-engineering", "policy-law", "communication-media"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["climate adaptation"], ["policy"], ["news", "coverage"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "pol-001",
+    "discipline": "Political Science",
+    "prompt": "Government surveillance and public trust in democratic institutions",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["proquest-political-science", "socindex", "cq-researcher", "heinonline"],
+      "forbiddenResourceIds": ["mintel", "pubmed-medline", "education-source"],
+      "expectedSubjectFocusIds": ["policy-law"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["government surveillance", "surveillance"], ["public trust", "trust"], ["democratic institutions", "democracy"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "pol-002",
+    "discipline": "Law and Policy",
+    "prompt": "Algorithmic discrimination in employment law",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["heinonline", "proquest-political-science", "cq-researcher"],
+      "forbiddenResourceIds": ["mintel", "pubmed-medline", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["policy-law", "science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["algorithmic discrimination", "algorithmic"], ["employment law", "employment"], ["law", "legal"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "pol-003",
+    "discipline": "Public Opinion",
+    "prompt": "Immigration policy and public opinion among suburban voters",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["proquest-political-science", "socindex", "cq-researcher", "icpsr"],
+      "forbiddenResourceIds": ["pubmed-medline", "mintel", "education-source", "science-direct"],
+      "expectedSubjectFocusIds": ["policy-law"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["immigration policy", "immigration"], ["public opinion"], ["suburban voters", "voters"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "dat-001",
+    "discipline": "Data and Statistics",
+    "prompt": "Statistics on college student mental health by year",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["icpsr", "statista", "pubmed-medline", "psycinfo"],
+      "forbiddenResourceIds": ["mintel", "historical-abstracts", "project-muse"],
+      "expectedSubjectFocusIds": ["biology-health", "psychology", "education"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["college student", "university student"], ["mental health"], ["statistics", "prevalence", "rates"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "dat-002",
+    "discipline": "Data and Statistics",
+    "prompt": "Dataset on climate migration by country and year",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["icpsr", "statista", "web-of-science"],
+      "forbiddenResourceIds": ["psycinfo", "mintel", "project-muse"],
+      "expectedSubjectFocusIds": ["science-engineering", "data-statistics"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["climate migration", "climate displacement"], ["country"], ["dataset", "data"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "soc-001",
+    "discipline": "Sociology",
+    "prompt": "Food insecurity and social isolation among older adults",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["socindex", "pubmed-medline", "icpsr"],
+      "forbiddenResourceIds": ["mintel", "mergent", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["food insecurity"], ["social isolation"], ["older adults", "elderly"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "soc-002",
+    "discipline": "Sociology",
+    "prompt": "Housing instability and educational outcomes for children",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["socindex", "eric", "education-source"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["education"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["housing instability", "housing insecurity"], ["educational outcomes", "academic achievement"], ["children", "students"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "nav-001",
+    "discipline": "Library Navigation",
+    "prompt": "Help me navigate ZSR for nursing research",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["ask-a-librarian", "databases-az", "research-guides", "pubmed-medline"],
+      "forbiddenResourceIds": ["mintel", "mergent", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["biology-health", "interdisciplinary"],
+      "minRecommendations": 1,
+      "maxRecommendations": 5,
+      "minVisibleSearchOptions": 0,
+      "requiredConceptGroups": [],
+      "allowGenericNavigation": true
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "nav-002",
+    "discipline": "Library Navigation",
+    "prompt": "Where should I start in ZSR if I do not know which database to use?",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["ask-a-librarian", "databases-az", "research-guides"],
+      "forbiddenResourceIds": [],
+      "expectedSubjectFocusIds": ["interdisciplinary"],
+      "minRecommendations": 1,
+      "maxRecommendations": 5,
+      "minVisibleSearchOptions": 0,
+      "requiredConceptGroups": [],
+      "allowGenericNavigation": true
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "cit-001",
+    "discipline": "Citation Help",
+    "prompt": "I need a citation for a website in APA style",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["research-guides", "ask-a-librarian"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["interdisciplinary"],
+      "minRecommendations": 1,
+      "maxRecommendations": 5,
+      "minVisibleSearchOptions": 0,
+      "requiredConceptGroups": [],
+      "allowGenericNavigation": true
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "cit-002",
+    "discipline": "Citation Help",
+    "prompt": "How should I cite a translated historical book in Chicago style?",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["research-guides", "ask-a-librarian", "jstor"],
+      "forbiddenResourceIds": ["mintel", "mergent", "pubmed-medline"],
+      "expectedSubjectFocusIds": ["history-humanities"],
+      "minRecommendations": 1,
+      "maxRecommendations": 5,
+      "minVisibleSearchOptions": 0,
+      "requiredConceptGroups": [],
+      "allowGenericNavigation": true
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "acc-001",
+    "discipline": "Full-text Access",
+    "prompt": "Find full text for DOI 10.1001/jama.2004.1635",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline"],
+      "forbiddenResourceIds": ["mintel", "mergent", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 1,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["10.1001/jama.2004.1635", "jama"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "bio-006",
+    "discipline": "Epidemiology",
+    "prompt": "Epigenetic effects of prenatal famine exposure across generations",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["pubmed-medline", "web-of-science", "science-direct"],
+      "forbiddenResourceIds": ["mintel", "mergent", "factiva"],
+      "expectedSubjectFocusIds": ["biology-health"],
+      "minRecommendations": 2,
+      "maxRecommendations": 5,
+      "requiredConceptGroups": [["epigenetic"], ["prenatal famine", "famine exposure"], ["generations", "intergenerational"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "pol-004",
+    "discipline": "Political Psychology",
+    "prompt": "Personality traits and decision-making among authoritarian political leaders",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["psycinfo", "proquest-political-science", "socindex"],
+      "forbiddenResourceIds": ["mintel", "mergent", "pubmed-medline"],
+      "expectedSubjectFocusIds": ["psychology"],
+      "minRecommendations": 3,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["personality", "narcissism", "psychopathy"], ["authoritarian", "autocrat"], ["political leaders", "leadership"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "com-003",
+    "discipline": "Media Studies",
+    "prompt": "News framing of artificial intelligence and job displacement",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["communication-mass-media", "factiva", "proquest-news"],
+      "forbiddenResourceIds": ["pubmed-medline", "mintel", "historical-abstracts"],
+      "expectedSubjectFocusIds": ["communication-media", "science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["news framing", "framing"], ["artificial intelligence", "ai"], ["job displacement", "employment"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "eco-003",
+    "discipline": "Political Economy",
+    "prompt": "Minimum-wage policy and employment effects in service industries",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["econlit", "proquest-political-science", "business-source"],
+      "forbiddenResourceIds": ["pubmed-medline", "project-muse", "mintel"],
+      "expectedSubjectFocusIds": ["economics", "policy-law"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["minimum wage"], ["employment"], ["service industries", "service sector"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  },
+  {
+    "id": "sci-004",
+    "discipline": "Climate Policy",
+    "prompt": "Carbon-sequestration policy and biodiversity co-benefits",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": ["web-of-science", "science-direct", "cq-researcher", "proquest-political-science"],
+      "forbiddenResourceIds": ["mintel", "mergent", "psycinfo"],
+      "expectedSubjectFocusIds": ["biology-health", "science-engineering"],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [["carbon sequestration"], ["biodiversity"], ["policy"]]
+    },
+    "humanReview": {"pathRelevance": null, "searchTermQuality": null, "catalogPrecision": null, "fallbackSafety": null, "notes": ""}
+  }
+]

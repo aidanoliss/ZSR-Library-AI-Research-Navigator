@@ -5,14 +5,21 @@ import {
   getSearchMode,
 } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "../config/subjectFocus.js";
+import {
+  ProviderError,
+  createCircuitBreaker,
+  providerHttpError,
+  runProviderOperation,
+} from "./providerResilience.js";
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const geminiCircuit = createCircuitBreaker();
 
 /**
  * System instructions that constrain Gemini to the ZSR Research Navigator role.
  * Re-sent on every turn so the guardrails hold across a long conversation.
  */
-function buildSystemInstruction() {
+export function buildSystemInstruction() {
   return [
     "You are the ZSR Research Navigator, a conversational guide that helps Wake Forest",
     "University students plan how to use the Z. Smith Reynolds (ZSR) Library's research",
@@ -79,6 +86,15 @@ function buildSystemInstruction() {
     "  include concrete checks for relevance, source type, method/evidence, date, and authority.",
     "- Offer 2-3 short suggested_followups only when they would help the student choose",
     "  a next research move. Omit them for narrow follow-ups where a direct answer is enough.",
+    "- Treat the message as a RESEARCH ORIENTATION, not a verdict or literature conclusion.",
+    "  Never imply that a short generated overview represents scholarly consensus, the full",
+    "  evidence base, or an exhaustive review. Do not use confidence percentages, evidence",
+    "  meters, or phrases such as 'the research proves' or 'all studies agree.'",
+    "- LOADED OR CONTESTED QUESTIONS: identify a false, disputed, causal, stigmatizing, or",
+    "  conspiratorial premise rather than silently accepting it. Give only the minimum",
+    "  corrective context needed to orient the search, distinguish correlation from causation,",
+    "  name uncertainty or expert consensus accurately, and direct the student to evaluate",
+    "  appropriate evidence. Do not create false balance where a strong expert consensus exists.",
   ].join("\n");
 }
 
@@ -269,7 +285,7 @@ function formatDatabaseStrategyReference() {
 }
 
 /** Wrap the student's latest turn with the curated resources + per-turn guidance. */
-function buildTurnPrompt(
+export function buildTurnPrompt(
   latestUserText,
   resources,
   isFirstTurn,
@@ -314,6 +330,7 @@ function buildTurnPrompt(
     "",
     "If the student's message is only a request to navigate or use ZSR, do not treat 'navigate ZSR' as a research topic and do not create search_terms for it. Give a concrete task map using only the curated ZSR homepage, A-Z Databases, Subject & Course Research Guides, and Ask ZSR starting points: articles -> A-Z Databases; books/background/known items -> ZSR Library Search or homepage; subject orientation -> Research Guides; stuck or niche topic -> Ask ZSR. End with optional choices for what the student wants to find next.",
     "DIRECT ANSWER QUALITY: answer the intellectual substance of the student's request before discussing how to search. If the student asks to compare or distinguish two ideas, state at least 2-4 concrete differences (for example assumptions, mechanisms, evidence, policy implications, or historical application). Do not respond with generic framing such as 'it is helpful to focus on specific aspects' or merely restate categories the student could explore. Topic options must be tailored to the named concepts, not reusable labels.",
+    "AUTHORITY CALIBRATION: message is a short research orientation, not a final answer or literature synthesis. For causal, controversial, medical, political, identity-based, or otherwise loaded questions, explicitly inspect the premise. Do not repeat a stigmatizing or unsupported premise as fact. State what kind of evidence would establish the claim, preserve genuine uncertainty, and avoid false balance when authoritative evidence strongly rejects a premise. Never claim exhaustive coverage or attach a numeric consensus/confidence score.",
     isFirstTurn
       ? "This is the first research turn. If RESPONSE STYLE is 'Answer first' and the student asks for brainstorming, topic options, possible angles, or research questions, give a concise message and 4-6 topic_options instead of a source dump. If RESPONSE STYLE is 'Answer first' and the student did not explicitly ask for sources or options, give a direct substantive answer without the full source plan. If RESPONSE STYLE is 'Guided plan' and the student has not provided planner preferences, prioritize clarifying_questions. Otherwise, give a short 'message' plus a structured plan tailored to the SEARCH INTENT MODE: 2-4 starting_points from the list above (exact urls + a short 'why'), 2-4 database_strategy entries, 5-8 concrete search_terms (include mode-specific words and a couple of Boolean examples), 3-5 source_evaluation tips, an academic_integrity_note, librarian_routes, and a limitations note. For limitations, state that you do NOT access, download, or summarize the full text of paywalled or copyrighted sources — the student must open sources through ZSR themselves to read them. (The app may also show a few real results from ZSR's catalog; you do not generate or vouch for those.)"
       : "This is a follow-up turn. Answer the student's specific question directly in 'message' and tailor it to the SEARCH INTENT MODE. Do NOT repeat the full research plan. If the student asks for articles, books, sources, evidence, databases, or results, keep the message focused on what to open/check in the live catalog results that the app may show; add database_strategy when the student asks where to search or which ZSR databases fit. When a follow-up materially narrows or clarifies an active research topic, include 3-5 compact search_terms and 2-3 relevant starting_points or database_strategy entries even if the student did not literally say 'sources' or 'keywords'; this keeps the next step actionable. For unrelated conceptual or writing-process questions, populate only message and possibly suggested_followups. Reuse links only from the curated list above.",
@@ -385,29 +402,64 @@ export async function generateChatResponse(
   resources,
   modeId = DEFAULT_MODE_ID,
   responseStyleId = DEFAULT_RESPONSE_STYLE_ID,
-  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  options = {}
 ) {
   const apiKey = requireApiKey();
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
+  const fetchImpl = options.fetchImpl || fetch;
+  const requestBody = JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId, subjectFocusId));
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId, subjectFocusId)),
+  return runProviderOperation(async ({ signal }) => {
+    const res = await fetchImpl(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: requestBody,
+      signal,
+    });
+    if (!res.ok) {
+      await res.body?.cancel?.().catch?.(() => {});
+      throw providerHttpError(res.status);
+    }
+
+    let data;
+    try {
+      data = await res.json();
+    } catch (cause) {
+      throw new ProviderError("AI provider returned an invalid response.", {
+        code: "PROVIDER_INVALID_RESPONSE",
+        status: 502,
+        retryable: true,
+        cause,
+      });
+    }
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      throw new ProviderError("AI provider returned an empty response.", {
+        code: "PROVIDER_EMPTY_RESPONSE",
+        status: 502,
+        retryable: true,
+      });
+    }
+    try {
+      return JSON.parse(text);
+    } catch (cause) {
+      throw new ProviderError("AI provider returned an invalid response.", {
+        code: "PROVIDER_INVALID_RESPONSE",
+        status: 502,
+        retryable: true,
+        cause,
+      });
+    }
+  }, {
+    signal: options.signal,
+    timeoutMs: options.timeoutMs,
+    retries: options.retries,
+    baseDelayMs: options.baseDelayMs,
+    random: options.random,
+    sleep: options.sleep,
+    circuit: options.circuit || geminiCircuit,
   });
-
-  if (!res.ok) {
-    const detail = await res.text();
-    const err = new Error(`Gemini API error (${res.status}): ${detail}`);
-    err.code = "GEMINI_ERROR";
-    throw err;
-  }
-
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("Gemini returned an empty response.");
-
-  return JSON.parse(text);
 }
 
 /**
@@ -435,55 +487,118 @@ export async function streamChatResponse(
   onDelta,
   modeId = DEFAULT_MODE_ID,
   responseStyleId = DEFAULT_RESPONSE_STYLE_ID,
-  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID
+  subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
+  options = {}
 ) {
   const apiKey = requireApiKey();
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse&key=${apiKey}`;
+  const fetchImpl = options.fetchImpl || fetch;
+  const requestBody = JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId, subjectFocusId));
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildRequestBody(history, resources, modeId, responseStyleId, subjectFocusId)),
-  });
+  return runProviderOperation(async ({ signal }) => {
+    let emitted = false;
+    try {
+      const res = await fetchImpl(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: requestBody,
+        signal,
+      });
+      if (!res.ok) {
+        await res.body?.cancel?.().catch?.(() => {});
+        throw providerHttpError(res.status);
+      }
+      if (!res.body) {
+        throw new ProviderError("AI provider returned an empty stream.", {
+          code: "PROVIDER_EMPTY_RESPONSE",
+          status: 502,
+          retryable: true,
+        });
+      }
 
-  if (!res.ok || !res.body) {
-    const detail = res.body ? await res.text() : "(no body)";
-    const err = new Error(`Gemini API error (${res.status}): ${detail}`);
-    err.code = "GEMINI_ERROR";
-    throw err;
-  }
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullText = "";
+      let lastMessage = "";
 
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let fullText = "";
-  let lastMessage = "";
-
-  for await (const chunk of res.body) {
-    buffer += decoder.decode(chunk, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? ""; // keep the trailing partial line
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("data:")) continue;
-      const payload = trimmed.slice(5).trim();
-      if (!payload || payload === "[DONE]") continue;
-      try {
-        const obj = JSON.parse(payload);
+      const processSseLine = (line) => {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) return;
+        const payload = trimmed.slice(5).trim();
+        if (!payload || payload === "[DONE]") return;
+        let obj;
+        try {
+          obj = JSON.parse(payload);
+        } catch {
+          return;
+        }
         const piece = obj?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        if (!piece) continue;
+        if (!piece) return;
         fullText += piece;
         const msg = extractPartialMessage(fullText);
         if (msg && msg !== lastMessage) {
           lastMessage = msg;
+          emitted = true;
           onDelta?.(msg);
         }
-      } catch {
-        // partial / non-JSON SSE line — ignore and keep accumulating
-      }
-    }
-  }
+      };
 
-  if (!fullText) throw new Error("Gemini returned an empty response.");
-  return JSON.parse(fullText);
+      for await (const chunk of res.body) {
+        buffer += decoder.decode(chunk, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) processSseLine(line);
+      }
+      buffer += decoder.decode();
+      if (buffer.trim()) processSseLine(buffer);
+
+      if (!fullText) {
+        throw new ProviderError("AI provider returned an empty response.", {
+          code: "PROVIDER_EMPTY_RESPONSE",
+          status: 502,
+          retryable: true,
+        });
+      }
+      try {
+        return JSON.parse(fullText);
+      } catch (cause) {
+        throw new ProviderError("AI provider returned an invalid response.", {
+          code: "PROVIDER_INVALID_RESPONSE",
+          status: 502,
+          retryable: !emitted,
+          cause,
+        });
+      }
+    } catch (error) {
+      // Once a delta reached the browser, replaying the provider call could
+      // duplicate or contradict text already shown.
+      if (emitted && error instanceof ProviderError) error.retryable = false;
+      else if (emitted) {
+        throw new ProviderError("AI provider stream was interrupted.", {
+          code: "PROVIDER_STREAM_INTERRUPTED",
+          status: 502,
+          retryable: false,
+          cause: error,
+        });
+      }
+      throw error;
+    }
+  }, {
+    signal: options.signal,
+    timeoutMs: options.timeoutMs,
+    retries: options.retries,
+    baseDelayMs: options.baseDelayMs,
+    random: options.random,
+    sleep: options.sleep,
+    circuit: options.circuit || geminiCircuit,
+  });
+}
+
+export function geminiResilienceStatus() {
+  return {
+    model: MODEL,
+    timeoutMs: Math.min(Math.max(Number.parseInt(process.env.GEMINI_TIMEOUT_MS || "20000", 10) || 20_000, 1_000), 120_000),
+    maxRetries: Math.min(Math.max(Number.parseInt(process.env.GEMINI_MAX_RETRIES || "2", 10) || 0, 0), 3),
+    circuit: geminiCircuit.snapshot(),
+  };
 }

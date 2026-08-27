@@ -23,7 +23,7 @@ import {
   getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
-import { buildSearchTermSuggestions } from "../config/researchAgent.js";
+import { buildResearchPlan, buildSearchTermSuggestions } from "../config/researchAgent.js";
 import { recommendLibrarianRoutes } from "../config/librarianRoutes.js";
 import {
   DEFAULT_SUBJECT_FOCUS_ID,
@@ -596,6 +596,15 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
     }
   }, [open, topic]);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    function onKeyDown(event) {
+      if (event.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
   if (!open) return null;
 
   const currentIndex = Math.min(step, Math.max(questions.length - 1, 0));
@@ -646,6 +655,8 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
       className={`planner-modal planner-popover planner-compact no-print ${docked ? "above-composer" : ""}`}
       role="region"
       aria-labelledby="planner-title"
+      aria-describedby="planner-description"
+      aria-live="polite"
     >
       <div className="planner-head">
         <div>
@@ -654,7 +665,7 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
         </div>
         <button type="button" className="modal-close" onClick={onClose} aria-label="Close planner">Close</button>
       </div>
-      <p className="planner-topic">{currentQuestion?.why || topic || "New research topic"}</p>
+      <p className="planner-topic" id="planner-description">{currentQuestion?.why || topic || "New research topic"}</p>
       <fieldset className="planner-step-options">
         <legend className="sr-only">{currentQuestion?.question}</legend>
         {currentOptions.map((option) => (
@@ -783,6 +794,28 @@ export default function App() {
   const handoffPayload = useMemo(
     () => buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId, researchWorkspace),
     [messages, input, mode, responseStyle, subjectFocusId, researchWorkspace]
+  );
+
+  const latestReleaseId = useMemo(
+    () => [...messages].reverse().find((message) => message.role === "assistant" && message.releaseId)?.releaseId || "",
+    [messages]
+  );
+
+  const librarianReviewPackets = useMemo(
+    () => messages.flatMap((message, index) => {
+      const researchSpec = message.researchSpec || message.researchPlan?.researchSpec;
+      if (message.role !== "assistant" || !researchSpec) return [];
+      return [{
+        id: `${researchSpec.planHash || message.researchPlan?.planHash || message.releaseId || "plan"}-${index}`,
+        createdAt: message.createdAt || null,
+        releaseId: message.releaseId || "",
+        researchSpec,
+        researchPlan: message.researchPlan || null,
+        matchedResources: message.matched || [],
+        reply: message.reply || {},
+      }];
+    }),
+    [messages]
   );
 
   const savedResearchItemKeys = useMemo(
@@ -952,6 +985,8 @@ export default function App() {
       return;
     }
 
+    const requestMode = options.modeOverride || options.mode || mode;
+    if (requestMode !== mode) setMode(requestMode);
     const focusText = submittedResearchTopicContext([...messages, { role: "user", content }]);
     const requestFocus = resolveSubjectFocus(subjectFocusId, focusText);
     const requestAssignmentContext = assignmentContext(researchWorkspace.assignment);
@@ -964,7 +999,7 @@ export default function App() {
     if (requestAssignmentContext) userMessage.assignmentContext = requestAssignmentContext;
     const nextMessages = [...messages, userMessage];
     const sessionId = activeSessionId || crypto.randomUUID();
-    saveSession(nextMessages, mode, responseStyle, sessionId);
+    saveSession(nextMessages, requestMode, responseStyle, sessionId);
     setMessages(nextMessages);
     setInput("");
     setError("");
@@ -973,11 +1008,12 @@ export default function App() {
 
     try {
       const requestPayload = {
-        mode,
+        mode: requestMode,
         responseStyle,
         subjectFocusId,
         assignmentContext: requestAssignmentContext,
         plannerContext: options.plannerContext || "",
+        ...(options.researchSpec ? { researchSpec: options.researchSpec } : {}),
         messages: nextMessages.map((m) => ({
           role: m.role,
           content: m.role === "assistant"
@@ -995,7 +1031,25 @@ export default function App() {
         matched: finalPayload.matchedResources || [],
         searchTools: finalPayload.searchTools || [],
         liveResults: finalPayload.liveResults || [],
-        mode,
+        researchSpec:
+          finalPayload.researchSpec ||
+          finalPayload.reply?.researchSpec ||
+          finalPayload.reply?.research_spec ||
+          null,
+        releaseId:
+          finalPayload.releaseId ||
+          finalPayload.release_id ||
+          finalPayload.reply?.releaseId ||
+          finalPayload.reply?.release_id ||
+          "",
+        researchPlan:
+          finalPayload.researchPlan ||
+          finalPayload.plan ||
+          finalPayload.planSummary ||
+          finalPayload.reply?.research_plan ||
+          null,
+        createdAt: Date.now(),
+        mode: requestMode,
         responseStyle,
         subjectFocusId: requestFocus.id,
         subjectFocusLabel: requestFocus.label,
@@ -1003,10 +1057,20 @@ export default function App() {
       };
       const finished = [...nextMessages, assistantMessage];
       setMessages(finished);
-      saveSession(finished, mode, responseStyle, sessionId);
+      saveSession(finished, requestMode, responseStyle, sessionId);
     } catch (err) {
       setError("");
       const failureMessage = chatFailureMessage(err);
+      const deterministicFallbackPlan = buildResearchPlan(
+        content,
+        5,
+        requestFocus.selectedId || requestFocus.id,
+        requestMode,
+        {
+          assignmentContext: requestAssignmentContext,
+          plannerContext: options.plannerContext || "",
+        }
+      );
       const fallback = [
         ...nextMessages,
         {
@@ -1022,10 +1086,16 @@ export default function App() {
             search_terms: buildSearchTermSuggestions(content, [], requestFocus.selectedId || requestFocus.id, 6),
             suggested_followups: ["Try a narrower version", "Find source leads", "Get citation help"],
           },
-          matched: [],
+          matched: deterministicFallbackPlan.recommendations || [],
           searchTools: FALLBACK_SEARCH_TOOLS,
           liveResults: [],
-          mode,
+          researchSpec: {
+            ...deterministicFallbackPlan.researchSpec,
+            planHash: deterministicFallbackPlan.planHash,
+            configVersion: deterministicFallbackPlan.configVersion,
+          },
+          researchPlan: deterministicFallbackPlan,
+          mode: requestMode,
           responseStyle,
           subjectFocusId: requestFocus.id,
           subjectFocusLabel: requestFocus.label,
@@ -1033,11 +1103,19 @@ export default function App() {
         },
       ];
       setMessages(fallback);
-      saveSession(fallback, mode, responseStyle, sessionId);
+      saveSession(fallback, requestMode, responseStyle, sessionId);
     } finally {
       setLoading(false);
       setStreamText("");
     }
+  }
+
+  function rerunInterpretation(prompt, options = {}) {
+    send(prompt, {
+      skipPlanner: true,
+      modeOverride: options.mode || mode,
+      researchSpec: options.researchSpec,
+    });
   }
 
   // Grow the textarea with its content (capped via CSS max-height) instead of a
@@ -1125,7 +1203,7 @@ export default function App() {
             </div>
           </header>
           <div className="content-wrap">
-            <AdminPanel onClose={closeAdmin} />
+            <AdminPanel onClose={closeAdmin} reviewPackets={librarianReviewPackets} releaseId={latestReleaseId} />
           </div>
         </main>
       </div>
@@ -1157,7 +1235,10 @@ export default function App() {
         <header className="zsr-hero">
           <div className="hero-bg" aria-hidden="true" />
           <div className="hero-content">
-            <p className="prototype-status">Prototype for ZSR Library research workflows</p>
+            <p className="prototype-status">
+              Prototype for ZSR Library research workflows
+              {latestReleaseId && <span className="hero-release">Release {latestReleaseId}</span>}
+            </p>
             <h1><span className="title-zsr">ZSR</span> Research Navigator</h1>
             <p>Shape a topic into searchable terms, ZSR starting points, live catalog leads, and citation-aware next steps.</p>
           </div>
@@ -1252,9 +1333,13 @@ export default function App() {
                       mode={message.mode || mode}
                       responseStyle={message.responseStyle || responseStyle}
                       subjectFocusId={message.subjectFocusId || messages[index - 1]?.subjectFocusId || effectiveSubjectFocus.id}
+                      researchSpec={message.researchSpec || message.reply?.researchSpec || message.reply?.research_spec}
+                      researchPlan={message.researchPlan}
+                      releaseId={message.releaseId || message.reply?.releaseId || message.reply?.release_id}
                       isFollowup={index > 1}
                       isLatest={index === messages.length - 1 && !loading}
                       onFollowup={send}
+                      onRerunInterpretation={rerunInterpretation}
                       onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchTopicContext(messages, index), questions)}
                       onSaveResearchItem={saveResearchItem}
                       onTrackSearch={trackSearch}

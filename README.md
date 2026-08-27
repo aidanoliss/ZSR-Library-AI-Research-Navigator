@@ -30,7 +30,7 @@ Each chat has a browser-local research workspace with:
 - search iteration history and result notes
 - a copy/download review packet for librarian handoff
 
-Workspace data remains in that browser unless the student explicitly prepares a librarian handoff. Assignment constraints can be included in AI requests without changing the literal catalog query or ZSR resource matching.
+Workspace data remains in that browser unless the student explicitly prepares a librarian handoff. When the student enables assignment constraints for a request, the submitted constraints join the same normalized ResearchSpec used by deterministic planning and generated guidance.
 
 ## Local Demo
 
@@ -78,10 +78,38 @@ Live demo readiness checklist:
 - Use Render/Railway/Fly for the current Node API shape; static-only Netlify/Vercel hosting will need a separate API deployment or serverless adapter.
 - Keep the prototype disclaimer visible in the demo and in any shared recording.
 
+Pilot-hardening commands:
+
+```bash
+npm run qa:pilot
+npm run eval:pilot
+npm run eval:pilot:strict
+npm run audit:resources
+npm run audit:resources:live
+```
+
+The automated librarian evaluation checks regression-level routing and query safeguards. It does not replace human librarian scoring or confirm database licensing.
+
+Additional release evidence commands:
+
+```bash
+npm run eval:matrix
+npm run evidence:release
+node scripts/build-release-evidence.mjs --strict --write /tmp/zsr-release-evidence.md
+node scripts/build-release-evidence.mjs --strict --require-clean
+npm run diff:institution
+node scripts/diff-institution-config.mjs wfu-zsr-prototype duke-illustrative-unapproved --json
+```
+
+The release report deliberately distinguishes automated passage from librarian, privacy, accessibility, security, and institutional approval.
+
+## Institution Profiles
+
+`config/institutionProfile.js` defines and validates institution-owned discovery parameters, resource-registry pointers, help/citation/full-text routes, branding, and privacy defaults for review, release evidence, and configuration diffs. The current WFU runtime has not been converted into a dynamic multi-institution switch. The WFU entry describes prototype defaults and is not an institutional approval record. The Duke entry is deliberately blank and marked unapproved; it contains no invented Duke resource links, contacts, credentials, discovery parameters, or branding and cannot activate a Duke deployment.
+
 ## Library Link Configuration
 
-Library URLs and mode definitions live in `config/libraryLinks.js`.
-The research-intent router, citation guide placeholders, and librarian-editable resource recommendations live in `config/researchAgent.js`.
+Library URLs and mode definitions live in `config/libraryLinks.js`. The normalized research specification lives in `config/researchSpec.js`, source-mode and resource-capability governance lives in `config/resourceCapabilities.js`, database-specific query compilation lives in `config/queryCompiler.js`, and deterministic routing plus librarian-editable resource records live in `config/researchAgent.js`.
 
 Values that should be confirmed with ZSR before a public pilot:
 
@@ -115,9 +143,9 @@ This is not a LibKey API integration and does not control the browser extension.
 
 ## Pilot Admin And Handoff
 
-Open `/?admin=1` to view the read-only pilot dashboard. It shows curated resource coverage, privacy posture, integration readiness, recent explicit feedback, and librarian handoff packages. The student interface intentionally has no pilot-status shield button.
+Open `/?admin=1` to reach the restricted librarian QA gate. The client does not request protected data until an operator enters the deployment-configured access code. The server requires `Authorization: Bearer <ADMIN_TOKEN>` and denies the route when the token is absent or invalid; the code is held only for that request and is not saved in browser storage. The authorized view is read-only and does not write resource configuration.
 
-Use the envelope handoff icon to package a student's topic, suggested search terms, matched ZSR paths, and live catalog leads into an Ask ZSR email draft. Handoff contact details are not retained by default; set `HANDOFF_STORE_CONTACT=on` only after privacy review.
+Use the envelope handoff icon to package a student's topic, suggested search terms, matched ZSR paths, and live catalog leads into an Ask ZSR email draft. Handoff contact details are not retained by default. Retaining them requires both `HANDOFF_STORE_DETAIL=on` and `HANDOFF_STORE_CONTACT=on`, and should happen only after privacy review.
 
 Query logging is off by default for safer demos. Set `LOG_QUERIES=on` only after ZSR approves retention and student notice language.
 
@@ -132,6 +160,16 @@ For library technical staff review, use:
 - `docs/privacy-logging-note.md`
 - `docs/amanda-feedback-validation.md`
 - `docs/technical-staff-questions.md`
+- `docs/pilot-hardening-baseline.md`
+- `docs/reliability-qa.md`
+- `docs/accessibility-qa.md`
+- `docs/official-zsr-integration-proposal.md`
+- `docs/staff-decision-packet.md`
+- `docs/data-inventory.md`
+- `docs/threat-and-failure-model.md`
+- `docs/duke-readiness-packet.md`
+- `docs/duke-demo-10-minute.md`
+- `docs/technical-correction-note.md`
 
 ## Useful Commands
 
@@ -144,7 +182,7 @@ PORT=3002 npm start
 ## Project Structure
 
 ```text
-config/                  ZSR links, search modes, research-intent/resource config
+config/                  Institution adapter, ZSR links, modes, and research/resource config
 docs/                    Meeting packet, architecture, privacy, deployment notes
 public/                  Static images used by the prototype
 server/                  Node API server, Gemini adapter, retrieval, Primo lookup, logging

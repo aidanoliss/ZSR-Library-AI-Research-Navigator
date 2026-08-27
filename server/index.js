@@ -1,12 +1,11 @@
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { existsSync } from "node:fs";
 
-import { retrieveResources, loadResources, getSearchTools } from "./retrieve.js";
-import { generateChatResponse, streamChatResponse } from "./gemini.js";
+import { retrieveResearchContext, loadResources, getSearchTools } from "./retrieve.js";
+import { generateChatResponse, geminiResilienceStatus, streamChatResponse } from "./gemini.js";
 import { validateReply } from "./validate.js";
 import {
   logQuery,
@@ -18,27 +17,35 @@ import {
   readQuerySummary,
 } from "./log.js";
 import { rateLimit } from "./ratelimit.js";
+import {
+  JSON_BODY_LIMIT_BYTES,
+  applySecurityHeaders,
+  clientKey,
+  corsHeaders,
+  isAdminAuthorized,
+  isCorsRequestAllowed,
+  releaseMetadata,
+  trustProxyHops,
+} from "./httpSecurity.js";
 import { screenMessage, blockedReply } from "./screen.js";
 import { searchSourceCandidates } from "./primo.js";
 import { shouldLookupCatalog } from "./catalogIntent.js";
-import { appendRequestContextForAi, requestContextFromBody } from "./requestContext.js";
+import { appendRequestContextForAi } from "./requestContext.js";
 import { applySourceContract, transparentSourceFallback } from "./sourceContract.js";
 import { buildPrimoRequest } from "./primoApi.js";
+import { parseChatRequest } from "./chatRequest.js";
 import {
   DEFAULT_MODE_ID,
   DEFAULT_RESPONSE_STYLE_ID,
-  getResponseStyle,
   getSearchMode,
 } from "../config/libraryLinks.js";
-import { DEFAULT_SUBJECT_FOCUS_ID, getSubjectFocus, resolveSubjectFocus } from "../config/subjectFocus.js";
+import { DEFAULT_SUBJECT_FOCUS_ID } from "../config/subjectFocus.js";
 import {
-  buildCatalogSearchQueries,
   buildResearchPlan,
   buildSearchTermSuggestions,
   isSubstantiveResearchRequest,
 } from "../config/researchAgent.js";
 import {
-  activeResearchConversation,
   submittedResearchTopicContext,
 } from "../src/conversationContext.js";
 
@@ -48,8 +55,23 @@ const HOST = process.env.HOST || "0.0.0.0";
 const ASK_ZSR_EMAIL = process.env.ASK_ZSR_EMAIL || "askzsr@wfu.edu";
 
 export const app = express();
-app.use(cors());
-app.use(express.json());
+app.disable("x-powered-by");
+const proxyHops = trustProxyHops();
+if (proxyHops) app.set("trust proxy", proxyHops);
+app.use((req, res, next) => {
+  applySecurityHeaders(res);
+  if (req.path?.startsWith("/api/")) res.setHeader("Cache-Control", "no-store");
+  if (!isCorsRequestAllowed(req)) return res.status(403).json({ error: "Origin is not allowed." });
+  for (const [name, value] of Object.entries(corsHeaders(req))) res.setHeader(name, value);
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.setHeader("Access-Control-Max-Age", "600");
+    return res.status(204).end();
+  }
+  next();
+});
+app.use(express.json({ limit: JSON_BODY_LIMIT_BYTES }));
 
 // Keep the ZSR preview fast and isolated. The older Venture Radar API imports a
 // larger experimental pipeline, so load it only if that namespace is requested.
@@ -64,13 +86,29 @@ app.use("/api/venture", async (req, res, next) => {
 });
 
 // Health + visibility into what the curated file currently holds.
-app.get("/api/health", async (_req, res) => {
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, ...releaseMetadata() });
+});
+
+app.get("/api/ready", async (_req, res) => {
   const resources = await loadResources();
-  res.json({ ok: true, resourceCount: resources.length });
+  const gemini = geminiResilienceStatus();
+  const configured = envConfigured("GEMINI_API_KEY");
+  const ready = resources.length > 0 && configured;
+  res.status(ready ? 200 : 503).json({
+    ok: ready,
+    ...releaseMetadata(),
+    checks: {
+      resources: { ok: resources.length > 0, count: resources.length },
+      gemini: { configured, circuit: gemini.circuit.state },
+    },
+  });
 });
 
 function envConfigured(name) {
-  return Boolean(String(process.env[name] || "").trim());
+  const value = String(process.env[name] || "").trim();
+  if (name === "GEMINI_API_KEY" && value === "your_api_key_here") return false;
+  return Boolean(value);
 }
 
 function resourceSummary(resources = []) {
@@ -98,7 +136,7 @@ function integrationStatus() {
   return {
     gemini: {
       configured: envConfigured("GEMINI_API_KEY"),
-      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+      ...geminiResilienceStatus(),
     },
     primoPublicLookup: {
       configured: (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off",
@@ -121,7 +159,7 @@ async function pilotStatusPayload() {
   return {
     ok: true,
     prototype: true,
-    canonicalPath: "/Users/aidanoliss/Desktop/ZSR AI Assistant",
+    ...releaseMetadata(),
     privacy: loggingStatus(),
     resources: resourceSummary(resources),
     integrations: integrationStatus(),
@@ -132,7 +170,8 @@ app.get("/api/pilot/status", async (_req, res) => {
   res.json(await pilotStatusPayload());
 });
 
-app.get("/api/admin/summary", async (_req, res) => {
+app.get("/api/admin/summary", async (req, res) => {
+  if (!isAdminAuthorized(req)) return res.status(404).json({ error: "Not found." });
   const [status, feedback, handoffs, querySummary] = await Promise.all([
     pilotStatusPayload(),
     readFeedback(100),
@@ -159,51 +198,17 @@ app.get("/api/admin/summary", async (_req, res) => {
   });
 });
 
-/**
- * Validate + normalize an incoming chat request body.
- * Returns { error } on bad input, or normalized message, mode, focus, and model-only context on success.
- */
-function parseChatRequest(body) {
-  const messages = Array.isArray(body?.messages) ? body.messages : null;
-  if (!messages || messages.length === 0) {
-    return { error: "Please enter a research topic or question to get started." };
-  }
-  const last = messages[messages.length - 1];
-  if (!last || last.role !== "user" || !String(last.content || "").trim()) {
-    return { error: "The latest message must be from the student." };
-  }
-  if (String(last.content).length > 2000) {
-    return { error: "That message is very long — please shorten it to under 2000 characters." };
-  }
-  if (messages.length > 40) {
-    return { error: "This conversation is quite long. Please start a new chat." };
-  }
-
-  const normalizedHistory = messages
-    .filter((m) => (m.role === "user" || m.role === "assistant") && String(m.content || "").trim())
-    .map((m) => ({ role: m.role, content: String(m.content).trim() }));
-  const history = activeResearchConversation(normalizedHistory);
-
-  const studentText = submittedResearchTopicContext(history) || String(last.content).trim();
-
-  const mode = getSearchMode(body?.mode || DEFAULT_MODE_ID).id;
-  const responseStyle = getResponseStyle(body?.responseStyle || DEFAULT_RESPONSE_STYLE_ID).id;
-  const subjectFocusId = getSubjectFocus(body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID).id;
-  return { history, studentText, last, mode, responseStyle, subjectFocusId, ...requestContextFromBody(body) };
-}
-
 function noKeyResponse(res) {
   return res.status(503).json({
-    error:
-      "The server is missing a Gemini API key. Add GEMINI_API_KEY to your .env file (see .env.example).",
+    error: "AI generation is not configured on this deployment.",
   });
 }
 
 /** Shared gate: rate limit + relevance/abuse screen. Returns null if OK. */
-function gate(req, res) {
-  const key = req.ip || req.socket?.remoteAddress || "unknown";
-  const limit = rateLimit(key);
+function gate(req, res, scope = "chat") {
+  const limit = rateLimit(clientKey(req), { scope });
   if (!limit.allowed) {
+    res.setHeader("Retry-After", String(limit.retryAfter));
     res.status(429).json({
       error: `You've sent a lot of requests in a short time. Please wait about ${Math.ceil(
         limit.retryAfter / 60
@@ -220,10 +225,55 @@ function startingPoint(resources, id, why) {
   return { resource_name: resource.name, url: resource.url, why };
 }
 
-function catalogSearchQueries(history, studentText, _modeId = DEFAULT_MODE_ID, subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
-  const subjectFocus = resolveSubjectFocus(subjectFocusId, studentText);
-  const focusId = subjectFocus.selectedId || subjectFocus.id;
-  return buildCatalogSearchQueries(studentText, focusId, 6);
+function liveSearchQueries(plan, fallbackText = "") {
+  if (!plan) return [fallbackText].filter(Boolean);
+  const catalogQueries = (plan.recommendations || [])
+    .filter((resource) => resource.id === "primo")
+    .flatMap((resource) => resource.searchTerms || []);
+  const planQueries = [
+    ...(plan.searchTerms || []),
+    ...(plan.fallbacks || []).map((fallback) => fallback.query),
+    ...(plan.recommendations || []).flatMap((resource) => resource.searchTerms || []),
+  ];
+  const compiled = [...new Set([...catalogQueries, ...planQueries].map((query) => String(query || "").trim()).filter(Boolean))]
+    .slice(0, 5);
+  return compiled.length ? compiled : [fallbackText].filter(Boolean);
+}
+
+function responsePlanContext(plan) {
+  const releaseId = releaseMetadata().releaseId;
+  if (!plan) return { releaseId };
+  const planMeta = {
+    modeId: plan.modeId,
+    configVersion: plan.configVersion,
+    planHash: plan.planHash,
+    sourceMode: plan.sourceMode,
+    safety: plan.safety,
+    safeFailure: plan.safeFailure,
+    validation: plan.validation,
+  };
+  return {
+    releaseId,
+    researchSpec: {
+      ...plan.researchSpec,
+      planHash: plan.planHash,
+      configVersion: plan.configVersion,
+    },
+    planMeta,
+    researchPlan: {
+      ...planMeta,
+      researchSpec: plan.researchSpec,
+      recommendations: (plan.recommendations || []).map((resource) => ({
+        id: resource.id,
+        searchTerms: resource.searchTerms,
+        filters: resource.filters,
+        queryValidation: resource.queryValidation,
+        provenance: resource.provenance,
+      })),
+      fallbacks: plan.fallbacks,
+      transparencyNote: plan.transparencyNote,
+    },
+  };
 }
 
 function withCatalogFoundIntro(reply, liveResults, latestText) {
@@ -275,11 +325,8 @@ function catalogResultFocusedTurn(history, latestText, liveResults) {
   return wantsSources && !wantsWhereToSearch;
 }
 
-function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID) {
+function prepareReply(reply, history, liveResults, latestText, responseStyle = DEFAULT_RESPONSE_STYLE_ID, resources = [], subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID, mode = DEFAULT_MODE_ID, deterministicPlan = null) {
   const researchText = submittedResearchTopicContext(history) || latestText;
-  const deterministicPlan = isSubstantiveResearchRequest(researchText)
-    ? buildResearchPlan(researchText, 6, subjectFocusId)
-    : null;
   if (reply?.search_terms?.length) {
     reply = { ...reply, search_terms: deterministicPlan?.searchTerms || [] };
   } else if (isSubstantiveResearchRequest(researchText) && !topicOptionIntent(latestText)) {
@@ -317,8 +364,34 @@ function sourceResultsFallback(liveResults, modeId = DEFAULT_MODE_ID) {
   };
 }
 
-function fallbackDatabaseStrategy(original, modeId = DEFAULT_MODE_ID) {
-  const plan = buildResearchPlan(original, 4);
+function deterministicPlanFallback(plan, resources = []) {
+  if (!plan) return null;
+  const premiseNotice = plan.safety?.requiresPremiseCheck
+    ? " The wording includes a premise that should be tested rather than accepted; compare appropriate evidence and keep correlation, causation, and uncertainty distinct."
+    : "";
+  return {
+    message: `The generated research orientation is temporarily unavailable. The routes and searches below are a deterministic plan built from the governed resource registry, not a research conclusion.${premiseNotice}`,
+    search_terms: plan.searchTerms || [],
+    starting_points: resources.map((resource) => ({
+      resource_name: resource.name,
+      url: resource.url,
+      why: resource.why || resource.description,
+    })),
+    database_strategy: resources
+      .filter((resource) => resource.recommended_query)
+      .map((resource) => ({
+        database: resource.name,
+        az_area: resource.type,
+        why: resource.why || resource.description,
+        search_inside: [resource.recommended_query, ...(resource.recommended_filters || [])],
+        journals_or_sources: [resource.expect].filter(Boolean),
+      })),
+    limitations: "No provider-generated overview was substituted. Verify each route, result, and claim, and ask a librarian when the plan does not fit the assignment.",
+  };
+}
+
+function fallbackDatabaseStrategy(original, modeId = DEFAULT_MODE_ID, deterministicPlan = null) {
+  const plan = deterministicPlan || buildResearchPlan(original, 4, DEFAULT_SUBJECT_FOCUS_ID, modeId);
   return plan.recommendations.map((resource) => ({
     database: resource.name,
     az_area: resource.subjectArea,
@@ -391,7 +464,7 @@ function fallbackTopicOptions(original) {
   ];
 }
 
-function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
+function followupFallback(history, resources, modeId = DEFAULT_MODE_ID, deterministicPlan = null) {
   const userTurns = history.filter((m) => m.role === "user").length;
   if (userTurns <= 1) return null;
 
@@ -464,7 +537,7 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
         startingPoint(resources, "communication-mass-media-complete", "Communication and media-effects research."),
         startingPoint(resources, "pubmed-medline", "Health and clinical research."),
       ].filter(Boolean),
-      database_strategy: fallbackDatabaseStrategy(original, modeId),
+      database_strategy: fallbackDatabaseStrategy(original, modeId, deterministicPlan),
       suggested_followups,
     };
   }
@@ -478,63 +551,93 @@ function followupFallback(history, resources, modeId = DEFAULT_MODE_ID) {
 
 // Buffered endpoint: full conversation in, complete structured reply out.
 app.post("/api/chat", async (req, res) => {
-  if (gate(req, res)) return;
+  if (gate(req, res, "chat")) return;
   const parsed = parseChatRequest(req.body);
   if (parsed.error) return res.status(400).json({ error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext, researchSpec } = parsed;
   const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
   const screen = screenMessage(last.content);
   if (screen.block) {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
-    return res.json({ reply: blockedReply(screen.message), matchedResources: [] });
+    return res.json({ reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) });
   }
 
+  const providerAbort = new AbortController();
+  const abortProvider = () => providerAbort.abort(new DOMException("Client disconnected", "AbortError"));
+  const abortIfIncomplete = () => {
+    if (!res.writableEnded) abortProvider();
+  };
+  req.once("aborted", abortProvider);
+  res.once("close", abortIfIncomplete);
   let resources = [];
+  let plan = null;
   let primoPromise = Promise.resolve([]);
   try {
-    resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
+    const researchContext = await retrieveResearchContext(studentText, 6, mode, subjectFocusId, {
+      assignmentContext,
+      plannerContext,
+      researchSpec,
+    });
+    plan = researchContext.plan;
+    resources = researchContext.resources;
+    const effectiveMode = plan?.modeId || mode;
     // Run the AI plan and the live ZSR catalog lookup in parallel.
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchSourceCandidates(catalogSearchQueries(history, studentText, mode, subjectFocusId), 10, mode)
+      ? searchSourceCandidates(liveSearchQueries(plan, studentText), 10, effectiveMode)
       : Promise.resolve([]);
-    const rawReply = await generateChatResponse(aiHistory, resources, mode, responseStyle, subjectFocusId);
+    const rawReply = await generateChatResponse(aiHistory, resources, effectiveMode, responseStyle, subjectFocusId, { signal: providerAbort.signal });
     const liveResults = await primoPromise;
 
     const { reply: validatedReply, report } = validateReply(rawReply, resources);
-    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId);
+    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan);
     if (report.dropped.length || report.corrected.length) {
       console.warn("[/api/chat] link guard:", JSON.stringify(report));
     }
     logQuery({ topic: last.content.trim(), matchedIds: resources.map((r) => r.id) });
 
-    res.json({ reply, matchedResources: resources, searchTools: await getSearchTools(), liveResults });
+    res.json({
+      reply,
+      matchedResources: resources,
+      searchTools: await getSearchTools(),
+      liveResults,
+      ...responsePlanContext(plan),
+    });
   } catch (err) {
-    console.error("[/api/chat]", err.message);
-    const fallback = transparentSourceFallback(responseStyle) || followupFallback(history, resources, mode);
+    if (res.destroyed || res.writableEnded || providerAbort.signal.aborted) return;
+    console.error(`[/api/chat] ${err?.code || "ERROR"}`);
+    const effectiveMode = plan?.modeId || mode;
+    const fallback = transparentSourceFallback(responseStyle)
+      || followupFallback(history, resources, effectiveMode, plan)
+      || deterministicPlanFallback(plan, resources);
     if (fallback) {
       const liveResults = await primoPromise.catch(() => []);
       return res.json({
-        reply: prepareReply(fallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId),
+        reply: prepareReply(fallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan),
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        ...responsePlanContext(plan),
       });
     }
     const liveResults = await primoPromise.catch(() => []);
-    const sourceFallback = sourceResultsFallback(liveResults, mode);
+    const sourceFallback = sourceResultsFallback(liveResults, effectiveMode);
     if (sourceFallback) {
       return res.json({
-        reply: prepareReply(sourceFallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId),
+        reply: prepareReply(sourceFallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan),
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        ...responsePlanContext(plan),
       });
     }
     if (err.code === "NO_API_KEY") return noKeyResponse(res);
     res.status(502).json({ error: "Could not generate a reply right now. Please try again." });
+  } finally {
+    req.removeListener("aborted", abortProvider);
+    res.removeListener("close", abortIfIncomplete);
   }
 });
 
@@ -543,10 +646,10 @@ app.post("/api/chat", async (req, res) => {
 //   {type:"done", reply, matchedResources}
 //   {type:"error", error}
 app.post("/api/chat/stream", async (req, res) => {
-  if (gate(req, res)) return;
+  if (gate(req, res, "chat")) return;
   const parsed = parseChatRequest(req.body);
   if (parsed.error) return res.status(400).json({ error: parsed.error });
-  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext } = parsed;
+  const { history, studentText, last, mode, responseStyle, subjectFocusId, assignmentContext, plannerContext, researchSpec } = parsed;
   const aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
@@ -555,13 +658,20 @@ app.post("/api/chat/stream", async (req, res) => {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
     res.setHeader("Content-Type", "application/x-ndjson");
     res.write(JSON.stringify({ type: "delta", message: screen.message }) + "\n");
-    res.write(JSON.stringify({ type: "done", reply: blockedReply(screen.message), matchedResources: [] }) + "\n");
+    res.write(JSON.stringify({ type: "done", reply: blockedReply(screen.message), matchedResources: [], ...responsePlanContext(null) }) + "\n");
     return res.end();
   }
 
   let resources;
+  let plan;
   try {
-    resources = await retrieveResources(studentText, 6, mode, subjectFocusId);
+    const researchContext = await retrieveResearchContext(studentText, 6, mode, subjectFocusId, {
+      assignmentContext,
+      plannerContext,
+      researchSpec,
+    });
+    plan = researchContext.plan;
+    resources = researchContext.resources;
   } catch (err) {
     console.error("[/api/chat/stream] retrieve", err.message);
     return res.status(502).json({ error: "Could not generate a reply right now. Please try again." });
@@ -572,24 +682,33 @@ app.post("/api/chat/stream", async (req, res) => {
   res.setHeader("X-Accel-Buffering", "no");
   const write = (obj) => res.write(JSON.stringify(obj) + "\n");
   let primoPromise = Promise.resolve([]);
+  const providerAbort = new AbortController();
+  const abortProvider = () => providerAbort.abort(new DOMException("Client disconnected", "AbortError"));
+  const abortIfIncomplete = () => {
+    if (!res.writableEnded) abortProvider();
+  };
+  req.once("aborted", abortProvider);
+  res.once("close", abortIfIncomplete);
 
   try {
+    const effectiveMode = plan?.modeId || mode;
     const lookupCatalog = shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length);
     primoPromise = lookupCatalog
-      ? searchSourceCandidates(catalogSearchQueries(history, studentText, mode, subjectFocusId), 10, mode)
+      ? searchSourceCandidates(liveSearchQueries(plan, studentText), 10, effectiveMode)
       : Promise.resolve([]); // in parallel with streaming
     const rawReply = await streamChatResponse(
       aiHistory,
       resources,
       (message) => write({ type: "delta", message }),
-      mode,
+      effectiveMode,
       responseStyle,
-      subjectFocusId
+      subjectFocusId,
+      { signal: providerAbort.signal }
     );
 
     const liveResults = await primoPromise;
     const { reply: validatedReply, report } = validateReply(rawReply, resources);
-    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId);
+    const reply = prepareReply(validatedReply, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan);
     if (report.dropped.length || report.corrected.length) {
       console.warn("[/api/chat/stream] link guard:", JSON.stringify(report));
     }
@@ -601,47 +720,58 @@ app.post("/api/chat/stream", async (req, res) => {
       matchedResources: resources,
       searchTools: await getSearchTools(),
       liveResults,
+      ...responsePlanContext(plan),
     });
     res.end();
   } catch (err) {
-    console.error("[/api/chat/stream]", err.message);
-    const fallback = transparentSourceFallback(responseStyle) || followupFallback(history, resources, mode);
+    if (res.destroyed || res.writableEnded || providerAbort.signal.aborted) return;
+    console.error(`[/api/chat/stream] ${err?.code || "ERROR"}`);
+    const effectiveMode = plan?.modeId || mode;
+    const fallback = transparentSourceFallback(responseStyle)
+      || followupFallback(history, resources, effectiveMode, plan)
+      || deterministicPlanFallback(plan, resources);
     if (fallback) {
       const liveResults = await primoPromise.catch(() => []);
       write({
         type: "done",
-        reply: prepareReply(fallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId),
+        reply: prepareReply(fallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan),
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        ...responsePlanContext(plan),
       });
       return res.end();
     }
     const liveResults = await primoPromise.catch(() => []);
-    const sourceFallback = sourceResultsFallback(liveResults, mode);
+    const sourceFallback = sourceResultsFallback(liveResults, effectiveMode);
     if (sourceFallback) {
       write({
         type: "done",
-        reply: prepareReply(sourceFallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId),
+        reply: prepareReply(sourceFallback, history, liveResults, last.content, responseStyle, resources, subjectFocusId, effectiveMode, plan),
         matchedResources: resources,
         searchTools: await getSearchTools(),
         liveResults,
+        ...responsePlanContext(plan),
       });
       return res.end();
     }
     const msg =
       err.code === "NO_API_KEY"
-        ? "The server is missing a Gemini API key. Add GEMINI_API_KEY to your .env file (see .env.example)."
+        ? "AI generation is not configured on this deployment."
         : "Could not generate a reply right now. Please try again.";
     // If we haven't streamed yet, a clean JSON error is friendlier.
     if (!res.headersSent) return res.status(502).json({ error: msg });
     write({ type: "error", error: msg });
     res.end();
+  } finally {
+    req.removeListener("aborted", abortProvider);
+    res.removeListener("close", abortIfIncomplete);
   }
 });
 
 // Students rate a reply or report a gap; librarians read it back.
 app.post("/api/feedback", async (req, res) => {
+  if (gate(req, res, "feedback")) return;
   const { rating, note, topic } = req.body || {};
   if (!["up", "down", "gap"].includes(rating)) {
     return res.status(400).json({ error: "Invalid rating." });
@@ -724,6 +854,7 @@ function handoffEmailBody({ topic, mode, responseStyle, subjectFocus, note, cont
 }
 
 app.post("/api/handoff", async (req, res) => {
+  if (gate(req, res, "handoff")) return;
   const body = req.body || {};
   const topic = String(body.topic || "").slice(0, 2000);
   if (!topic.trim()) {
@@ -767,7 +898,7 @@ app.post("/api/handoff", async (req, res) => {
   };
 
   try {
-    await logHandoff(payload);
+    await logHandoff(payload).catch(() => console.warn("[handoff] aggregate event was not retained"));
     const subject = `Research help request: ${payload.topic.slice(0, 80)}`;
     const bodyText = handoffEmailBody(payload);
     const mailto = `mailto:${ASK_ZSR_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
@@ -784,8 +915,23 @@ app.post("/api/handoff", async (req, res) => {
 });
 
 // Simple librarian view of recent feedback.
-app.get("/api/feedback", async (_req, res) => {
+app.get("/api/feedback", async (req, res) => {
+  if (!isAdminAuthorized(req)) return res.status(404).json({ error: "Not found." });
   res.json({ feedback: await readFeedback() });
+});
+
+app.use("/api", (_req, res) => res.status(404).json({ error: "Not found." }));
+
+app.use((err, _req, res, next) => {
+  if (err?.type === "entity.too.large" || err?.status === 413) {
+    return res.status(413).json({ error: "Request body is too large." });
+  }
+  if (err instanceof SyntaxError && err?.status === 400 && "body" in err) {
+    return res.status(400).json({ error: "Request body must be valid JSON." });
+  }
+  console.error(`[express] ${err?.code || "INTERNAL_ERROR"}`);
+  if (res.headersSent) return next(err);
+  return res.status(500).json({ error: "Internal server error." });
 });
 
 // In production, serve the built frontend from the same server.

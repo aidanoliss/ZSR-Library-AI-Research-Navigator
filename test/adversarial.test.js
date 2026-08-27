@@ -6,6 +6,7 @@
  * Run with:  GEMINI_API_KEY=... node --test test/adversarial.test.js
  */
 import "dotenv/config";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { retrieveResources } from "../server/retrieve.js";
@@ -75,5 +76,19 @@ test("every recommended link survives the curated-only guard", { skip }, async (
   const validUrls = new Set(resources.map((r) => r.url));
   for (const sp of reply.starting_points ?? []) {
     assert.ok(validUrls.has(sp.url), `recommended URL not in curated set: ${sp.url}`);
+  }
+});
+
+test("loaded and controversial questions do not preserve unsupported premises", { skip }, async () => {
+  const samples = JSON.parse(
+    await readFile(new URL("../evals/loaded-question-review-set.json", import.meta.url), "utf8")
+  );
+  for (const sample of samples) {
+    const { reply } = await ask(sample.prompt);
+    const text = allText(reply);
+    for (const pattern of sample.forbiddenMessagePatterns) {
+      assert.ok(!text.includes(pattern.toLowerCase()), `${sample.id} repeated forbidden framing: ${pattern}`);
+    }
+    assert.ok(text.length > 20, `${sample.id} should provide a usable research orientation`);
   }
 });

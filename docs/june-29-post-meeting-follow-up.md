@@ -26,7 +26,7 @@ Suggested live-demo checklist:
 - Try: "I need statistics on college student mental health."
 - Try: "I need a citation for a website in APA."
 - Try: "I need full text for this DOI 10.1001/jama.2004.1635."
-- Open the pilot-status dashboard with `/?admin=1` and confirm query logging shows as off.
+- Open the restricted librarian QA gate with `/?admin=1`, enter the deployment-configured access code, and confirm query logging shows as off. Do not share the access code.
 - Use the handoff icon once and confirm the email draft is useful without retaining contact details.
 - Note any ZSR resource names, links, citation pages, or librarian-routing language that should be corrected before broader sharing.
 
@@ -42,5 +42,5 @@ Aidan
 - Build command: `npm ci --include=dev && npm run build`.
 - Start command: `npm start`.
 - Required secret: `GEMINI_API_KEY`, set only in Render or local `.env`.
-- Demo privacy defaults: `LOG_QUERIES=off`, `HANDOFF_STORE_CONTACT=off`.
+- Demo privacy defaults: `LOG_QUERIES=off`, `LOG_QUERY_TEXT=off`, `HANDOFF_STORE_DETAIL=off`, `HANDOFF_STORE_CONTACT=off`.
 - Render binding: `HOST=0.0.0.0`, `PORT=10000`.

@@ -1,33 +1,28 @@
-# Venture Radar Methodology
+# Research Navigator Evaluation Methodology
 
-Venture Radar is an analyst-augmentation system for startup discovery, market mapping, venture research, and proposal drafting. It is not an automated investing product.
+The evaluation program tests whether a deterministic research plan is reproducible, source-mode appropriate, concept preserving, inspectable, and safe to use as a starting orientation. It does not measure whether a literature review is complete and does not grant librarian or institutional approval.
 
-## Workflow
+## Evidence layers
 
-1. Discover newly surfaced startups from configured public or manual sources.
-2. Deduplicate company records by name, URL, source URL, and product description similarity.
-3. Extract structured company profiles from source text.
-4. Separate confirmed facts, model inferences, unverified claims, and diligence needs.
-5. Score companies with the transparent scoring rubric.
-6. Group companies by domain and identify the best company in each domain.
-7. Match top companies to thesis-relevant investors.
-8. Generate memos, outreach drafts, and a weekly report.
+1. Unit and contract tests validate request handling, routing, query construction, link allowlisting, provider failure, accessibility structure, privacy/security defaults, and institution profiles.
+2. The librarian baseline runs common and niche prompts across disciplines against explicit routing and query expectations.
+3. The metamorphic matrix runs three paraphrases of each discipline topic through all six governed source modes. It checks mode propagation, mode-capable routes in the top three, per-query concept retention, paraphrase stability, provenance, safety/failure metadata, configuration version, and plan hash.
+4. The loaded-question set covers causal overclaim, medical misinformation, political/conspiratorial framing, stigma, determinism, and presentism.
+5. Human librarians separately rate path relevance, search quality, catalog precision, and fallback safety. Blank ratings remain pending and cannot be converted into automated approval.
 
-## Evidence Discipline
+## Reproducibility
 
-The UI and reports use four evidence tags:
+Every deterministic plan reports a configuration version and plan hash. The release evidence report also records the source commit, branch, Node version, dirty-tree state, mode summaries, and explicit human-approval status. Re-running identical input against identical configuration must yield the same deterministic hash.
 
-- Confirmed: directly supported by a source.
-- Inferred: a model or analyst inference based on available information.
-- Unverified: a claim that appears in a source but needs corroboration.
-- Needs diligence: a question or review item before recommendation.
+## Metamorphic expectations
 
-## Source Policy
+- Equivalent paraphrases should retain at least two of the top three routes within the same discipline and mode.
+- Changing only source mode should preserve core concepts while changing route capabilities and query treatment.
+- Books and scholarly modes must not return the same ordered plan; books should prioritize catalog/monograph paths while scholarly mode prioritizes disciplinary article indexes.
+- Every primary recommendation query must preserve all required ResearchSpec concepts.
+- The same strong query may be reused across compatible databases. The evaluator does not require artificial variation that drops a concept; it still rejects duplicate moves within the same location or redundant generic/fallback options.
+- A weak or invalid plan must report safe-failure metadata and a usable clarification or librarian path.
 
-Preferred sources are official APIs, RSS feeds, public directories, permitted public pages, manually provided URLs, filings, company websites, accelerator pages, and founder-provided materials. Scraping, if added, should be lightweight, rate-limited, respectful, and isolated from core scoring logic.
+## Known evaluation boundaries
 
-## Current Ingestion Implementation
-
-The first live connector uses Hacker News Launch HN results through the public Algolia/HN search API. It stores launch title, source URL, HN metadata, deterministic category inference, score inputs, and raw candidate metadata. HN points and comments are treated as community interest only, not revenue, retention, customer adoption, or investment performance.
-
-Deduplication runs before persistence using normalized name, website host, source URL, and source UID. Extracted profiles preserve four evidence buckets so confirmed source text, inferred category/score logic, unverified claims, and diligence questions remain separate.
+Automated tests do not confirm licensing, holdings, full-text access, librarian endorsement, accessibility with assistive technology, privacy compliance, application security, or student learning outcomes. Public-provider relevance also requires sampled human review. Those remain separate release gates.
