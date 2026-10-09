@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { getOpenAlexStatus, searchOpenAlex } from "../server/openalex.js";
+import { assessSourceRequirements } from "../src/sourceAssessment.js";
 
 function openAlexWork(overrides = {}) {
   const title = overrides.display_name || "Climate change and biodiversity conservation";
@@ -57,6 +58,51 @@ function openAlexWork(overrides = {}) {
 function okResponse(results) {
   return { ok: true, json: async () => ({ results }) };
 }
+
+test("OpenAlex enforces book mode and publication bounds without inventing peer-review verification", async () => {
+  let requestedFilter = "";
+  const researchSpec = { mode: "books", sourceRequirements: { publicationYearFrom: 2021, publicationYearTo: 2025, peerReviewed: true } };
+  const results = await searchOpenAlex("climate change biodiversity", 10, {
+    apiKey: "test-key", researchSpec,
+    fetchImpl: async (url) => {
+      requestedFilter = new URL(url).searchParams.get("filter");
+      return okResponse([
+        openAlexWork({ display_name: "Climate change and biodiversity article" }),
+        openAlexWork({ display_name: "Climate change and biodiversity old book", type: "book", type_crossref: "book", publication_date: "2018-01-01", publication_year: 2018 }),
+        openAlexWork({ display_name: "Climate change and biodiversity current book", type: "book", type_crossref: "book" }),
+        openAlexWork({ display_name: "Climate change and biodiversity undated book", type: "book", type_crossref: "book", publication_date: "", publication_year: null }),
+      ]);
+    },
+  });
+  assert.match(requestedFilter, /from_publication_date:2021-01-01/);
+  assert.match(requestedFilter, /to_publication_date:2025-12-31/);
+  assert.equal(results.length, 2);
+  assert.ok(results.every((result) => result.sourceKind === "book" && result.sourceMode === "books"));
+  assert.ok(results.every((result) => result.peerReviewed === null && result.sourceAssessment.status === "unverified"));
+  assert.equal(results.find((result) => /undated/.test(result.title)).sourceAssessment.checks.find((check) => check.id === "publication-date").status, "unverified");
+});
+
+test("metadata assessment distinguishes a known mismatch from missing evidence", () => {
+  const requirements = { publicationYearFrom: 2021, publicationYearTo: 2025, peerReviewed: true };
+  assert.equal(assessSourceRequirements({ date: "2020", peerReviewed: true }, requirements).status, "mismatch");
+  assert.equal(assessSourceRequirements({ date: "2024", type: "journal article" }, requirements).status, "unverified");
+  assert.equal(assessSourceRequirements({ date: "2024", peerReviewed: true }, requirements).status, "meets");
+  assert.equal(assessSourceRequirements({ date: "2024", peerReviewed: false }, requirements).status, "mismatch");
+});
+
+test("OpenAlex reports timeout, rate limiting, true empty results and disabled separately", async () => {
+  const cases = [
+    { expected: "rate_limited", fetchImpl: async () => ({ ok: false, status: 429 }) },
+    { expected: "empty", fetchImpl: async () => okResponse([]) },
+    { expected: "disabled", apiKey: "", fetchImpl: async () => { throw new Error("must not fetch"); } },
+    { expected: "timeout", timeoutMs: 2, fetchImpl: async (_url, { signal }) => new Promise((_resolve, reject) => signal.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")), { once: true })) },
+  ];
+  for (const scenario of cases) {
+    const outcomes = [];
+    await searchOpenAlex("climate biodiversity", 5, { apiKey: "test-key", ...scenario, onOutcome: (outcome) => outcomes.push(outcome) });
+    assert.equal(outcomes.at(-1).status, scenario.expected);
+  }
+});
 
 test("constructs the current OpenAlex works search URL with bounded server credentials", async () => {
   let requestUrl = "";
@@ -217,7 +263,7 @@ test("sanitizes malicious metadata and rejects unsafe or credential-bearing link
   assert.doesNotMatch(JSON.stringify(results), /<script|<b>|<em>|javascript:|data:text|user:password/i);
 });
 
-test("deduplicates works by canonical DOI and independently by normalized title", async () => {
+test("deduplicates canonical DOIs while preserving works with conflicting identifiers", async () => {
   const works = [
     openAlexWork({ display_name: "AI and cognitive offloading in learning", doi: "https://doi.org/10.5555/shared" }),
     openAlexWork({ display_name: "AI cognitive offloading duplicate DOI", doi: "10.5555/shared" }),
@@ -240,8 +286,8 @@ test("deduplicates works by canonical DOI and independently by normalized title"
     fetchImpl: async () => okResponse(works),
   });
 
-  assert.equal(results.length, 2);
-  assert.deepEqual(results.map((result) => result.doi), ["10.5555/shared", "10.5555/unique"]);
+  assert.equal(results.length, 3);
+  assert.deepEqual(results.map((result) => result.doi), ["10.5555/shared", "10.5555/different", "10.5555/unique"]);
 });
 
 test("excludes retractions and off-topic works despite provider ranking", async () => {
@@ -318,4 +364,32 @@ test("returns citation and rights metadata without retrieving or summarizing ful
   assert.equal(result.citation.lastPage, "19");
   assert.equal("fullText" in result, false);
   assert.equal("summary" in result, false);
+});
+
+test("OpenAlex reconstructs bounded provider abstracts and ranks their original topic evidence", async () => {
+  const words = "This article compares sanctions in authoritarian regimes and democracies using provider reported metadata only.".split(" ");
+  const abstract = {};
+  words.forEach((word, position) => (abstract[word] ||= []).push(position));
+  const spec = {
+    mode: "scholarly", concepts: [{ id: "sanctions", preferredTerm: "sanctions" }, { id: "authoritarian", preferredTerm: "authoritarian regimes" }, { id: "democracies", preferredTerm: "democracies" }],
+    comparison: { conceptIds: ["authoritarian", "democracies"], terms: ["authoritarian regimes", "democracies"] },
+  };
+  const calls = [];
+  const results = await searchOpenAlex("sanctions authoritarian regimes democracies", 5, {
+    apiKey: "test-key", researchSpec: spec,
+    fetchImpl: async (url) => { calls.push(url); return okResponse([openAlexWork({ display_name: "Sanctions and political institutions", concepts: [], abstract_inverted_index: abstract })]); },
+  });
+  assert.equal(calls.length, 1, "abstracts use the metadata response, not a full-text fetch");
+  assert.equal(results.length, 1);
+  assert.equal(results[0].abstractExcerpt, words.join(" "));
+  assert.equal(results[0].abstractSource, "OpenAlex provider abstract metadata");
+  assert.equal(results[0].matchExplanation.category, "direct-comparison");
+  assert.equal(results[0].matchExplanation.evidence.find((item) => item.concept === "democracies").field, "abstract");
+  assert.equal(results[0].provenance.metadataOnly, true);
+});
+
+test("malformed provider abstract positions cannot fabricate continuous text", async () => {
+  const [result] = await searchOpenAlex("climate biodiversity", 5, { apiKey: "test-key", fetchImpl: async () => okResponse([openAlexWork({ abstract_inverted_index: { Climate: [0], contradicted: [0], other: [99999999] } })]) });
+  assert.equal(result.abstractExcerpt, "");
+  assert.equal(result.abstractSource, "");
 });

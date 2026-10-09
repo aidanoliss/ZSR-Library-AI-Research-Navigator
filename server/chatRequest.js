@@ -11,6 +11,7 @@ import {
 import {
   activeResearchConversation,
   submittedResearchTopicContext,
+  startsIndependentResearchTurn,
 } from "../src/conversationContext.js";
 import { requestContextFromBody } from "./requestContext.js";
 import { getAccessScope } from "../config/accessScope.js";
@@ -62,6 +63,9 @@ export function parseChatRequest(body) {
     body?.subjectFocusId || DEFAULT_SUBJECT_FOCUS_ID
   ).id;
   const accessScope = getAccessScope(body?.accessScope).id;
+  const context = requestContextFromBody(body);
+  const hasPriorTopic = normalizedHistory.slice(0, -1).some((message) => message.role === "user");
+  if (!hasPriorTopic || startsIndependentResearchTurn(last.content, true)) context.previousResearchSpec = null;
 
   return {
     history,
@@ -71,6 +75,7 @@ export function parseChatRequest(body) {
     responseStyle,
     subjectFocusId,
     accessScope,
-    ...requestContextFromBody(body),
+    ...context,
+    latestUserText: String(last.content).trim(),
   };
 }

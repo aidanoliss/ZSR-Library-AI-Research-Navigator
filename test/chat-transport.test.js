@@ -3,6 +3,22 @@ import test from "node:test";
 
 import { ChatRequestError, chatFailureMessage, requestChatReply } from "../src/chatTransport.js";
 
+test("sources arrive before generation and survive a broken stream without repeating the paid request", async () => {
+  let calls = 0;
+  let release;
+  const sourceEvent = { type: "sources", reply: { message: "Research guidance", guidance_policy: "evidence_only" }, liveResults: [{ title: "Retrieved record" }] };
+  let streamController;
+  const stream = new ReadableStream({ start(controller) { streamController = controller; controller.enqueue(new TextEncoder().encode(JSON.stringify(sourceEvent) + "\n")); } });
+  const seen = new Promise((resolve) => { release = resolve; });
+  const resultPromise = requestChatReply({}, { fetchImpl: async () => { calls += 1; return new Response(stream); }, onSources: release });
+  assert.deepEqual((await seen).liveResults, sourceEvent.liveResults);
+  streamController.error(new Error("connection interrupted after sources"));
+  const result = await resultPromise;
+  assert.equal(calls, 1);
+  assert.equal(result.guidanceUnavailable, true);
+  assert.deepEqual(result.liveResults, sourceEvent.liveResults);
+});
+
 function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -89,4 +105,20 @@ test("keeps actionable service errors and clarifies unrecovered interruptions", 
     "Gemini is not configured."
   );
   assert.match(chatFailureMessage(new ChatRequestError("Network failed.")), /automatic retry/);
+});
+
+test("cancelling a request forwards its signal and never launches a buffered retry", async () => {
+  const controller = new AbortController();
+  const calls = [];
+  const fetchImpl = async (path, options) => {
+    calls.push(path);
+    assert.equal(options.signal, controller.signal);
+    return new Promise((resolve, reject) => {
+      options.signal.addEventListener("abort", () => reject(new DOMException("Cancelled", "AbortError")), { once: true });
+    });
+  };
+  const request = requestChatReply({ messages: [] }, { fetchImpl, signal: controller.signal });
+  controller.abort();
+  await assert.rejects(request, { name: "AbortError" });
+  assert.deepEqual(calls, ["/api/chat/stream"]);
 });

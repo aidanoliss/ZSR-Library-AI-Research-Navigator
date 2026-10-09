@@ -3,7 +3,10 @@ const CATALOG_DISCOVERY_RE = /\b(articles?|books?|sources?|evidence|results?|dat
 const CITATION_ONLY_RE = /\b(citat|cite|apa|mla|chicago|zotero|bibliograph)\b/i;
 const EVALUATION_ONLY_RE = /\b(evaluat(?:e|es|ed|ing|ion)?|credible|quality|authority|bias)\b/i;
 
-export function shouldLookupCatalog(text, responseStyle, userTurnCount = 1) {
+export function shouldLookupCatalog(text, responseStyle, userTurnCount = 1, options = {}) {
+  // An edited ResearchSpec is an explicit request to run discovery again,
+  // even when the correction prompt itself does not contain a search keyword.
+  if (options.correctedResearchSpec) return true;
   const value = String(text || "");
   if (!value.trim()) return false;
 

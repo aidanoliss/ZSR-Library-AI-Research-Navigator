@@ -1,5 +1,7 @@
 import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "./subjectFocus.js";
 import { DEFAULT_MODE_ID } from "./libraryLinks.js";
+import { sourceRequirementFilters, stripSourceRequirementText } from "./sourceRequirements.js";
+import { sourceQueryVariants } from "./searchQueries.js";
 import {
   RESOURCE_CONFIG_VERSION,
   getResourceCapability,
@@ -10,6 +12,7 @@ import {
 } from "./resourceCapabilities.js";
 import {
   buildResearchSpec,
+  continueResearchSpec,
   deterministicHash,
   extractKnownItemRequest,
   inferExplicitModeRequest,
@@ -1065,9 +1068,11 @@ function keywordSearchBase(query) {
     .replace(/[^a-z0-9\s-]/g, " ")
     .split(/\s+/)
     .map((word) => word.trim())
-    .filter((word) => word.length >= 3 && !QUERY_STOPWORDS.has(word))
+    .filter((word) => (word.length >= 3 || word === "ai") && !QUERY_STOPWORDS.has(word))
     .map((word) => (word === "ai" ? "AI" : word));
-  return uniq([...quoted, ...words]).slice(0, 6).join(" ") || q;
+  // A connective-only fragment (for example, "their impact") is not a
+  // research concept. Falling back to that fragment poisons search strings.
+  return uniq([...quoted, ...words]).slice(0, 6).join(" ");
 }
 
 function researchTopicBody(query) {
@@ -1773,6 +1778,13 @@ function appendSearchQualifier(base, qualifier) {
   return `${base} AND ${booleanConcept(qualifier)}`;
 }
 
+function preservesRequestedMethods(query, candidate) {
+  const methods = /\b(?:systematic review|meta-analysis|randomized controlled trial|longitudinal(?: study)?|qualitative(?: study)?|case stud(?:y|ies)|empirical stud(?:y|ies)|experimental stud(?:y|ies)|content analysis|discourse analysis)\b/gi;
+  return [...String(candidate || "").matchAll(methods)].every((match) =>
+    String(query || "").toLowerCase().includes(match[0].toLowerCase())
+  );
+}
+
 function genericSearchVariants(query, subjectFocusId) {
   const base = genericBooleanQuery(query);
   if (!base) return [];
@@ -1780,7 +1792,7 @@ function genericSearchVariants(query, subjectFocusId) {
   const qualifiers = uniq([
     ...(FOCUS_QUERY_QUALIFIERS[focus.id] || []),
     ...FOCUS_QUERY_QUALIFIERS.interdisciplinary,
-  ]);
+  ]).filter((qualifier) => queryContainsTerm(query, qualifier));
   const concepts = genericTopicConcepts(query);
   const boundedConceptPairs = concepts.length >= 3
     ? [
@@ -1791,7 +1803,7 @@ function genericSearchVariants(query, subjectFocusId) {
   return uniqueSearchOptions([
     base,
     ...qualifiers.map((qualifier) => appendSearchQualifier(base, qualifier)),
-    ...boundedConceptPairs,
+    // Required concepts are never removed to manufacture extra suggestions.
   ]);
 }
 
@@ -1807,7 +1819,7 @@ function resourceSpecificSearches(resource, query, subjectFocusId) {
   const qualifiers = RESOURCE_QUERY_QUALIFIERS[resource.id] ||
     FOCUS_QUERY_QUALIFIERS[focus.id] ||
     FOCUS_QUERY_QUALIFIERS.interdisciplinary;
-  return uniqueSearchOptions(qualifiers.map((qualifier) => appendSearchQualifier(base, qualifier)));
+  return uniqueSearchOptions(qualifiers.filter((qualifier) => queryContainsTerm(query, qualifier)).map((qualifier) => appendSearchQualifier(base, qualifier)));
 }
 
 export function buildSearchTermSuggestions(
@@ -1839,7 +1851,7 @@ export function buildSearchTermSuggestions(
     ? uniq([
         ...(FOCUS_QUERY_QUALIFIERS[focus.id] || []),
         ...FOCUS_QUERY_QUALIFIERS.interdisciplinary,
-      ]).map((qualifier) => appendSearchQualifier(strategy.betterTerms[0], qualifier))
+      ]).filter((qualifier) => queryContainsTerm(q, qualifier)).map((qualifier) => appendSearchQualifier(strategy.betterTerms[0], qualifier))
     : [];
   const synonymSwap = hasProfile ? anchoredSynonymSearch(strategy) : "";
   const base = strategy.betterTerms[0] || keywordSearchBase(q);
@@ -1864,6 +1876,7 @@ export function buildSearchTermSuggestions(
     ...profileVariants,
     ...candidates,
   ])
+    .filter((term) => preservesRequestedMethods(q, term))
     .filter((term) => term.split(/\s+/).length >= 2 || /\b(?:doi|pmid)\b/i.test(term))
     .slice(0, limit);
 }
@@ -1961,6 +1974,7 @@ function assignResourceSearchInstructions(
       ? [compiled]
       : preferred.length ? preferred : uniqueSearchOptions(candidates, used);
     const available = source
+      .filter((term) => !researchSpec || validateCompiledQuery(term, researchSpec).valid)
       .map((term, position) => ({ term, position, score: resourceQueryScore(resource, term, position) }))
       .sort((a, b) => b.score - a.score || a.position - b.position);
     const selected = available[0]?.term || "";
@@ -1968,7 +1982,7 @@ function assignResourceSearchInstructions(
     return {
       ...resource,
       searchTerms: selected ? [selected] : [],
-      filters: resource.capabilityFilters?.length ? resource.capabilityFilters : filtersForResource(resource),
+      filters: [...sourceRequirementFilters(researchSpec?.sourceRequirements), ...(resource.capabilityFilters?.length ? resource.capabilityFilters : filtersForResource(resource))],
       queryValidation: researchSpec ? validateCompiledQuery(selected, researchSpec) : null,
       provenance: {
         matchedSubject: subjectFocusId,
@@ -2094,100 +2108,54 @@ export function buildFallbackSearches(
       },
     ];
   }
-  const genericVariants = hasProfile ? [] : genericSearchVariants(q, subjectFocusId);
-  const candidatePool = uniqueSearchOptions([
-    ...strategy.narrowerTerms,
-    ...(hasProfile ? [controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)] : []),
-    ...genericVariants,
-    compiledRecovery.narrow,
-    compiledRecovery.broaden,
-    ...buildSearchTermSuggestions(q, [], subjectFocusId, 20, researchSpec),
-  ]);
-
-  const take = (preferred = []) => {
-    const choices = uniqueSearchOptions([...preferred, ...candidatePool], used);
-    const selected = choices[0] || "";
-    if (selected) used.add(normalizeSearchOptionKey(selected));
-    return selected;
-  };
-
-  const genericBaseKey = normalizeSearchOptionKey(genericBooleanQuery(q));
-  const genericNarrowers = genericVariants.filter(
-    (term) => normalizeSearchOptionKey(term) !== genericBaseKey
-  );
-  const narrowQuery = take([compiledRecovery.narrow, recovery.narrow, ...(hasProfile ? strategy.narrowerTerms : genericNarrowers)]);
-  const genericConcepts = genericTopicConcepts(q);
-  const boundedBroaden = !hasProfile && genericConcepts.length >= 3
-    ? genericConcepts.slice(0, 2).map(booleanConcept).join(" AND ")
-    : "";
-  const broadenQuery = hasProfile
-    ? take([compiledRecovery.broaden, recovery.broaden, controlledBroaden(strategy, true), anchoredSynonymSearch(strategy)])
-    : boundedBroaden
-      ? take([compiledRecovery.broaden, boundedBroaden])
-      : take([compiledRecovery.broaden]);
-  const switchQuery = take([compiledRecovery.canonical, recovery.switchDatabase]);
-  const scholarQuery = ["scholarly", "books", "legal-policy"].includes(researchSpec.mode)
-    ? take([compiledRecovery.controlledReduction, recovery.scholar])
-    : "";
+  const variants = sourceQueryVariants(researchSpec);
+  const canonical = variants[0] || compiledRecovery.canonical;
+  const expanded = variants[1] || canonical;
   const namedDatabases = resources.filter((resource) => !GENERIC_NAVIGATION_RESOURCE_IDS.has(resource.id));
   const subjectDatabase = namedDatabases[0];
   const nextDatabase = namedDatabases[1] || namedDatabases[0];
-  const fallbacks = [];
-
-  if (narrowQuery) {
-    fallbacks.push({
-      label: "Too many irrelevant results? Add one precise limiter",
-      text: narrowQuery,
-      query: narrowQuery,
-      href: nextDatabase?.accessUrl || fillTemplate(LIBRARY_LINKS.zsrArticleSearch, narrowQuery),
-    });
-  } else {
-    fallbacks.push({
-      label: "Too many irrelevant results? Add one limiter",
-      text: "Keep the two core concepts, then add one population, place, date range, outcome, or method from the assignment.",
-    });
-  }
-  if (broadenQuery) {
-    fallbacks.push({
-      label: "Too few results? Broaden one concept but keep the topic anchored",
-      text: broadenQuery,
-      query: broadenQuery,
-      href: nextDatabase?.accessUrl || fillTemplate(LIBRARY_LINKS.zsrArticleSearch, broadenQuery),
-    });
-  } else {
-    fallbacks.push({
-      label: "Too few results? Remove only one limiter",
-      text: "Keep both core topic concepts; remove only a population, place, date, or method term, then rerun the search.",
-    });
-  }
-  if (nextDatabase && switchQuery) {
-    fallbacks.push({
+  // A repeated executable query can be reused in a different database without
+  // inventing extra qualifiers merely to make each suggestion look different.
+  const queryField = (query) => {
+    const key = normalizeSearchOptionKey(query);
+    if (!query || used.has(key)) return {};
+    used.add(key);
+    return { query };
+  };
+  const fallbacks = [
+    {
+      label: "Too many irrelevant results? Add a requirement you actually need",
+      text: "Edit the search to add a population, place, outcome, or method required by the assignment. Keep required source types and dates unchanged.",
+    },
+    {
+      label: "Too few results? Broaden with equivalent terms",
+      text: expanded,
+      ...queryField(expanded),
+      href: nextDatabase?.accessUrl || fillTemplate(LIBRARY_LINKS.zsrArticleSearch, expanded),
+    },
+    ...(nextDatabase ? [{
       label: `Switch databases and rerun in ${nextDatabase.name}`,
-      text: switchQuery,
-      query: switchQuery,
+      text: canonical,
+      ...queryField(canonical),
       href: nextDatabase.accessUrl,
-    });
-  }
-  if (scholarQuery) {
-    fallbacks.push({
-      label: "Try a distinct keyword search in Google Scholar",
-      text: scholarQuery,
-      query: scholarQuery,
-      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, scholarQuery),
-    });
-  }
-  if (subjectDatabase) {
-    fallbacks.push({
+    }] : []),
+    ...(["scholarly", "books", "legal-policy"].includes(researchSpec.mode) ? [{
+      label: "Try the topic in Google Scholar",
+      text: variants[2] || canonical,
+      ...queryField(variants[2] || canonical),
+      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, variants[2] || canonical),
+    }] : []),
+    ...(subjectDatabase ? [{
       label: `Reuse subject headings from ${subjectDatabase.name}`,
-      text: "Open one relevant record, copy its most specific subject heading, and combine that heading with one core topic concept.",
+      text: "Open a relevant record and use its subject headings as alternatives within the matching concept group. Retain the other concepts and assignment requirements.",
       href: subjectDatabase.accessUrl,
-    });
-  }
-  fallbacks.push({
-    label: "Use citation chaining after one strong result",
-    text: "Open its references for earlier research and its cited-by list for newer research.",
-    href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, strategy.betterTerms[0] || keywordSearchBase(q)),
-  });
+    }] : []),
+    {
+      label: "Use citation chaining after one strong result",
+      text: "Open its references for earlier research and its cited-by list for newer research. Check the assignment requirements for each lead.",
+      href: fillTemplate(LIBRARY_LINKS.googleScholarSearch, canonical),
+    },
+  ];
   return fallbacks;
 }
 
@@ -2243,20 +2211,24 @@ export function buildResearchPlan(
     assignmentContext: requestContext.assignmentContext,
     plannerContext: requestContext.plannerContext,
   });
-  const researchSpec = mergeSuppliedResearchSpec(baseResearchSpec, requestContext.researchSpec);
-  const q = requestContext.researchSpec ? cleanQuery(researchSpec.topic) : requestQuery;
+  const continuedSpec = continueResearchSpec(baseResearchSpec, requestContext.previousResearchSpec, requestContext.latestUserText || requestQuery, `${requestContext.assignmentContext || ""} ${requestContext.plannerContext || ""}`);
+  const researchSpec = mergeSuppliedResearchSpec(continuedSpec, requestContext.researchSpec);
+  const q = requestContext.researchSpec || requestContext.previousResearchSpec ? cleanQuery(researchSpec.topic) : requestQuery;
   const navigationOnly = !requestContext.researchSpec && isZsrNavigationRequest(q);
   const effectiveModeId = researchSpec.mode;
   const correctedFocusId = requestContext.researchSpec && researchSpec.disciplines?.length
     ? researchSpec.disciplines[0]
     : subjectFocusId;
-  const subjectFocus = resolveSubjectFocus(correctedFocusId, q);
+  const routingTopic = navigationOnly || classifyResearchIntent(q).some(({ id }) => ["citation", "fulltext", "known-item"].includes(id))
+    ? stripSourceRequirementText(q)
+    : researchSpec.searchIntent?.neutralQuestion || stripSourceRequirementText(q);
+  const subjectFocus = resolveSubjectFocus(correctedFocusId, routingTopic);
   const effectiveFocusId = subjectFocus.selectedId && subjectFocus.selectedId !== DEFAULT_SUBJECT_FOCUS_ID
     ? subjectFocus.selectedId
     : DEFAULT_SUBJECT_FOCUS_ID;
   const intents = withSourceModeIntent(classifyResearchIntent(q), effectiveModeId);
   const strategy = buildSearchStrategy(q, effectiveFocusId);
-  const rawRecommendations = recommendResources(q, limit, effectiveFocusId, effectiveModeId);
+  const rawRecommendations = recommendResources(routingTopic, limit, effectiveFocusId, effectiveModeId);
   const assignedRecommendations = assignResourceSearchInstructions(
     rawRecommendations,
     q,
@@ -2270,6 +2242,8 @@ export function buildResearchPlan(
   const reservedKeys = new Set(
     recommendations.flatMap((resource) => resource.searchTerms || []).map(normalizeSearchOptionKey)
   );
+  const searchTerms = navigationOnly ? [] : sourceQueryVariants(researchSpec).slice(0, 3);
+  searchTerms.forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
   const fallbacks = buildFallbackSearches(q, effectiveFocusId, {
     excludedTerms: [...reservedKeys],
     resources: recommendations,
@@ -2281,11 +2255,6 @@ export function buildResearchPlan(
     .filter(Boolean)
     .forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
 
-  const searchTerms = uniqueSearchOptions(
-    buildSearchTermSuggestions(q, [], effectiveFocusId, 20, researchSpec),
-    reservedKeys
-  ).slice(0, 3);
-  searchTerms.forEach((term) => reservedKeys.add(normalizeSearchOptionKey(term)));
 
   const rawOtherStartingPoints = navigationOnly
     ? []

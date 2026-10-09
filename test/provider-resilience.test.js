@@ -13,6 +13,17 @@ import {
 
 process.env.GEMINI_API_KEY = "test-only-key";
 
+test("total generation deadline bounds all retries together", async () => {
+  let attempts = 0;
+  const start = Date.now();
+  await assert.rejects(runProviderOperation(({ signal }) => {
+    attempts += 1;
+    return new Promise((resolve, reject) => signal.addEventListener("abort", () => reject(signal.reason), { once: true }));
+  }, { timeoutMs: 1000, totalTimeoutMs: 35, retries: 3, baseDelayMs: 10 }), (error) => error.code === "PROVIDER_TIMEOUT");
+  assert.equal(attempts, 1);
+  assert.ok(Date.now() - start < 900);
+});
+
 const history = [{ role: "user", content: "How should I search for media effects?" }];
 
 function geminiJson(reply = { message: "Complete" }) {
@@ -117,9 +128,11 @@ test("buffered Gemini retries transient status responses and never exposes provi
   let calls = 0;
   const circuit = createCircuitBreaker({ failureThreshold: 5 });
   const result = await generateChatResponse(history, [], "scholarly", "answer", "auto", {
-    fetchImpl: async (_url, options) => {
+    fetchImpl: async (url, options) => {
       calls += 1;
       assert.ok(options.signal instanceof AbortSignal);
+      assert.doesNotMatch(url, /test-only-key|[?&]key=/);
+      assert.equal(options.headers["x-goog-api-key"], "test-only-key");
       if (calls < 3) return new Response("private provider diagnostic", { status: 500 });
       return geminiJson({ message: "Recovered" });
     },
@@ -152,8 +165,10 @@ test("Gemini streaming retries before output but never replays after a visible d
   let calls = 0;
   const deltas = [];
   const recovered = await streamChatResponse(history, [], (message) => deltas.push(message), "scholarly", "answer", "auto", {
-    fetchImpl: async () => {
+    fetchImpl: async (url, options) => {
       calls += 1;
+      assert.doesNotMatch(url, /test-only-key|[?&]key=/);
+      assert.equal(options.headers["x-goog-api-key"], "test-only-key");
       if (calls === 1) return new Response("temporary", { status: 503 });
       return new Response(sseEvent('{"message":"Recovered"}').trimEnd(), { status: 200 });
     },

@@ -5,7 +5,28 @@ import { readFile } from "node:fs/promises";
 import {
   searchSourceCandidatesForScope,
   sourceDiscoveryStatus,
+  discoverSourcesForScope,
 } from "../server/sourceDiscovery.js";
+
+test("per-request discovery status preserves provider outages and partial fallback success", async () => {
+  const originalFetch = globalThis.fetch;
+  const priorKey = process.env.OPENALEX_API_KEY;
+  process.env.OPENALEX_API_KEY = "fixture-key";
+  globalThis.fetch = async () => ({ ok: false, status: 429 });
+  try {
+    const { results, outcomes } = await discoverSourcesForScope(["climate biodiversity"], 5, "scholarly", "open-access");
+    const status = sourceDiscoveryStatus("open-access", results, outcomes);
+    assert.equal(status.lanes.openAccess.status, "rate_limited");
+    assert.equal(status.lanes.openAccess.errorCode, "HTTP_429");
+    assert.equal(status.lanes.library.status, "not_requested");
+    const partial = sourceDiscoveryStatus("library", [{ accessScope: "library" }], { library: [{ provider: "Primo", status: "timeout" }, { provider: "Crossref", status: "success" }] });
+    assert.equal(partial.lanes.library.status, "partial");
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (priorKey === undefined) delete process.env.OPENALEX_API_KEY;
+    else process.env.OPENALEX_API_KEY = priorKey;
+  }
+});
 
 function primoDoc() {
   return {
@@ -129,11 +150,28 @@ test("missing OpenAlex configuration is a visible safe-disabled status", async (
   }
 });
 
-test("the interface renders a requested open-access lane even when it has no results", async () => {
-  const jsx = await readFile(new URL("../src/AssistantMessage.jsx", import.meta.url), "utf8");
-  assert.match(
-    jsx,
-    /liveResults\?\.length > 0 \|\| Boolean\(sourceDiscovery\?\.lanes\?\.openAccess\?\.requested\)/
-  );
-  assert.match(jsx, /OpenAlex is not configured on this deployment/);
+test("the source workspace explains unavailable discovery without claiming no sources exist", async () => {
+  const jsx = (await Promise.all(["SourceResults.jsx", "SourceEmptyState.jsx", "sourcePresentation.js"].map((file) => readFile(new URL(`../src/${file}`, import.meta.url), "utf8")))).join("\n");
+  assert.match(jsx, /not configured|not connected/i);
+  assert.match(jsx, /OpenAlex reports an open-access location/);
+  assert.match(jsx, /This does not mean relevant sources/);
+});
+
+test("open-access works merged into a library card retain truthful outcome counts", () => {
+  const result = { title: "A merged article", accessScope: "library", url: "https://library.example/record", accessLinks: [{ url: "https://open.example/article", label: "Open record", accessScope: "open-access" }] };
+  const status = sourceDiscoveryStatus("both", [result], { library: [{ status: "success" }], openAccess: [{ status: "success" }] });
+  assert.equal(status.lanes.library.resultCount, 1);
+  assert.equal(status.lanes.openAccess.resultCount, 1);
+  assert.equal(status.lanes.openAccess.separateResultCount, 0);
+  assert.equal(status.lanes.openAccess.mergedResultCount, 1);
+  assert.equal(status.lanes.openAccess.outcome, "success");
+});
+
+test("empty lanes retain the difference between zero hits, rejected records and failed attempts", () => {
+  const lane = (attempts) => sourceDiscoveryStatus("library", [], { library: attempts }).lanes.library;
+  assert.equal(lane([{ status: "empty", retrievedCount: 0 }]).emptyReason, "no_records");
+  assert.equal(lane([{ status: "empty", retrievedCount: 12 }]).emptyReason, "no_eligible_records");
+  assert.equal(lane([{ status: "empty" }]).emptyReason, "no_matches");
+  assert.equal(lane([{ status: "empty", retrievedCount: 0 }, { status: "timeout" }]).emptyReason, "search_incomplete");
+  assert.equal(lane([{ status: "disabled" }]).emptyReason, "provider_unavailable");
 });

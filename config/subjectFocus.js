@@ -60,7 +60,7 @@ export const SUBJECT_FOCUSES = [
       "Prioritize multidisciplinary science indexes, technical vocabulary, document-type filters, publication years, and citation chaining.",
     resourceIds: ["web-of-science", "science-direct", "academic-search-premier", "proquest-research-library"],
     keywords: ["science", "engineering", "technology", "physics", "chemistry", "materials", "quantum", "sensor", "agriculture", "climate change", "machine learning"],
-    patterns: [/\b(engineering|technology|physics|chemistry|materials science|quantum|sensors?|robotics|agricultur(?:e|al)|precision agriculture|climate(?: science| change| resilience| adaptation)?|global warming|environmental change|machine learning|algorithmic|facial recognition)\b/i],
+    patterns: [/\b(engineering|technology|physics|chemistry|materials science|quantum|sensors?|robotics|agricultur(?:e|al)|precision agriculture|climate(?: science| change| resilience| adaptation)?|global warming|environmental change|temperatures?|thermal|heat|hydrology|atmospheric|air pollution|forests?|vegetation|machine learning|algorithmic|facial recognition)\b/i],
   },
   {
     id: "psychology",
@@ -81,8 +81,8 @@ export const SUBJECT_FOCUSES = [
     prompt:
       "Prioritize media-effects, platform, audience, journalism, communication-theory, and digital-culture language.",
     resourceIds: ["communication-mass-media", "socindex", "academic-search-premier", "proquest-research-library"],
-    keywords: ["communication", "media", "social media", "journalism", "audience", "platform", "digital culture"],
-    patterns: [/\b(communication|media|social media|instagram|tiktok|snapchat|journalism|news coverage|news framing|misinformation|disinformation|audience|platform|digital culture)\b/i],
+    keywords: ["communication", "media", "social media", "journalism", "newspaper coverage", "press coverage", "audience", "platform", "digital culture"],
+    patterns: [/\b(communication|media|social media|instagram|tiktok|snapchat|journalism|news coverage|newspaper coverage|press coverage|news framing|misinformation|disinformation|audience|platform|digital culture)\b/i],
   },
   {
     id: "economics",
@@ -130,14 +130,14 @@ export const SUBJECT_FOCUSES = [
   },
   {
     id: "policy-law",
-    label: "Policy / Law",
+    label: "Political Science / Policy / Law",
     shortLabel: "Policy",
-    description: "Policy memos, law, government sources, regulations, and current issues.",
+    description: "Politics, international relations, public policy, law, and government sources.",
     prompt:
       "Prioritize policy, legal, government, issue-report, statute/regulation, jurisdiction, and stakeholder language.",
     resourceIds: ["proquest-political-science", "cq-researcher", "heinonline", "socindex", "jstor"],
     keywords: ["policy", "law", "legal", "government", "regulation", "legislation", "court", "public policy"],
-    patterns: [/\b(policy|law|legal|government|regulation|legislation|court|case law|public policy|policy memo|surveillance|immigration|democratic institutions?)\b/i],
+    patterns: [/\b(policy|law|legal|government|regulation|legislation|court|case law|public policy|policy memo|surveillance|immigration|democratic institutions?|sanctions?|authoritarian|autocra(?:tic|cy|cies)|dictatorships?|democra(?:cy|cies|tic)|political science|international relations|regime types?|elections?|voters?)\b/i],
   },
   {
     id: "data-statistics",

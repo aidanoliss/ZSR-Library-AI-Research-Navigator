@@ -41,12 +41,13 @@ test("application retains research spec and release trace data from compatible r
   assert.match(app, /finalPayload\.releaseId/);
   assert.match(app, /finalPayload\.researchPlan/);
   assert.match(app, /reviewPackets=\{librarianReviewPackets\}/);
-  assert.match(app, /onRerunInterpretation=\{rerunInterpretation\}/);
+  assert.match(app, /onRerunInterpretation=\{index === messages\.length - 1 && !loading/);
+  assert.match(app, /correctionOfIndex: index/);
 });
 
 test("student recommendations disclose configured provenance", async () => {
   const message = await src("src/AssistantMessage.jsx");
-  assert.match(message, /Why this was recommended and provenance/);
+  assert.match(message, /About this database and recommendation/);
   for (const field of [
     "sourceKinds",
     "queryDialect",

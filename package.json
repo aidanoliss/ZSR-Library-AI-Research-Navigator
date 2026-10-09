@@ -14,7 +14,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/native.js",
-    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js test/retrieve.test.js test/primo.test.js test/book-flow.test.js test/catalog-intent.test.js test/request-context.test.js test/research-workspace.test.js test/conversation-context.test.js test/source-contract.test.js test/source-discovery.test.js test/openalex.test.js test/ris-export.test.js test/chat-transport.test.js test/log.test.js test/reliability.test.js test/resource-config.test.js test/librarian-routes.test.js test/pilot-evaluation.test.js test/loaded-questions.test.js test/accessibility-contract.test.js test/evaluation-matrix.test.js test/institution-profile.test.js test/librarian-qa-ui.test.js test/provider-resilience.test.js test/research-interpretation-ui.test.js test/research-spec-corrections.test.js test/security-hardening.test.js",
+    "test": "node --test test/validate.test.js test/screen.test.js test/research-agent.test.js test/retrieve.test.js test/primo.test.js test/primo-api.test.js test/book-flow.test.js test/catalog-intent.test.js test/request-context.test.js test/research-workspace.test.js test/conversation-context.test.js test/source-contract.test.js test/source-discovery.test.js test/openalex.test.js test/ris-export.test.js test/chat-transport.test.js test/log.test.js test/reliability.test.js test/resource-config.test.js test/librarian-routes.test.js test/pilot-evaluation.test.js test/loaded-questions.test.js test/accessibility-contract.test.js test/evaluation-matrix.test.js test/institution-profile.test.js test/librarian-qa-ui.test.js test/provider-resilience.test.js test/research-interpretation-ui.test.js test/research-spec-corrections.test.js test/security-hardening.test.js test/browser-storage.test.js test/workspace-requirements.test.js test/result-search.test.js test/source-result-view.test.js test/search-quality-evaluation.test.js test/source-learning.test.js test/query-understanding-quality.test.js test/source-identity-quality.test.js test/source-evidence.test.js test/source-abstract-quality.test.js test/source-requirement-accuracy.test.js test/source-presentation.test.js test/independentReview.test.js test/discovery-readiness.test.js",
     "test:live": "node --test test/adversarial.test.js",
     "eval:pilot": "node scripts/run-librarian-evals.mjs",
     "eval:pilot:strict": "node scripts/run-librarian-evals.mjs --strict",
@@ -23,7 +23,15 @@
     "diff:institution": "node scripts/diff-institution-config.mjs",
     "audit:resources": "node scripts/audit-resource-config.mjs",
     "audit:resources:live": "node scripts/audit-resource-config.mjs --live",
-    "qa:pilot": "npm test && npm run audit:resources && npm run eval:pilot && npm run build"
+    "verify:primo": "node scripts/verify-primo-api.mjs",
+    "qa:pilot": "npm test && npm run audit:resources && npm run eval:pilot && npm run build",
+    "test:browser:fixtures": "node scripts/browser-fixture-server.mjs --self-test",
+    "dev:browser:fixtures": "node scripts/browser-fixture-server.mjs",
+    "eval:search": "node scripts/evaluate-search-quality.mjs",
+    "capture:search": "node scripts/capture-search-quality.mjs",
+    "review:independent": "node scripts/prepare-independent-review.mjs",
+    "check:discovery": "node scripts/check-discovery.mjs",
+    "qa:release": "npm test && npm run audit:resources && npm run eval:pilot:strict && npm run test:browser:fixtures && npm run build"
   },
   "dependencies": {
     "cors": "^2.8.5",

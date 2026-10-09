@@ -186,15 +186,15 @@ export const DEFAULT_MODE_ID = "scholarly";
 export const RESPONSE_STYLES = [
   {
     id: "hybrid",
-    label: "Answer + sources",
+    label: "Guidance + source leads",
     shortLabel: "Hybrid",
-    description: "Answer directly and add ZSR results when the request calls for evidence.",
+    description: "Get search guidance, retrieved source records, and checked abstract passages. This pilot does not generate research conclusions.",
   },
   {
     id: "answer",
-    label: "Answer first",
+    label: "Explore a topic",
     shortLabel: "Answer",
-    description: "Prioritize a direct answer, topic options, and next research moves before source lists.",
+    description: "Explore search terms and next research steps. Open sources to investigate the question; this pilot does not generate a factual answer.",
   },
   {
     id: "plan",

@@ -134,6 +134,7 @@ function wait(ms, signal, sleep) {
 export async function runProviderOperation(operation, {
   signal,
   timeoutMs = boundedInteger(process.env.GEMINI_TIMEOUT_MS, 20_000, 1_000, 120_000),
+  totalTimeoutMs = boundedInteger(process.env.GEMINI_TOTAL_TIMEOUT_MS, 25_000, 1_000, 120_000),
   retries = boundedInteger(process.env.GEMINI_MAX_RETRIES, 2, 0, 3),
   baseDelayMs = boundedInteger(process.env.GEMINI_RETRY_BASE_MS, 250, 10, 5_000),
   random = Math.random,
@@ -142,11 +143,18 @@ export async function runProviderOperation(operation, {
 } = {}) {
   circuit?.acquire();
   let lastError;
+  const deadline = Date.now() + totalTimeoutMs;
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     if (signal?.aborted) {
       circuit?.cancelProbe();
       throw abortError(signal);
+    }
+
+    const remainingMs = deadline - Date.now();
+    if (remainingMs <= 0) {
+      lastError = new ProviderError("AI generation exceeded its total time budget.", { code: "PROVIDER_TIMEOUT", retryable: true });
+      break;
     }
 
     const controller = new AbortController();
@@ -156,7 +164,7 @@ export async function runProviderOperation(operation, {
     const timer = setTimeout(() => {
       timedOut = true;
       controller.abort(new DOMException("Provider timeout", "TimeoutError"));
-    }, timeoutMs);
+    }, Math.min(timeoutMs, remainingMs));
 
     try {
       const result = await operation({ signal: controller.signal, attempt });
@@ -173,6 +181,11 @@ export async function runProviderOperation(operation, {
       const exponential = baseDelayMs * (2 ** attempt);
       const jitter = Math.floor(exponential * 0.25 * Math.max(0, Math.min(1, random())));
       try {
+        const remaining = deadline - Date.now();
+        if (exponential + jitter >= remaining) {
+          lastError = new ProviderError("AI generation exceeded its total time budget.", { code: "PROVIDER_TIMEOUT", retryable: true });
+          break;
+        }
         await wait(exponential + jitter, signal, sleep);
       } catch (error) {
         circuit?.cancelProbe();

@@ -5,8 +5,9 @@ services:
     name: zsr-research-navigator
     runtime: node
     plan: free
+    autoDeployTrigger: checksPass
     healthCheckPath: /api/health
-    buildCommand: npm ci --include=dev && npm run build
+    buildCommand: npm ci --include=dev && npm run qa:release
     startCommand: npm start
     envVars:
       - key: GEMINI_API_KEY
@@ -49,6 +50,10 @@ services:
         value: "131072"
       - key: RATE_CHAT_MAX
         value: "30"
+      - key: MAX_ACTIVE_CHAT_GLOBAL
+        value: "8"
+      - key: MAX_ACTIVE_CHAT_PER_CLIENT
+        value: "2"
       - key: RATE_FEEDBACK_MAX
         value: "20"
       - key: RATE_HANDOFF_MAX
@@ -57,6 +62,8 @@ services:
         value: "600000"
       - key: GEMINI_TIMEOUT_MS
         value: "20000"
+      - key: GEMINI_TOTAL_TIMEOUT_MS
+        value: "25000"
       - key: GEMINI_MAX_RETRIES
         value: "2"
       - key: GEMINI_CIRCUIT_FAILURES
@@ -65,6 +72,12 @@ services:
         value: "30000"
       - key: PRIMO_LIVE
         value: "on"
+      - key: PRIMO_API_PROFILE
+        value: "off"
+      - key: PRIMO_API_USE_FOR_DISCOVERY
+        value: "off"
+      - key: PRIMO_API_KEY
+        sync: false # optional; server-side only, and never needed for public Primo lookup
       - key: OPENALEX_LIVE
         value: "on"
       - key: OPENALEX_API_KEY

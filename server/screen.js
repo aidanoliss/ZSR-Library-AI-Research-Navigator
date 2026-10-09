@@ -35,11 +35,16 @@ const REDIRECT_INJECTION =
   "I'm the ZSR Research Navigator and I stick to helping Wake Forest students plan library research. Tell me your research topic or assignment prompt and I'll build you a plan.";
 
 /** Returns { block: false } or { block: true, message } with a canned redirect. */
+export function screenPromptOverride(text) {
+  return INJECTION.some((re) => re.test(String(text || "")))
+    ? { block: true, message: REDIRECT_INJECTION }
+    : { block: false };
+}
+
 export function screenMessage(text) {
   const t = String(text || "");
-  if (INJECTION.some((re) => re.test(t))) {
-    return { block: true, message: REDIRECT_INJECTION };
-  }
+  const override = screenPromptOverride(t);
+  if (override.block) return override;
   if (DO_MY_WORK.some((re) => re.test(t))) {
     return { block: true, message: REDIRECT_WORK };
   }

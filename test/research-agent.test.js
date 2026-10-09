@@ -14,6 +14,7 @@ import {
   normalizeSearchOptionKey,
   recommendResources,
 } from "../config/researchAgent.js";
+import { liveSearchQueries } from "../server/liveSearchQueries.js";
 
 const cases = [
   {
@@ -77,6 +78,17 @@ const cases = [
     fallback: /Too many|Too few|Google Scholar|citation chaining/i,
   },
 ];
+
+test("sanctions comparison excludes connective words and searches the core topic first", () => {
+  const topic = "Sanctions and their impact on authoritarian regimes vs democracies";
+  const plan = buildResearchPlan(topic, 5, "auto", "scholarly");
+  assert.deepEqual(plan.researchSpec.concepts.map((concept) => concept.preferredTerm.toLowerCase()), [
+    "sanctions", "authoritarian regimes", "democracies",
+  ]);
+  const queries = liveSearchQueries(plan, topic);
+  assert.equal(queries[0], 'Sanctions AND ("authoritarian regimes" OR democracies)');
+  assert.ok(queries.every((query) => !/\btheir\b/i.test(query)));
+});
 
 test("research intent router covers less-primary-source-focused queries", () => {
   for (const sample of cases) {
@@ -392,17 +404,17 @@ test("biodiversity and climate recovery searches keep both concepts without poll
   const plan = buildResearchPlan(query, 5);
   const databaseSearches = plan.recommendations.flatMap((resource) => resource.searchTerms);
   const secondaryDatabaseSearches = plan.otherStartingPoints.flatMap((resource) => resource.searchTerms);
-  const fallbackSearches = plan.fallbacks.map((fallback) => fallback.query).filter(Boolean);
+  const fallbackSearches = plan.fallbacks.map((fallback) => fallback.query || (fallback.href && /\bAND\b/.test(fallback.text) ? fallback.text : "")).filter(Boolean);
   const visibleSearches = [...databaseSearches, ...secondaryDatabaseSearches, ...fallbackSearches, ...plan.searchTerms];
-  const nonDatabaseKeys = [...fallbackSearches, ...plan.searchTerms].map(normalizeSearchOptionKey);
+  const nonDatabaseKeys = [...plan.fallbacks.map((fallback) => fallback.query).filter(Boolean), ...plan.searchTerms].map(normalizeSearchOptionKey);
 
   assert.deepEqual(
     plan.recommendations.map((resource) => resource.id),
     ["web-of-science", "science-direct", "academic-search-premier"]
   );
-  assert.ok(fallbackSearches.length >= 4);
-  assert.ok(fallbackSearches.every((term) => /biodivers|species richness/i.test(term)));
-  assert.ok(fallbackSearches.every((term) => /climate|carbon sequestration/i.test(term)));
+  assert.ok(fallbackSearches.length >= 3, "reuse safe queries across providers rather than invent four extra constraints");
+  assert.ok(fallbackSearches.every((term) => /biodivers|biological diversity|species diversity|species richness/i.test(term)));
+  assert.ok(fallbackSearches.every((term) => /climate|global warming|carbon sequestration/i.test(term)));
   assert.equal(new Set(nonDatabaseKeys).size, nonDatabaseKeys.length);
   assert.doesNotMatch(visibleSearches.join(" "), /pollinat|community ecology|disease mechanism|health outcomes/i);
 });

@@ -19,3 +19,8 @@ test("follow-ups search only when they explicitly request discovery", () => {
   assert.equal(shouldLookupCatalog("How should I evaluate what I found?", "hybrid", 2), false);
   assert.equal(shouldLookupCatalog("Help me cite this in APA", "hybrid", 2), false);
 });
+
+test("an edited search brief always requests fresh source discovery", () => {
+  assert.equal(shouldLookupCatalog("Apply the corrected population", "answer", 3), false);
+  assert.equal(shouldLookupCatalog("Apply the corrected population", "answer", 3, { correctedResearchSpec: true }), true);
+});

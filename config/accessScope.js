@@ -3,19 +3,19 @@ export const ACCESS_SCOPES = [
     id: "library",
     label: "Library resources",
     shortLabel: "Library",
-    description: "Search ZSR discovery first, with bibliographic metadata fallback when appropriate.",
+    description: "Find library records and scholarly leads, then check access through ZSR.",
   },
   {
     id: "both",
     label: "Library + open access",
     shortLabel: "Library + OA",
-    description: "Keep library results and add a separate OpenAlex open-access results lane.",
+    description: "Include library records and openly available source leads.",
   },
   {
     id: "open-access",
     label: "Open access",
     shortLabel: "Open access",
-    description: "Search the OpenAlex open-access lane without implying Wake Forest access.",
+    description: "Find sources with a reported open-access location.",
   },
 ];
 

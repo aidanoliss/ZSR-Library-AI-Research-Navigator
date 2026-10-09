@@ -10,6 +10,11 @@
  */
 import { DEFAULT_MODE_ID, LIBRARY_LINKS, getSearchMode } from "../config/libraryLinks.js";
 import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
+import { sourceKeywordFallback } from "../config/searchQueries.js";
+import { assessSourceRequirements } from "../src/sourceAssessment.js";
+import { assessSourceRelevance, hasExactKnownItem, rankSourceResults } from "./sourceRelevance.js";
+import { uniqueSourceResults } from "../src/sourceDedup.js";
+import { discoveryAbort, discoveryResponseDetails, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
 
 const ENABLED = (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off";
 const HOST = process.env.PRIMO_HOST || "https://wfu.primo.exlibrisgroup.com";
@@ -35,22 +40,6 @@ function clean(s) {
     .replace(/\s*[:;/]\s*$/, "")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function resultKey(result) {
-  const title = String(result.title || "")
-    .replace(/\([^)]*updated[^)]*\)/gi, "")
-    .replace(/\([^)]*\d{4}[^)]*\)/g, "")
-    .split(/\s:\s/)
-    .shift()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\b(the|a|an)\b/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  const author = String(result.author || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-  const date = String(result.date || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-  return [title, author, date].join("|");
 }
 
 function looksLikeNewswireRecord(result) {
@@ -158,7 +147,7 @@ function authorMetadata(structured, display) {
     : fallbackCandidates.filter(looksLikePersonName);
   const seen = new Set();
   const authors = likelyAuthors.filter((author) => {
-    const key = author.toLowerCase().replace(/[^\p{L}]+/gu, " ").trim();
+    const key = author.toLowerCase().replace(/[^\p{L}]+/gu, " ").trim().split(/\s+/).sort().join(" ");
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -204,22 +193,22 @@ function firstValue(value) {
   return String(value || "").trim();
 }
 
-function imageUrl(raw) {
+function imageUrl(raw, host = HOST) {
   const value = firstValue(raw);
   if (!value) return null;
   const primoUrl = value.match(/\$\$U([^$]+)/)?.[1] || value;
   if (/^https?:\/\//i.test(primoUrl)) return primoUrl;
   if (primoUrl.startsWith("//")) return `https:${primoUrl}`;
-  if (primoUrl.startsWith("/")) return `${HOST}${primoUrl}`;
+  if (primoUrl.startsWith("/") && host) return `${host}${primoUrl}`;
   return null;
 }
 
-function thumbnailFromDoc(d) {
+function thumbnailFromDoc(d, host = HOST) {
   return (
-    imageUrl(d.thumbnail) ||
-    imageUrl(d.pnx?.links?.thumbnail) ||
-    imageUrl(d.pnx?.display?.thumbnail) ||
-    imageUrl(d.delivery?.thumbnail)
+    imageUrl(d.thumbnail, host) ||
+    imageUrl(d.pnx?.links?.thumbnail, host) ||
+    imageUrl(d.pnx?.display?.thumbnail, host) ||
+    imageUrl(d.delivery?.thumbnail, host)
   );
 }
 
@@ -293,21 +282,29 @@ function resultModeText(result) {
 }
 
 function inferredSourceKind(result, modeId) {
-  const text = resultModeText(result).toLowerCase();
   const type = String(result.type || "").toLowerCase();
   if (/newspaper|news article|newswire|magazine|trade publication|press release/.test(type)) return SOURCE_KINDS.NEWS;
-  if (/dataset|data set|statistic|statistical|survey data|numeric data/.test(text)) return SOURCE_KINDS.DATASET;
-  if (/case law|court decision|statute|legislation|regulation|legal document|law review/.test(text)) {
-    return /case law|court decision|statute|legislation|regulation|legal document/.test(text)
+  // Document type is not the topic or method discussed in an abstract. In
+  // particular, statistics, interviews and emotion regulation describe many
+  // ordinary journal articles; they must not reclassify those records.
+  if (/dataset|data set|statistics|survey data|numeric data/.test(type)) return SOURCE_KINDS.DATASET;
+  if (/case law|court decision|statute|legislation|regulation|legal document|law review/.test(type)) {
+    return /case law|court decision|statute|legislation|regulation|legal document/.test(type)
       ? SOURCE_KINDS.LEGAL_PRIMARY
       : SOURCE_KINDS.LEGAL_SECONDARY;
   }
-  if (/archiv|manuscript|correspondence|letters?\b|diar(?:y|ies)|oral histor|photograph|personal papers|primary source|government document|speech|interview/.test(text)) {
+  if (/archiv|manuscript|correspondence|letters?\b|diar(?:y|ies)|oral histor|photograph|personal papers|primary source|government document|speech|interview/.test(type)) {
     return SOURCE_KINDS.PRIMARY_SOURCE;
   }
   if (/book chapter|chapter/.test(type)) return SOURCE_KINDS.BOOK_CHAPTER;
   if (/book|ebook|e-book|reference entry|encyclopedia/.test(type)) return SOURCE_KINDS.BOOK;
   if (/article|journal|review/.test(type)) return SOURCE_KINDS.SCHOLARLY_ARTICLE;
+  // Generic media types sometimes omit the bibliographic genre. Only use
+  // explicit recording/transcript wording in the title, never abstract topics.
+  if (/^(?:other|unknown|video|audio|sound recording|recording)?$/.test(type)
+      && /\b(?:video oral history with|audio interview(?: and transcript)?|interview transcript)\b/i.test(String(result.title || ""))) {
+    return SOURCE_KINDS.PRIMARY_SOURCE;
+  }
   if (modeId === "books") return SOURCE_KINDS.CATALOG_RECORD;
   return "unknown";
 }
@@ -465,15 +462,159 @@ function physicalFulfillment(doc, recordUrl, modeId) {
   };
 }
 
-export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
+export function normalizePrimoDocs(
+  data,
+  {
+    query,
+    limit = 10,
+    modeId = DEFAULT_MODE_ID,
+    recordHost = HOST,
+    vid = VID,
+    tab: configuredTab,
+    scope: configuredScope,
+    providerLabel = "ZSR discovery",
+    metadataLabel = "ZSR record metadata",
+    demoData = false,
+    researchSpec = null,
+  } = {}
+) {
   const mode = getSearchMode(modeId);
   const profile = discoveryProfile(mode.id, query);
-  const q = normalizeCatalogQuery(query);
-  if (!ENABLED || !q) return [];
+  const q = researchSpec?.knownItem?.title ? clean(query) : normalizeCatalogQuery(query);
+  if (!q) return [];
   const wantsArticles = profile.tab === "Articles";
   const tokens = queryTokens(q);
   const requirements = conceptRequirements(q);
-  const requestLimit = wantsArticles ? Math.max(limit * 4, 30) : Math.max(limit * 3, 24);
+  const tab = configuredTab || profile.tab;
+  const scope = configuredScope || profile.scope;
+  const results = (data?.docs || data?.results || []).filter((doc) => doc && typeof doc === "object" && !Array.isArray(doc)).map((d) => {
+    const disp = d.pnx?.display || {};
+    const addata = d.pnx?.addata || {};
+    const subjects = values(disp.subject, 8);
+    const displayedSubjects = subjects.slice(0, 6);
+    const titleText = disp.title?.[0] || d.title || "";
+    const authors = authorMetadata(
+      [addata.au, addata.addau, d.author],
+      [disp.creator, disp.contributor]
+    );
+    const relevanceText = [
+      titleText,
+      ...authors.authors,
+      ...displayedSubjects,
+    ].filter(Boolean).join(" ");
+    // Rank against the supplied abstract, not the two-sentence card preview.
+    // This remains provider metadata, never full article text or generated prose.
+    const fullAbstract = providerText(addata.abstract || disp.abstract || d.abstract);
+    const abstractText = fullAbstract.slice(0, 20000);
+    const sourceAbstract = abstractExcerpt(abstractText);
+    const visibleConceptText = [relevanceText, abstractText].filter(Boolean).join(" ");
+    const recordid = d.pnx?.control?.recordid?.[0] || d.recordId || "";
+    const context = d.context || "L";
+    const record = d.url || (recordHost
+      ? recordid
+        ? `${recordHost}/discovery/fulldisplay?docid=${encodeURIComponent(recordid)}&context=${context}&vid=${encodeURIComponent(vid)}&tab=${encodeURIComponent(tab)}&search_scope=${encodeURIComponent(scope)}`
+        : `${recordHost}/discovery/search?query=any,contains,${encodeURIComponent(q)}&vid=${encodeURIComponent(vid)}&tab=${encodeURIComponent(tab)}&search_scope=${encodeURIComponent(scope)}`
+      : "");
+    const isbn = clean(firstValue(addata.isbn || d.isbn)).replace(/[^0-9Xx]/g, "");
+    const cover = thumbnailFromDoc(d, recordHost) || (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false` : null);
+    const doi = doiIdentifier(addata.doi || disp.identifier || d.doi);
+    const pmid = pmidIdentifier(addata.pmid || addata.pubmedid || addata.pubmed || disp.identifier || d.pmid);
+    const fulfillment = demoData ? null : physicalFulfillment(d, record, mode.id);
+    const issn = clean(firstValue(addata.issn || d.issn)).replace(/[^0-9Xx-]/g, "");
+    const publisher = clean(firstValue(addata.pub || disp.publisher || d.publisher));
+    const containerTitle = clean(firstValue(addata.jtitle) || firstValue(addata.btitle) || firstValue(addata.stitle) || firstValue(d.containerTitle));
+    const type = clean(disp.type?.[0] || d.type || "");
+    const date = clean(firstValue(disp.creationdate) || firstValue(addata.date) || firstValue(addata.risdate) || firstValue(d.date) || firstValue(d.publicationYear));
+    const description = demoData
+      ? "Ex Libris guest-sandbox demo metadata used to validate the API adapter. This is not a Wake Forest holding or access result."
+      : resultDescription({ title: titleText, type, date, subjects });
+    return {
+      title: clean(titleText) || "(untitled)",
+      author: authors.summary,
+      authors: authors.authors,
+      type,
+      date,
+      url: record,
+      cover,
+      doi,
+      pmid,
+      isbn,
+      issn,
+      containerTitle,
+      publisher,
+      edition: clean(firstValue(addata.edition || disp.edition || d.edition)),
+      volume: clean(firstValue(addata.volume || d.volume)),
+      issue: clean(firstValue(addata.issue || d.issue)),
+      pages: citationPages({ ...addata, pages: addata.pages || d.pages }),
+      fulfillment,
+      description,
+      abstractText,
+      abstractTruncated: fullAbstract.length > abstractText.length,
+      abstractExcerpt: sourceAbstract,
+      abstractSource: sourceAbstract ? metadataLabel : "",
+      detailPoints: [
+        demoData ? "Demo data only: do not use this record to infer ZSR holdings, access, or relevance." : "",
+        authors.detail,
+        displayedSubjects.length ? `Subject terms: ${displayedSubjects.join("; ")}` : "",
+        fulfillment?.location ? `Location when checked: ${fulfillment.location}` : "",
+        fulfillment?.callNumber ? `Call number: ${fulfillment.callNumber}` : "",
+        demoData
+          ? "The guest sandbox validates request and response handling only."
+          : mode.id === "books"
+            ? "Availability can change. Open the ZSR record before visiting the shelf or placing a request."
+            : "Access: use the ZSR record to check full text, PDF availability, and database login.",
+      ].filter(Boolean),
+      sourceProvider: providerLabel,
+      peerReviewed: /\bpeer_reviewed\b/i.test(values(d.pnx?.facets?.toplevel, 20).join(" ")) ? true : null,
+      accessScope: demoData ? "demo" : "library",
+      sourceKind: inferredSourceKind({
+        title: clean(titleText),
+        type,
+        subjects: displayedSubjects,
+        abstractExcerpt: sourceAbstract,
+      }, mode.id),
+      sourceMode: mode.id,
+      provenance: {
+        provider: providerLabel,
+        recordType: type || "unspecified",
+        accessVerified: false,
+        metadataOnly: true,
+        demoData,
+      },
+      subjects: displayedSubjects,
+      relevance: relevanceScore(relevanceText, tokens),
+      titleRelevance: relevanceScore(titleText, tokens),
+      strongRelevance: matchedStrongTokens(relevanceText, tokens).length,
+      titleStrongRelevance: matchedStrongTokens(titleText, tokens).length,
+      requiredConceptMatch: passesConceptRequirements(visibleConceptText, requirements),
+    };
+  });
+  const relevantResults = researchSpec?.concepts?.length ? results : tokens.length ? results.filter((result) => isRelevantResult(result, tokens)) : results;
+  const modeResults = relevantResults.filter((result) => resultMatchesMode(result, mode.id));
+  const articleUsefulResults = mode.id === "scholarly"
+    ? modeResults.filter((result) => !/newsletter|newspaper|magazine|trade/i.test(String(result.type || "")))
+    : modeResults;
+  const displayResults = mode.id === "scholarly" ? articleUsefulResults : modeResults;
+  const candidates = uniqueSourceResults(displayResults
+    .sort((a, b) => resultScore(b, wantsArticles) - resultScore(a, wantsArticles))
+    .filter((result) => !looksLikeNewswireRecord(result))
+    .map((result) => ({ ...result, sourceAssessment: assessSourceRequirements(result, researchSpec || { mode: mode.id }), matchExplanation: assessSourceRelevance(result, researchSpec) }))
+    .filter((result) => result.sourceAssessment.status !== "mismatch" && result.matchExplanation.status !== "mismatch"))
+    .map(({ relevance, titleRelevance, strongRelevance, titleStrongRelevance, requiredConceptMatch, ...result }) => result);
+  return researchSpec?.concepts?.length ? rankSourceResults(candidates, researchSpec, limit) : candidates.slice(0, limit);
+}
+
+export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID, suppliedOptions = {}) {
+  const options = { ...suppliedOptions, discoveryQuery: clean(query) };
+  const mode = getSearchMode(modeId);
+  const profile = discoveryProfile(mode.id, query);
+  const q = options.researchSpec?.knownItem?.title ? clean(query) : normalizeCatalogQuery(query);
+  if (!ENABLED || !q) {
+    reportDiscoveryOutcome(options, "Primo public", !ENABLED ? "disabled" : "not_requested");
+    return [];
+  }
+  const wantsArticles = profile.tab === "Articles";
+  const requestLimit = Math.min(80, wantsArticles ? Math.max(limit * 4, 30) : Math.max(limit * 3, 24));
   const tab = profile.tab;
   const scope = profile.scope;
   const includeDelivery = mode.id === "books";
@@ -505,135 +646,39 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID) {
   });
   const url = `${HOST}/primaws/rest/pub/pnxs?${params}`;
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 6000);
+  const request = discoveryAbort(options, options.timeoutMs || 6000);
   try {
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
-      signal: controller.signal,
+      signal: request.signal,
     });
-    if (!res.ok) return [];
+    if (!res.ok) {
+      reportDiscoveryHttpError(options, "Primo public", res.status);
+      return [];
+    }
     const data = await res.json();
-    const results = (data.docs || []).map((d) => {
-      const disp = d.pnx?.display || {};
-      const addata = d.pnx?.addata || {};
-      const subjects = values(disp.subject, 8);
-      const displayedSubjects = subjects.slice(0, 6);
-      const titleText = disp.title?.[0] || "";
-      const authors = authorMetadata(
-        [addata.au, addata.addau],
-        [disp.creator, disp.contributor]
-      );
-      const relevanceText = [
-        titleText,
-        ...authors.authors,
-        ...displayedSubjects,
-      ].filter(Boolean).join(" ");
-      const sourceAbstract = abstractExcerpt(addata.abstract || disp.abstract);
-      const visibleConceptText = [
-        relevanceText,
-        sourceAbstract,
-      ].filter(Boolean).join(" ");
-      const description = resultDescription({
-        title: titleText,
-        type: disp.type?.[0],
-        date: disp.creationdate?.[0],
-        subjects,
-      });
-      const recordid = d.pnx?.control?.recordid?.[0];
-      const context = d.context || "L";
-      const record = recordid
-        ? `${HOST}/discovery/fulldisplay?docid=${encodeURIComponent(recordid)}&context=${context}&vid=${VID}&tab=${tab}&search_scope=${scope}`
-        : `${HOST}/discovery/search?query=any,contains,${encodeURIComponent(q)}&vid=${VID}&tab=${tab}&search_scope=${scope}`;
-      // Prefer a real thumbnail supplied by Primo. Fall back to a real book cover
-      // by ISBN via the free Open Library cover service.
-      // ?default=false → 404 when no cover exists, so the UI can fall back cleanly.
-      const isbn = (addata.isbn?.[0] || "").replace(/[^0-9Xx]/g, "");
-      const cover = thumbnailFromDoc(d) || (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false` : null);
-      const doi = doiIdentifier(addata.doi || disp.identifier);
-      const pmid = pmidIdentifier(addata.pmid || addata.pubmedid || addata.pubmed || disp.identifier);
-      const fulfillment = physicalFulfillment(d, record, mode.id);
-      const issn = clean(firstValue(addata.issn)).replace(/[^0-9Xx-]/g, "");
-      const publisher = clean(firstValue(addata.pub || disp.publisher));
-      const containerTitle = clean(firstValue(addata.jtitle || addata.btitle));
-      return {
-        title: clean(disp.title?.[0]) || "(untitled)",
-        author: authors.summary,
-        authors: authors.authors,
-        type: clean(disp.type?.[0] || ""),
-        date: clean(disp.creationdate?.[0] || ""),
-        url: record,
-        cover,
-        doi,
-        pmid,
-        isbn,
-        issn,
-        containerTitle,
-        publisher,
-        edition: clean(firstValue(addata.edition || disp.edition)),
-        volume: clean(firstValue(addata.volume)),
-        issue: clean(firstValue(addata.issue)),
-        pages: citationPages(addata),
-        fulfillment,
-        description,
-        abstractExcerpt: sourceAbstract,
-        abstractSource: sourceAbstract ? "ZSR record metadata" : "",
-        detailPoints: [
-          authors.detail,
-          displayedSubjects.length ? `Subject terms: ${displayedSubjects.join("; ")}` : "",
-          fulfillment?.location ? `Location when checked: ${fulfillment.location}` : "",
-          fulfillment?.callNumber ? `Call number: ${fulfillment.callNumber}` : "",
-          mode.id === "books"
-            ? "Availability can change. Open the ZSR record before visiting the shelf or placing a request."
-            : "Access: use the ZSR record to check full text, PDF availability, and database login.",
-        ].filter(Boolean),
-        sourceProvider: "ZSR discovery",
-        accessScope: "library",
-        sourceKind: inferredSourceKind({
-          title: clean(disp.title?.[0]),
-          type: clean(disp.type?.[0] || ""),
-          subjects: displayedSubjects,
-          abstractExcerpt: sourceAbstract,
-        }, mode.id),
-        sourceMode: mode.id,
-        provenance: {
-          provider: "ZSR discovery",
-          recordType: clean(disp.type?.[0] || "") || "unspecified",
-          accessVerified: false,
-          metadataOnly: true,
-        },
-        subjects: displayedSubjects,
-        relevance: relevanceScore(relevanceText, tokens),
-        titleRelevance: relevanceScore(titleText, tokens),
-        strongRelevance: matchedStrongTokens(relevanceText, tokens).length,
-        titleStrongRelevance: matchedStrongTokens(titleText, tokens).length,
-        requiredConceptMatch: passesConceptRequirements(visibleConceptText, requirements),
-      };
+    const records = data?.docs || data?.results;
+    if (!Array.isArray(records)) {
+      reportDiscoveryOutcome(options, "Primo public", "error", { errorCode: "INVALID_PROVIDER_RESPONSE" });
+      return [];
+    }
+    const results = normalizePrimoDocs(data, {
+      query: q,
+      limit,
+      modeId: mode.id,
+      recordHost: HOST,
+      vid: VID,
+      tab,
+      scope,
+      researchSpec: options.researchSpec,
     });
-    const relevantResults = tokens.length ? results.filter((result) => isRelevantResult(result, tokens)) : results;
-    // Source mode is a retrieval contract. A result of the wrong type is not
-    // allowed to leak in merely because its title happens to match the topic.
-    const modeResults = relevantResults.filter((result) => resultMatchesMode(result, mode.id));
-    const articleUsefulResults = mode.id === "scholarly"
-      ? modeResults.filter((result) => !/newsletter|newspaper|magazine|trade/i.test(String(result.type || "")))
-      : modeResults;
-    const seen = new Set();
-    const displayResults = mode.id === "scholarly" ? articleUsefulResults : modeResults;
-    return displayResults
-      .sort((a, b) => resultScore(b, wantsArticles) - resultScore(a, wantsArticles))
-      .filter((result) => !looksLikeNewswireRecord(result))
-      .filter((result) => {
-        const key = resultKey(result);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      })
-      .slice(0, limit)
-      .map(({ relevance, titleRelevance, strongRelevance, titleStrongRelevance, requiredConceptMatch, subjects: _subjects, ...result }) => result);
-  } catch {
+    reportDiscoveryOutcome(options, "Primo public", results.length ? "success" : "empty", discoveryResponseDetails(records.length, results.length));
+    return results;
+  } catch (error) {
+    reportDiscoveryError(options, "Primo public", error, request.timedOut);
     return []; // network error / timeout / abort → degrade gracefully
   } finally {
-    clearTimeout(timer);
+    request.cleanup();
   }
 }
 
@@ -658,40 +703,55 @@ function crossrefDate(item) {
   return parts.filter(Boolean).join("-");
 }
 
-export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID) {
-  const q = crossrefQuery(query);
-  if (!q) return [];
+export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID, suppliedOptions = {}) {
+  const options = { ...suppliedOptions, discoveryQuery: clean(query) };
+  const knownItem = options.researchSpec?.knownItem;
+  const q = knownItem?.title ? clean(knownItem.title) : crossrefQuery(query);
+  if (!q) { reportDiscoveryOutcome(options, "Crossref", "not_requested"); return []; }
   const mode = getSearchMode(modeId);
-  if (mode.id !== "scholarly") return [];
+  if (mode.id !== "scholarly") { reportDiscoveryOutcome(options, "Crossref", "unsupported"); return []; }
   const params = new URLSearchParams({
     "query.title": q,
     rows: String(Math.min(30, Math.max(limit * 3, 15))),
     select: "DOI,title,author,published,issued,type,URL,container-title,abstract,volume,issue,page,publisher,ISBN,ISSN",
   });
-  if (mode.id === "scholarly") params.set("filter", "type:journal-article");
+  if (knownItem?.author) params.set("query.author", clean(knownItem.author));
+  const filters = ["type:journal-article"];
+  const requirements = options.researchSpec?.sourceRequirements || {};
+  if (Number.isInteger(requirements.publicationYearFrom)) filters.push(`from-pub-date:${requirements.publicationYearFrom}-01-01`);
+  if (Number.isInteger(requirements.publicationYearTo)) filters.push(`until-pub-date:${requirements.publicationYearTo}-12-31`);
+  params.set("filter", filters.join(","));
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 6000);
+  const request = discoveryAbort(options, options.timeoutMs || 6000);
   try {
-    const res = await fetch(`${CROSSREF_HOST}/works?${params}`, {
+    const suppliedDoi = knownItem?.doi ? doiIdentifier(knownItem.doi) : "";
+    const res = await fetch(suppliedDoi ? `${CROSSREF_HOST}/works/${encodeURIComponent(suppliedDoi)}` : `${CROSSREF_HOST}/works?${params}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "ZSR-Research-Navigator/1.0 (mailto:askzsr@wfu.edu)",
       },
-      signal: controller.signal,
+      signal: request.signal,
     });
-    if (!res.ok) return [];
+    if (!res.ok) { reportDiscoveryHttpError(options, "Crossref", res.status); return []; }
     const data = await res.json();
+    const records = suppliedDoi && data?.message && !Array.isArray(data.message) && data.message.DOI
+      ? [data.message] : data?.message?.items;
+    if (!Array.isArray(records)) {
+      reportDiscoveryOutcome(options, "Crossref", "error", { errorCode: "INVALID_PROVIDER_RESPONSE" });
+      return [];
+    }
     const tokens = queryTokens(q);
     const minimumMatches = tokens.length <= 1 ? 1 : 2;
-    const rows = (data?.message?.items || [])
+    const rows = records
       .map((item) => {
         const title = clean(item?.title?.[0]);
         const container = clean(item?.["container-title"]?.[0]);
         const doi = doiIdentifier(item?.DOI);
         const authors = crossrefAuthors(item?.author);
-        const sourceAbstract = abstractExcerpt(item?.abstract);
-        const searchable = [title, container, sourceAbstract].filter(Boolean).join(" ");
+        const fullAbstract = providerText(item?.abstract);
+        const abstractText = fullAbstract.slice(0, 20000);
+        const sourceAbstract = abstractExcerpt(abstractText);
+        const searchable = [title, container, abstractText].filter(Boolean).join(" ");
         return {
           title,
           author: authors.summary,
@@ -712,6 +772,8 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
           pages: clean(item?.page),
           fulfillment: null,
           description: `Bibliographic metadata from Crossref${container ? ` for a work in ${container}` : ""}. Search the exact title in ZSR to confirm access and fit.`,
+          abstractText,
+          abstractTruncated: fullAbstract.length > abstractText.length,
           abstractExcerpt: sourceAbstract,
           abstractSource: sourceAbstract ? "Crossref record metadata" : "",
           detailPoints: [
@@ -720,6 +782,7 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
             "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access.",
           ].filter(Boolean),
           sourceProvider: "Crossref scholarly metadata",
+          peerReviewed: null,
           accessScope: "library",
           sourceKind: SOURCE_KINDS.SCHOLARLY_ARTICLE,
           sourceMode: mode.id,
@@ -731,66 +794,58 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
           },
           relevance: relevanceScore(searchable, tokens),
           titleRelevance: relevanceScore(title, tokens),
+          requiredConceptMatch: passesConceptRequirements(searchable, conceptRequirements(q)),
         };
       })
-      .filter((item) => item.title && item.url && item.relevance >= minimumMatches)
+      .filter((item) => item.title && item.url && (options.researchSpec?.concepts?.length || (item.requiredConceptMatch && item.relevance >= minimumMatches)))
+      .map((result) => ({ ...result, sourceAssessment: assessSourceRequirements(result, options.researchSpec || { mode: mode.id }), matchExplanation: assessSourceRelevance(result, options.researchSpec) }))
+      .filter((result) => result.sourceAssessment.status !== "mismatch" && result.matchExplanation.status !== "mismatch")
       .sort((a, b) => b.titleRelevance - a.titleRelevance || b.relevance - a.relevance);
 
-    const seen = new Set();
-    return rows
-      .filter((item) => {
-        const key = item.doi?.toLowerCase() || resultKey(item);
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      })
-      .slice(0, limit)
-      .map(({ relevance, titleRelevance, ...item }) => item);
-  } catch {
+    const results = rankSourceResults(rows, options.researchSpec || { mode: mode.id }, limit)
+      .map(({ relevance, titleRelevance, requiredConceptMatch, ...item }) => item);
+    reportDiscoveryOutcome(options, "Crossref", results.length ? "success" : "empty", discoveryResponseDetails(records.length, results.length));
+    return results;
+  } catch (error) {
+    reportDiscoveryError(options, "Crossref", error, request.timedOut);
     return [];
   } finally {
-    clearTimeout(timer);
+    request.cleanup();
   }
 }
 
-function mergedSourceKey(result) {
-  return String(result?.doi || "").toLowerCase() || resultKey(result);
+function mergeSourceResults(groups, limit, researchSpec) {
+  return rankSourceResults(groups.flatMap((group) => group || []), researchSpec, limit);
 }
 
-function mergeSourceResults(groups, limit) {
-  const seen = new Set();
-  const merged = [];
-  for (const group of groups) {
-    for (const result of group || []) {
-      const key = mergedSourceKey(result);
-      if (!key || seen.has(key)) continue;
-      seen.add(key);
-      merged.push(result);
-      if (merged.length >= limit) return merged;
-    }
-  }
-  return merged;
-}
-
-export async function searchSourceCandidates(queries, limit = 10, modeId = DEFAULT_MODE_ID) {
+export async function searchSourceCandidates(queries, limit = 10, modeId = DEFAULT_MODE_ID, options = {}) {
   const queryList = [...new Set((queries || []).map((query) => clean(query)).filter(Boolean))].slice(0, 5);
   if (!queryList.length) return [];
 
-  const target = Math.min(5, Math.max(1, limit));
-  const primary = await searchPrimo(queryList[0], limit, modeId);
-  if (primary.length >= target) return primary.slice(0, limit);
-
-  const zsrFallbacks = await Promise.all(
-    queryList.slice(1).map((query) => searchPrimo(query, limit, modeId))
-  );
-  const zsrResults = mergeSourceResults([primary, ...zsrFallbacks], limit);
-  if (zsrResults.length >= target) return zsrResults;
+  const candidateLimit = Math.min(24, Math.max(12, limit * 2));
+  const deadline = Date.now() + Math.min(12000, Math.max(500, Number(options.discoveryBudgetMs) || 8000));
+  const attempts = [];
+  const attemptOptions = () => ({ ...options, timeoutMs: Math.min(options.timeoutMs || 6000, Math.max(1, deadline - Date.now())), onOutcome: (outcome) => {
+    attempts.push(outcome);
+    options.onOutcome?.(outcome);
+  } });
+  // Always compare alternatives: the first query's five records are not necessarily the best five.
+  const zsrGroups = await Promise.all(queryList.slice(0, 3).map((query) => searchPrimo(query, candidateLimit, modeId, attemptOptions())));
+  const spec = options.researchSpec || { mode: modeId };
+  const zsrResults = mergeSourceResults(zsrGroups, candidateLimit, spec);
+  if (options.signal?.aborted) return zsrResults.slice(0, limit);
+  const identityUnresolved = spec.knownItem?.title && !hasExactKnownItem(zsrResults, spec);
+  if ((!identityUnresolved && zsrResults.length >= limit) || Date.now() >= deadline) return zsrResults.slice(0, limit);
 
   const profile = discoveryProfile(getSearchMode(modeId).id, queryList[0]);
-  if (!profile.crossrefFallback) return zsrResults;
-
-  const crossrefFallbacks = await Promise.all(
-    queryList.slice(0, 2).map((query) => searchCrossref(query, limit, modeId))
-  );
-  return mergeSourceResults([zsrResults, ...crossrefFallbacks], limit);
+  // The compiler can supply five equivalent variants. Previously the last two
+  // were never searched, even when the first three produced no usable records.
+  // Only expand after a completed empty search, not repeated provider failures.
+  const remainingQueries = !zsrResults.length && !spec.knownItem?.title && attempts.some((attempt) => attempt.status === "empty")
+    ? [...new Set([sourceKeywordFallback(spec), ...queryList.slice(3, 5)])].filter((query) => query && !queryList.slice(0, 3).includes(query)).slice(0, 2) : [];
+  const fallbackGroups = await Promise.all([
+    ...remainingQueries.map((query) => searchPrimo(query, candidateLimit, modeId, attemptOptions())),
+    ...(profile.crossrefFallback ? queryList.slice(0, spec.knownItem?.title ? 1 : 2).map((query) => searchCrossref(query, candidateLimit, modeId, attemptOptions())) : []),
+  ]);
+  return mergeSourceResults([zsrResults, ...fallbackGroups], limit, spec);
 }

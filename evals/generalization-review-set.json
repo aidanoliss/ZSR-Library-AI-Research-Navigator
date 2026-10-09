@@ -1,0 +1,399 @@
+[
+  {
+    "id": "prose-canopy",
+    "discipline": "Science / Engineering",
+    "prompt": "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "academic-search-premier"
+      ],
+      "expectedSubjectFocusIds": [
+        "science-engineering"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "tree canopy"
+        ],
+        [
+          "neighborhood summer temperatures"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": 2020,
+        "peerReviewed": true,
+        "requestedSourceCount": 3
+      }
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    }
+  },
+  {
+    "id": "prose-thermal",
+    "discipline": "Science / Engineering",
+    "prompt": "How does thermal insulation affect indoor humidity in older homes? Find five peer-reviewed studies published between 2021 and 2025.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "academic-search-premier"
+      ],
+      "expectedSubjectFocusIds": [
+        "science-engineering"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "thermal insulation"
+        ],
+        [
+          "indoor humidity"
+        ],
+        [
+          "older homes"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": 2021,
+        "publicationYearTo": 2025,
+        "peerReviewed": true,
+        "requestedSourceCount": 5
+      }
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    }
+  },
+  {
+    "id": "prose-heat-pumps",
+    "discipline": "Science / Engineering",
+    "prompt": "How do heat pumps change household electricity demand during winter? I need three peer-reviewed sources from 2020 through 2025.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "academic-search-premier"
+      ],
+      "expectedSubjectFocusIds": [
+        "science-engineering"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "heat pumps"
+        ],
+        [
+          "household electricity demand"
+        ],
+        [
+          "winter"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": 2020,
+        "publicationYearTo": 2025,
+        "peerReviewed": true,
+        "requestedSourceCount": 3
+      }
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    }
+  },
+  {
+    "id": "prose-ecology",
+    "discipline": "Ecology",
+    "prompt": "Ecological studies of road salt runoff and freshwater frog reproduction, published since 2021. I need four sources for a first-year paper.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "pubmed-medline"
+      ],
+      "expectedSubjectFocusIds": [
+        "biology-health"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "road salt runoff"
+        ],
+        [
+          "freshwater frog reproduction"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": 2021,
+        "requestedSourceCount": 4
+      }
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    }
+  },
+  {
+    "id": "prose-wayfinding",
+    "discipline": "Interdisciplinary",
+    "prompt": "Find studies about bilingual signage and museum visitor wayfinding for a first-year research paper.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "academic-search-premier",
+        "proquest-research-library",
+        "jstor"
+      ],
+      "expectedSubjectFocusIds": [
+        "interdisciplinary"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "bilingual signage"
+        ],
+        [
+          "museum visitor wayfinding"
+        ]
+      ]
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    }
+  },
+  {
+    "id": "prose-mixed-vocabulary",
+    "discipline": "Science / Engineering",
+    "prompt": "urban rooftop gardens and climate change and rainwater retention",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "academic-search-premier"
+      ],
+      "expectedSubjectFocusIds": [
+        "science-engineering"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "urban"
+        ],
+        [
+          "rooftop gardens"
+        ],
+        [
+          "climate change"
+        ],
+        [
+          "rainwater retention"
+        ]
+      ]
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    }
+  },
+  {
+    "id": "multiturn-canopy-limits",
+    "discipline": "Science / Engineering",
+    "prompt": "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "academic-search-premier"
+      ],
+      "expectedSubjectFocusIds": [
+        "science-engineering"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "tree canopy"
+        ],
+        [
+          "neighborhood summer temperatures"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": 2023,
+        "peerReviewed": true,
+        "requestedSourceCount": 3
+      }
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    },
+    "turns": [
+      "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+      "Show me more sources",
+      "Explain the scope",
+      "Find similar articles",
+      "Narrow the topic",
+      "Show more sources",
+      "Limit it to studies published since 2023"
+    ]
+  },
+  {
+    "id": "multiturn-correction",
+    "discipline": "Science / Engineering",
+    "prompt": "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "web-of-science",
+        "science-direct",
+        "academic-search-premier"
+      ],
+      "expectedSubjectFocusIds": [
+        "science-engineering"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "tree canopy"
+        ],
+        [
+          "air temperature"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": 2022,
+        "peerReviewed": true,
+        "requestedSourceCount": 3
+      }
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    },
+    "turns": [
+      {
+        "prompt": "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+        "context": {
+          "researchSpec": {
+            "topic": "urban tree canopy and air temperature",
+            "concepts": [
+              {
+                "preferredTerm": "tree canopy"
+              },
+              {
+                "preferredTerm": "air temperature"
+              }
+            ],
+            "sourceRequirements": {
+              "publicationYearFrom": 2022,
+              "peerReviewed": true,
+              "requestedSourceCount": 3
+            }
+          }
+        }
+      },
+      "Show me more sources",
+      "Explain the scope"
+    ]
+  },
+  {
+    "id": "multiturn-new-topic",
+    "discipline": "Biology",
+    "prompt": "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+    "subjectFocusId": "auto",
+    "expected": {
+      "acceptedResourceIds": [
+        "pubmed-medline",
+        "web-of-science",
+        "science-direct"
+      ],
+      "expectedSubjectFocusIds": [
+        "biology-health"
+      ],
+      "minRecommendations": 2,
+      "maxRecommendations": 6,
+      "requiredConceptGroups": [
+        [
+          "protein folding"
+        ],
+        [
+          "disease"
+        ]
+      ],
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "peerReviewed": false,
+        "requestedSourceCount": null
+      },
+      "forbiddenQueryTerms": [
+        "tree canopy",
+        "temperatures"
+      ]
+    },
+    "humanReview": {
+      "pathRelevance": null,
+      "searchTermQuality": null,
+      "catalogPrecision": null,
+      "fallbackSafety": null,
+      "notes": "",
+      "approvalStatus": "not-granted"
+    },
+    "turns": [
+      "Find peer-reviewed studies on how urban tree canopy affects neighborhood summer temperatures, published since 2020. I need three sources for a first-year research paper.",
+      "Show me more sources",
+      "New topic: protein folding and disease"
+    ]
+  }
+]

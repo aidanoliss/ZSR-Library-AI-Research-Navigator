@@ -1,4 +1,5 @@
 import { recommendLibrarianRoutes } from "../config/librarianRoutes.js";
+import { validateEvidenceNotes } from "./sourceEvidence.js";
 
 export function applySourceContract(reply, resources, plan, liveResults, responseStyle, context = {}) {
   if (!reply) return reply;
@@ -9,6 +10,7 @@ export function applySourceContract(reply, resources, plan, liveResults, respons
   // cannot invent or override a person-level librarian route.
   const governedReply = {
     ...reply,
+    ...validateEvidenceNotes(reply, liveResults).fields,
     librarian_routes: recommendLibrarianRoutes(topic, modeId, resources || []),
   };
   if (!["hybrid", "sources"].includes(responseStyle)) return governedReply;
@@ -32,7 +34,7 @@ export function applySourceContract(reply, resources, plan, liveResults, respons
     ? usesCrossrefFallback
       ? "These source leads may or may not be fully relevant. Some come from Crossref bibliographic metadata because ZSR discovery returned too few records; search each title through ZSR and confirm relevance, source type, and access before using it."
       : "These automated source leads may or may not be fully relevant to your search. Open each record and confirm its topic, evidence, source type, and access before using it."
-    : "No verified source records were returned after the ZSR and scholarly-metadata searches. Do not treat the database routes below as citations; revise one concept or ask a librarian before using sources.";
+    : "No source leads are displayed for this request. Check the discovery status for any provider problem before changing your search. Database routes are places to search, not citations.";
 
   return {
     ...governedReply,
@@ -46,6 +48,7 @@ export function applySourceContract(reply, resources, plan, liveResults, respons
 export function transparentSourceFallback(responseStyle) {
   if (!["hybrid", "sources"].includes(responseStyle)) return null;
   return {
+    generation_unavailable: true,
     message: "The AI answer could not be generated, so I have not substituted a canned response. The named ZSR databases and searches below were built directly from your submitted topic.",
   };
 }

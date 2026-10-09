@@ -9,6 +9,8 @@ import {
 import { buildResearchPlan } from "../config/researchAgent.js";
 import { fillTemplate } from "../config/libraryLinks.js";
 import { applySourceContract } from "../server/sourceContract.js";
+import { clientFallbackContext } from "../src/clientFallbackContext.js";
+import { buildBoundedRefinementPrompt } from "../src/researchInterpretation.js";
 import {
   ChatRequestError,
   requestChatReply,
@@ -77,6 +79,51 @@ test("chat parser accepts only governed source-access scopes", () => {
   assert.equal(request("not-a-scope").accessScope, "library");
 });
 
+test("previous interpretation is carried only across dependent follow-ups", () => {
+  const previousResearchSpec = { topic: "medieval trade", mode: "books", sourceRequirements: { publicationYearFrom: 2021 } };
+  const base = [{ role: "user", content: "medieval trade" }, { role: "assistant", content: "Plan" }];
+  const dependent = parseChatRequest({ previousResearchSpec, messages: [...base, { role: "user", content: "Only sources since 2023" }] });
+  assert.deepEqual(dependent.previousResearchSpec, previousResearchSpec);
+  assert.equal(dependent.latestUserText, "Only sources since 2023");
+  const independent = parseChatRequest({ previousResearchSpec, messages: [...base, { role: "user", content: "Protein folding and disease" }] });
+  assert.equal(independent.previousResearchSpec, null);
+});
+
+test("transport fallback replaces an independent topic and tightens dependent publication requirements", () => {
+  const previousResearchSpec = buildResearchPlan("medieval trade networks", 5, "auto", "scholarly", { assignmentContext: "Sources since 2021" }).researchSpec;
+  const independentText = "protein folding and disease";
+  const independent = buildResearchPlan(independentText, 5, "auto", "scholarly", clientFallbackContext({
+    latestUserText: independentText, hasPriorTopic: true, previousResearchSpec,
+  }));
+  assert.match(independent.researchSpec.topic, /protein folding/i);
+  assert.doesNotMatch(JSON.stringify(independent.researchSpec), /medieval|trade networks/);
+  assert.equal(independent.researchSpec.sourceRequirements.publicationYearFrom, null);
+
+  const dependent = buildResearchPlan("medieval trade networks", 5, "auto", "scholarly", clientFallbackContext({
+    latestUserText: "Only sources since 2024", hasPriorTopic: true, previousResearchSpec,
+  }));
+  assert.match(dependent.researchSpec.topic, /medieval trade networks/i);
+  assert.equal(dependent.researchSpec.sourceRequirements.publicationYearFrom, 2024);
+});
+
+test("bounded UI refinement preserves the prior source requirements without treating instructions as concepts", () => {
+  const previousResearchSpec = buildResearchPlan("medieval trade networks", 5, "auto", "books", { assignmentContext: "Published since 2021" }).researchSpec;
+  for (const kind of ["too-broad", "too-narrow", "wrong-discipline"]) {
+    const content = buildBoundedRefinementPrompt(kind, { topic: previousResearchSpec.topic, mode: previousResearchSpec.mode });
+    const parsed = parseChatRequest({ mode: "books", previousResearchSpec, messages: [
+      { role: "user", content: previousResearchSpec.topic }, { role: "assistant", content: "Plan" }, { role: "user", content },
+    ] });
+    assert.ok(parsed.previousResearchSpec, kind);
+    assert.equal(parsed.studentText, previousResearchSpec.topic);
+    const next = buildResearchPlan(parsed.studentText, 5, "auto", parsed.mode, parsed);
+    assert.equal(next.researchSpec.topic, previousResearchSpec.topic);
+    assert.equal(next.researchSpec.sourceRequirements.publicationYearFrom, 2021);
+    assert.deepEqual(next.researchSpec.concepts.map((concept) => concept.preferredTerm), previousResearchSpec.concepts.map((concept) => concept.preferredTerm));
+    const localContext = clientFallbackContext({ latestUserText: content, hasPriorTopic: true, previousResearchSpec });
+    assert.ok(localContext.previousResearchSpec);
+  }
+});
+
 test("missing optional link templates fail closed instead of crashing the interface", () => {
   assert.equal(fillTemplate(undefined, "student topic"), "");
   assert.equal(fillTemplate(null, "student topic"), "");
@@ -111,7 +158,8 @@ test("zero live results remain an explicit zero-result state", () => {
     "hybrid"
   );
 
-  assert.match(reply.source_notice, /No verified source records were returned/i);
+  assert.match(reply.source_notice, /No source leads are displayed/i);
+  assert.match(reply.source_notice, /provider problem before changing your search/i);
   assert.deepEqual(reply.starting_points, []);
   assert.ok(reply.search_terms.length > 0);
 });

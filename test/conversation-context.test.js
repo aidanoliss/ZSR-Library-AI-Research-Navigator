@@ -5,6 +5,7 @@ import {
   isSourceOnlyFollowup,
   submittedResearchContext,
   submittedResearchTopicContext,
+  startsIndependentResearchTurn,
 } from "../src/conversationContext.js";
 
 test("submitted context ignores unsent draft text by accepting messages only", () => {
@@ -14,6 +15,22 @@ test("submitted context ignores unsent draft text by accepting messages only", (
   ];
 
   assert.equal(submittedResearchContext(messages), "protein folding and disease");
+});
+
+test("ordinary source and process follow-ups preserve the topic rather than becoming keywords", () => {
+  const topic = "medieval Italian trade networks";
+  for (const followup of ["Find peer reviewed articles", "Find peer-reviewed articles", "Which databases should I use?", "Can you explain the scope?", "Only sources since 2021", "I need five peer-reviewed sources", "Last 5 years"]) {
+    const messages = [{ role: "user", content: topic }, { role: "assistant", content: "Plan" }, { role: "user", content: followup }];
+    assert.equal(startsIndependentResearchTurn(followup, true), false, followup);
+    assert.equal(activeResearchConversation(messages).length, 3, followup);
+    assert.equal(submittedResearchTopicContext(messages), topic, followup);
+  }
+});
+
+test("several process follow-ups retain the original topic anchor", () => {
+  const topic = "medieval Italian trade networks";
+  const messages = [topic, "Find articles", "Which databases should I use?", "Can you explain the scope?", "Find more sources", "Show books"].map((content) => ({ role: "user", content }));
+  assert.equal(submittedResearchTopicContext(messages), topic);
 });
 
 test("submitted context removes navigation setup after a real topic is sent", () => {

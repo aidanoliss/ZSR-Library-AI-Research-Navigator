@@ -7,8 +7,9 @@ export class ChatRequestError extends Error {
   }
 }
 
-function requestOptions(payload) {
+function requestOptions(payload, signal) {
   return {
+    signal,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -38,10 +39,10 @@ function parseEvent(line) {
   }
 }
 
-async function requestStream(payload, fetchImpl, onDelta) {
+async function requestStream(payload, fetchImpl, onDelta, signal, onSources) {
   let response;
   try {
-    response = await fetchImpl("/api/chat/stream", requestOptions(payload));
+    response = await fetchImpl("/api/chat/stream", requestOptions(payload, signal));
   } catch (err) {
     throw interruptedError("The AI stream could not be reached.", err);
   }
@@ -53,12 +54,19 @@ async function requestStream(payload, fetchImpl, onDelta) {
   const decoder = new TextDecoder();
   let buffer = "";
   let finalPayload = null;
+  let sourcePayload = null;
+  const sourceOnlyResult = () => ({ ...sourcePayload, type: "done", guidancePending: false, guidanceUnavailable: true,
+    reply: { ...sourcePayload.reply, generation_unavailable: true } });
 
   const consumeLine = (line) => {
     if (!line.trim()) return;
     const event = parseEvent(line);
     if (event.type === "delta") onDelta?.(event.message || "");
     if (event.type === "done") finalPayload = event;
+    if (event.type === "sources" && event.reply && Array.isArray(event.liveResults)) {
+      sourcePayload = event;
+      onSources?.(event);
+    }
     if (event.type === "error") {
       throw interruptedError(event.error || "The AI stream stopped before completing.");
     }
@@ -76,20 +84,22 @@ async function requestStream(payload, fetchImpl, onDelta) {
     buffer += decoder.decode();
     consumeLine(buffer);
   } catch (err) {
+    if (sourcePayload && !signal?.aborted) return sourceOnlyResult();
     if (err instanceof ChatRequestError) throw err;
     throw interruptedError("The AI stream was interrupted.", err);
   }
 
   if (!finalPayload?.reply) {
+    if (sourcePayload && !signal?.aborted) return sourceOnlyResult();
     throw interruptedError("The AI stream ended before the reply was complete.");
   }
   return finalPayload;
 }
 
-async function requestBuffered(payload, fetchImpl) {
+async function requestBuffered(payload, fetchImpl, signal) {
   let response;
   try {
-    response = await fetchImpl("/api/chat", requestOptions(payload));
+    response = await fetchImpl("/api/chat", requestOptions(payload, signal));
   } catch (err) {
     throw interruptedError("The AI service could not be reached after an automatic retry.", err);
   }
@@ -112,11 +122,12 @@ export async function requestChatReply(payload, options = {}) {
   }
 
   try {
-    return await requestStream(payload, fetchImpl, options.onDelta);
+    return await requestStream(payload, fetchImpl, options.onDelta, options.signal, options.onSources);
   } catch (err) {
+    if (options.signal?.aborted) throw new DOMException("Request cancelled", "AbortError");
     if (!(err instanceof ChatRequestError) || !err.retryable) throw err;
     options.onDelta?.("");
-    return requestBuffered(payload, fetchImpl);
+    return requestBuffered(payload, fetchImpl, options.signal);
   }
 }
 

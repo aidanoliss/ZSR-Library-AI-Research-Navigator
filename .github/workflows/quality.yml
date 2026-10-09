@@ -1,0 +1,23 @@
+name: Release checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DOTENV_CONFIG_PATH: /dev/null
+      LOG_QUERIES: 'off'
+      LOG_FEEDBACK: 'off'
+      LOG_HANDOFFS: 'off'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --include=dev
+      - run: npm run qa:release

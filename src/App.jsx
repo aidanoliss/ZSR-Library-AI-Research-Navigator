@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import AdminPanel from "./AdminPanel.jsx";
+import { allowStorageRetry, readStoredJSON, readStoredText, removeStoredValue, storageReadFailed, writeStoredText } from "./browserStorage.js";
+import { inferExplicitModeRequest } from "../config/researchSpec.js";
+import { clientFallbackContext } from "./clientFallbackContext.js";
 import AssistantMessage from "./AssistantMessage.jsx";
 import HandoffModal from "./HandoffModal.jsx";
 import ResearchWorkspace from "./ResearchWorkspace.jsx";
+import { LocalStudyPanel } from "./ResultsWorkspace.jsx";
+import { createSearchMetricsSession } from "./searchMetrics.js";
+import { searchRunStatus } from "./resultSearch.js";
 import { chatFailureMessage, requestChatReply } from "./chatTransport.js";
 import { submittedResearchTopicContext } from "./conversationContext.js";
 import { conversationToMarkdown, downloadText } from "./exportPlan.js";
 import {
   addResearchItem,
+  saveSourceNotes,
   addSearchHistoryEntry,
   assignmentContext,
   createResearchWorkspace,
@@ -42,11 +49,10 @@ const ACTIVE_SESSION_KEY = "zsr-research-navigator-active-session";
 const FOLDERS_KEY = "zsr-research-navigator-folders";
 const DEFAULT_FOLDER_ID = "general";
 
-const INITIAL_TOPIC = "The impact of social media on adolescent mental health";
+const INITIAL_TOPIC = "";
 const TRY_PROMPTS = [
-  "Help me research a topic",
-  "Help me with citations",
-  "Help me navigate ZSR",
+  "Sanctions and their impact on authoritarian regimes vs democracies",
+  "Urban tree canopy and neighborhood summer temperatures",
 ];
 
 const FALLBACK_SEARCH_TOOLS = [
@@ -62,7 +68,23 @@ const FALLBACK_SEARCH_TOOLS = [
   },
 ];
 
+function refreshedSourceStatus(discovery) {
+  const outcomes = Object.entries(discovery?.lanes || {})
+    .filter(([, lane]) => lane?.requested)
+    .map(([id, lane]) => {
+      const label = id === "openAccess" ? "Open-access lookup" : "Library lookup";
+      if (lane.outcome === "success") return `${label}: ${lane.resultCount || 0} leads returned`;
+      if (lane.outcome === "empty") return `${label}: no leads matched`;
+      if (lane.outcome === "timeout") return `${label}: timed out`;
+      if (lane.outcome === "rate_limited") return `${label}: rate limited`;
+      return `${label}: ${String(lane.outcome || lane.status || "status unavailable").replace(/_/g, " ")}`;
+    });
+  return outcomes.join(" · ") || "Source lookup status unavailable";
+}
+
 const Icon = {
+  sidebarClose: <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16m7-12-4 4 4 4" /></svg>,
+  sidebarOpen: <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16m4-12 4 4-4 4" /></svg>,
   plus: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>,
   folder: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h6l2 2h8v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" /></svg>,
   trash: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v5M14 11v5" /></svg>,
@@ -113,7 +135,7 @@ function sortSessions(items) {
 
 function readSessions() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(SESSIONS_KEY) || "[]");
+    const parsed = readStoredJSON(SESSIONS_KEY, [], undefined, (value) => Array.isArray(value) && value.every((item) => item && typeof item === "object" && !Array.isArray(item)));
     return Array.isArray(parsed)
       ? sortSessions(parsed.map((session) => ({
         ...session,
@@ -133,7 +155,7 @@ function readSessions() {
 
 function readFolders() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(FOLDERS_KEY) || "[]");
+    const parsed = readStoredJSON(FOLDERS_KEY, [], undefined, Array.isArray);
     const customFolders = Array.isArray(parsed) ? parsed.filter((folder) => folder?.id && folder?.name) : [];
     return uniqueBy(
       [{ id: DEFAULT_FOLDER_ID, name: "General" }, ...customFolders],
@@ -152,13 +174,13 @@ function initialTopicFromUrl() {
 function LoadingBubble() {
   return (
     <div className="bubble assistant loading-bubble" role="status" aria-live="polite">
-      <span className="typing-text">Thinking<span className="typing-dots" aria-hidden="true">...</span></span>
-      <span className="loading-rotate" aria-hidden="true">Checking ZSR context</span>
+      <span className="typing-text">Preparing your result<span className="typing-dots" aria-hidden="true">...</span></span>
+      <span className="loading-rotate" aria-hidden="true">Checking available source metadata</span>
     </div>
   );
 }
 
-function ModeSelector({ value, onChange, accessScope, onAccessScopeChange, responseStyle, onResponseStyleChange, compact = false }) {
+function ModeSelector({ value, onChange, accessScope, onAccessScopeChange, responseStyle, onResponseStyleChange, providerStatus, compact = false }) {
   const active = getSearchMode(value);
   const activeAccessScope = getAccessScope(accessScope);
   const activeStyle = getResponseStyle(responseStyle);
@@ -190,11 +212,12 @@ function ModeSelector({ value, onChange, accessScope, onAccessScopeChange, respo
           onChange={(event) => onAccessScopeChange(event.target.value)}
         >
           {ACCESS_SCOPES.map((scope) => (
-            <option key={scope.id} value={scope.id}>{scope.label}</option>
+            <option key={scope.id} value={scope.id} disabled={scope.id !== "library" && providerStatus?.lanes?.openAccess?.configured === false}>{scope.label}{scope.id !== "library" && providerStatus?.lanes?.openAccess?.configured === false ? " · unavailable" : ""}</option>
           ))}
         </select>
       </div>
-      <div className="response-style" role="radiogroup" aria-label="Response style">
+      {providerStatus?.lanes?.openAccess?.configured === false && <p className="muted">Open-access discovery is not configured here. Library results can still include openly available works.</p>}
+      <div className="response-style" role="group" aria-label="Response style">
         <div>
           <span>Response style</span>
           {!compact && <p>{activeStyle.description}</p>}
@@ -252,7 +275,7 @@ const RESPONSE_STYLE_ICONS = {
 
 function ComposerStyleSwitch({ value, onChange }) {
   return (
-    <div className="composer-style-switcher" role="radiogroup" aria-label="Response style">
+    <div className="composer-style-switcher" role="group" aria-label="Response style">
       {RESPONSE_STYLES.map((style) => {
         const active = value === style.id;
         return (
@@ -262,7 +285,6 @@ function ComposerStyleSwitch({ value, onChange }) {
             className={active ? "active" : ""}
             onClick={(event) => {
               onChange(style.id);
-              event.currentTarget.blur();
             }}
             aria-label={`${style.label}: ${style.description}`}
             aria-pressed={active}
@@ -293,6 +315,7 @@ function SessionRow({ session, activeId, onOpen, onTogglePin, onDelete, classNam
       <button
         type="button"
         className={`session-button ${className} ${active ? "active" : ""}`}
+        title={session.title}
         onClick={() => onOpen(session.id)}
       >
         <strong>{session.title}</strong>
@@ -339,13 +362,12 @@ function SessionRow({ session, activeId, onOpen, onTogglePin, onDelete, classNam
 }
 
 function SessionSidebar({
+  expanded,
+  onExpandedChange,
   sessions,
   activeId,
   folders,
   activeFolderId,
-  subjectFocusId,
-  detectedFocus,
-  onSubjectFocusChange,
   onFolderChange,
   onCreateFolder,
   onDeleteFolder,
@@ -353,10 +375,12 @@ function SessionSidebar({
   onNew,
   onTogglePin,
   onDeleteSession,
-  researchWorkspace,
-  onOpenResearchWorkspace,
 }) {
   const [folderName, setFolderName] = useState("");
+  const [creatingFolder, setCreatingFolder] = useState(false);
+  const newFolderButton = useRef(null);
+  const sidebarToggle = useRef(null);
+  const [showRecent, setShowRecent] = useState(false);
   const customFolders = folders.filter((folder) => folder.id !== DEFAULT_FOLDER_ID);
   const customFolderIds = new Set(customFolders.map((folder) => folder.id));
   const unfiledSessions = sortSessions(sessions.filter((session) => {
@@ -369,99 +393,99 @@ function SessionSidebar({
     const name = folderName.trim();
     if (!name) return;
     onCreateFolder(name);
+    closeFolderForm();
+  }
+
+  function closeFolderForm() {
     setFolderName("");
+    setCreatingFolder(false);
+    newFolderButton.current?.focus();
   }
 
   return (
-    <aside className="session-sidebar no-print" aria-label="Research sessions">
-      <button type="button" className="new-topic-btn" onClick={() => onNew(activeFolderId || DEFAULT_FOLDER_ID)}>
+    <aside className={`session-sidebar no-print ${expanded ? "is-expanded" : "is-collapsed"}`} aria-label="Research sessions"
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && !event.defaultPrevented && expanded) {
+          event.preventDefault();
+          onExpandedChange(false);
+          sidebarToggle.current?.focus();
+        }
+      }}>
+      <div className="sidebar-heading">
+        {expanded && <span>Research</span>}
+        <button type="button" className="sidebar-toggle" ref={sidebarToggle}
+          onClick={() => onExpandedChange(!expanded)}
+          aria-expanded={expanded} aria-controls="research-sidebar-content"
+          aria-label={expanded ? "Close sidebar" : "Expand sidebar"}
+          title={expanded ? "Close sidebar" : "Expand sidebar"}>
+          {expanded ? Icon.sidebarClose : Icon.sidebarOpen}
+          <span className="sidebar-toggle-label">{expanded ? "Close sidebar" : "Expand sidebar"}</span>
+        </button>
+      </div>
+      <div id="research-sidebar-content" className="sidebar-content" hidden={!expanded}>
+      <button type="button" className="new-topic-btn" onClick={() => onNew(DEFAULT_FOLDER_ID)}>
         {Icon.plus}
         <span>New topic</span>
       </button>
-      <SubjectFocusControl
-        value={subjectFocusId}
-        detectedFocus={detectedFocus}
-        onChange={onSubjectFocusChange}
-      />
-      <button type="button" className="research-workspace-open" onClick={onOpenResearchWorkspace}>
-        {Icon.workspace}
-        <span>
-          <strong>Research workspace</strong>
-          <em>{researchWorkspace.trail.length} saved · {researchWorkspace.searchHistory.length} searches</em>
-        </span>
-      </button>
-      <div className="folder-list" aria-label="Session folders">
-        <h2>Folders</h2>
-        {customFolders.length === 0 ? (
-          <p className="folder-empty">No folders yet.</p>
-        ) : (
-          customFolders.map((folder) => {
+      <details className="folder-list" aria-label="Session folders">
+        <summary>Folders <span className="folder-count">{customFolders.length || ""}</span></summary>
+        <div className="folder-contents">
+          {customFolders.map((folder) => {
             const folderSessions = sortSessions(sessions.filter((session) => (session.folderId || DEFAULT_FOLDER_ID) === folder.id));
             return (
-              <section
-                key={folder.id}
-                className={`folder-group ${activeFolderId === folder.id ? "active" : ""}`}
-              >
-                <div className={`folder-row ${activeFolderId === folder.id ? "active" : ""}`}>
-                  <button
-                    type="button"
-                    className="folder-select"
-                    onClick={() => onFolderChange(folder.id)}
-                    title="Select this folder for new chats"
-                  >
-                    {Icon.folder}
-                    <span>{folder.name}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="folder-delete"
-                    onClick={() => onDeleteFolder(folder.id)}
-                    aria-label={`Delete folder ${folder.name}`}
-                    title="Delete folder and move chats outside folders"
-                  >
-                    {Icon.trash}
-                  </button>
-                </div>
-                <div className="folder-session-list" aria-label={`${folder.name} chats`}>
+              <details key={folder.id} className={`folder-group ${activeFolderId === folder.id ? "active" : ""}`}>
+                <summary className="folder-select" onClick={() => onFolderChange(folder.id)}>
+                  {Icon.folder}
+                  <span title={folder.name}>{folder.name}</span>
+                  <small className="folder-count" aria-label={`${folderSessions.length} topics`}>{folderSessions.length}</small>
+                </summary>
+                <div className="folder-session-list" aria-label={`${folder.name} topics`}>
                   <button type="button" className="folder-new-chat" onClick={() => onNew(folder.id)}>
-                    {Icon.plus}
-                    <span>New chat here</span>
+                    {Icon.plus}<span>New topic here</span>
                   </button>
-                  {folderSessions.length === 0 ? (
-                    <p className="folder-empty small">No chats yet.</p>
-                  ) : (
-                    folderSessions.map((session) => (
-                      <SessionRow
-                        key={session.id}
-                        session={session}
-                        activeId={activeId}
-                        onOpen={onOpen}
-                        onTogglePin={onTogglePin}
-                        onDelete={onDeleteSession}
-                        className="nested"
-                      />
-                    ))
-                  )}
+                  {folderSessions.map((session) => (
+                    <SessionRow
+                      key={session.id}
+                      session={session}
+                      activeId={activeId}
+                      onOpen={onOpen}
+                      onTogglePin={onTogglePin}
+                      onDelete={onDeleteSession}
+                      className="nested"
+                    />
+                  ))}
+                  <button type="button" className="folder-remove" onClick={() => onDeleteFolder(folder.id)}
+                    aria-label={`Remove folder ${folder.name}`} title="Remove folder; keep its topics in Recent research">
+                    Remove folder
+                  </button>
                 </div>
-              </section>
+              </details>
             );
-          })
-        )}
-        <form className="folder-create" onSubmit={submitFolder}>
-          <label className="sr-only" htmlFor="folder-name">New folder name</label>
-          <input
-            id="folder-name"
-            value={folderName}
-            onChange={(event) => setFolderName(event.target.value)}
-            placeholder="New folder"
-          />
-          <button type="submit" aria-label="Create folder">{Icon.plus}</button>
-        </form>
-      </div>
-      <div className="session-list">
-        <h2>Chats</h2>
+          })}
+          <button type="button" className="folder-add" ref={newFolderButton}
+            aria-expanded={creatingFolder} aria-controls="folder-create-form"
+            onClick={() => creatingFolder ? closeFolderForm() : setCreatingFolder(true)}>
+            {Icon.plus}<span>New folder</span>
+          </button>
+          {creatingFolder && <form id="folder-create-form" className="folder-create" onSubmit={submitFolder}>
+            <label htmlFor="folder-name">Folder name</label>
+            <input id="folder-name" autoFocus maxLength={64} value={folderName}
+              onChange={(event) => setFolderName(event.target.value)} placeholder="e.g. History seminar"
+              onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); closeFolderForm(); } }} />
+            <div className="folder-create-actions">
+              <button type="submit" disabled={!folderName.trim()}>Create</button>
+              <button type="button" onClick={closeFolderForm}>Cancel</button>
+            </div>
+          </form>}
+        </div>
+      </details>
+      <button type="button" className="recent-toggle" aria-expanded={showRecent} aria-controls="recent-research-list" onClick={() => setShowRecent((shown) => !shown)}>
+        {showRecent ? "Hide past topics" : "Browse past topics"}
+      </button>
+      <div className={`session-list ${showRecent ? "recent-open" : ""}`} id="recent-research-list">
+        <h2>Recent research</h2>
         {unfiledSessions.length === 0 ? (
-          <p>No chats outside folders yet.</p>
+          <p>Your research sessions will appear here.</p>
         ) : (
           unfiledSessions.map((session) => (
             <SessionRow
@@ -474,6 +498,7 @@ function SessionSidebar({
             />
           ))
         )}
+      </div>
       </div>
     </aside>
   );
@@ -595,9 +620,9 @@ function plannerQuestionsFor(topic, modeLabel, providedQuestions = []) {
       options: ["Peer-reviewed articles", "Books/background", "News/current events", "Data/statistics", "Primary sources"],
     },
     {
-      question: `Which ${modeLabel.toLowerCase()} lens fits best?`,
+      question: "How would you like to narrow your topic?",
       why: "Choosing a lens keeps the research question from becoming too broad.",
-      options: ["Psychology/behavior", "Communication/media", "Health outcomes", "Policy/social context", "Not sure yet"],
+      options: ["A particular place", "A particular population", "Compare two approaches", "Historical change", "Not sure yet"],
     },
   ];
 }
@@ -738,28 +763,50 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
 }
 
 export default function App() {
-  const [input, setInput] = useState(() => localStorage.getItem(STORAGE_KEY) || initialTopicFromUrl());
+  const [sidebarExpanded, setSidebarExpanded] = useState(() => window.matchMedia("(min-width: 861px)").matches);
+  const [input, setInput] = useState(() => readStoredText(STORAGE_KEY, initialTopicFromUrl()));
   const [messages, setMessages] = useState([]);
   const [mode, setMode] = useState(DEFAULT_MODE_ID);
   const [responseStyle, setResponseStyle] = useState(DEFAULT_RESPONSE_STYLE_ID);
   const [subjectFocusId, setSubjectFocusId] = useState(DEFAULT_SUBJECT_FOCUS_ID);
   const [accessScope, setAccessScope] = useState(DEFAULT_ACCESS_SCOPE_ID);
+  const [providerStatus, setProviderStatus] = useState(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/discovery/status", { signal: controller.signal }).then((response) => response.ok ? response.json() : null).then((status) => { if (!controller.signal.aborted) setProviderStatus(status); }).catch(() => {});
+    return () => controller.abort();
+  }, []);
   const [researchWorkspace, setResearchWorkspace] = useState(() => createResearchWorkspace());
   const [researchWorkspaceOpen, setResearchWorkspaceOpen] = useState(false);
+  const [workspaceTab, setWorkspaceTab] = useState("trail");
   const [sessions, setSessions] = useState(() => readSessions());
   const [folders, setFolders] = useState(() => readFolders());
   const [activeFolderId, setActiveFolderId] = useState(DEFAULT_FOLDER_ID);
-  const [activeSessionId, setActiveSessionId] = useState(() => localStorage.getItem(ACTIVE_SESSION_KEY) || "");
+  const [activeSessionId, setActiveSessionId] = useState(() => readStoredText(ACTIVE_SESSION_KEY, ""));
   const [adminOpen, setAdminOpen] = useState(() => new URLSearchParams(window.location.search).has("admin"));
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [plannerDraft, setPlannerDraft] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [streamText, setStreamText] = useState("");
+  const [followupOpen, setFollowupOpen] = useState(false);
+  const studyRef = useRef(null);
+  if (!studyRef.current) {
+    let storage;
+    try { storage = window.sessionStorage; } catch { storage = null; }
+    studyRef.current = createSearchMetricsSession({ sessionId: "current-tab", storage });
+  }
+  const [studyEnabled, setStudyEnabled] = useState(() => studyRef.current.isEnabled());
   const [error, setError] = useState("");
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  const requestRef = useRef(null);
+  const workspaceRef = useRef(researchWorkspace);
+  workspaceRef.current = researchWorkspace;
+  const [storageError, setStorageError] = useState(storageReadFailed());
+  const [storageRetry, setStorageRetry] = useState(0);
+  const [actionNotice, setActionNotice] = useState("");
 
   const hasConversation = messages.length > 0;
+  const currentRequestIndex = Math.max(0, messages.findLastIndex((message) => message.role === "user"));
   const activeMode = getSearchMode(mode);
   const subjectFocusSeed = useMemo(() => submittedResearchTopicContext(messages), [messages]);
   const effectiveSubjectFocus = useMemo(
@@ -768,31 +815,34 @@ export default function App() {
   );
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, input);
-  }, [input]);
+    const written = [
+      writeStoredText(STORAGE_KEY, input),
+      writeStoredText(SESSIONS_KEY, JSON.stringify(sessions)),
+      writeStoredText(FOLDERS_KEY, JSON.stringify(folders.filter((folder) => folder.id !== DEFAULT_FOLDER_ID))),
+      activeSessionId ? writeStoredText(ACTIVE_SESSION_KEY, activeSessionId) : removeStoredValue(ACTIVE_SESSION_KEY),
+    ];
+    setStorageError(written.some((ok) => !ok));
+  }, [input, sessions, folders, activeSessionId, storageRetry]);
 
-  useEffect(() => {
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions.slice(0, 60)));
-  }, [sessions]);
+  useEffect(() => () => requestRef.current?.abort(), []);
 
-  useEffect(() => {
-    localStorage.setItem(FOLDERS_KEY, JSON.stringify(folders.filter((folder) => folder.id !== DEFAULT_FOLDER_ID)));
-  }, [folders]);
+  function cancelRequest() {
+    requestRef.current?.abort();
+    requestRef.current = null;
+    setLoading(false);
+  }
 
-  useEffect(() => {
-    if (activeSessionId) {
-      localStorage.setItem(ACTIVE_SESSION_KEY, activeSessionId);
-    } else {
-      localStorage.removeItem(ACTIVE_SESSION_KEY);
-    }
-  }, [activeSessionId]);
+  function openWorkspace(tab = "trail") {
+    setWorkspaceTab(tab);
+    setResearchWorkspaceOpen(true);
+  }
 
   useEffect(() => {
     if (!activeSessionId || messages.length > 0) return;
     const session = sessions.find((item) => item.id === activeSessionId);
     if (!session) {
       setActiveSessionId("");
-      localStorage.removeItem(ACTIVE_SESSION_KEY);
+      removeStoredValue(ACTIVE_SESSION_KEY);
       return;
     }
     setMode(session.mode || DEFAULT_MODE_ID);
@@ -802,7 +852,6 @@ export default function App() {
     setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
-    setInput("");
   }, []);
 
   // Scroll only when a new question is asked — not while "Thinking" animates or
@@ -810,6 +859,13 @@ export default function App() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages.filter((m) => m.role === "user").length]);
+
+  const updatedResultRef = useRef(null);
+  useEffect(() => {
+    if (!loading && messages.at(-1)?.isCorrectionResult) {
+      updatedResultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [loading, messages]);
 
   const exportableMessages = useMemo(
     () => messages.filter((m) => m.role === "user" || m.role === "assistant"),
@@ -819,6 +875,11 @@ export default function App() {
   const handoffPayload = useMemo(
     () => buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusId, researchWorkspace),
     [messages, input, mode, responseStyle, subjectFocusId, researchWorkspace]
+  );
+
+  const latestResearchSpec = useMemo(
+    () => [...messages].reverse().find((message) => message.role === "assistant" && message.researchSpec)?.researchSpec || null,
+    [messages]
   );
 
   const latestReleaseId = useMemo(
@@ -869,7 +930,7 @@ export default function App() {
         createdAt: existing?.createdAt || Date.now(),
         updatedAt: Date.now(),
       };
-      return sortSessions([session, ...current.filter((s) => s.id !== id)]).slice(0, 60);
+      return sortSessions([session, ...current.filter((s) => s.id !== id)]);
     });
     return id;
   }
@@ -889,7 +950,11 @@ export default function App() {
   function changeResearchWorkspace(nextWorkspace) {
     const normalized = normalizeResearchWorkspace(nextWorkspace);
     setResearchWorkspace(normalized);
-    if (!activeSessionId) return;
+    workspaceRef.current = normalized;
+    if (!activeSessionId) {
+      saveSession(messages, mode, responseStyle, undefined, subjectFocusId, normalized);
+      return;
+    }
     setSessions((current) => sortSessions(current.map((session) =>
       session.id === activeSessionId
         ? { ...session, researchWorkspace: normalized, updatedAt: Date.now() }
@@ -898,11 +963,23 @@ export default function App() {
   }
 
   function saveResearchItem(item) {
-    changeResearchWorkspace(addResearchItem(researchWorkspace, item));
+    try {
+      changeResearchWorkspace(addResearchItem(workspaceRef.current, item));
+      setActionNotice(`Saved “${item.title}” to My sources.`);
+    } catch (cause) { setActionNotice(cause.message || "Could not save this source. Export your workspace before trying again."); }
+  }
+
+  function saveReadingNotes(item, notes) {
+    try {
+      changeResearchWorkspace(saveSourceNotes(workspaceRef.current, item, notes));
+      setActionNotice(`Reading notes saved for “${item.title}”.`);
+      return true;
+    } catch (cause) { setActionNotice(cause.message || "Could not save reading notes."); return false; }
   }
 
   function trackSearch(entry) {
-    changeResearchWorkspace(addSearchHistoryEntry(researchWorkspace, entry));
+    try { changeResearchWorkspace(addSearchHistoryEntry(workspaceRef.current, entry)); }
+    catch (cause) { setActionNotice(cause.message || "Could not save this search to the workspace."); }
   }
 
   function createFolder(name) {
@@ -940,6 +1017,7 @@ export default function App() {
   }
 
   function deleteSession(sessionId) {
+    if (activeSessionId === sessionId) cancelRequest();
     const deletedSession = sessions.find((session) => session.id === sessionId);
     setSessions((current) => current.filter((session) => session.id !== sessionId));
     if (activeSessionId !== sessionId) return;
@@ -954,13 +1032,13 @@ export default function App() {
     setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
     setError("");
-    setStreamText("");
-    localStorage.removeItem(ACTIVE_SESSION_KEY);
+    removeStoredValue(ACTIVE_SESSION_KEY);
   }
 
   function openSession(id) {
     const session = sessions.find((s) => s.id === id);
     if (!session) return;
+    cancelRequest();
     setActiveSessionId(id);
     setMode(session.mode || DEFAULT_MODE_ID);
     setResponseStyle(session.responseStyle || DEFAULT_RESPONSE_STYLE_ID);
@@ -974,6 +1052,7 @@ export default function App() {
   }
 
   function startNew(folderId = activeFolderId) {
+    cancelRequest();
     const targetFolderId = typeof folderId === "string" && folderId ? folderId : DEFAULT_FOLDER_ID;
     setActiveFolderId(targetFolderId);
     setActiveSessionId("");
@@ -987,10 +1066,10 @@ export default function App() {
     setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
     setError("");
-    setStreamText("");
   }
 
   function openPlanner(topicText = input, questions = []) {
+    setFollowupOpen(true);
     const content = String(topicText || input || "").trim();
     if (!content) return;
     setPlannerDraft({ topic: content, questions });
@@ -1014,47 +1093,45 @@ export default function App() {
       return;
     }
 
-    const requestMode = options.modeOverride || options.mode || mode;
+    const searchMetricId = crypto.randomUUID();
+    studyRef.current.record("search_started", { searchId: searchMetricId, accessScope });
+    setFollowupOpen(false);
+    const requestMode = options.modeOverride || options.mode || inferExplicitModeRequest(content, mode);
+    const controller = new AbortController();
+    controller.signal.addEventListener("abort", () => studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: "cancelled" }), { once: true });
+    requestRef.current = controller;
     if (requestMode !== mode) setMode(requestMode);
-    const focusText = submittedResearchTopicContext([...messages, { role: "user", content }]);
+    const focusText = options.researchSpec?.topic || submittedResearchTopicContext([...messages, { role: "user", content }]);
     const requestFocus = resolveSubjectFocus(subjectFocusId, focusText);
     const requestAssignmentContext = assignmentContext(researchWorkspace.assignment);
     const userMessage = options.plannerContext
       ? { role: "user", content, plannerContext: options.plannerContext }
       : { role: "user", content };
+    const isCorrection = Number.isInteger(options.correctionOfIndex) && messages[options.correctionOfIndex]?.role === "assistant";
+    if (isCorrection) {
+      userMessage.isCorrectionRequest = true;
+      userMessage.displayContent = `Updated search: ${(options.correctionChanges || []).map((change) => `${change.label}: ${change.after}`).join("; ") || "corrected search brief"}`;
+    }
     userMessage.subjectFocusId = requestFocus.id;
     userMessage.subjectFocusLabel = requestFocus.label;
     userMessage.subjectFocusAuto = subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID;
     if (requestAssignmentContext) userMessage.assignmentContext = requestAssignmentContext;
-    const nextMessages = [...messages, userMessage];
+    const nextMessages = [
+      ...messages.map((message, index) => isCorrection && index === options.correctionOfIndex ? { ...message, supersededByCorrection: true } : message),
+      userMessage,
+    ];
     const sessionId = activeSessionId || crypto.randomUUID();
     saveSession(nextMessages, requestMode, responseStyle, sessionId);
     setMessages(nextMessages);
     setInput("");
     setError("");
     setLoading(true);
-    setStreamText("");
-
-    try {
-      const requestPayload = {
-        mode: requestMode,
-        accessScope,
-        responseStyle,
-        subjectFocusId,
-        assignmentContext: requestAssignmentContext,
-        plannerContext: options.plannerContext || "",
-        ...(options.researchSpec ? { researchSpec: options.researchSpec } : {}),
-        messages: nextMessages.map((m) => ({
-          role: m.role,
-          content: m.role === "assistant"
-            ? (m.reply?.message || m.content || "")
-            : m.content,
-        })),
-      };
-      const finalPayload = await requestChatReply(requestPayload, {
-        onDelta: (message) => setStreamText(message || ""),
-      });
+    const assistantCreatedAt = Date.now();
+    function presentPayload(finalPayload, guidancePending = false) {
       const assistantMessage = {
+        searchMetricId,
+        guidancePending,
+        guidanceUnavailable: Boolean(finalPayload.guidanceUnavailable),
         role: "assistant",
         content: finalPayload.reply?.message || "",
         reply: finalPayload.reply,
@@ -1079,29 +1156,64 @@ export default function App() {
           finalPayload.planSummary ||
           finalPayload.reply?.research_plan ||
           null,
-        createdAt: Date.now(),
+        createdAt: assistantCreatedAt,
         mode: requestMode,
         responseStyle,
         subjectFocusId: requestFocus.id,
         subjectFocusLabel: requestFocus.label,
         subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
         accessScope,
+        ...(isCorrection ? { isCorrectionResult: true, correctionChanges: options.correctionChanges || [] } : {}),
       };
       const finished = [...nextMessages, assistantMessage];
       setMessages(finished);
-      saveSession(finished, requestMode, responseStyle, sessionId);
+      saveSession(finished, requestMode, responseStyle, sessionId, subjectFocusId, workspaceRef.current);
+    }
+
+    try {
+      const requestPayload = {
+        mode: requestMode,
+        accessScope,
+        responseStyle,
+        subjectFocusId,
+        assignmentContext: requestAssignmentContext,
+        plannerContext: options.plannerContext || "",
+        ...((options.previousResearchSpec || latestResearchSpec) ? { previousResearchSpec: options.previousResearchSpec || latestResearchSpec } : {}),
+        ...(options.researchSpec ? { researchSpec: options.researchSpec } : {}),
+        messages: nextMessages.map((m) => ({
+          role: m.role,
+          content: m.role === "assistant"
+            ? (m.reply?.message || m.content || "")
+            : m.content,
+        })),
+      };
+      const finalPayload = await requestChatReply(requestPayload, {
+        signal: controller.signal,
+        onSources: (payload) => {
+          if (!controller.signal.aborted && requestRef.current === controller) presentPayload(payload, true);
+        },
+      });
+      if (controller.signal.aborted || requestRef.current !== controller) return;
+      studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: (finalPayload.liveResults || []).length, status: searchRunStatus(finalPayload) });
+      presentPayload(finalPayload);
     } catch (err) {
+      if (controller.signal.aborted || requestRef.current !== controller) return;
       setError("");
+      studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: "error" });
       const failureMessage = chatFailureMessage(err);
       const deterministicFallbackPlan = buildResearchPlan(
-        content,
+        focusText,
         5,
         requestFocus.selectedId || requestFocus.id,
         requestMode,
-        {
+        clientFallbackContext({
           assignmentContext: requestAssignmentContext,
           plannerContext: options.plannerContext || "",
-        }
+          researchSpec: options.researchSpec,
+          previousResearchSpec: options.previousResearchSpec || latestResearchSpec,
+          latestUserText: content,
+          hasPriorTopic: messages.some((message) => message.role === "user"),
+        })
       );
       const fallback = [
         ...nextMessages,
@@ -1115,7 +1227,7 @@ export default function App() {
                   source_notice: "The AI answer was interrupted. The named database routes and locally generated searches below may or may not be fully relevant; verify every result you open.",
                 }
               : {}),
-            search_terms: buildSearchTermSuggestions(content, [], requestFocus.selectedId || requestFocus.id, 6),
+            search_terms: deterministicFallbackPlan.searchTerms || buildSearchTermSuggestions(focusText, [], requestFocus.selectedId || requestFocus.id, 6),
             suggested_followups: ["Try a narrower version", "Find source leads", "Get citation help"],
           },
           matched: deterministicFallbackPlan.recommendations || [],
@@ -1132,21 +1244,26 @@ export default function App() {
           subjectFocusId: requestFocus.id,
           subjectFocusLabel: requestFocus.label,
           subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
+          ...(isCorrection ? { isCorrectionResult: true, correctionFailed: true, correctionChanges: options.correctionChanges || [] } : {}),
         },
       ];
       setMessages(fallback);
-      saveSession(fallback, requestMode, responseStyle, sessionId);
+      saveSession(fallback, requestMode, responseStyle, sessionId, subjectFocusId, workspaceRef.current);
     } finally {
-      setLoading(false);
-      setStreamText("");
+      if (requestRef.current === controller) {
+        requestRef.current = null;
+        setLoading(false);
+      }
     }
   }
 
   function rerunInterpretation(prompt, options = {}) {
-    send(prompt, {
+    return send(prompt, {
       skipPlanner: true,
-      modeOverride: options.mode || mode,
+      modeOverride: options.modeOverride || options.mode || mode,
       researchSpec: options.researchSpec,
+      correctionOfIndex: options.correctionOfIndex,
+      correctionChanges: options.changes,
     });
   }
 
@@ -1176,8 +1293,14 @@ export default function App() {
     send();
   }
 
-  function copyPlan() {
-    navigator.clipboard?.writeText(conversationToMarkdown(exportableMessages)).catch(() => {});
+  async function copyPlan() {
+    try {
+      if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(conversationToMarkdown(exportableMessages));
+      setActionNotice("Research plan copied.");
+    } catch {
+      setActionNotice("The plan could not be copied. Use Download plan instead.");
+    }
   }
 
   function downloadPlan() {
@@ -1185,12 +1308,17 @@ export default function App() {
   }
 
   async function sharePlan() {
-    const url = window.location.href;
-    if (navigator.share) {
-      await navigator.share({ title: "ZSR Research Navigator", url }).catch(() => {});
-      return;
+    const url = `${window.location.origin}${window.location.pathname}`;
+    try {
+      if (navigator.share) await navigator.share({ title: "ZSR Research Navigator", url });
+      else {
+        if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+        await navigator.clipboard.writeText(url);
+        setActionNotice("Navigator link copied. Your private research is not included.");
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") setActionNotice("The Navigator link could not be shared. Copy the address from your browser.");
     }
-    await navigator.clipboard?.writeText(url).catch(() => {});
   }
 
   function closeAdmin() {
@@ -1204,17 +1332,79 @@ export default function App() {
     openPlanner(seed || submittedResearchTopicContext(messages) || input, questions);
   }
 
+  function renderConversationMessage(message, index) {
+    if (message.role === "user") {
+      const next = messages[index + 1];
+      const shownInSearch = index === currentRequestIndex && next?.role === "assistant";
+      const originalTopic = next?.researchSpec?.topic || next?.researchPlan?.researchSpec?.topic;
+      if (shownInSearch && (originalTopic === message.content || message.isCorrectionRequest) && !message.assignmentContext && !message.plannerContext) return null;
+      const request = <div className="bubble user"><span>Research request</span><p>{message.displayContent || message.content}</p>{message.assignmentContext && <RequestMetaSummary message={{ assignmentContext: message.assignmentContext }} />}<PlannerContextSummary context={message.plannerContext} /></div>;
+      return shownInSearch ? <details className="request-context" key={`${message.role}-${index}`}><summary>Request details</summary>{request}</details> : <div key={`${message.role}-${index}`}>{request}</div>;
+    }
+                  const assistant = (
+                    <AssistantMessage
+                      key={`${message.role}-${index}`}
+                      reply={message.reply}
+                      matched={message.matched}
+                      searchTools={message.searchTools}
+                      liveResults={message.liveResults}
+                      sourceDiscovery={message.sourceDiscovery}
+                      topic={message.isCorrectionResult ? message.researchSpec?.topic || submittedResearchTopicContext(messages, index) : submittedResearchTopicContext(messages, index)}
+                      mode={message.mode || mode}
+                      responseStyle={message.responseStyle || responseStyle}
+                      subjectFocusId={message.subjectFocusId || messages[index - 1]?.subjectFocusId || effectiveSubjectFocus.id}
+                      researchSpec={message.researchSpec || message.reply?.researchSpec || message.reply?.research_spec}
+                      researchPlan={message.researchPlan}
+                      releaseId={message.releaseId || message.reply?.releaseId || message.reply?.release_id}
+                      isFollowup={index > 1 && !message.isCorrectionResult}
+                      isLatest={index === messages.length - 1 && !loading}
+                      isRefreshing={loading && index === messages.length - 2 && messages.at(-1)?.isCorrectionRequest}
+                      onFollowup={send}
+                      onRerunInterpretation={index === messages.length - 1 && !loading
+                        ? (prompt, options) => rerunInterpretation(prompt, { ...options, correctionOfIndex: index })
+                        : null}
+                      onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchTopicContext(messages, index), questions)}
+                      onSaveResearchItem={saveResearchItem}
+                      onSaveSourceNotes={saveReadingNotes}
+                      onTrackSearch={trackSearch}
+                      savedResearchItemKeys={savedResearchItemKeys}
+                      savedItems={researchWorkspace.trail}
+                      onOpenSavedSources={() => openWorkspace("trail")}
+                      studyEnabled={studyEnabled}
+                      onSourceEvent={(type, detail) => { if (message.searchMetricId) studyRef.current.record(type, { ...detail, searchId: message.searchMetricId }); }}
+                    />
+                  );
+                  if (message.supersededByCorrection) {
+                    return <details className="previous-search-result" key={`${message.role}-${index}`}>
+                      <summary>Previous search result — before corrections</summary>
+                      {assistant}
+                    </details>;
+                  }
+                  return <div key={`${message.role}-${index}`} ref={message.isCorrectionResult && index === messages.length - 1 ? updatedResultRef : null} className={message.isCorrectionResult ? "updated-search-result" : ""}>
+                    {loading && message.guidancePending && <p className="source-guidance-status" role="status"><strong>Search results are ready.</strong> Checking optional abstract passages. You can open and save sources now.</p>}
+                    {message.guidanceUnavailable && <p className="source-guidance-status" role="status">Source results were preserved. Optional abstract selection could not finish.</p>}
+                    {message.isCorrectionResult && <div className="correction-result-status" role="status">
+                      <strong>{message.correctionFailed ? "Search refresh could not complete" : "Search updated"}</strong>
+                      <span>{message.correctionFailed
+                        ? "The suggestions below are local fallbacks; source leads were not refreshed. Try again when the service is available."
+                        : refreshedSourceStatus(message.sourceDiscovery)}</span>
+                      {!message.correctionFailed && <details><summary>What changed</summary><p>{(message.correctionChanges || []).map((change) => `${change.label}: ${change.after}`).join("; ") || "Corrected search brief"}. Search terms and database routes were rebuilt. Matching source leads may repeat after a correction.</p></details>}
+                    </div>}
+                    {assistant}
+                  </div>;
+
+  }
+
   if (adminOpen) {
     return (
-      <div className="zsr-app has-conversation admin-mode">
+      <div className={`zsr-app has-conversation admin-mode ${sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed"}`}>
         <SessionSidebar
+          expanded={sidebarExpanded}
+          onExpandedChange={setSidebarExpanded}
           sessions={sessions}
           activeId={activeSessionId}
           folders={folders}
           activeFolderId={activeFolderId}
-          subjectFocusId={subjectFocusId}
-          detectedFocus={effectiveSubjectFocus}
-          onSubjectFocusChange={changeSubjectFocus}
           onFolderChange={setActiveFolderId}
           onCreateFolder={createFolder}
           onDeleteFolder={deleteFolder}
@@ -1222,8 +1412,6 @@ export default function App() {
           onNew={startNew}
           onTogglePin={togglePinSession}
           onDeleteSession={deleteSession}
-          researchWorkspace={researchWorkspace}
-          onOpenResearchWorkspace={() => setResearchWorkspaceOpen(true)}
         />
         <main className="zsr-main">
           <header className="zsr-hero">
@@ -1243,15 +1431,14 @@ export default function App() {
   }
 
   return (
-    <div className={`zsr-app ${hasConversation ? "has-conversation" : ""}`}>
+    <div className={`zsr-app ${hasConversation ? "has-conversation" : ""} ${sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed"}`}>
       <SessionSidebar
+        expanded={sidebarExpanded}
+        onExpandedChange={setSidebarExpanded}
         sessions={sessions}
         activeId={activeSessionId}
         folders={folders}
         activeFolderId={activeFolderId}
-        subjectFocusId={subjectFocusId}
-        detectedFocus={effectiveSubjectFocus}
-        onSubjectFocusChange={changeSubjectFocus}
         onFolderChange={setActiveFolderId}
         onCreateFolder={createFolder}
         onDeleteFolder={deleteFolder}
@@ -1259,45 +1446,57 @@ export default function App() {
         onNew={startNew}
         onTogglePin={togglePinSession}
         onDeleteSession={deleteSession}
-        researchWorkspace={researchWorkspace}
-        onOpenResearchWorkspace={() => setResearchWorkspaceOpen(true)}
       />
 
-      <main className="zsr-main">
+      <a className="skip-link" href="#research-main">Skip to research</a>
+      <main className="zsr-main" id="research-main" tabIndex={-1}>
         <header className="zsr-hero">
           <div className="hero-bg" aria-hidden="true" />
           <div className="hero-content">
             <p className="prototype-status">
               Prototype for ZSR Library research workflows
-              {latestReleaseId && <span className="hero-release">Release {latestReleaseId}</span>}
             </p>
             <h1><span className="title-zsr">ZSR</span> Research Navigator</h1>
-            <p>Shape a topic into searchable terms, ZSR starting points, live library and open-access leads, and citation-aware next steps.</p>
+            <p>Find a starting point. Build a search. Keep the sources that matter.</p>
           </div>
         </header>
 
-        <section className="top-actions no-print" aria-label="Research actions">
-          <a className="tool-icon librarian-icon" href="https://zsr.wfu.edu/ask/" target="_blank" rel="noopener noreferrer" aria-label="Ask a librarian" data-tip="Ask a librarian">
-            {Icon.mail}
-          </a>
-          <button type="button" className="tool-icon" onClick={() => setHandoffOpen(true)} disabled={!handoffPayload.topic} aria-label="Prepare librarian handoff" data-tip="Handoff">{Icon.handoff}</button>
-          <button type="button" className="tool-icon" onClick={() => setResearchWorkspaceOpen(true)} aria-label="Open research workspace" data-tip="Research workspace">{Icon.workspace}</button>
-          <button type="button" className="tool-icon" onClick={copyPlan} aria-label="Copy research plan" data-tip="Copy plan">{Icon.copy}</button>
-          <button type="button" className="tool-icon" onClick={downloadPlan} aria-label="Download plan" data-tip="Download">{Icon.download}</button>
-          <button type="button" className="tool-icon" onClick={() => window.print()} aria-label="Print" data-tip="Print">{Icon.print}</button>
-          <button type="button" className="tool-icon" onClick={sharePlan} aria-label="Share" data-tip="Share">{Icon.share}</button>
-        </section>
+        <nav className="research-toolbar no-print" aria-label="Research actions">
+          <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter((item) => item.kind !== "search" && item.kind !== "database").length}</span></button>
+          <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
+          <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
+          <details className="research-export-menu">
+            <summary>Export &amp; share</summary>
+            <div>
+              <button type="button" onClick={copyPlan} disabled={!hasConversation}>Copy research plan</button>
+              <button type="button" onClick={downloadPlan} disabled={!hasConversation}>Download plan</button>
+              <button type="button" onClick={() => window.print()} disabled={!hasConversation}>Print plan</button>
+              <button type="button" onClick={() => setHandoffOpen(true)} disabled={!handoffPayload.topic}>Prepare librarian handoff</button>
+              <button type="button" onClick={sharePlan}>Share Navigator link</button>
+              <p>Share Navigator sends the app link. Export your plan or My sources to share your research.</p>
+              <LocalStudyPanel enabled={studyEnabled} onToggle={(enabled) => { enabled ? studyRef.current.start() : studyRef.current.stop(); setStudyEnabled(enabled); setActionNotice(enabled ? "Local review recording is on. Run a search, then mark a checked source useful." : "Local review recording stopped."); }} onExport={() => downloadText("zsr-usability-session.json", studyRef.current.exportJson())} onClear={() => { studyRef.current.clear(); setStudyEnabled(false); setActionNotice("Local review session cleared."); }} />
+            </div>
+          </details>
+        </nav>
+        {storageError && <div className="storage-warning" role="alert">
+          <strong>Your latest changes could not be saved in this browser.</strong>
+          <p>Keep this tab open and export My sources before reloading. If stored data could not be read, retrying will replace it with the research currently visible here.</p>
+          <button type="button" onClick={() => openWorkspace("review")}>Export My sources</button>
+          <button type="button" onClick={() => { allowStorageRetry(); setStorageRetry((value) => value + 1); }}>Retry saving</button>
+        </div>}
+        <div className="action-status no-print" role="status" aria-live="polite">{actionNotice}</div>
         <div className="content-wrap">
           {!hasConversation ? (
             <section className="start-panel">
-              <ModeSelector
-                value={mode}
-                onChange={setMode}
-                accessScope={accessScope}
-                onAccessScopeChange={setAccessScope}
-                responseStyle={responseStyle}
-                onResponseStyleChange={setResponseStyle}
-              />
+              <div className="start-intro">
+                <h2>What are you researching?</h2>
+                <p>Start with a topic or research question. No setup is required; you can change the source type later.</p>
+                <ol className="start-steps" aria-label="How this works">
+                  <li><strong>1</strong><span>Enter your topic</span></li>
+                  <li><strong>2</strong><span>Check and edit the search</span></li>
+                  <li><strong>3</strong><span>Open and verify sources</span></li>
+                </ol>
+              </div>
               <form
                 className="topic-card"
                 onSubmit={(event) => {
@@ -1324,9 +1523,10 @@ export default function App() {
                     placeholder="e.g. Renewable energy policy in the EU..."
                     rows={1}
                   />
-                  <button type="submit" disabled={!input.trim() || loading} aria-label="Send topic">{Icon.arrowUp}</button>
+                  <button type="submit" disabled={!input.trim() || loading} aria-label="Send topic">Start research {Icon.arrowRight}</button>
                 </div>
                 <div className="try-prompts" aria-label="Quick start prompts">
+                  <span>Try an example:</span>
                   {TRY_PROMPTS.map((prompt) => (
                     <button key={prompt} type="button" onClick={() => setInput(prompt)}>
                       {prompt}
@@ -1334,62 +1534,25 @@ export default function App() {
                   ))}
                 </div>
               </form>
+              <p className="entry-privacy">Your request goes to an AI service. Avoid personal or sensitive information. Saved research stays in this browser.</p>
+              <details className="search-options">
+                <summary>Optional search settings <span>{activeMode.shortLabel} · {getAccessScope(accessScope).label}</span></summary>
+                <ModeSelector providerStatus={providerStatus} value={mode} onChange={setMode} accessScope={accessScope} onAccessScopeChange={setAccessScope} responseStyle={responseStyle} onResponseStyleChange={setResponseStyle} />
+                <SubjectFocusControl value={subjectFocusId} detectedFocus={effectiveSubjectFocus} onChange={changeSubjectFocus} />
+              </details>
             </section>
           ) : (
             <>
-              <ModeSelector
-                value={mode}
-                onChange={setMode}
-                accessScope={accessScope}
-                onAccessScopeChange={setAccessScope}
-                responseStyle={responseStyle}
-                onResponseStyleChange={setResponseStyle}
-                compact
-              />
-              <section className="conversation" aria-label="Research conversation">
-                {messages.map((message, index) => {
-                  if (message.role === "user") {
-                    return (
-                      <div className="bubble user" key={`${message.role}-${index}`}>
-                        <span>Research request</span>
-                        <p>{message.content}</p>
-                        <RequestMetaSummary message={message} />
-                        <PlannerContextSummary context={message.plannerContext} />
-                      </div>
-                    );
-                  }
-                  return (
-                    <AssistantMessage
-                      key={`${message.role}-${index}`}
-                      reply={message.reply}
-                      matched={message.matched}
-                      searchTools={message.searchTools}
-                      liveResults={message.liveResults}
-                      sourceDiscovery={message.sourceDiscovery}
-                      topic={submittedResearchTopicContext(messages, index)}
-                      mode={message.mode || mode}
-                      responseStyle={message.responseStyle || responseStyle}
-                      subjectFocusId={message.subjectFocusId || messages[index - 1]?.subjectFocusId || effectiveSubjectFocus.id}
-                      researchSpec={message.researchSpec || message.reply?.researchSpec || message.reply?.research_spec}
-                      researchPlan={message.researchPlan}
-                      releaseId={message.releaseId || message.reply?.releaseId || message.reply?.release_id}
-                      isFollowup={index > 1}
-                      isLatest={index === messages.length - 1 && !loading}
-                      onFollowup={send}
-                      onRerunInterpretation={rerunInterpretation}
-                      onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchTopicContext(messages, index), questions)}
-                      onSaveResearchItem={saveResearchItem}
-                      onTrackSearch={trackSearch}
-                      savedResearchItemKeys={savedResearchItemKeys}
-                    />
-                  );
-                })}
-                {loading && (streamText ? (
-                  <div className="bubble assistant loading-bubble">
-                    <p>{streamText}</p>
-                    <span className="typing-text">Thinking<span className="typing-dots" aria-hidden="true">...</span></span>
-                  </div>
-                ) : <LoadingBubble />)}
+              <details className="search-options conversation-options">
+                <summary>Search preferences <span>{activeMode.shortLabel} · {getAccessScope(accessScope).label}</span></summary>
+                <ModeSelector providerStatus={providerStatus} value={mode} onChange={setMode} accessScope={accessScope} onAccessScopeChange={setAccessScope} responseStyle={responseStyle} onResponseStyleChange={setResponseStyle} compact />
+                <SubjectFocusControl value={subjectFocusId} detectedFocus={effectiveSubjectFocus} onChange={changeSubjectFocus} />
+              </details>
+              <section className="conversation" aria-label="Research results" aria-busy={loading}>
+                {messages.slice(currentRequestIndex).map((message, index) => renderConversationMessage(message, index + currentRequestIndex))}
+                {currentRequestIndex > 0 && <details className="previous-conversation"><summary>Previous searches and replies</summary>{messages.slice(0, currentRequestIndex).map((message, index) => renderConversationMessage(message, index))}</details>}
+                {loading && messages.at(-1)?.isCorrectionRequest && <p className="refresh-request-status" role="status">Refreshing search terms, database routes, and source leads from the corrected brief…</p>}
+                {loading && <LoadingBubble />}
                 {error && <p className="error-note" role="alert">{error}</p>}
                 <div ref={scrollRef} />
               </section>
@@ -1399,6 +1562,8 @@ export default function App() {
       </main>
 
       {hasConversation && (
+        <details className="followup-panel no-print" open={followupOpen || Boolean(plannerDraft)} onToggle={(event) => setFollowupOpen(event.currentTarget.open)}>
+        <summary>Ask a follow-up</summary>
         <form
           className="composer-dock no-print"
           onSubmit={(event) => {
@@ -1416,7 +1581,7 @@ export default function App() {
             onComplete={completePlanner}
           />
           <label className="sr-only" htmlFor="followup-input">Ask a follow-up or refine your topic</label>
-          <ComposerStyleSwitch value={responseStyle} onChange={setResponseStyle} />
+
           <textarea
             id="followup-input"
             ref={inputRef}
@@ -1430,12 +1595,15 @@ export default function App() {
             {Icon.arrowUp}
           </button>
         </form>
+        </details>
       )}
       <HandoffModal open={handoffOpen} onClose={() => setHandoffOpen(false)} payload={handoffPayload} />
       <ResearchWorkspace
         open={researchWorkspaceOpen}
         workspace={researchWorkspace}
         topic={handoffPayload.topic}
+        initialTab={workspaceTab}
+        researchSpec={latestResearchSpec}
         onChange={changeResearchWorkspace}
         onClose={() => setResearchWorkspaceOpen(false)}
         onHandoff={() => {

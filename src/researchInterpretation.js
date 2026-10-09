@@ -31,6 +31,7 @@ export function normalizeResearchSpec(spec = {}, fallback = {}) {
       );
       if (!preferredTerm) return null;
       return {
+        ...(typeof concept === "object" && concept !== null ? concept : {}),
         id: cleanText(concept?.id) || `concept-${index + 1}`,
         preferredTerm,
         synonyms: normalizeTextList(concept?.synonyms),
@@ -47,6 +48,15 @@ export function normalizeResearchSpec(spec = {}, fallback = {}) {
   );
 
   return {
+    ...raw,
+    sourceRequirements: {
+      publicationYearFrom: null,
+      publicationYearTo: null,
+      peerReviewed: false,
+      requestedSourceCount: null,
+      ...(fallback.sourceRequirements || {}),
+      ...(raw.sourceRequirements || {}),
+    },
     topic: cleanText(raw.topic || fallback.topic),
     mode: cleanText(raw.modeId || raw.mode || raw.sourceMode || fallback.mode),
     disciplines: normalizeTextList(raw.disciplines || raw.discipline || fallback.disciplines),
@@ -66,6 +76,10 @@ function comparableValue(spec, field) {
   if (field === "concepts") return conceptText(spec);
   if (field === "disciplines") return (spec.disciplines || []).join(", ");
   if (field in (spec.facets || {})) return cleanText(spec.facets[field]);
+  if (field in (spec.sourceRequirements || {})) {
+    const value = spec.sourceRequirements[field];
+    return field === "peerReviewed" ? value ? "Required" : "Not required" : cleanText(value);
+  }
   return cleanText(spec[field]);
 }
 
@@ -79,6 +93,10 @@ const DIFF_FIELDS = [
   ["documentType", "Document type"],
   ["mode", "Source type"],
   ["disciplines", "Discipline"],
+  ["publicationYearFrom", "Published from"],
+  ["publicationYearTo", "Published through"],
+  ["peerReviewed", "Peer review"],
+  ["requestedSourceCount", "Source target"],
 ];
 
 export function researchSpecDiff(original, edited) {
@@ -112,6 +130,10 @@ export function buildInterpretationCorrectionPrompt(original, edited) {
     fieldLine("Date range", next.facets.timePeriod),
     fieldLine("Method", next.facets.method),
     fieldLine("Document type", next.facets.documentType),
+    fieldLine("Published from", next.sourceRequirements.publicationYearFrom),
+    fieldLine("Published through", next.sourceRequirements.publicationYearTo),
+    fieldLine("Peer review", next.sourceRequirements.peerReviewed ? "Required" : "Not required"),
+    fieldLine("Source target", next.sourceRequirements.requestedSourceCount),
     fieldLine("Source type", next.mode),
     fieldLine("Discipline", next.disciplines.join(", ")),
     `Student changes: ${changes.map((change) => `${change.label} from "${change.before}" to "${change.after}"`).join("; ")}.`,

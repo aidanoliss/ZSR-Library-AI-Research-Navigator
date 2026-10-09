@@ -1,3 +1,5 @@
+import { evidenceNotesForSource } from "./sourceLearning.js";
+
 /** Turn a conversation (user + assistant turns) into clean Markdown. */
 function plannerContextLines(context) {
   return String(context || "")
@@ -27,7 +29,14 @@ export function conversationToMarkdown(messages) {
       continue;
     }
     const r = m.reply || {};
-    if (r.message) lines.push(r.message, "");
+    if (r.message) lines.push("### Unverified AI orientation", "", "AI may invent claims or misrepresent real sources. Check factual statements in the originals.", "", r.message, "");
+    const sourceNotes = (m.liveResults || []).flatMap((source) => evidenceNotesForSource(source, r.evidence_notes).map((note) => ({ source, note })));
+    if (sourceNotes.length) {
+      lines.push("### AI-selected provider abstract passages", "", "Passages were matched to provider abstracts. AI selection does not establish their relevance or support for a claim; no full text was retrieved.", "");
+      for (const {source, note} of sourceNotes) {
+        lines.push(`- ${source.title}${source.url ? ` — ${source.url}` : ""}`, `  - Provider abstract passage: “${note.quote}”`, "");
+      }
+    }
 
     if (r.topic_options?.length) {
       lines.push("### Topic options", "");

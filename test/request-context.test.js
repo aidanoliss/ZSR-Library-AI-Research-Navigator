@@ -13,6 +13,7 @@ test("request metadata is sanitized separately from the student's topic", () => 
     assignmentContext: "Use 8 peer-reviewed sources.",
     plannerContext: "Last 5 years",
     researchSpec: null,
+    previousResearchSpec: null,
   });
 });
 

@@ -1,6 +1,6 @@
 /**
- * Enforces the project's hardest rule IN CODE, not just via the prompt:
- * the app may only ever surface links that exist in the curated resources file.
+ * Binds model-generated starting-point links to the curated resource registry.
+ * Bibliographic source links come separately from server-side retrieval.
  *
  * The model could, despite instructions, hallucinate a URL or a database name.
  * This pass inspects the clickable link surface (the recommended starting_points)
@@ -10,10 +10,19 @@
  *     resource but got the URL slightly wrong,
  *   - DROPS a link that matches no curated resource at all (an invention).
  *
+ * Evidence notes additionally require a retrieved source ID and an exact supplied
+ * abstract quotation. This establishes quotation provenance, not claim entailment.
  * Returns the cleaned reply plus a small report so the caller can log drops.
  */
 
 import { normalizeSearchOptionKey } from "../config/researchAgent.js";
+import { validateEvidenceNotes } from "./sourceEvidence.js";
+
+export function searchOrientation(liveResults = []) {
+  return liveResults.length
+    ? "Review the source records and provider abstracts below. This pilot does not generate research conclusions; check each source's methods, findings, and limitations before using it."
+    : "Use the search brief and suggested databases to continue researching. No source-supported answer has been generated for this request.";
+}
 
 /** Normalize a URL for forgiving comparison (trailing slash, case, protocol). */
 function normalizeUrl(url) {
@@ -28,9 +37,11 @@ function normalizeName(name) {
   return String(name || "").trim().toLowerCase();
 }
 
-export function validateReply(reply, resources) {
+export function validateReply(reply, resources, liveResults = []) {
   const report = { dropped: [], corrected: [] };
   if (!reply) return { reply, report };
+  const evidence = validateEvidenceNotes(reply, liveResults);
+  report.evidenceDropped = evidence.dropped;
 
   const byUrl = new Map();
   const byName = new Map();
@@ -45,7 +56,7 @@ export function validateReply(reply, resources) {
     for (const sp of reply.starting_points) {
       const urlMatch = byUrl.get(normalizeUrl(sp.url));
       if (urlMatch) {
-        cleanedStartingPoints.push(sp);
+        cleanedStartingPoints.push({ resource_name: urlMatch.name, url: urlMatch.url, why: urlMatch.why || urlMatch.description || "" });
         continue;
       }
 
@@ -53,7 +64,7 @@ export function validateReply(reply, resources) {
       if (nameMatch) {
         // Real resource, wrong/invented URL → snap to the canonical curated URL.
         report.corrected.push({ name: sp.resource_name, from: sp.url, to: nameMatch.url });
-        cleanedStartingPoints.push({ ...sp, url: nameMatch.url });
+        cleanedStartingPoints.push({ resource_name: nameMatch.name, url: nameMatch.url, why: nameMatch.why || nameMatch.description || "" });
         continue;
       }
 
@@ -74,15 +85,13 @@ export function validateReply(reply, resources) {
       const modelEntry = modelByName.get(normalizeName(resource.name)) || {};
       return {
         database: resource.name,
-        az_area: modelEntry.az_area || resource.type,
-        why: modelEntry.why || resource.why || resource.description,
+        az_area: resource.type,
+        why: resource.why || resource.description,
         search_inside: [
           resource.recommended_query,
           ...resource.recommended_filters,
         ],
-        journals_or_sources: Array.isArray(modelEntry.journals_or_sources)
-          ? modelEntry.journals_or_sources
-          : [],
+        journals_or_sources: [],
       };
     });
   }
@@ -103,9 +112,13 @@ export function validateReply(reply, resources) {
 
   return {
     reply: {
-      ...reply,
+      // Allowlist the pilot response. A disclaimer or a citation-shaped string
+      // cannot validate free-form model claims in message or auxiliary fields.
+      message: searchOrientation(liveResults),
+      guidance_policy: "evidence_only",
+      ...evidence.fields,
       ...(Array.isArray(cleanedStartingPoints) ? { starting_points: cleanedStartingPoints } : {}),
-      ...(Array.isArray(databaseStrategy) ? { database_strategy: databaseStrategy } : {}),
+      ...(routedResources.length && Array.isArray(databaseStrategy) ? { database_strategy: databaseStrategy } : {}),
       ...(Array.isArray(searchTerms) ? { search_terms: searchTerms } : {}),
     },
     report,

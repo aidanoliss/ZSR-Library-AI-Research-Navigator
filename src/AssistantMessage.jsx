@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import ResearchRoadmap from "./ResearchRoadmap.jsx";
 import ResearchInterpretationPanel from "./ResearchInterpretationPanel.jsx";
 import {
-  buildAccessLinks,
   CITATION_LINKS,
   DEFAULT_MODE_ID,
   DEFAULT_RESPONSE_STYLE_ID,
@@ -20,8 +19,10 @@ import {
   isSubstantiveResearchRequest,
   normalizeSearchOptionKey,
 } from "../config/researchAgent.js";
-import { researchItemKey } from "./researchWorkspace.js";
-import { downloadRis } from "./ris.js";
+import { researchSpecQuery } from "../config/researchSpec.js";
+import { isSavedSource, researchItemKey } from "./researchWorkspace.js";
+import LiveResultsSection from "./SourceResults.jsx";
+import { ResultWorkspaceHeader, SavedSourcesView } from "./ResultsWorkspace.jsx";
 
 /* Monochrome inline icon per resource type — restrained, academic. */
 const TypeIcon = {
@@ -610,12 +611,6 @@ function databasePreviewImage(item) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(databasePreviewSvg(item))}`;
 }
 
-// A result's DOI/PMID may live in dedicated fields or inside its text.
-function resultIds(r) {
-  const text = `${r.doi || ""} ${r.pmid || ""} ${r.description || ""} ${(r.detailPoints || []).join(" ")}`;
-  return { doi: r.doi || extractDoi(text), pmid: r.pmid || extractPmid(text) };
-}
-
 function SaveResearchButton({ item, onSaveResearchItem, savedResearchItemKeys }) {
   if (!onSaveResearchItem) return null;
   const saved = savedResearchItemKeys?.has(researchItemKey(item));
@@ -890,6 +885,7 @@ function StrategyTermGroup({ label, terms = [], linkBase }) {
 }
 
 function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
+  const [copyNotice, setCopyNotice] = useState("");
   const terms = (resource.searchTerms || []).slice(0, 1);
   const filters = (resource.filters || []).filter(Boolean);
   const accessUrl = resource.accessUrl || resource.url || (resource.id === "primo" ? LIBRARY_LINKS.zsrPrimoSearch : "");
@@ -904,8 +900,7 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
     detail: resource.whyFits || resource.description || resource.subjectArea,
   };
   return (
-    <li className="agent-resource-card has-preview">
-      <img className="agent-resource-preview" src={previewImage} alt="" loading="lazy" />
+    <li className="agent-resource-card no-preview">
       <div className="agent-resource-body">
         <div className="agent-resource-head">
           <a
@@ -919,7 +914,7 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
           </a>
           <span>{resource.subjectArea}</span>
         </div>
-        <p>{resource.description}</p>
+        <p>{resource.whyFits || resource.description}</p>
         <div className="agent-card-summary">
           {terms.length > 0 ? (
             <span><strong>Search inside {resource.name}:</strong> <code>{terms[0]}</code></span>
@@ -929,9 +924,19 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
           {filters.length > 0 && (
             <span><strong>Then filter:</strong> {filters.join(" · ")}</span>
           )}
-          <span><strong>Expect:</strong> {resource.expect}</span>
         </div>
-        <EvidenceChips
+        {terms[0] && <button type="button" className="copy-primary-search" aria-label={`Copy query for ${resource.name}`} onClick={async () => {
+          try {
+            if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+            await navigator.clipboard.writeText(terms[0]);
+            setCopyNotice("Search copied. Paste it into the database search box.");
+          } catch { setCopyNotice("Could not copy. Select the search text above to copy it manually."); }
+        }}>{Icon.copy} Copy query</button>}
+        {copyNotice && <p className="copy-search-status" role="status">{copyNotice}</p>}
+        <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
+        <details className="agent-resource-details">
+          <summary>About this database and recommendation</summary>
+          <EvidenceChips
           items={resource.generalStartingPoint
             ? ["Curated ZSR config", "Named secondary database", "Not top-ranked"]
             : [
@@ -941,9 +946,7 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
                 "Librarian-reviewable path",
               ]}
         />
-        <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
-        <details className="agent-resource-details">
-          <summary>Why this was recommended and provenance</summary>
+
           <p><strong>Why it fits:</strong> {resource.whyFits}</p>
           <p><strong>Best for:</strong> {resource.bestFor}</p>
           <p><strong>Not best for:</strong> {resource.notBestFor}</p>
@@ -958,8 +961,8 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
 
 function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visibleSearchTerms = [], onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   if (!plan?.query) return null;
-  const firstFour = plan.recommendations.slice(0, 4);
-  const remaining = plan.recommendations.slice(4);
+  const firstFour = plan.recommendations.slice(0, plan.navigationOnly ? 4 : 1);
+  const remaining = plan.recommendations.slice(plan.navigationOnly ? 4 : 1);
   const otherStartingPoints = plan.otherStartingPoints || [];
   const showOtherStartingPoints =
     !plan.navigationOnly &&
@@ -986,12 +989,12 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
   });
   return (
     <section className="research-agent">
-      <SectionHeader icon={Icon.search}>{plan.navigationOnly ? "Navigate ZSR" : "Search plan"}</SectionHeader>
+      <SectionHeader icon={Icon.search}>{plan.navigationOnly ? "Navigate ZSR" : "Start with this search"}</SectionHeader>
 
       <div className="agent-resource-block">
         <div className="agent-block-head">
-          <strong>{plan.navigationOnly ? "Choose what you need to do" : "Recommended ZSR paths"}</strong>
-          <span>{plan.transparencyNote}</span>
+          <strong>{plan.navigationOnly ? "Choose what you need to do" : "Recommended starting point"}</strong>
+          <span>{plan.navigationOnly ? "Open the service that fits your task." : "Copy the search, open the database, then apply the indicated filters."}</span>
           {focusLabel && (
             <span className="agent-focus-chip">
               Subject focus: {focusLabel}{plan.subjectFocus.autoDetected ? " (auto)" : ""}
@@ -1005,7 +1008,7 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
         </ul>
         {remaining.length > 0 && (
           <details className="more-results agent-more">
-            <summary>Show more ZSR paths</summary>
+            <summary>Other recommended databases ({remaining.length})</summary>
             <ul className="agent-resource-list">
               {remaining.map((resource) => (
                 <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
@@ -1029,7 +1032,7 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
       </div>
 
       {!compact && visibleFallbacks.length > 0 && (
-        <details className="agent-fallback" open>
+        <details className="agent-fallback">
           <summary>{plan.navigationOnly ? "ZSR task guide" : "If this search fails, try..."}</summary>
           <ul>
             {visibleFallbacks.map((fallback) => (
@@ -1074,233 +1077,6 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
   );
 }
 
-function LiveResultsSection({ liveResults = [], sourceDiscovery = null, compact = false, followup = false, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
-  const openAccessStatus = sourceDiscovery?.lanes?.openAccess;
-  const libraryResults = liveResults.filter((result) => result?.accessScope !== "open-access");
-  const openAccessResults = liveResults.filter((result) => result?.accessScope === "open-access");
-  if (!libraryResults.length && !openAccessResults.length && !openAccessStatus?.requested) return null;
-
-  const renderResult = (r, i, laneId) => {
-    const ids = resultIds(r);
-    const hasId = Boolean(ids.doi || ids.pmid);
-    const isOpenAccess = r.accessScope === "open-access";
-    const isZsrRecord = /zsr discovery/i.test(r.sourceProvider || "");
-    const hasBookFulfillment = Boolean(r.fulfillment);
-    const reportedOpenUrl = r.openAccess?.landingPageUrl || r.openAccess?.pdfUrl || r.url;
-    const accessLinks = buildAccessLinks({ title: r.title, doi: ids.doi, pmid: ids.pmid })
-      .filter((link) => !/full text|pubmed/i.test(link.label))
-      .slice(0, 2);
-    const visibleMeta = resultMetaText(r);
-    const savedItem = {
-      kind: "catalog",
-      title: r.title,
-      url: r.url,
-      detail: visibleMeta || r.description || (isOpenAccess ? "Open-access metadata lead" : "ZSR discovery lead"),
-    };
-
-    return (
-      <li key={`${laneId}-${r.url || r.title}-${i}`} className={`result-row ${r.cover ? "" : "no-thumb"}`}>
-        <ResultThumb cover={r.cover} />
-        <div className="result-body">
-          <a className="result-title" href={r.url} target="_blank" rel="noopener noreferrer">
-            {r.title}
-            <span className="ext-icon">{Icon.external}</span>
-          </a>
-          {visibleMeta && <p className="result-meta">{visibleMeta}</p>}
-          {isOpenAccess && (
-            <div className="open-access-provenance" aria-label="Open-access provenance">
-              <strong>OpenAlex reports an open-access location</strong>
-              {r.openAccess?.license && <span>License: {r.openAccess.license}</span>}
-              {r.openAccess?.version && <span>Version: {r.openAccess.version}</span>}
-              <small>The linked work keeps its own copyright and license. The navigator has not retrieved or summarized its full text.</small>
-            </div>
-          )}
-          {hasBookFulfillment && (
-            <div className="book-fulfillment" aria-label="Book location and availability guidance">
-              <strong>{r.fulfillment.statusLabel || "Check location and availability"}</strong>
-              {r.fulfillment.location && <span>{r.fulfillment.location}</span>}
-              {r.fulfillment.callNumber && <span>Call number: {r.fulfillment.callNumber}</span>}
-              <small>Availability can change. Confirm in the ZSR record before visiting or requesting.</small>
-            </div>
-          )}
-          <div className="result-actions">
-            <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
-            <button
-              type="button"
-              className="ris-export-btn"
-              onClick={() => downloadRis([r], { filename: r.title || "research-source" })}
-              aria-label={`Download RIS citation for ${r.title || "this source"}`}
-            >
-              Download RIS
-            </button>
-            {isOpenAccess ? (
-              <a className="fulltext-btn" href={reportedOpenUrl} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "OpenAlex open-access location", url: reportedOpenUrl })}>
-                Open reported open-access copy
-              </a>
-            ) : hasBookFulfillment ? (
-              <a className="fulltext-btn" href={r.fulfillment.recordUrl || r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR book record", url: r.fulfillment.recordUrl || r.url })}>
-                {r.fulfillment.actionLabel || "Check location and availability"}
-              </a>
-            ) : hasId ? (
-              <a className="fulltext-btn" href={libkeyUrl(ids)} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "ZSR full text", url: libkeyUrl(ids) })}>
-                <svg className="dl-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" />
-                </svg>
-                Find full text through ZSR
-              </a>
-            ) : (
-              <a className="fulltext-btn" href={fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "")} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: "Google Scholar", url: fillTemplate(LIBRARY_LINKS.googleScholarSearch, r.title || "") })}>
-                Find via Google Scholar
-              </a>
-            )}
-            {!isOpenAccess && (
-              <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: r.title, tool: isZsrRecord ? "ZSR record" : "DOI record", url: r.url })}>
-                {isZsrRecord ? "Open in ZSR" : "Open DOI record"}
-              </a>
-            )}
-            {hasBookFulfillment && (
-              <a href={r.fulfillment.requestUrl || LIBRARY_LINKS.zsrDelivers} target="_blank" rel="noopener noreferrer">
-                {r.fulfillment.requestLabel || "Request through ZSR Delivers"}
-              </a>
-            )}
-          </div>
-          <details className="result-details">
-            <summary>Source details and access</summary>
-            <div className="result-details-body">
-              <EvidenceChips
-                compact
-                items={[
-                  r.sourceProvider || "Live catalog metadata",
-                  r.type ? `${r.type}` : "",
-                  isOpenAccess ? "OA reported by OpenAlex" : hasId ? "DOI/PMID detected" : "Title lookup needed",
-                  isOpenAccess
-                    ? r.openAccess?.license ? `License: ${r.openAccess.license}` : "No reusable-content license supplied"
-                    : isZsrRecord ? "Confirm access in record" : "Check access through ZSR",
-                ]}
-              />
-              {r.abstractExcerpt ? (
-                <section className="result-abstract" aria-label="Provider-supplied abstract excerpt">
-                  <div className="result-abstract-heading">
-                    <strong>Abstract excerpt</strong>
-                    <span>{r.abstractSource || "Provider metadata"} · not AI-generated</span>
-                  </div>
-                  <p>{r.abstractExcerpt}</p>
-                </section>
-              ) : (
-                <p className="result-abstract-unavailable">
-                  {isOpenAccess
-                    ? r.summaryEligible
-                      ? "This location may qualify for a later rights-controlled summary pilot, but no full text was retrieved and no summary was generated."
-                      : "No permissive summary license was confirmed for this location, so no full text was retrieved and no summary was generated."
-                    : "No provider-supplied abstract was available, so no source summary was generated."}
-                </p>
-              )}
-              {r.description && <p className="result-description">{r.description}</p>}
-              {r.detailPoints?.length > 0 && (
-                <ul>
-                  {r.detailPoints.map((point, pointIndex) => (
-                    <li key={pointIndex}>{point}</li>
-                  ))}
-                </ul>
-              )}
-              {(ids.pmid || accessLinks.length > 0) && (
-                <div className="result-secondary-links" aria-label="Additional source links">
-                  {ids.pmid && (
-                    <a href={`https://pubmed.ncbi.nlm.nih.gov/${String(ids.pmid).replace(/\D/g, "")}/`} target="_blank" rel="noopener noreferrer">
-                      PubMed record
-                    </a>
-                  )}
-                  {accessLinks.map((link) => (
-                    <a key={`${r.title}-${link.label}`} href={link.url} target="_blank" rel="noopener noreferrer">
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          </details>
-        </div>
-      </li>
-    );
-  };
-
-  const renderLane = (results, laneId) => {
-    if (!results.length) {
-      if (laneId !== "open-access" || !openAccessStatus?.requested) return null;
-      return (
-        <section className={`live-results open-access-lane ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
-          <SectionHeader icon={Icon.search}>Open-access source lane</SectionHeader>
-          <p className="found-note">
-            {!openAccessStatus.enabled
-              ? "OpenAlex is not configured on this deployment, so no open-access search was sent. A server-side OpenAlex API key is required and is never exposed to the browser."
-              : "OpenAlex returned no strong open-access matches for this search. Try revising one concept or broaden the source mode."}
-          </p>
-        </section>
-      );
-    }
-
-    const isOpenAccessLane = laneId === "open-access";
-    const usesMetadataFallback = !isOpenAccessLane && results.some((result) => /crossref/i.test(result.sourceProvider || ""));
-    const visibleResults = results.slice(0, 5);
-    const moreResults = results.slice(5, 10);
-    const heading = isOpenAccessLane
-      ? compact ? "Open-access examples" : "Open-access source leads"
-      : compact
-        ? usesMetadataFallback ? "Scholarly source examples" : "ZSR discovery examples"
-        : usesMetadataFallback ? "Scholarly source leads" : "Live ZSR discovery leads";
-
-    return (
-      <section className={`live-results ${isOpenAccessLane ? "open-access-lane" : "library-lane"} ${followup ? "followup-first" : ""} ${compact ? "compact-extra" : ""}`}>
-        <div className="live-results-heading-row">
-          <SectionHeader icon={Icon.search}>{heading}</SectionHeader>
-          <button
-            type="button"
-            className="ris-export-btn"
-            onClick={() => downloadRis(results, { filename: isOpenAccessLane ? "open-access-source-leads" : "library-source-leads" })}
-          >
-            Export lane RIS
-          </button>
-        </div>
-        {!compact && (
-          <p className="found-note">
-            {isOpenAccessLane
-              ? "OpenAlex reports these source locations as open access. Confirm topic fit, access, version, and the linked work's license before using or sharing it."
-              : usesMetadataFallback
-                ? "These records come from ZSR discovery when available and verified Crossref bibliographic metadata when the ZSR search is too narrow. Treat them as starting leads and confirm topic fit and access through ZSR."
-                : "These records passed an automated keyword-relevance check. Treat them as starting leads, not endorsements, and open each record to confirm topic fit, access, and format."}
-          </p>
-        )}
-        <ul className="results">
-          {visibleResults.map((result, index) => renderResult(result, index, laneId))}
-        </ul>
-        {moreResults.length > 0 && (
-          <details className="more-results">
-            <summary>Show {moreResults.length} more {isOpenAccessLane ? "open-access" : "ZSR"} results</summary>
-            <ul className="results">
-              {moreResults.map((result, index) => renderResult(result, index + visibleResults.length, laneId))}
-            </ul>
-          </details>
-        )}
-        {!compact && (
-          <p className="muted terms-hint">
-            {isOpenAccessLane
-              ? "OpenAlex metadata is CC0. Linked articles and PDFs retain their own copyright and licenses; the navigator does not retrieve their full text."
-              : usesMetadataFallback
-                ? "Live bibliographic metadata. Crossref records do not confirm Wake Forest access; use the provided ZSR and full-text links to check availability."
-                : "Live metadata from ZSR discovery. Weak matches are intentionally omitted; images appear only when ZSR or ISBN metadata provides a real thumbnail."}
-          </p>
-        )}
-      </section>
-    );
-  };
-
-  return (
-    <>
-      {renderLane(libraryResults, "library")}
-      {renderLane(openAccessResults, "open-access")}
-    </>
-  );
-}
 
 export default function AssistantMessage({
   reply,
@@ -1317,13 +1093,23 @@ export default function AssistantMessage({
   releaseId,
   isFollowup = false,
   isLatest,
+  isRefreshing = false,
   onFollowup,
   onRerunInterpretation,
   onOpenPlanner,
   onSaveResearchItem,
+  onSaveSourceNotes,
   onTrackSearch,
   savedResearchItemKeys,
+  savedItems = [],
+  onOpenSavedSources,
+  onSourceEvent,
+  studyEnabled = false,
 }) {
+  const sectionId = useId().replace(/:/g, "");
+  const [resultView, setResultView] = useState(responseStyle === "plan" ? "strategy" : "results");
+  const [editorRequest, setEditorRequest] = useState(0);
+  const [recoveryEditor, setRecoveryEditor] = useState(false);
   const [copied, setCopied] = useState(null); // index of copied term, or "all"
   const [fb, setFb] = useState("idle"); // idle | done
   const [showGap, setShowGap] = useState(false);
@@ -1337,7 +1123,8 @@ export default function AssistantMessage({
     .filter(Boolean);
   const tools = searchTools || [];
   const activeMode = getSearchMode(mode);
-  const localAgentPlan = buildResearchPlan(topic || reply.message || "", 5, subjectFocusId, mode);
+  const canonicalSpec = researchSpec || researchPlan?.researchSpec || reply.research_spec || reply.researchSpec;
+  const localAgentPlan = buildResearchPlan(canonicalSpec?.topic || topic || reply.message || "", 5, subjectFocusId, mode, { researchSpec: canonicalSpec });
   const providedAgentPlan = researchPlan && Array.isArray(researchPlan.recommendations)
     ? {
         ...localAgentPlan,
@@ -1369,7 +1156,7 @@ export default function AssistantMessage({
   const norm = (u) => String(u || "").replace(/\/+$/, "").toLowerCase();
   const byUrlNorm = new Map((matched || []).map((r) => [norm(r.url), r]));
   const lookup = (url) => byUrl.get(url) || byUrlNorm.get(norm(url));
-  const showTopicSpecificPlan = !isFollowup && isSocialMediaMentalHealthTopic(topic);
+  const showTopicSpecificPlan = false; // Every topic uses the same governed plan and source presentation.
   const suggestedSearchGroups = showTopicSpecificPlan ? SUGGESTED_SEARCH_GROUPS : [];
   const startingPoints = showTopicSpecificPlan
     ? SOCIAL_MEDIA_MENTAL_HEALTH_RESOURCES
@@ -1488,8 +1275,18 @@ export default function AssistantMessage({
     !showTopicSpecificPlan &&
     displaySearchTerms.length > 0 &&
     (!isFollowup || wantsSearchHelp || wantsDatabaseStrategyHelp || responseStyle === "sources" || responseStyle === "plan");
+  const suggestedQueries = uniqueTerms([
+    ...(agentPlan.recommendations[0]?.searchTerms || []),
+    ...(agentPlan.searchTerms || []),
+    ...displaySearchTerms,
+  ]).slice(0, 8);
+  const synonymOptions = (canonicalSpec?.concepts || []).flatMap((concept) =>
+    (concept.synonyms || []).slice(0, 2).map((synonym) => ({ preferred: concept.preferredTerm, synonym }))
+  ).slice(0, 4);
+  const showSearchPrimer = allowSourceSections && !showTopicSpecificPlan && suggestedQueries.length > 0 &&
+    (showAgenticSearchPlan || showGeneratedTerms);
   const showCatalogResults =
-    liveResults?.length > 0 || Boolean(sourceDiscovery?.lanes?.openAccess?.requested);
+    liveResults?.length > 0 || Boolean(sourceDiscovery?.lanes?.openAccess?.requested || sourceDiscovery?.lanes?.library?.requested);
   const benefitsFromRefinement =
     isFollowup &&
     (showCatalogResults ||
@@ -1608,8 +1405,23 @@ export default function AssistantMessage({
     setShowGap(false);
   }
 
+  const useWorkspace = allowSourceSections && (showCatalogResults || showAgenticSearchPlan || showSearchPrimer);
+  const effectiveSpec = researchSpec || agentPlan.researchSpec;
+  const sourceSection = <LiveResultsSection evidenceNotes={reply.evidence_notes || []} evidenceNotice={reply.evidence_notice || ""} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} liveResults={liveResults} sourceDiscovery={sourceDiscovery} researchSpec={effectiveSpec} followup={isFollowup} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onRerunInterpretation={isLatest ? onRerunInterpretation : null} onShowStrategy={() => { setRecoveryEditor(true); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onEditRequirements={() => { setRecoveryEditor(false); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} />;
+
   return (
-    <div className="bubble assistant">
+    <div className={`bubble assistant ${useWorkspace ? "results-workspace" : ""}`}>
+      {useWorkspace && <>
+        <ResultWorkspaceHeader id={sectionId} view={resultView} onViewChange={setResultView} onEditRequirements={() => setEditorRequest((value) => value + 1)} topic={effectiveSpec?.topic || topic} researchSpec={effectiveSpec} mode={mode} busy={isRefreshing} onSearch={isLatest ? onRerunInterpretation : null} savedCount={savedItems.filter(isSavedSource).length} />
+        {effectiveSpec?.searchIntent?.reformulated && <div className="neutral-search-note"><strong>Searching with an open question</strong><p>{effectiveSpec.searchIntent.neutralQuestion}</p><small>{effectiveSpec.searchIntent.explanation} You can edit the search brief in Search strategy.</small></div>}
+        <div id={`${sectionId}-panel-results`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-results`} hidden={resultView !== "results"} tabIndex={0}>
+          {showCatalogResults ? <div id={`${sectionId}-sources`}>{sourceSection}</div> : <div className="result-plan-empty"><p>This response provides a search strategy. Open Search strategy for queries and recommended databases.</p>{isLatest && <button type="button" onClick={() => onFollowup(`Find source leads for ${topic}`)}>Find sources</button>}</div>}
+        </div>
+        <div id={`${sectionId}-panel-saved`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-saved`} hidden={resultView !== "saved"} tabIndex={0}>
+          <SavedSourcesView items={savedItems} onManage={onOpenSavedSources} onSourceEvent={onSourceEvent} />
+        </div>
+      </>}
+      <div id={`${sectionId}-panel-strategy`} className="search-strategy-panel" role={useWorkspace ? "tabpanel" : undefined} aria-labelledby={useWorkspace ? `${sectionId}-tab-strategy` : undefined} hidden={useWorkspace && resultView !== "strategy"} tabIndex={useWorkspace ? 0 : undefined}>
       {researchSpec && (
         <ResearchInterpretationPanel
           researchSpec={researchSpec}
@@ -1617,20 +1429,48 @@ export default function AssistantMessage({
           fallbackMode={mode}
           releaseId={releaseId}
           isLatest={isLatest}
-          onRerun={onRerunInterpretation || onFollowup}
-          onRefine={onFollowup}
+          isRefreshing={isRefreshing}
+          editorRequest={editorRequest}
+          recoveryEditor={recoveryEditor}
+          onRerun={isLatest ? onRerunInterpretation || onFollowup : null}
+          onRefine={isLatest ? onRerunInterpretation || onFollowup : null}
         />
       )}
 
-      {reply.message && (
-        <section className="research-orientation" aria-label="AI-generated research orientation">
-          {substantiveResearchRequest && (
-            <div className="research-orientation-label">
-              <strong>Research orientation</strong>
-              <span>Starting context, not a research conclusion</span>
-            </div>
-          )}
-          <p className="msg plan-intro">{reply.message}</p>
+      {showSearchPrimer && (
+        <section className="search-query-card" id={`${sectionId}-terms`} aria-label="Search terms to try">
+          <div className="search-query-heading">
+            <SectionHeader icon={Icon.search}>Search terms to try</SectionHeader>
+            <a href="https://guides.zsr.wfu.edu/c.php?g=1072064&p=7805742" target="_blank" rel="noopener noreferrer">ZSR guide to building a database search <span className="ext-icon">{Icon.external}</span></a>
+          </div>
+          <p>Start with this query, then open a recommended database below and paste it into its search box.</p>
+          <div className="primary-query-row">
+            <code>{suggestedQueries[0]}</code>
+            <button type="button" className="query-copy-button" onClick={() => copy(suggestedQueries[0], "primary-query")} aria-label={copied === "primary-query" ? "Query copied" : "Copy search query"}>
+              {copied === "primary-query" ? Icon.helpful : Icon.copy}
+              <span>{copied === "primary-query" ? "Copied" : "Copy search"}</span>
+            </button>
+          </div>
+          <p className="query-construction-note">Use OR between synonyms, AND between different ideas, and quotation marks around phrases. Database filters such as date and peer review are applied after searching.</p>
+          {(suggestedQueries.length > 1 || synonymOptions.length > 0) && <details className="query-options">
+            <summary>More queries and ways to improve the search</summary>
+            {suggestedQueries.length > 1 && <ul className="compact-query-list">
+              {suggestedQueries.slice(1).map((query, index) => <li key={query}>
+                <code>{query}</code>
+                <button type="button" onClick={() => copy(query, `query-${index}`)} aria-label={`Copy alternative query ${index + 1}`}>{copied === `query-${index}` ? "Copied" : "Copy"}</button>
+              </li>)}
+            </ul>}
+            {synonymOptions.length > 0 && <p className="synonym-options"><strong>Terms to consider:</strong> {synonymOptions.map(({ preferred, synonym }) => `${preferred} → ${synonym}`).join("; ")}. These are AI-suggested alternatives; use only those that match your meaning.</p>}
+            <p>If results are too broad, add a specific population or setting. If too narrow, remove one limit or swap one synonym at a time.</p>
+          </details>}
+        </section>
+      )}
+
+      {reply.message && !showSearchPrimer && (
+        <section className="research-orientation" aria-label={reply.guidance_policy === "evidence_only" ? "Research guidance" : "AI-generated research orientation"}>
+            <strong>{reply.guidance_policy === "evidence_only" ? "Research guidance" : "AI-written guidance"}</strong>
+            <p className="msg plan-intro">{reply.message}</p>
+            <p className="orientation-caution">{reply.guidance_policy === "evidence_only" ? "No factual synthesis was generated. Provider abstract passages are starting points, not full-text verification. Read the original source to assess context and relevance." : "AI can invent or misstate claims. Verify factual statements in sources you open."}</p>
         </section>
       )}
 
@@ -1649,13 +1489,13 @@ export default function AssistantMessage({
       )}
 
       {["hybrid", "sources"].includes(responseStyle) && reply.source_notice && (
-        <div className="notice source-relevance" role="note">
+        <details className="notice source-relevance">
+          <summary>How to use these source leads</summary>
           <span className="sec-icon">{Icon.info}</span>
           <div>
-            <strong>About these source leads</strong>
             <p>{reply.source_notice}</p>
           </div>
-        </div>
+        </details>
       )}
 
       {showModeGuidance && (
@@ -1682,16 +1522,14 @@ export default function AssistantMessage({
         </section>
       )}
 
-      {allowSourceSections && isFollowup && showCatalogResults && (
-        <LiveResultsSection liveResults={liveResults} sourceDiscovery={sourceDiscovery} followup onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
-      )}
+
 
       {showAgenticSearchPlan && (
-        <ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} visibleSearchTerms={displaySearchTerms} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+        <div id={`${sectionId}-databases`}><ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} visibleSearchTerms={displaySearchTerms} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
       )}
 
       {showDatabaseStrategy && (
-        <DatabaseStrategySection strategy={databaseStrategy} topic={topic} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+        <div id={`${sectionId}-databases`}><DatabaseStrategySection strategy={databaseStrategy} topic={topic} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
       )}
 
       {allowSourceSections && showTopicSpecificPlan && (
@@ -1735,75 +1573,15 @@ export default function AssistantMessage({
         </section>
       )}
 
-      {allowSourceSections && !isFollowup && showCatalogResults && (
-        <LiveResultsSection liveResults={liveResults} sourceDiscovery={sourceDiscovery} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
-      )}
+
+
+      {reply.message && showSearchPrimer && <details className="research-orientation" aria-label={reply.guidance_policy === "evidence_only" ? "About these results" : "AI-generated research orientation"}>
+        <summary>{reply.guidance_policy === "evidence_only" ? "About these results" : "AI-written overview · may contain invented claims"}</summary>
+        <p className="orientation-caution">{reply.guidance_policy === "evidence_only" ? "No factual synthesis was generated. Source cards may show selected passages from provider abstracts; these are not full-text verification. Read the original source to check context, study design, and relevance." : "This is unverified AI orientation. It may invent claims or misrepresent real sources. Source cards show AI-selected passages from provider abstracts. Their selection can miss context; check the original before using a passage as evidence."}</p>
+        <p className="msg plan-intro">{reply.message}</p>
+      </details>}
 
       {showStandaloneFullTextHelp && <FindFullText />}
-
-      {showGeneratedTerms && (
-        <section>
-          <div className="sec-head-row">
-            <SectionHeader icon={Icon.search}>Search terms to try</SectionHeader>
-            <button
-              type="button"
-              className={`icon-copy copy-all-terms ${copied === "all" ? "is-copied" : ""}`}
-              onClick={() => copy(displaySearchTerms.join("\n"), "all")}
-              aria-label={copied === "all" ? "All search terms copied" : "Copy all search terms"}
-            >
-              {Icon.copy}
-              <span>{copied === "all" ? "Copied" : "Copy all"}</span>
-            </button>
-          </div>
-          <ul className="terms">
-            {displaySearchTerms.map((term, i) => (
-              <li key={i} className="term-row">
-                <span className="term">
-                  <code>{term}</code>
-                </span>
-                <button
-                  type="button"
-                  className={`icon-copy ${copied === `generated-${i}` ? "is-copied" : ""}`}
-                  onClick={() => copy(term, `generated-${i}`)}
-                  aria-label={
-                    copied === `generated-${i}`
-                      ? `Search term ${i + 1} copied`
-                      : `Copy search term ${i + 1}`
-                  }
-                >
-                  {Icon.copy}
-                  <span className="sr-only">{copied === `generated-${i}` ? "Copied" : "Copy"}</span>
-                </button>
-                <SaveResearchButton
-                  item={{ kind: "search", title: term, detail: "Keyword search suggested by the Navigator" }}
-                  onSaveResearchItem={onSaveResearchItem}
-                  savedResearchItemKeys={savedResearchItemKeys}
-                />
-                {tools.map((tool) => (
-                  <a
-                    key={tool.id}
-                    className="term-search"
-                    href={tool.search_url_template.replace("{q}", encodeURIComponent(term))}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`Run this search in ${tool.name}`}
-                    onClick={() => onTrackSearch?.({ query: term, tool: tool.name, url: tool.search_url_template.replace("{q}", encodeURIComponent(term)) })}
-                  >
-                    ↗ {shortToolName(tool.name)}
-                  </a>
-                ))}
-              </li>
-            ))}
-          </ul>
-          <div className="term-combo-advice" role="note">
-            <strong>Combine concepts deliberately.</strong>
-            <span>Start with the first two concept groups. Use OR for synonyms within one idea and AND between different ideas. If results are thin, swap one synonym or remove one limiter before changing databases.</span>
-          </div>
-          {tools.length > 0 && (
-            <p className="muted terms-hint">Use the copy icon for a single term, or ↗ to run it as a search.</p>
-          )}
-        </section>
-      )}
 
       {allowSourceSections && !showTopicSpecificPlan && reply.academic_integrity_note && !isFollowup && !showMoreGuidance && (
         <div className="notice integrity">
@@ -1975,6 +1753,7 @@ export default function AssistantMessage({
         </details>
       )}
 
+      </div>
       <div className="feedback no-print">
         {fb === "done" ? (
           <span className="fb-thanks">Thanks — your feedback helps librarians improve the collection.</span>

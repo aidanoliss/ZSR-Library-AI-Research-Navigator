@@ -66,6 +66,7 @@ test("evaluation matrix crosses disciplines, six governed modes, and paraphrases
   assert.ok(matrix.disciplines.length >= 3);
   assert.deepEqual(Object.keys(matrix.modes).sort(), expectedModes);
   assert.ok(matrix.disciplines.every((entry) => entry.prompts.length >= 3));
+  assert.ok(samples.every((sample) => sample.subjectFocusId === "auto"));
   assert.equal(
     samples.length,
     matrix.disciplines.reduce(

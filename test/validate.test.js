@@ -57,7 +57,8 @@ test("corrects the URL when the model names a real resource but invents the link
 
 test("handles replies with no starting_points", () => {
   const { reply: out, report } = validateReply({ message: "just chatting" }, RESOURCES);
-  assert.equal(out.message, "just chatting");
+  assert.equal(out.guidance_policy, "evidence_only");
+  assert.match(out.message, /No source-supported answer/);
   assert.equal(report.dropped.length, 0);
 });
 

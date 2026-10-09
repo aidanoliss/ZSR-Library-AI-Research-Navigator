@@ -1,9 +1,12 @@
-import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { appendFile, chmod, readFile, writeFile, rename, unlink } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { createPilotStorage } from "./pilotStorage.js";
+import { randomUUID } from "node:crypto";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "data");
+const storage = createPilotStorage({ directory: process.env.PILOT_DATA_DIR, fallbackDirectory: join(__dirname, "..", "data") });
+const DATA_DIR = storage.dataDirectory;
 const QUERIES_LOG = join(DATA_DIR, "queries.jsonl");
 const FEEDBACK_LOG = join(DATA_DIR, "feedback.jsonl");
 const HANDOFF_LOG = join(DATA_DIR, "handoffs.jsonl");
@@ -31,9 +34,16 @@ function redactText(value, max = 2000) {
 }
 
 async function appendRecord(file, record) {
-  await mkdir(DATA_DIR, { recursive: true });
-  await prune(file);
-  await appendFile(file, JSON.stringify({ ts: new Date().toISOString(), ...record }) + "\n");
+  try {
+    await storage.ensureDirectory();
+    await prune(file);
+    await appendFile(file, JSON.stringify({ ts: new Date().toISOString(), ...record }) + "\n", { mode: 0o600 });
+    await chmod(file, 0o600);
+    storage.recordSuccess();
+  } catch (error) {
+    storage.recordError(error);
+    throw error;
+  }
 }
 
 async function withFileQueue(file, operation) {
@@ -75,7 +85,16 @@ async function prune(file) {
     const records = retainedRecords(raw).slice(-(MAX_RECORDS - 1));
     const normalized = records.map((record) => JSON.stringify(record)).join("\n");
     const next = normalized ? `${normalized}\n` : "";
-    if (next !== raw) await writeFile(file, next);
+    if (next !== raw) {
+      const temporary = `${file}.${randomUUID()}.tmp`;
+      try {
+        await writeFile(temporary, next, { mode: 0o600, flag: "wx" });
+        await rename(temporary, file);
+      } finally {
+        await unlink(temporary).catch((error) => { if (error.code !== "ENOENT") throw error; });
+      }
+    }
+    await chmod(file, 0o600);
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
   }
@@ -90,15 +109,17 @@ async function readJsonl(file, limit = 100) {
         .slice(-Math.min(Math.max(Number(limit) || 100, 1), MAX_RECORDS))
         .reverse();
     });
-  } catch {
-    return [];
+  } catch (error) {
+    if (error?.code === "ENOENT") return [];
+    storage.recordError(error);
+    throw error;
   }
 }
 
 if (process.env.NODE_ENV === "production") {
   const pruneAll = () => Promise.all(
     [QUERIES_LOG, FEEDBACK_LOG, HANDOFF_LOG].map((file) => withFileQueue(file, () => prune(file)))
-  ).catch(() => {});
+  ).catch((error) => { storage.recordError(error); console.warn("[log] pilot retention cleanup failed"); });
   pruneAll();
   setInterval(pruneAll, 6 * 60 * 60 * 1000).unref?.();
 }
@@ -218,8 +239,14 @@ export async function readQuerySummary(limit = 200) {
   };
 }
 
+export async function probePilotStorage() {
+  if (!QUERIES_ENABLED && !FEEDBACK_ENABLED && !HANDOFFS_ENABLED) return { ...storage.status(), enabled: false };
+  return { ...await storage.probe(), enabled: true };
+}
+
 export function loggingStatus() {
   return {
+    storage: storage.status(),
     queryLoggingEnabled: QUERIES_ENABLED,
     queryTextStorageEnabled: QUERIES_ENABLED && STORE_QUERY_TEXT,
     feedbackLoggingEnabled: FEEDBACK_ENABLED,

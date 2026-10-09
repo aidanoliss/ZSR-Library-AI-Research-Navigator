@@ -7,6 +7,9 @@
  * neither this module's status helper nor its result objects expose the key.
  */
 import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
+import { assessSourceRequirements } from "../src/sourceAssessment.js";
+import { assessSourceRelevance, rankSourceResults } from "./sourceRelevance.js";
+import { discoveryAbort, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
 
 const PROVIDER = "OpenAlex";
 const API_ORIGIN = "https://api.openalex.org";
@@ -133,6 +136,26 @@ function conceptRequirements(query) {
   return requirements;
 }
 
+/** Reassemble only ordered provider words; this is an excerpt, not a generated summary. */
+function providerAbstract(work) {
+  const index = work?.abstract_inverted_index;
+  if (!index || typeof index !== "object" || Array.isArray(index)) return "";
+  const words = [];
+  for (const [rawWord, positions] of Object.entries(index).slice(0, 2000)) {
+    const word = cleanText(rawWord, 100);
+    if (!word || !Array.isArray(positions)) continue;
+    for (const position of positions.slice(0, 2048)) {
+      if (!Number.isInteger(position) || position < 0 || position >= 2048) continue;
+      if (words[position] && words[position] !== word) return "";
+      words[position] = word;
+    }
+  }
+  // Never bridge missing positions into an apparently continuous quotation.
+  const contiguous = [];
+  for (let position = 0; position < words.length && words[position]; position += 1) contiguous.push(words[position]);
+  return cleanText(contiguous.join(" "), 20000);
+}
+
 function relevanceFor(work, tokens, requirements) {
   const title = cleanText(work?.display_name || work?.title, 500);
   const concepts = [
@@ -143,7 +166,7 @@ function relevanceFor(work, tokens, requirements) {
     .map((item) => cleanText(item?.display_name || item?.keyword || item?.name, 120))
     .filter(Boolean)
     .slice(0, 25);
-  const text = [title, ...concepts].join(" ");
+  const text = [title, ...concepts, providerAbstract(work)].join(" ");
   if (!requirements.every((requirement) => requirement.test(text))) return null;
   if (!tokens.length) return { score: 1, titleScore: 0, concepts };
 
@@ -228,7 +251,7 @@ function sourceKindForType(type) {
   if (/book[- ]chapter|book section/.test(value)) return SOURCE_KINDS.BOOK_CHAPTER;
   if (/^book$|monograph/.test(value)) return SOURCE_KINDS.BOOK;
   if (/dataset/.test(value)) return SOURCE_KINDS.DATASET;
-  return SOURCE_KINDS.SCHOLARLY_ARTICLE;
+  return /article|review/.test(value) ? SOURCE_KINDS.SCHOLARLY_ARTICLE : "";
 }
 
 function mapWork(work, queryContext) {
@@ -259,6 +282,7 @@ function mapWork(work, queryContext) {
   const summaryEligible = ["cc-by", "cc0", "public-domain"].includes(licenseKind);
   const exactLicense = location.license || location.licenseId;
   const subjects = relevance.concepts.slice(0, 6);
+  const abstract = providerAbstract(work);
 
   return {
     title,
@@ -283,8 +307,9 @@ function mapWork(work, queryContext) {
     ].filter(Boolean).join("-"),
     fulfillment: null,
     description: `Open-access discovery metadata from OpenAlex${venue ? ` for a work published by ${venue}` : ""}. Open the source page to confirm access, relevance, and reuse terms.`,
-    abstractExcerpt: "",
-    abstractSource: "",
+    abstractText: abstract,
+    abstractExcerpt: abstract.length > 360 ? `${abstract.slice(0, 357).replace(/\s+\S*$/, "")}...` : abstract,
+    abstractSource: abstract ? "OpenAlex provider abstract metadata" : "",
     detailPoints: [
       oaStatus ? `Open-access status reported by OpenAlex: ${oaStatus}.` : "OpenAlex reports this work as open access.",
       exactLicense ? `License reported for this location: ${exactLicense}.` : "No reusable-content license was supplied for this location.",
@@ -294,7 +319,8 @@ function mapWork(work, queryContext) {
     ].filter(Boolean),
     sourceProvider: "OpenAlex scholarly metadata",
     sourceKind: sourceKindForType(rawType),
-    sourceMode: "scholarly",
+    sourceMode: queryContext.modeId || "scholarly",
+    peerReviewed: null,
     accessScope: "open-access",
     summaryEligible,
     citation: {
@@ -424,72 +450,79 @@ export async function searchOpenAlex(query, limit = 10, options = {}) {
   const q = cleanQuery(query);
   const resultLimit = boundedLimit(limit);
   const apiKey = configuredApiKey(options);
-  if (!q || !apiKey || !providerEnabled(options)) return [];
+  if (!q || !apiKey || !providerEnabled(options)) {
+    reportDiscoveryOutcome(options, PROVIDER, !q ? "not_requested" : "disabled", { errorCode: !apiKey ? "MISSING_API_KEY" : undefined });
+    return [];
+  }
 
   const fetchImpl = options.fetchImpl || globalThis.fetch;
-  if (typeof fetchImpl !== "function") return [];
+  if (typeof fetchImpl !== "function") {
+    reportDiscoveryOutcome(options, PROVIDER, "error", { errorCode: "FETCH_UNAVAILABLE" });
+    return [];
+  }
   const oaOnly = options.oaOnly !== false;
   const cacheEnabled = options.cache !== false && fetchImpl === globalThis.fetch;
   const now = Date.now();
-  const cacheKey = `${q.toLowerCase()}|${resultLimit}|${oaOnly ? "oa" : "all"}`;
+  const spec = options.researchSpec || { mode: options.modeId || "scholarly" };
+  const cacheKey = `${q.toLowerCase()}|${resultLimit}|${oaOnly ? "oa" : "all"}|${JSON.stringify(spec)}`;
   if (cacheEnabled) {
     const cached = cacheGet(cacheKey, now);
-    if (cached) return cached;
+    if (cached) {
+      reportDiscoveryOutcome(options, PROVIDER, cached.length ? "success" : "empty", { resultCount: cached.length, cached: true });
+      return cached;
+    }
   }
 
   const requestLimit = Math.min(50, Math.max(20, resultLimit * 4));
+  const filters = [...(oaOnly ? ["is_oa:true"] : []), "is_retracted:false"];
+  const requirements = spec.sourceRequirements || {};
+  if (Number.isInteger(requirements.publicationYearFrom)) filters.push(`from_publication_date:${requirements.publicationYearFrom}-01-01`);
+  if (Number.isInteger(requirements.publicationYearTo)) filters.push(`to_publication_date:${requirements.publicationYearTo}-12-31`);
   const params = new URLSearchParams({
     search: q,
-    filter: oaOnly ? "is_oa:true,is_retracted:false" : "is_retracted:false",
+    filter: filters.join(","),
     "per-page": String(requestLimit),
     sort: "relevance_score:desc",
     api_key: apiKey,
   });
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), boundedTimeout(options.timeoutMs));
-  const callerSignal = options.signal;
-  const abortFromCaller = () => controller.abort();
-  if (callerSignal?.aborted) controller.abort();
-  else callerSignal?.addEventListener?.("abort", abortFromCaller, { once: true });
+  const request = discoveryAbort(options, boundedTimeout(options.timeoutMs));
 
   try {
-    if (controller.signal.aborted) return [];
+    if (request.signal.aborted) {
+      reportDiscoveryOutcome(options, PROVIDER, "cancelled");
+      return [];
+    }
     const response = await fetchImpl(`${API_ORIGIN}/works?${params}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "ZSR-Research-Navigator/1.0 (mailto:askzsr@wfu.edu)",
       },
-      signal: controller.signal,
+      signal: request.signal,
     });
-    if (!response?.ok) return [];
+    if (!response?.ok) {
+      reportDiscoveryHttpError(options, PROVIDER, response?.status || 502);
+      return [];
+    }
     const payload = await response.json();
     const works = Array.isArray(payload?.results) ? payload.results.slice(0, requestLimit) : [];
-    const queryContext = { tokens: queryTokens(q), requirements: conceptRequirements(q) };
+    const queryContext = { tokens: queryTokens(q), requirements: conceptRequirements(q), modeId: spec.mode || options.modeId };
     const mapped = works
       .map((work) => mapWork(work, queryContext))
       .filter(Boolean)
+      .map((result) => ({ ...result, retrievedAt: new Date(now).toISOString(), sourceAssessment: assessSourceRequirements(result, spec), matchExplanation: assessSourceRelevance(result, spec) }))
+      .filter((result) => result.sourceAssessment.status !== "mismatch" && result.matchExplanation.status !== "mismatch")
       .sort((a, b) => b._titleRelevance - a._titleRelevance || b._relevance - a._relevance);
 
-    const seenDois = new Set();
-    const seenTitles = new Set();
-    const results = mapped
-      .filter((result) => {
-        const doiKey = result.doi.toLowerCase();
-        const titleKey = normalizedTitle(result.title);
-        if ((doiKey && seenDois.has(doiKey)) || (titleKey && seenTitles.has(titleKey))) return false;
-        if (doiKey) seenDois.add(doiKey);
-        if (titleKey) seenTitles.add(titleKey);
-        return true;
-      })
-      .slice(0, resultLimit)
+    const results = rankSourceResults(mapped, spec, resultLimit)
       .map(({ _relevance, _titleRelevance, ...result }) => result);
 
     if (cacheEnabled) cacheSet(cacheKey, results, now, DEFAULT_CACHE_TTL_MS);
+    reportDiscoveryOutcome(options, PROVIDER, results.length ? "success" : "empty", { resultCount: results.length });
     return results;
-  } catch {
+  } catch (error) {
+    reportDiscoveryError(options, PROVIDER, error, request.timedOut);
     return [];
   } finally {
-    clearTimeout(timeout);
-    callerSignal?.removeEventListener?.("abort", abortFromCaller);
+    request.cleanup();
   }
 }
