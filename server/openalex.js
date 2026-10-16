@@ -9,7 +9,7 @@
 import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
 import { assessSourceRelevance, rankSourceResults } from "./sourceRelevance.js";
-import { discoveryAbort, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
+import { fetchDiscoveryJson, discoveryAbort, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
 
 const PROVIDER = "OpenAlex";
 const API_ORIGIN = "https://api.openalex.org";
@@ -492,18 +492,17 @@ export async function searchOpenAlex(query, limit = 10, options = {}) {
       reportDiscoveryOutcome(options, PROVIDER, "cancelled");
       return [];
     }
-    const response = await fetchImpl(`${API_ORIGIN}/works?${params}`, {
+    const { response, data: payload } = await fetchDiscoveryJson(`${API_ORIGIN}/works?${params}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "ZSR-Research-Navigator/1.0 (mailto:askzsr@wfu.edu)",
       },
       signal: request.signal,
-    });
+    }, { ...options, fetchImpl, signal: request.signal, timeoutMs: boundedTimeout(options.timeoutMs), onRetry: (retry) => reportDiscoveryOutcome(options, "OpenAlex", "retrying", retry) });
     if (!response?.ok) {
       reportDiscoveryHttpError(options, PROVIDER, response?.status || 502);
       return [];
     }
-    const payload = await response.json();
     const works = Array.isArray(payload?.results) ? payload.results.slice(0, requestLimit) : [];
     const queryContext = { tokens: queryTokens(q), requirements: conceptRequirements(q), modeId: spec.mode || options.modeId };
     const mapped = works

@@ -1,6 +1,6 @@
 import { DEFAULT_MODE_ID, fillTemplate, getSearchMode, LIBRARY_LINKS } from "../config/libraryLinks.js";
 import { normalizePrimoDocs, searchPrimo, searchCrossref, searchSourceCandidates } from "./primo.js";
-import { discoveryAbort, discoveryResponseDetails, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
+import { fetchDiscoveryJson, discoveryAbort, discoveryResponseDetails, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
 import { hasExactKnownItem, rankSourceResults } from "./sourceRelevance.js";
 
 const GUEST_DEFAULTS = Object.freeze({
@@ -190,20 +190,19 @@ export async function searchPrimoApi(
   );
   const operation = discoveryAbort(options, options.timeoutMs || timeoutMs);
   try {
-    const res = await fetch(request.url, {
+    const { response: res, data } = await fetchDiscoveryJson(request.url, {
       headers: {
         Accept: "application/json",
         Authorization: `apikey ${config.apiKey}`,
       },
       signal: operation.signal,
-    });
+    }, { ...options, signal: operation.signal, timeoutMs: options.timeoutMs || timeoutMs, onRetry: (retry) => reportDiscoveryOutcome(options, "Primo API", "retrying", retry) });
     if (!res.ok) {
       reportDiscoveryHttpError(options, "Primo API", res.status);
       const error = new Error(`Primo API request failed (${res.status})`);
       error.outcomeReported = true;
       throw error;
     }
-    const data = await res.json();
     const records = data?.docs || data?.results;
     if (!Array.isArray(records)) {
       reportDiscoveryOutcome(options, "Primo API", "error", { errorCode: "INVALID_PROVIDER_RESPONSE" });

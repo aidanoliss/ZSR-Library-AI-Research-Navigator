@@ -1,3 +1,4 @@
+import { extractDoiIdentifier } from "../config/sourceIdentifiers.js";
 /**
  * Live lookup against ZSR's Primo discovery (the same index behind
  * "Start your search @ ZSR"). Returns a small set of REAL results — titles,
@@ -14,7 +15,7 @@ import { sourceKeywordFallback } from "../config/searchQueries.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
 import { assessSourceRelevance, hasExactKnownItem, rankSourceResults } from "./sourceRelevance.js";
 import { uniqueSourceResults } from "../src/sourceDedup.js";
-import { discoveryAbort, discoveryResponseDetails, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
+import { fetchDiscoveryJson, discoveryAbort, discoveryResponseDetails, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
 
 const ENABLED = (process.env.PRIMO_LIVE || "on").toLowerCase() !== "off";
 const HOST = process.env.PRIMO_HOST || "https://wfu.primo.exlibrisgroup.com";
@@ -411,10 +412,7 @@ function identifierText(value) {
   return String(value || "");
 }
 
-function doiIdentifier(value) {
-  const match = identifierText(value).match(/10\.\d{4,9}\/[-._;()/:a-z0-9]+/i);
-  return match ? match[0].replace(/[.,;:)}\]]+$/, "") : "";
-}
+function doiIdentifier(value) { return extractDoiIdentifier(identifierText(value)); }
 
 function pmidIdentifier(value) {
   const text = identifierText(value);
@@ -648,15 +646,14 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID, s
 
   const request = discoveryAbort(options, options.timeoutMs || 6000);
   try {
-    const res = await fetch(url, {
+    const { response: res, data } = await fetchDiscoveryJson(url, {
       headers: { Accept: "application/json" },
       signal: request.signal,
-    });
+    }, { ...options, signal: request.signal, timeoutMs: options.timeoutMs || 6000, onRetry: (retry) => reportDiscoveryOutcome(options, "Primo public", "retrying", retry) });
     if (!res.ok) {
       reportDiscoveryHttpError(options, "Primo public", res.status);
       return [];
     }
-    const data = await res.json();
     const records = data?.docs || data?.results;
     if (!Array.isArray(records)) {
       reportDiscoveryOutcome(options, "Primo public", "error", { errorCode: "INVALID_PROVIDER_RESPONSE" });
@@ -725,15 +722,14 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
   const request = discoveryAbort(options, options.timeoutMs || 6000);
   try {
     const suppliedDoi = knownItem?.doi ? doiIdentifier(knownItem.doi) : "";
-    const res = await fetch(suppliedDoi ? `${CROSSREF_HOST}/works/${encodeURIComponent(suppliedDoi)}` : `${CROSSREF_HOST}/works?${params}`, {
+    const { response: res, data } = await fetchDiscoveryJson(suppliedDoi ? `${CROSSREF_HOST}/works/${encodeURIComponent(suppliedDoi)}` : `${CROSSREF_HOST}/works?${params}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "ZSR-Research-Navigator/1.0 (mailto:askzsr@wfu.edu)",
       },
       signal: request.signal,
-    });
+    }, { ...options, signal: request.signal, timeoutMs: options.timeoutMs || 6000, onRetry: (retry) => reportDiscoveryOutcome(options, "Crossref", "retrying", retry) });
     if (!res.ok) { reportDiscoveryHttpError(options, "Crossref", res.status); return []; }
-    const data = await res.json();
     const records = suppliedDoi && data?.message && !Array.isArray(data.message) && data.message.DOI
       ? [data.message] : data?.message?.items;
     if (!Array.isArray(records)) {

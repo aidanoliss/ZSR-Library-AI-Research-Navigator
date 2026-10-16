@@ -1,3 +1,4 @@
+import { checkSourceIdentities } from "./sourceIdentityCheck.js";
 import {
   getAccessScope,
   includesLibraryResults,
@@ -75,7 +76,7 @@ export function sourceIdentityStatus(results = [], researchSpec, outcomes = {}) 
 export async function searchSourceCandidatesForScope(queries, limit = 10, modeId, accessScopeId, options = {}) {
   const discovery = await discoverSourcesForScope(queries, limit, modeId, accessScopeId, options);
   options.onStatus?.(discovery.outcomes);
-  return discovery.results;
+  return options.verifyIdentities === false ? discovery.results : checkSourceIdentities(discovery.results, { signal: options.signal });
 }
 
 function laneOutcome(requested, results, attempts = []) {

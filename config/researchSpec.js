@@ -22,6 +22,7 @@ const REQUEST_WORDS = new Set([
 ]);
 
 const CANONICAL_CONCEPTS = [
+  { id: "cognitive-behavioral-therapy", preferredTerm: "cognitive behavioral therapy", synonyms: ["cognitive behavioural therapy", "CBT"], pattern: /\b(cognitive behavio[u]?ral therap(?:y|ies)|CBT)\b/i },
   { id: "social-media", preferredTerm: "social media", synonyms: ["social platform*", "online social networking", "platform use", "Instagram", "TikTok", "Snapchat"], pattern: /\b(social media|social platforms?|online social network(?:ing)?|platform use|instagram|tiktok|snapchat)\b/i },
   { id: "adolescents", preferredTerm: "adolescent*", synonyms: ["teen*", "youth", "young people"], pattern: /\b(adolescents?|teenagers?|teens?|youth|young people)\b/i, facet: "population" },
   { id: "children", preferredTerm: "child*", synonyms: ["children", "pediatric"], pattern: /\b(children|child|pediatric)\b/i, facet: "population" },
@@ -203,6 +204,7 @@ function contextDisciplines(text, focusId) {
 }
 
 function populationFacet(text) {
+  if (/\bundergraduates?\b/i.test(text)) return "undergraduates";
   return CANONICAL_CONCEPTS.find((concept) => concept.facet === "population" && concept.pattern.test(text))?.preferredTerm || "";
 }
 
@@ -219,7 +221,7 @@ function geographyFacet(text) {
   if (/\bUS\b/.test(text)) return "United States";
   return clean(
     text.match(/\b(?:by country|countries)\b/i)?.[0]?.replace(/^by\s+/i, "") ||
-    text.match(/\b(?:United States|U\.S\.|North Carolina|Europe|European Union|Global South|Latin America|Africa|Asia|Canada|United Kingdom|UK|rural communities|urban communities)\b/i)?.[0] || ""
+    text.match(/\b(?:United States|U\.S\.|North Carolina|Europe|European Union|Global South|Latin America|Africa|Asia|Canada|United Kingdom|UK|Bangladesh|India|China|Australia|New Zealand|Germany|France|Brazil|Kenya|South Africa|Mexico|Japan|rural communities|urban communities)\b/i)?.[0] || ""
   );
 }
 

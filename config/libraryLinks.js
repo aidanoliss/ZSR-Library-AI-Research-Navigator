@@ -1,3 +1,4 @@
+import { extractDoiIdentifier } from "./sourceIdentifiers.js";
 export const LIBRARY_LINKS = {
   googleScholarSearch: "https://scholar.google.com/scholar?q={q}",
   zsrPrimoSearch:
@@ -54,11 +55,7 @@ export function libkeyUrl({ doi, pmid } = {}) {
 }
 
 /** Find a DOI (10.xxxx/xxxx) anywhere in free text. */
-export function extractDoi(text) {
-  const m = String(text || "").match(/10\.\d{4,9}\/[-._;()/:a-z0-9]+/i);
-  if (!m) return "";
-  return m[0].replace(/[.,;:)\]]+$/, ""); // trim trailing punctuation
-}
+export function extractDoi(text) { return extractDoiIdentifier(text); }
 
 /** Find a PMID only when it is explicitly labeled (avoid mistaking random numbers). */
 export function extractPmid(text) {

@@ -80,6 +80,10 @@ export function sourceMethodEvidence(source, method) {
   const requested = normalized(method);
   const aliases = METHOD_ALIASES[requested] || [requested];
   const statements = ownMethodStatements(source);
+  const titleMethod = normalized(String(source.title || "").split(/[:—–]|\s-\s/).at(-1)).match(/(?:^)\s*(?:a |an )?(systematic review|scoping review|meta analys(?:is|es)|randomi[sz]ed controlled trial|longitudinal study)(?:\s+and\s+meta analys(?:is|es))?\s*$/)?.[1];
+  if (titleMethod && aliases.includes(titleMethod.replace("meta analyses", "meta analysis"))) {
+    return { status: "meets", detail: `The provider title identifies this work as a ${titleMethod}. Verify its methods in the source.` };
+  }
   if (aliases.includes(type)) return { status: "meets", detail: `The provider labels this record “${type}”. Confirm its methods in the source.` };
   const bookReview = isBookReview(source);
   const nonStudy = bookReview || /^(?:editorial|commentary|opinion|hearing)$/.test(type);
@@ -136,7 +140,7 @@ export function sourcePopulationCheck(source, population) {
   const samplePrefix = "^(?:methods?:\\s*)?(?:we (?:recruited|surveyed|interviewed|randomized|randomised)|(?:this|our|the present|the current) study (?:recruited|included|involved)|(?:the |our )?(?:sample|participants) (?:consisted of|comprised|included|were))\\s+(?:(?:a total of|a sample of|only|all|\\d+|male|female|first year)\\s+)*";
   const collegeSample = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${COLLEGE.source}`).test(sentence));
   const schoolSample = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${SCHOOL.source}`).test(sentence));
-  const requestedPattern = COLLEGE.test(requested) ? COLLEGE.source : SCHOOL.test(requested) ? SCHOOL.source
+  const requestedPattern = /\bundergraduates?\b/.test(requested) ? "\\bundergraduates?\\b" : COLLEGE.test(requested) ? COLLEGE.source : SCHOOL.test(requested) ? SCHOOL.source
     : `\\b${requested.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?\\b`;
   const populationModifiers = "(?:(?:\\d+|first year|final year|male|female|(?:non )?[a-z]+(?: [a-z]+)? major)\\s+)*";
   // Participants must be the population itself, not its teachers or caregivers.
@@ -198,4 +202,30 @@ export function sourcePeriodCheck(source, timePeriod, publicationYear) {
       : tooEarly ? `Published ${publicationYear}, before the requested subject period (${timePeriod}). This is a subject-coverage check, not a publication-date filter.`
       : contained ? `The provider's study description names a period within the requested subject period (${timePeriod}). Verify the temporal scope in the source.`
       : `Confirm coverage of the requested subject period (${timePeriod}). ${ranges.length ? "The provider describes an overlapping period, but metadata alone does not establish coverage of the whole request." : "Publication date alone does not establish the period studied."}` };
+}
+
+/** Geography must describe this work's setting, not an affiliation or background citation. */
+export function sourceGeographyCheck(source, geography) {
+  if (!clean(geography)) return null;
+  const requested = normalized(geography);
+  const aliases = {
+    "united states": ["united states", "united states of america", "usa", "u.s.", "u.s.a."],
+    "united kingdom": ["united kingdom", "uk", "u.k."],
+    uk: ["united kingdom", "uk", "u.k."],
+    "north carolina": ["north carolina", "nc"],
+  }[requested] || [requested];
+  const place = aliases.map((value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  const location = new RegExp(`\\b(?:in|across|within|from|throughout)\\s+(?:the\\s+)?(?:${place})(?=$|[\\s,.;:])`, "i");
+  const title = normalized(source.title);
+  const own = sourceMetadataText(source).split(/(?<=[.!?;])\s+/).filter((original) => {
+    const clause = studyClause(original);
+    return /^(?:we (?:analy[sz]ed|examined|studied|recruited|surveyed|interviewed|collected|used|compared)|(?:this|our|the present|the current) (?:study|paper|research|analysis)\b|(?:the |our )?(?:sample|participants|data)\b)/.test(clause)
+      && !AMBIGUOUS_STUDY_DESCRIPTION.test(clause)
+      && !/\b(?:background|previous studies|earlier studies|affiliation|author address)\b/.test(clause);
+  });
+  const passage = !/\b(?:protocol|proposal|future research)\b/.test(title) && location.test(title) ? clean(source.title)
+    : own.find((statement) => location.test(normalized(statement)));
+  return { id: "geography", label: "Study geography", status: passage ? "meets" : "unverified",
+    detail: passage ? `The provider title or study description places this work in the requested geography (${geography}): “${clean(passage).slice(0, 260)}”. Verify its coverage in the source.`
+      : `The metadata does not establish the requested study geography (${geography}). Background mentions, affiliations, and subject tags alone do not confirm coverage.` };
 }

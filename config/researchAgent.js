@@ -1,3 +1,4 @@
+import { extractDoiIdentifier } from "./sourceIdentifiers.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, resolveSubjectFocus } from "./subjectFocus.js";
 import { DEFAULT_MODE_ID } from "./libraryLinks.js";
 import { sourceRequirementFilters, stripSourceRequirementText } from "./sourceRequirements.js";
@@ -64,10 +65,7 @@ export function libkeyUrl({ doi, pmid } = {}) {
   return "";
 }
 
-export function extractDoi(text) {
-  const m = String(text || "").match(/10\.\d{4,9}\/[-._;()/:a-z0-9]+/i);
-  return m ? m[0].replace(/[.,;:)\]]+$/, "") : "";
-}
+export function extractDoi(text) { return extractDoiIdentifier(text); }
 
 export function extractPmid(text) {
   const m = String(text || "").match(/\b(?:pmid|pubmed\s*id|pubmed)\s*[:#]?\s*(\d{4,9})\b/i);

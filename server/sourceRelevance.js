@@ -183,7 +183,7 @@ export function assessSourceRelevance(source, researchSpec) {
     : comparisonTerms.length >= 2 && !missing.length && category === "supporting" ? "Topic match · comparison not established"
       : { "direct-comparison": "Comparison indicated · verify design", "full-topic-match": "All topic concepts found", supporting: "Supporting source · partial topic match", background: "Background · partial topic match" }[category];
   const assessment = assessSourceRequirements(source, researchSpec || {});
-  const facetChecks = { population: "population", timePeriod: "study-period" };
+  const facetChecks = { population: "population", geography: "geography", timePeriod: "study-period" };
   const facetTerms = ["population", "geography", "timePeriod"].map((name) => ({ term: researchSpec?.facets?.[name], checkId: facetChecks[name] }));
   const includedMethods = researchSpec?.methodRequirements?.include || [];
   facetTerms.push(...includedMethods.map((term) => ({ term, checkId: `method-include-${term}` })));
@@ -217,8 +217,16 @@ export function rankSourceResults(results, researchSpec, limit = 10) {
     const categoryScore = { "exact-item": 250, "possible-item": 60, "related-work": 0, "direct-comparison": 50, "full-topic-match": 40, supporting: 15, background: 0 }[matchExplanation.category] || 0;
     const fieldScore = matchExplanation.evidence.reduce((sum, item) => sum + ({ title: 8, abstract: 5, subjects: 2, authors: 4 }[item.field] || 0), 0);
     const unverifiedRequirements = sourceAssessment.checks.filter((check) => check.status === "unverified").length;
-    const score = Math.round(coverage * 100 + categoryScore + fieldScore - matchExplanation.missingFacets.length * 5 - unverifiedRequirements * 12 + (sourceAssessment.status === "meets" ? 5 : 0));
-    return { ...result, sourceAssessment, matchExplanation, metadataRank: { score, coverage, basis: "title-abstract-subject-metadata" }, _position: position };
+    const scopeChecks = sourceAssessment.checks.filter((check) => /^(?:population|geography|study-period|method-)/.test(check.id));
+    const scopeStatuses = [...scopeChecks.map((check) => check.status), ...(matchExplanation.relationship ? [matchExplanation.relationship.status === "comparison-indicated" ? "meets" : "unverified"] : [])];
+    const scopeCoverage = scopeStatuses.length ? scopeStatuses.filter((status) => status === "meets").length / scopeStatuses.length : 1;
+    const complete = matchExplanation.status === "meets" && sourceAssessment.status === "meets";
+    // Lexical density must never outweigh a complete request match. Within
+    // partial matches, established scope beats repeated topical keywords.
+    const tier = complete ? 3 : matchExplanation.missingConcepts.length === 0 ? 2 : 1;
+    const score = researchSpec?.knownItem ? Math.round(coverage * 100 + categoryScore + fieldScore - unverifiedRequirements * 12)
+      : Math.round(tier * 2000 + scopeCoverage * 1000 + coverage * 100 + categoryScore + Math.min(80, fieldScore) - unverifiedRequirements * 12);
+    return { ...result, sourceAssessment, matchExplanation, metadataRank: { score, coverage, scopeCoverage, requestFit: complete ? "metadata-supported" : "partial-or-unverified", basis: "title-abstract-subject-metadata" }, _position: position };
   }).filter((result) => result.sourceAssessment.status !== "mismatch" && result.matchExplanation.status !== "mismatch");
   return ranked.sort((a, b) => b.metadataRank.score - a.metadataRank.score || a._position - b._position)
     .slice(0, Math.max(1, limit)).map(({ _position, ...result }) => result);
