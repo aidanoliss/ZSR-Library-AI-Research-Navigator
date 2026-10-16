@@ -93,7 +93,7 @@
   .result-search-options, .result-databases { padding: 18px; }
 }
 
-/* Links remain visibly links even inside cards and toolbar actions. */
+/* Text links remain visibly links; button-style actions have explicit exceptions below. */
 .zsr-app a[href], .planner-modal a[href], .research-workspace-modal a[href] { color: #0759b0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .zsr-app a[href]:hover, .planner-modal a[href]:hover, .research-workspace-modal a[href]:hover { color: #003d82; text-decoration-thickness: 2px; }
 .zsr-app a[href]:focus-visible { outline: 3px solid #226bd0; outline-offset: 4px; border-radius: 2px; }
@@ -101,8 +101,10 @@
 .zsr-app .session-sidebar a[href]:hover, .zsr-app .brand-bar a[href]:hover { color: #c1e0ff; }
 .zsr-app .source-results-workspace a[href] { color: #0759b0; text-decoration: underline; text-underline-offset: 3px; }
 .zsr-app .source-results-workspace a[href]:hover { color: #003d82; }
-.zsr-app .source-results-workspace a.source-open-button[href] { color: #a8d3ff; }
-.zsr-app .source-results-workspace a.source-open-button[href]:hover { color: #d1e8ff; }
+/* Wake Forest Old Gold: https://brand.wfu.edu/our-brand-identity/color-patterns-papers/ */
+.zsr-app .source-results-workspace a.source-open-button[href] { color: #fff; background: #9e7e38; border-color: #9e7e38; text-decoration: none; }
+.zsr-app .source-results-workspace a.source-open-button[href]:hover { color: #fff; background: #8c6d2c; border-color: #8c6d2c; text-decoration: none; }
+.zsr-app .research-toolbar > a[href], .zsr-app .research-toolbar > a[href]:hover { color: var(--control-black); text-decoration: none; }
 .result-section-links { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 20px; padding: 10px 14px; border: 1px solid #e2e4e7; border-radius: 9px; background: #f8f9fb; font: 600 .8rem/1.5 system-ui, sans-serif; }
 .result-section-links > span { color: #626875; font-weight: 450; }
 .result-section-links > a { display: inline-flex; align-items: center; min-height: 36px; }
