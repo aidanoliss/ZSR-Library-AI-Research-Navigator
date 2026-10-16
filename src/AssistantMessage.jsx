@@ -22,6 +22,8 @@ import {
 import { researchSpecQuery } from "../config/researchSpec.js";
 import { isSavedSource, researchItemKey } from "./researchWorkspace.js";
 import LiveResultsSection from "./SourceResults.jsx";
+import ResultDiscoveryOptions from "./ResultDiscoveryOptions.jsx";
+import { resultSectionLinks } from "./resultDiscovery.js";
 import { ResultWorkspaceHeader, SavedSourcesView } from "./ResultsWorkspace.jsx";
 
 /* Monochrome inline icon per resource type — restrained, academic. */
@@ -1407,6 +1409,7 @@ export default function AssistantMessage({
 
   const useWorkspace = allowSourceSections && (showCatalogResults || showAgenticSearchPlan || showSearchPrimer);
   const effectiveSpec = researchSpec || agentPlan.researchSpec;
+  const resultLinks = resultSectionLinks({ id: sectionId, spec: effectiveSpec, plan: agentPlan, showSources: showCatalogResults });
   const sourceSection = <LiveResultsSection evidenceNotes={reply.evidence_notes || []} evidenceNotice={reply.evidence_notice || ""} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} liveResults={liveResults} sourceDiscovery={sourceDiscovery} researchSpec={effectiveSpec} followup={isFollowup} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onRerunInterpretation={isLatest ? onRerunInterpretation : null} onShowStrategy={() => { setRecoveryEditor(true); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onEditRequirements={() => { setRecoveryEditor(false); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} />;
 
   return (
@@ -1415,13 +1418,19 @@ export default function AssistantMessage({
         <ResultWorkspaceHeader id={sectionId} view={resultView} onViewChange={setResultView} onEditRequirements={() => setEditorRequest((value) => value + 1)} topic={effectiveSpec?.topic || topic} researchSpec={effectiveSpec} mode={mode} busy={isRefreshing} onSearch={isLatest ? onRerunInterpretation : null} savedCount={savedItems.filter(isSavedSource).length} />
         {effectiveSpec?.searchIntent?.reformulated && <div className="neutral-search-note"><strong>Searching with an open question</strong><p>{effectiveSpec.searchIntent.neutralQuestion}</p><small>{effectiveSpec.searchIntent.explanation} You can edit the search brief in Search strategy.</small></div>}
         <div id={`${sectionId}-panel-results`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-results`} hidden={resultView !== "results"} tabIndex={0}>
-          {showCatalogResults ? <div id={`${sectionId}-sources`}>{sourceSection}</div> : <div className="result-plan-empty"><p>This response provides a search strategy. Open Search strategy for queries and recommended databases.</p>{isLatest && <button type="button" onClick={() => onFollowup(`Find source leads for ${topic}`)}>Find sources</button>}</div>}
+          {resultLinks.length > 0 && <nav className="result-section-links" aria-label="Jump to a results section">
+            <span>Jump to</span>
+            {resultLinks.map((link) => <a key={link.href} href={link.href} onClick={() => document.getElementById(link.href.slice(1))?.focus({ preventScroll: true })}>{link.label}</a>)}
+          </nav>}
+          {showCatalogResults ? <div id={`${sectionId}-sources`} tabIndex={-1}>{sourceSection}</div> : <div className="result-plan-empty"><p>Start with the search terms and recommended databases below, or find source leads directly.</p>{isLatest && <button type="button" onClick={() => onFollowup(`Find source leads for ${topic}`)}>Find sources</button>}</div>}
+          <ResultDiscoveryOptions id={sectionId} spec={effectiveSpec} plan={agentPlan} onTrackSearch={onTrackSearch} />
         </div>
         <div id={`${sectionId}-panel-saved`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-saved`} hidden={resultView !== "saved"} tabIndex={0}>
           <SavedSourcesView items={savedItems} onManage={onOpenSavedSources} onSourceEvent={onSourceEvent} />
         </div>
       </>}
       <div id={`${sectionId}-panel-strategy`} className="search-strategy-panel" role={useWorkspace ? "tabpanel" : undefined} aria-labelledby={useWorkspace ? `${sectionId}-tab-strategy` : undefined} hidden={useWorkspace && resultView !== "strategy"} tabIndex={useWorkspace ? 0 : undefined}>
+      {useWorkspace && <p className="strategy-results-hint">Edit your search brief here. <button type="button" onClick={() => setResultView("results")}>View search terms and recommended databases in Results</button></p>}
       {researchSpec && (
         <ResearchInterpretationPanel
           researchSpec={researchSpec}
@@ -1437,7 +1446,7 @@ export default function AssistantMessage({
         />
       )}
 
-      {showSearchPrimer && (
+      {showSearchPrimer && !useWorkspace && (
         <section className="search-query-card" id={`${sectionId}-terms`} aria-label="Search terms to try">
           <div className="search-query-heading">
             <SectionHeader icon={Icon.search}>Search terms to try</SectionHeader>
@@ -1524,11 +1533,11 @@ export default function AssistantMessage({
 
 
 
-      {showAgenticSearchPlan && (
+      {showAgenticSearchPlan && !useWorkspace && (
         <div id={`${sectionId}-databases`}><ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} visibleSearchTerms={displaySearchTerms} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
       )}
 
-      {showDatabaseStrategy && (
+      {showDatabaseStrategy && !useWorkspace && (
         <div id={`${sectionId}-databases`}><DatabaseStrategySection strategy={databaseStrategy} topic={topic} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
       )}
 
