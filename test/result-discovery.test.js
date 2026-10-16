@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildResultQueryOptions, resultQueryFilters } from "../src/resultDiscovery.js";
+import { buildResultQueryOptions, resultQueryFilters, resultSearchVocabulary } from "../src/resultDiscovery.js";
 import { buildResearchSpec, researchFacetExpressions } from "../config/researchSpec.js";
 import { validateCompiledQuery } from "../config/queryCompiler.js";
 
@@ -36,7 +36,7 @@ test("explicit phrases are not relaxed or synonym-expanded", () => {
   }
 });
 
-test("variants are unique and use only vocabulary already in the brief", () => {
+test("unknown vocabulary is not invented just to create extra options", () => {
   const options = buildResultQueryOptions({ concepts: [{ id: "a", preferredTerm: "coral", synonyms: [] }] });
   assert.deepEqual(options.map((option) => option.query), ["coral"]);
   assert.deepEqual(buildResultQueryOptions(null), []);
@@ -54,4 +54,37 @@ test("results jump links exist only for sections with renderable content", async
   assert.deepEqual(resultSectionLinks({ id: "r2", plan: { navigationOnly: true, recommendations: [{ name: "Ask ZSR", url: "https://zsr.wfu.edu/ask/" }] } }), [{ label: "ZSR resources", href: "#r2-databases" }]);
   const spec = { concepts: [{ id: "a", preferredTerm: "coral" }] };
   assert.deepEqual(resultSectionLinks({ id: "r3", spec, plan: { recommendations: [{ name: "Missing access URL" }] } }), [{ label: "Search terms", href: "#r3-terms" }]);
+});
+
+
+test("display suggestions recover full vocabulary without altering a reviewed or corrected brief", () => {
+  const spec = buildResearchSpec("Sanctions and their impact on authoritarian regimes vs democracies");
+  // Older saved briefs can have missing/truncated synonym arrays.
+  spec.concepts.forEach((concept) => { concept.synonyms = []; });
+  const original = JSON.stringify(spec);
+  const options = buildResultQueryOptions(spec);
+  assert.ok(options.length >= 7, JSON.stringify(options));
+  assert.match(options.find(({ label }) => label === "Widen the vocabulary").query, /trade sanctions/);
+  assert.match(options.find(({ label }) => label === "Widen the vocabulary").query, /dictatorships/);
+  const focused = options.find(({ label }) => label.toLowerCase() === "broaden: sanctions");
+  assert.match(focused.query, /financial sanctions/);
+  assert.doesNotMatch(focused.query, /dictatorships/);
+  assert.equal(new Set(options.map(({ query }) => query.toLowerCase())).size, options.length);
+  assert.equal(JSON.stringify(spec), original);
+  assert.deepEqual(resultSearchVocabulary({ concepts: [{ id: "economic-sanctions", preferredTerm: "coral", synonyms: [] }] }), [], "a stale concept ID cannot inject the previous topic");
+  assert.deepEqual(resultSearchVocabulary({ concepts: [{ preferredTerm: "sanctions", exactPhrase: true }] }), []);
+});
+
+test("single concept queries get useful synonym alternatives while retaining constraints", () => {
+  const spec = { concepts: [{ id: "wearables", preferredTerm: "wearables", synonyms: ["wearable technology", "Wearable Technology", " "] }], facets: { geography: "North Carolina" }, methodRequirements: { exclude: ["systematic review"] } };
+  const options = buildResultQueryOptions(spec);
+  assert.ok(options.length >= 6);
+  assert.equal(resultSearchVocabulary(spec)[0].alternatives.filter((term) => term.toLowerCase() === "wearable technology").length, 1);
+  for (const { query } of options) {
+    assert.match(query, /wearables/);
+    for (const facet of researchFacetExpressions(spec)) assert.ok(query.includes(facet), query);
+  }
+  assert.equal(new Set(options.map(({ query }) => query.toLowerCase())).size, options.length);
+  assert.deepEqual(resultSearchVocabulary({ concepts: [{ preferredTerm: "wearables", required: false }] }), []);
+  assert.deepEqual(resultSearchVocabulary({ knownItem: { title: "Wearables" }, concepts: [{ preferredTerm: "wearables" }] }), []);
 });

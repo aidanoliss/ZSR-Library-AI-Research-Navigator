@@ -108,3 +108,15 @@
 .result-section-links > a { display: inline-flex; align-items: center; min-height: 36px; }
 .result-view-panel > [id$="-sources"], .result-search-options, .result-databases { scroll-margin-top: 20px; }
 .result-view-panel > [id$="-sources"]:focus-visible, .result-search-options:focus-visible, .result-databases:focus-visible { outline: 3px solid #226bd0; outline-offset: 4px; }
+
+.result-vocabulary { margin: 0 0 18px; padding: 14px 18px; border: 1px solid #e2e4e7; border-radius: 10px; background: #f8f9fb; }
+.result-vocabulary summary, .result-more-queries summary { cursor: pointer; font: 600 .86rem/1.5 system-ui, sans-serif; }
+.result-vocabulary summary:focus-visible, .result-more-queries summary:focus-visible { outline: 3px solid #226bd0; outline-offset: 4px; }
+.result-vocabulary p, .result-vocabulary dl { font: .82rem/1.6 system-ui, sans-serif; }
+.result-vocabulary dl { margin-bottom: 0; }
+.result-vocabulary dl > div + div { margin-top: 12px; }
+.result-vocabulary dt { font-weight: 650; }
+.result-vocabulary dd { margin: 3px 0 0; color: #505762; overflow-wrap: anywhere; }
+.result-more-queries { margin-top: 18px; }
+.result-more-queries summary { padding: 12px 0; }
+.result-query-count { font-size: .82rem; }

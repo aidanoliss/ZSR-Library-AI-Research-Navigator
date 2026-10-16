@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { compileResourceQuery } from "../config/queryCompiler.js";
 import { fillTemplate } from "../config/libraryLinks.js";
-import { buildResultQueryOptions, resultQueryFilters, resultDatabaseRecommendations } from "./resultDiscovery.js";
+import { buildResultQueryOptions, resultQueryFilters, resultDatabaseRecommendations, resultSearchVocabulary } from "./resultDiscovery.js";
 
 function CopyQuery({ query, label = "Copy query" }) {
   const [status, setStatus] = useState("");
@@ -17,7 +17,11 @@ function CopyQuery({ query, label = "Copy query" }) {
 export default function ResultDiscoveryOptions({ id, spec, plan, onTrackSearch }) {
   const options = buildResultQueryOptions(spec);
   const filters = resultQueryFilters(spec);
+  const vocabulary = resultSearchVocabulary(spec);
   const resources = resultDatabaseRecommendations(plan);
+  function queryCard(option, index) {
+    return <li key={option.query}><div className="result-query-label"><strong>{option.label}</strong><span>{index + 1}</span></div><p>{option.description}</p><code>{option.query}</code><CopyQuery query={option.query} label={`Copy query: ${option.label}`} /></li>;
+  }
   function databaseCard(resource, index) {
     const query = plan.navigationOnly ? "" : compileResourceQuery(resource, spec, index) || options[0]?.query;
     const url = fillTemplate(resource.accessUrl || resource.url, query || "");
@@ -33,7 +37,10 @@ export default function ResultDiscoveryOptions({ id, spec, plan, onTrackSearch }
     {options.length > 0 && <section id={`${id}-terms`} className="result-search-options" tabIndex={-1} aria-label="Search terms to try">
       <div className="result-section-heading"><h3>Search terms to try</h3><a href="https://guides.zsr.wfu.edu/c.php?g=1072064&p=7805742" target="_blank" rel="noopener noreferrer">ZSR search guide ↗</a></div>
       <p>Copy a Boolean search into one of the databases below. <strong>AND</strong> combines ideas; <strong>OR</strong> includes alternatives; <strong>NOT</strong> excludes terms.</p>
-      <ul className="result-query-options">{options.map((option, index) => <li key={option.query}><div className="result-query-label"><strong>{option.label}</strong><span>{index + 1}</span></div><p>{option.description}</p><code>{option.query}</code><CopyQuery query={option.query} label={`Copy query: ${option.label}`} /></li>)}</ul>
+      <p className="result-query-count"><strong>{options.length} distinct {options.length === 1 ? "search" : "searches"}</strong> · Start focused, then try alternatives if you need more.</p>
+      {vocabulary.length > 0 && <details className="result-vocabulary"><summary>Explore synonyms &amp; related terms</summary><p>Suggestions from your brief and Navigator’s vocabulary list. <strong>These are not verified database subject headings or exact equivalents.</strong> Keep only terms that fit your question. An asterisk (*) searches word endings in databases that support it.</p><dl>{vocabulary.map(({ term, alternatives }) => <div key={term}><dt>{term}</dt><dd>{alternatives.join(" · ")}</dd></div>)}</dl></details>}
+      <ul className="result-query-options">{options.slice(0, 4).map(queryCard)}</ul>
+      {options.length > 4 && <details className="result-more-queries"><summary>More search options ({options.length - 4})</summary><ul className="result-query-options">{options.slice(4).map((option, index) => queryCard(option, index + 4))}</ul></details>}
       <p className="result-query-limit-note"><strong>Keep your requirements:</strong> {filters.length ? `${filters.join(" · ")}. ` : ""}Apply source type, date, and peer-review filters in the database when required. NOT may also remove useful studies that mention an excluded term.</p>
     </section>}
     {resources.length > 0 && <section id={`${id}-databases`} className="result-databases" tabIndex={-1} aria-label="Recommended databases">

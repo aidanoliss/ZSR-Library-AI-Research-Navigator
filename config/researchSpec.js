@@ -688,6 +688,19 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
   return { ...spec, planHash: deterministicHash(spec) };
 }
 
+/** Presentation-only vocabulary lookup; never changes the interpreted research brief.
+ * Require a whole-term match so a subtopic cannot silently replace a longer idea.
+ */
+export function suggestedResearchVocabulary(term) {
+  const normalized = clean(term).toLowerCase();
+  const entry = CANONICAL_CONCEPTS.find((concept) => {
+    if (concept.preferredTerm.toLowerCase() === normalized) return true;
+    const match = normalized.match(concept.pattern);
+    return match?.[0]?.toLowerCase() === normalized;
+  });
+  return entry ? [entry.preferredTerm, ...entry.synonyms] : [];
+}
+
 /** Quotation is an explicit phrase choice, not the default for a whole clause. */
 export function formatResearchTerm(value, { exact = false } = {}) {
   const term = clean(value);
