@@ -1453,11 +1453,9 @@ export default function App() {
         <header className="zsr-hero">
           <div className="hero-bg" aria-hidden="true" />
           <div className="hero-content">
-            <p className="prototype-status">
-              Prototype for ZSR Library research workflows
-            </p>
             <h1><span className="title-zsr">ZSR</span> Research Navigator</h1>
-            <p>Find a starting point. Build a search. Keep the sources that matter.</p>
+            <p className="hero-tagline">Find a starting point. Build a search. Keep the sources that matter.</p>
+            <div className="prototype-status"><span aria-hidden="true" />Research prototype</div>
           </div>
         </header>
 

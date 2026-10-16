@@ -206,3 +206,12 @@ button:disabled { cursor: default; opacity: .55; }
 .refinement-use-suggestion:focus-visible { outline: 3px solid #b49a59; outline-offset: 3px; }
 .refinement-use-suggestion:disabled { opacity: .55; cursor: wait; }
 .source-guidance-status { padding: 12px 16px; border-radius: 10px; background: #f1f3ef; font-size: .85rem; line-height: 1.5; }
+
+/* Keep the prototype status secondary, anchored below the header introduction. */
+.zsr-hero { border-bottom-color: #9e7e38; }
+.zsr-hero .title-zsr { color: #9e7e38; }
+.zsr-hero .hero-tagline { margin: 8px 0 0; color: #fff5e2; font: 400 1.02rem/1.5 system-ui, sans-serif; text-shadow: 0 1px 10px #0009; }
+.zsr-hero .prototype-status { display: inline-flex; align-items: center; gap: 7px; margin: 18px 0 0; padding: 5px 9px; border: 1px solid #ffffff40; border-radius: 6px; background: #111111b8; color: #f8f7f3; font: 500 .7rem/1.4 system-ui, sans-serif; text-shadow: none; }
+.prototype-status > span { width: 6px; height: 6px; border-radius: 50%; background: #9e7e38; }
+.has-conversation .zsr-hero .hero-tagline { display: none; }
+.has-conversation .zsr-hero .prototype-status { margin-top: 12px; }

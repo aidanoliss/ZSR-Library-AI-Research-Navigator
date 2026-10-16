@@ -16,7 +16,6 @@ import {
 } from "./researchWorkspace.js";
 import { assignmentProgress } from "./workspaceRequirements.js";
 import { RequirementProgress, SavedSourceEvidence, SourceComparison } from "./WorkspaceSourcePanels.jsx";
-import "./workspace.css";
 
 const Icon = {
   close: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>,
@@ -32,7 +31,7 @@ const Icon = {
 
 const TABS = [
   { id: "brief", label: "Brief" },
-  { id: "trail", label: "Sources" },
+  { id: "trail", label: "Research" },
   { id: "history", label: "Searches" },
   { id: "review", label: "Review" },
 ];
@@ -50,6 +49,7 @@ function EmptyState({ children }) {
 
 export default function ResearchWorkspace({ open, workspace, topic, onChange, onClose, onHandoff, initialTab = "trail", researchSpec = null }) {
   const closeButtonRef = useRef(null);
+  const bodyRef = useRef(null);
   const previousFocusRef = useRef(null);
   const [tab, setTab] = useState(initialTab);
   const tabRefs = useRef({});
@@ -89,6 +89,10 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
       previousFocusRef.current?.focus?.();
     };
   }, [open, initialTab]);
+
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [tab, open]);
 
   if (!open) return null;
 
@@ -166,13 +170,13 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
     try {
       if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(workspaceToMarkdown(current, topic));
-      announce("Review packet copied.");
-    } catch { setNotice(""); setError("Could not copy the packet. Use Download Markdown instead."); }
+      announce("Research summary copied.");
+    } catch { setNotice(""); setError("Could not copy the summary. Use Download summary instead."); }
   }
 
   function downloadReview() {
     try { downloadText("zsr-research-trail.md", workspaceToMarkdown(current, topic)); announce("Markdown download started."); }
-    catch { setNotice(""); setError("The download could not start. Try copying the packet."); }
+    catch { setNotice(""); setError("The download could not start. Try copying the summary."); }
   }
 
   function downloadWorkspace() {
@@ -223,7 +227,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
         <button ref={closeButtonRef} type="button" onClick={onClose} aria-label="Close research workspace">{Icon.close}</button>
       </header>
 
-      <p className="workspace-local-note">Saved in this browser. Export a backup from Review.</p>
+      <p className="workspace-local-note">Your brief, saved research, and search activity. Saved in this browser.</p>
 
       <nav className="research-workspace-tabs" role="tablist" aria-label="Research workspace sections">
         {TABS.map((item) => (
@@ -245,7 +249,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
         ))}
       </nav>
 
-      <div className="research-workspace-body">
+      <div ref={bodyRef} className="research-workspace-body">
         <div role="status" aria-live="polite" aria-atomic="true" className={notice ? "workspace-action-status" : "sr-only"}>{notice}</div>
         {error && <p role="alert" className="workspace-action-error">{error}</p>}
         {(
@@ -261,18 +265,16 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
               <div>
                 <h3 id="workspace-brief-title">Research brief</h3>
               </div>
-              <label className="workspace-toggle">
+            </div>
+            <p className="workspace-brief-help">Set the requirements for this project. Start with the essentials; add more details when you need them.</p>
+            <label className="workspace-toggle workspace-sharing-choice">
                 <input
                   type="checkbox"
                   checked={current.assignment.enabled}
                   onChange={(event) => changeAssignment("enabled", event.target.checked)}
                 />
-                <span>Include in AI requests</span>
-              </label>
-            </div>
-
-            <p className="workspace-brief-help">Add only the requirements that matter for finding sources. These details are sent to the AI only when the switch above is on.</p>
-            {(progress.selected > 0 || progress.target > 0) && <RequirementProgress progress={progress} id="workspace-brief-progress" />}
+                <span><strong>Use this brief in AI requests</strong><small>When checked, these requirements are sent with your next request.</small></span>
+            </label>
 
             <div className="workspace-form-grid workspace-essential-fields">
               <label>
@@ -325,22 +327,22 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
           >
             <div className="workspace-section-head">
               <div>
-                <span>{current.trail.length} saved</span>
-                <h3 id="workspace-trail-title">My sources and saved searches</h3>
+                <h3 id="workspace-trail-title">Saved research</h3>
+                <span>{current.trail.length} saved {current.trail.length === 1 ? "item" : "items"}</span>
               </div>
             </div>
-            {(progress.selected > 0 || progress.target > 0) && <RequirementProgress progress={progress} id="workspace-trail-progress" />}
+            <p className="workspace-brief-help">Keep promising sources here. Mark the ones you plan to use, then check your progress in Review.</p>
             <SourceComparison items={comparisonItems} spec={progress.spec} onClear={() => { setComparisonIds([]); announce("Comparison cleared."); }} />
-            {current.trail.some(isSavedSource) && <p className="workspace-evidence-note">Select two or three sources to compare. Mark “Use” to include a source in requirement checks.</p>}
+            {current.trail.some(isSavedSource) && <p className="workspace-evidence-note">Choose two or three sources to compare their details side by side.</p>}
             {!current.trail.length ? (
-              <EmptyState>Start with a topic, ask for source leads, and choose Save on a result. Your sources, notes, and comparison will appear here. Saved database paths help you search but do not count toward your source target.</EmptyState>
+              <EmptyState>Your saved research will appear here. Choose Save on a search result to keep it with this project.</EmptyState>
             ) : (
               <ul className="workspace-trail-list">
                 {current.trail.map((item) => (
                   <li key={item.id}>
                     <div className="workspace-item-head">
                       <div>
-                        <span>{isSavedSource(item) ? "Source" : item.kind}</span>
+                        <span>{isSavedSource(item) ? "Source" : item.kind === "database" ? "Database" : "Search"}</span>
                         {item.url ? (
                           <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}{Icon.external}</a>
                         ) : <strong>{item.title}</strong>}
@@ -349,7 +351,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                     </div>
                     {item.detail && <p>{item.detail}</p>}
                     {isSavedSource(item) && <>
-                      <label className="workspace-compare-choice"><input type="checkbox" checked={comparisonIds.includes(item.id)} onChange={() => toggleComparison(item.id)} disabled={!comparisonIds.includes(item.id) && comparisonItems.length >= 3} />Compare {item.title}</label>
+                      <label className="workspace-compare-choice"><input type="checkbox" checked={comparisonIds.includes(item.id)} onChange={() => toggleComparison(item.id)} aria-label={`Compare ${item.title}`} disabled={!comparisonIds.includes(item.id) && comparisonItems.length >= 3} />Compare source</label>
                       <SavedSourceEvidence item={item} spec={progress.spec} />
                     </>}
                     <label>
@@ -358,6 +360,8 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                         {RESEARCH_ITEM_STATUSES.map((status) => <option key={status.id} value={status.id}>{status.label}</option>)}
                       </select>
                     </label>
+                    <details className="workspace-item-notes">
+                      <summary>Notes &amp; citation{item.notes || item.citation ? " · added" : ""}</summary>
                     <label>
                       Notes
                       <textarea maxLength={4000} rows={2} value={item.notes} onChange={(event) => updateTrailItem(item.id, { notes: event.target.value })} placeholder="Why this may help, evidence to verify, useful pages..." />
@@ -366,6 +370,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                       Citation details
                       <textarea maxLength={4000} rows={2} value={item.citation} onChange={(event) => updateTrailItem(item.id, { citation: event.target.value })} placeholder="Author, title, container, date, DOI or URL..." />
                     </label>
+                    </details>
                   </li>
                 ))}
               </ul>
@@ -384,31 +389,32 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
           >
             <div className="workspace-section-head">
               <div>
+                <h3 id="workspace-history-title">Search activity</h3>
                 <span>{current.searchHistory.length} recorded</span>
-                <h3 id="workspace-history-title">Searches tried</h3>
               </div>
             </div>
+            <p className="workspace-brief-help">Revisit searches and source links you opened. Add a note about what worked so you know what to try next.</p>
             <form className="workspace-manual-search" onSubmit={addManualSearch}>
-              <label className="sr-only" htmlFor="manual-search-note">Add a search string</label>
-              <input id="manual-search-note" maxLength={4000} value={manualQuery} onChange={(event) => setManualQuery(event.target.value)} placeholder="Add a search you tried" />
-              <button type="submit" disabled={!manualQuery.trim()}>Add</button>
+              <label htmlFor="manual-search-note">Record a search you tried elsewhere</label>
+              <input id="manual-search-note" maxLength={4000} value={manualQuery} onChange={(event) => setManualQuery(event.target.value)} placeholder='e.g. "economic sanctions" AND democracy' />
+              <button type="submit" disabled={!manualQuery.trim()}>Save search</button>
             </form>
             {!current.searchHistory.length ? (
-              <EmptyState>Searches opened from Navigator links will appear here automatically.</EmptyState>
+              <EmptyState>No activity yet. Searches and source links opened from Navigator are recorded here automatically.</EmptyState>
             ) : (
               <ul className="workspace-history-list">
                 {current.searchHistory.map((entry) => (
                   <li key={entry.id}>
                     <div className="workspace-item-head">
                       <div>
-                        <span>{entry.tool} {formatDate(entry.usedAt) ? `- ${formatDate(entry.usedAt)}` : ""}</span>
-                        {entry.url ? <a href={entry.url} target="_blank" rel="noopener noreferrer"><code>{entry.query}</code>{Icon.external}</a> : <code>{entry.query}</code>}
+                        <span className="workspace-activity-meta">{entry.tool}{formatDate(entry.usedAt) && <time dateTime={new Date(entry.usedAt).toISOString()}>{formatDate(entry.usedAt)}</time>}</span>
+                        {entry.url ? <a href={entry.url} target="_blank" rel="noopener noreferrer"><span className="workspace-query">{entry.query}</span>{Icon.external}</a> : <span className="workspace-query">{entry.query}</span>}
                       </div>
                       <button type="button" onClick={() => removeSearch(entry.id)} aria-label={`Remove search ${entry.query}`}>{Icon.trash}</button>
                     </div>
                     <label>
-                      What happened?
-                      <input maxLength={4000} value={entry.resultNote || ""} onChange={(event) => updateSearch(entry.id, event.target.value)} placeholder="Too broad, useful results, no results..." />
+                      Outcome or next step
+                      <input maxLength={4000} value={entry.resultNote || ""} onChange={(event) => updateSearch(entry.id, event.target.value)} placeholder="e.g. Useful results; try narrowing by year" />
                     </label>
                   </li>
                 ))}
@@ -427,42 +433,40 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
             aria-labelledby="workspace-tab-review"
           >
             <div className="workspace-section-head">
-              <div>
-                <span>Librarian-ready summary</span>
-                <h3 id="workspace-review-title">Review packet</h3>
-              </div>
+              <div><h3 id="workspace-review-title">Review &amp; share</h3></div>
             </div>
+            <p className="workspace-brief-help">Check what you have, then take your research into a paper or a conversation with a librarian.</p>
             <div className="workspace-review-metrics">
-              <div><strong>{current.trail.length}</strong><span>saved leads</span></div>
-              <div><strong>{usableItems}</strong><span>marked use</span></div>
-              <div><strong>{current.searchHistory.length}</strong><span>searches tried</span></div>
+              <div><strong>{current.trail.length}</strong><span>saved items</span></div>
+              <div><strong>{usableItems}</strong><span>sources to use</span></div>
+              <div><strong>{current.searchHistory.length}</strong><span>activity entries</span></div>
             </div>
+            {(progress.selected > 0 || progress.target > 0) && <RequirementProgress progress={progress} id="workspace-review-progress" />}
             <div className="workspace-review-block">
-              <strong>Assignment brief</strong>
-              {assignmentSummary ? <pre>{assignmentSummary}</pre> : <p>Add the assignment constraints a librarian should know.</p>}
-            </div>
-            <div className="workspace-review-block">
-              <strong>Integration status</strong>
-              <ul>
-                <li>Navigator offers curated ZSR links and source searches when their providers are available. Check each result's provider and access notice.</li>
-                <li>Subscription access, full text, and citation details still require confirmation in ZSR.</li>
-                <li>No library account, course system, or saved-list sync is implied by this local prototype.</li>
-              </ul>
+              <strong>Your brief</strong>
+              {assignmentSummary ? <pre>{assignmentSummary}</pre> : <p>No requirements added yet. Use Brief if your assignment has a source target or other requirements.</p>}
             </div>
             <div className="workspace-portable">
-              <h4>Move or back up your research</h4>
-              <p>JSON includes your brief, sources, notes, citation details, and search history. Imports add to this chat, skip duplicates, and keep an existing brief. Maximum 100 items, 100 searches, and 2 MB.</p>
+              <h4>Share your research summary</h4>
+              <p>Includes your brief, saved items, notes, and search activity. You can review the librarian handoff before sending anything.</p>
+              <div className="workspace-review-actions">
+                <button type="button" className="primary" onClick={onHandoff}>Prepare librarian handoff</button>
+                <button type="button" onClick={copyReview}>{Icon.copy}<span>Copy summary</span></button>
+                <button type="button" onClick={downloadReview}>{Icon.download}<span>Download summary</span></button>
+              </div>
+              <p className="workspace-evidence-note">The summary downloads as a Markdown text file.</p>
+            </div>
+            <details className="workspace-optional-fields">
+              <summary>Back up or restore this project</summary>
+              <p className="workspace-evidence-note">Research is saved in this browser, not synced to your library account. Download a backup to keep a copy or move it to another browser.</p>
               <div className="workspace-portable-actions">
-                <button type="button" onClick={downloadWorkspace}>Export workspace JSON</button>
-                <button type="button" onClick={() => importRef.current?.click()} disabled={importing}>{importing ? "Reading file…" : "Import workspace JSON"}</button>
+                <button type="button" onClick={downloadWorkspace}>Download backup</button>
+                <button type="button" onClick={() => importRef.current?.click()} disabled={importing}>{importing ? "Reading file…" : "Restore backup"}</button>
                 <input ref={importRef} type="file" accept=".json,application/json" onChange={importWorkspace} hidden aria-label="Choose a Navigator workspace JSON file" />
               </div>
-            </div>
-            <div className="workspace-review-actions">
-              <button type="button" onClick={copyReview}>{Icon.copy}<span>Copy packet</span></button>
-              <button type="button" onClick={downloadReview}>{Icon.download}<span>Download Markdown</span></button>
-              <button type="button" className="primary" onClick={onHandoff}>Ask a librarian</button>
-            </div>
+              <p className="workspace-evidence-note">Use a Navigator JSON backup, up to 2 MB. Restoring adds items, skips duplicates, and keeps an existing brief. Limit: 100 saved items and 100 activity entries.</p>
+            </details>
+            <p className="workspace-evidence-note"><strong>Before you cite:</strong> open the original source to verify its claims, citation details, and access. AI guidance and source metadata can be incomplete or mistaken.</p>
           </section>
         )}
       </div>
