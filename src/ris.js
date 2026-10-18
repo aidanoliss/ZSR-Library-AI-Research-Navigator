@@ -1,4 +1,5 @@
-import { sourceIdentityNotes } from "./researchWorkspace.js";
+import { explorationRelationshipLabel, sourceIdentityNotes } from "./researchWorkspace.js";
+import { evidenceEntryNotes } from "./evidenceNotebook.js";
 
 /**
  * Provider-neutral RIS export for verified source-lead metadata.
@@ -176,7 +177,8 @@ export function normalizeSourceLead(lead = {}) {
   if (serialNumbers.length) fields.SN = serialNumbers;
   if (pmid) fields.AN = pmid;
   if (url) fields.UR = url;
-  const notes = [provider ? `Metadata provider: ${provider}` : "", ...sourceIdentityNotes(lead)].filter(Boolean);
+  const notes = [provider ? `Metadata provider: ${provider}` : "", ...sourceIdentityNotes(lead), ...evidenceEntryNotes(lead.evidenceEntries)].filter(Boolean);
+  if (lead.exploration) notes.push(`Connection reported by ${cleanValue(lead.exploration.provider) || "provider"}: ${explorationRelationshipLabel(lead.exploration.relationship)}; seed: ${cleanValue(lead.exploration.seedId) || "not recorded"}; observed: ${cleanValue(lead.exploration.retrievedAt) || "not recorded"}. A connection does not establish agreement or claim support.`);
   if (notes.length) fields.N1 = notes.length === 1 ? notes[0] : notes;
 
   return fields;

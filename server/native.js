@@ -1,3 +1,5 @@
+import { exploreSources } from "./sourceExploration.js";
+import { parseSourceExplorationRequest } from "./sourceExplorationRequest.js";
 import { getDiscoveryReadiness } from "./discoveryReadiness.js";
 import "dotenv/config";
 import { createReadStream, existsSync } from "node:fs";
@@ -633,6 +635,19 @@ export async function handleApi(req, res, path) {
       mailto: `mailto:${ASK_ZSR_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`,
       body: bodyText,
     });
+  }
+  if (req.method === "POST" && path === "/api/explore-sources") {
+    const blocked = gate(req, "chat");
+    if (blocked) { res.setHeader("Retry-After", String(blocked.retryAfter)); return sendJson(res, blocked.status, blocked.payload); }
+    const parsed = parseSourceExplorationRequest(await readJsonBody(req));
+    if (parsed.error) return sendJson(res, 400, { error: parsed.error });
+    const release = acquireChatSlot(clientKey(req));
+    if (!release) { res.setHeader("Retry-After", "2"); return sendJson(res, 429, { error: "The research service is busy. Please try again shortly." }); }
+    const controller = new AbortController();
+    const abort = () => { if (!res.writableEnded) controller.abort(); };
+    req.once("aborted", abort); res.once("close", abort);
+    try { return sendJson(res, 200, await exploreSources(parsed, { signal: controller.signal })); }
+    finally { req.off("aborted", abort); res.off("close", abort); release(); }
   }
   if (req.method === "POST" && path === "/api/chat") return handleChat(req, res, false);
   if (req.method === "POST" && path === "/api/chat/stream") return handleChat(req, res, true);

@@ -726,6 +726,7 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
     safety: safetyFor(topic),
     configVersion: RESOURCE_CONFIG_VERSION,
     correctedByStudent: true,
+    preferredFacets: Object.fromEntries(["population", "geography", "method"].filter((key) => !facets[key] && typeof supplied.preferredFacets?.[key] === "string" && supplied.preferredFacets[key].trim()).map((key) => [key, bounded(supplied.preferredFacets[key], 120)])),
     ...(supplied.searchExpansion === "full-synonyms" ? { searchExpansion: "full-synonyms" } : {}),
   };
   return { ...spec, planHash: deterministicHash(spec) };

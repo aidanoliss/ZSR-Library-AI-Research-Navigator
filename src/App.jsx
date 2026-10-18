@@ -1,3 +1,7 @@
+import { SourceFeedbackProvider } from "./SourceFeedback.jsx";
+import { buildResearchSpec } from "../config/researchSpec.js";
+import SearchClarification from "./SearchClarification.jsx";
+import { searchClarification } from "./searchClarification.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ResearchPrivacyContext, readPrivateMode, setPrivateModePreference } from "./researchPrivacy.js";
 import { searchRunSnapshot } from "./searchRunHistory.js";
@@ -774,7 +778,7 @@ export default function App() {
     setPrivateModePreference(next);
     setPrivateMode(next);
   }
-  return <ResearchPrivacyContext.Provider value={privateMode}><ResearchApp key={privateMode ? "private" : "saved"} privateMode={privateMode} onPrivacyChange={changePrivacy} /></ResearchPrivacyContext.Provider>;
+  return <ResearchPrivacyContext.Provider value={privateMode}><SourceFeedbackProvider key={privateMode ? "private-feedback" : "saved-feedback"}><ResearchApp key={privateMode ? "private" : "saved"} privateMode={privateMode} onPrivacyChange={changePrivacy} /></SourceFeedbackProvider></ResearchPrivacyContext.Provider>;
 }
 
 function ResearchApp({ privateMode, onPrivacyChange }) {
@@ -801,6 +805,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   const [adminOpen, setAdminOpen] = useState(() => new URLSearchParams(window.location.search).has("admin"));
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [plannerDraft, setPlannerDraft] = useState(null);
+  const [clarificationDraft, setClarificationDraft] = useState(null);
   const [loading, setLoading] = useState(false);
   const [followupOpen, setFollowupOpen] = useState(false);
   const studyRef = useRef(null);
@@ -1140,6 +1145,13 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     if (!options.skipPlanner && requestResponseStyle === "plan") {
       setPlannerDraft({ topic: content, questions: options.questions || [] });
       return;
+    }
+
+    if (!options.skipClarification && !options.replay && !options.researchSpec && !messages.some((message) => message.role === "user")) {
+      const context = assignmentContext(researchWorkspace.assignment);
+      const spec = buildResearchSpec(content, { modeId: mode, assignmentContext: context });
+      const question = searchClarification(content, spec);
+      if (question) { setClarificationDraft({ content, question, spec, options, assignmentContext: context }); return; }
     }
 
     const searchMetricId = crypto.randomUUID();
@@ -1684,6 +1696,11 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         </form>
         </details>
       )}
+      {clarificationDraft && <SearchClarification draft={clarificationDraft} onCancel={() => setClarificationDraft(null)} onSearch={(topic, spec) => {
+        const options = clarificationDraft.options;
+        setClarificationDraft(null);
+        send(topic, { ...options, skipClarification: true, researchSpec: spec });
+      }} />}
       <HandoffModal open={handoffOpen} onClose={() => setHandoffOpen(false)} payload={handoffPayload} />
       <ResearchWorkspace
         key={activeSessionId || "new"}

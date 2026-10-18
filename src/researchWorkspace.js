@@ -1,4 +1,5 @@
 import { groupRelatedSourceResults } from "./sourceDedup.js";
+import { evidenceEntryNotes, normalizeEvidenceEntries } from "./evidenceNotebook.js";
 
 export const RESEARCH_ITEM_STATUSES = [
   { id: "promising", label: "Promising" },
@@ -112,6 +113,42 @@ function boundedMetadata(value, depth = 0) {
 }
 
 const IDENTITY_STATUSES = new Set(["unverified", "title-matched", "title-difference"]);
+const EXPLORATION_RELATIONSHIPS = new Set(["similar", "references", "citing"]);
+export function explorationRelationshipLabel(relationship) {
+  return { similar: "Related works (not a citation relationship)", references: "Works referenced by the selected source", citing: "Works citing the selected source" }[relationship] || "Relationship not recorded";
+}
+
+function normalizeExplorationProvenance(value) {
+  if (!plainObject(value)) return undefined;
+  const relationship = EXPLORATION_RELATIONSHIPS.has(value.relationship) ? value.relationship : "";
+  return { relationship, label: textValue(value.label, 400), seedId: safeUrl(value.seedId), provider: textValue(value.provider, 200),
+    retrievedAt: textValue(value.retrievedAt, 120), citationRelationship: ["references", "citing"].includes(relationship) };
+}
+
+function normalizeExplorationHistory(value) {
+  const seed = plainObject(value?.seed) ? value.seed : {};
+  const coverage = plainObject(value?.coverage) ? value.coverage : {};
+  const observation = {};
+  for (const key of ["provider", "relationship", "retrievedAt", "accessScope", "sampled", "filter", "query", "seedLookupStatus"]) if (typeof coverage[key] === "string") observation[key] = textValue(coverage[key], 4000);
+  for (const key of ["retrievedCount", "eligibleCount", "excludedCount", "candidateLimit", "indexedConnectionCount", "returnedCount", "failedLookupCount"]) {
+    if (Number.isInteger(coverage[key]) && coverage[key] >= 0) observation[key] = coverage[key];
+  }
+  for (const key of ["exhaustive", "constraintsPreserved", "knownItemIdentityReplacedBySeed"]) if (typeof coverage[key] === "boolean") observation[key] = coverage[key];
+  const normalizeQuery = (query) => ({
+    query: textValue(query?.query), provider: textValue(query?.provider, 200), dialect: textValue(query?.dialect, 200),
+    ...(typeof query?.sort === "string" ? { sort: textValue(query.sort, 200) } : {}),
+    ...(Number.isInteger(query?.limit) && query.limit >= 0 ? { limit: query.limit } : {}),
+  });
+  if (plainObject(coverage.seedQuery)) observation.seedQuery = normalizeQuery(coverage.seedQuery);
+  if (Array.isArray(coverage.queries)) observation.queries = coverage.queries.slice(0, 10).map(normalizeQuery).filter((query) => query.query);
+  const result = {
+    seed: { title: textValue(seed.title, 1000), doi: textValue(seed.doi, 350), openAlexId: /^W\d+$/i.test(seed.openAlexId || "") ? `https://openalex.org/${seed.openAlexId.toUpperCase()}` : safeUrl(seed.openAlexId) },
+    relationship: EXPLORATION_RELATIONSHIPS.has(value?.relationship) ? value.relationship : "",
+    accessScope: textValue(value?.accessScope, 100), coverage: observation,
+  };
+  if (seed.identityCheck) result.seed.identityCheck = normalizeIdentityCheck(seed.identityCheck);
+  return result;
+}
 
 /** Registry observations are evidence, not a verification of the source's claims. */
 export function normalizeIdentityCheck(value, { imported = false } = {}) {
@@ -164,6 +201,7 @@ export function normalizeSourceRecord(value) {
     record[field] = Object.fromEntries(allowed.filter((key) => value[field][key] !== undefined).map((key) => [key, /url$/i.test(key) ? safeUrl(value[field][key]) : boundedMetadata(value[field][key])]));
   }
   if (value.identityCheck) record.identityCheck = normalizeIdentityCheck(value.identityCheck);
+  if (value.exploration) record.exploration = normalizeExplorationProvenance(value.exploration);
   return record;
 }
 
@@ -180,6 +218,7 @@ function normalizeTrailItem(item, index = 0) {
     detail: textValue(item.detail),
     status: RESEARCH_ITEM_STATUSES.some((status) => status.id === item.status) ? item.status : "promising",
     notes: textValue(item.notes),
+    evidenceEntries: normalizeEvidenceEntries(item.evidenceEntries),
     citation: typeof item.citation === "string" ? textValue(item.citation) : "",
     savedAt: Number.isFinite(Number(item.savedAt)) && Number(item.savedAt) > 0 ? Number(item.savedAt) : 0,
     sourceRecord,
@@ -194,7 +233,7 @@ function normalizeAssignment(value) {
 }
 
 // Preserve the complete resolved criteria, with a bounded JSON-only snapshot.
-const SPEC_FIELDS = ["topic", "mode", "disciplines", "concepts", "comparison", "knownItem", "searchIntent", "methodRequirements", "sourceRequirements", "facets", "sourceContract", "safety", "configVersion", "planHash"];
+const SPEC_FIELDS = ["topic", "mode", "disciplines", "concepts", "comparison", "knownItem", "searchIntent", "methodRequirements", "sourceRequirements", "facets", "preferredFacets", "sourceContract", "safety", "configVersion", "planHash"];
 function snapshot(value, depth = 0) {
   if (depth > 5) return undefined;
   if (typeof value === "string") return textValue(value, 4000);
@@ -212,13 +251,18 @@ function normalizeHistoryItem(entry, index) {
   if (!plainObject(entry) || !textValue(entry.query || entry.originalRequest).trim()) return null;
   const query = textValue(entry.query || entry.originalRequest).trim();
   const id = textValue(entry.id || `search-restored-${index}`, 160);
-  const kind = ["search-run", "manual-search", "opened-resource", "legacy-activity"].includes(entry.kind) ? entry.kind : "legacy-activity";
+  const kind = ["search-run", "citation-exploration", "manual-search", "opened-resource", "legacy-activity"].includes(entry.kind) ? entry.kind : "legacy-activity";
   const record = {
     id, key: id, kind, query,
     tool: textValue(entry.tool || (kind === "search-run" ? "Navigator" : "Search"), 200).trim(),
     url: safeUrl(entry.url), resultNote: textValue(entry.resultNote),
     usedAt: timestamp(entry.usedAt),
   };
+  if (kind === "citation-exploration") {
+    record.exploration = normalizeExplorationHistory(entry.exploration);
+    record.researchSpec = plainObject(entry.researchSpec) ? Object.fromEntries(SPEC_FIELDS.filter((key) => entry.researchSpec[key] !== undefined).map((key) => [key, snapshot(entry.researchSpec[key])])) : {};
+    record.outcome = textValue(entry.outcome || "unknown", 80);
+  }
   if (kind === "search-run") {
     record.originalRequest = textValue(entry.originalRequest || query);
     record.searchConfig = plainObject(entry.searchConfig) ? Object.fromEntries(["accessScope", "subjectFocusId", "responseStyle"].filter((key) => typeof entry.searchConfig[key] === "string").map((key) => [key, textValue(entry.searchConfig[key], 160)])) : {};
@@ -289,13 +333,15 @@ export function updateResearchItem(workspace, item, patch) {
   const key = researchItemKey(item);
   // Deliberately allow only student-editable fields; provider metadata stays intact.
   return normalizeResearchWorkspace({ ...current, trail: current.trail.map((entry) => researchItemKey(entry) === key
-    ? { ...entry, notes: patch.notes ?? entry.notes, status: patch.status ?? entry.status } : entry) });
+    ? { ...entry, notes: patch.notes ?? entry.notes, status: patch.status ?? entry.status,
+      evidenceEntries: patch.evidenceEntries === undefined ? entry.evidenceEntries : normalizeEvidenceEntries(patch.evidenceEntries) } : entry) });
 }
 
 export function filterSavedSources(items, query = "", status = "all") {
   const terms = String(query).toLowerCase().trim().split(/\s+/).filter(Boolean);
   return items.filter(isSavedSource).filter((item) => (status === "all" || item.status === status)
-    && terms.every((term) => [item.title, item.sourceRecord?.author, item.sourceRecord?.containerTitle, item.notes].filter(Boolean).join(" ").toLowerCase().includes(term)));
+    && terms.every((term) => [item.title, item.sourceRecord?.author, item.sourceRecord?.containerTitle, item.notes,
+      ...normalizeEvidenceEntries(item.evidenceEntries).flatMap((entry) => [entry.claim, entry.passage, entry.location, entry.limitations])].filter(Boolean).join(" ").toLowerCase().includes(term)));
 }
 
 /** Save a student's reading notes without duplicating the work or replacing its other fields. */
@@ -330,6 +376,8 @@ export function isSavedSource(item) {
 
 export function sourceForResearchItem(item) {
   const source = { ...normalizeSourceRecord(item?.sourceRecord || item), title: textValue(item?.title), url: safeUrl(item?.url) };
+  const evidenceEntries = normalizeEvidenceEntries(item?.evidenceEntries);
+  if (evidenceEntries.length) source.evidenceEntries = evidenceEntries;
   if (source.identityCheck && item?.imported) source.identityCheck = normalizeIdentityCheck(source.identityCheck, { imported: true });
   return source;
 }
@@ -418,7 +466,7 @@ export function parseWorkspaceImport(json) {
   for (const item of value.searchHistory) if (!plainObject(item) || typeof item.query !== "string" || !item.query.trim() || typeof item.id !== "string" || !item.id) throw new Error("Every saved search must include an ID and search text.");
   const workspace = normalizeResearchWorkspace(value);
   workspace.assignment.enabled = false; // An imported file cannot opt the student into sending its assignment to AI.
-  workspace.trail = workspace.trail.map((item) => normalizeTrailItem({ ...item, imported: true }));
+  workspace.trail = workspace.trail.map((item) => normalizeTrailItem({ ...item, imported: true, evidenceEntries: normalizeEvidenceEntries(item.evidenceEntries, { imported: true }) }));
   return { workspace, topic: textValue(payload.topic, 1000) };
 }
 
@@ -434,7 +482,7 @@ export function mergeWorkspaceImport(workspace, imported, now = Date.now()) {
   const assignment = hasBrief ? current.assignment : { ...incoming.assignment, enabled: false };
   const merged = {
     assignment,
-    trail: [...current.trail, ...addedItems.map((item, index) => normalizeTrailItem({ ...item, id: `import-${now}-${index}`, imported: true }))],
+    trail: [...current.trail, ...addedItems.map((item, index) => normalizeTrailItem({ ...item, id: `import-${now}-${index}`, imported: true, evidenceEntries: normalizeEvidenceEntries(item.evidenceEntries, { imported: true }) }))],
     searchHistory: [...current.searchHistory, ...addedSearches.map((entry, index) => ({ ...entry, id: entry.id }))],
   };
   return { workspace: merged, addedItems: addedItems.length, addedSearches: addedSearches.length, skippedDuplicates: incoming.trail.length + incoming.searchHistory.length - addedItems.length - addedSearches.length, keptExistingBrief: hasBrief };
@@ -469,11 +517,13 @@ export function workspaceToMarkdown(workspace, topic = "Research topic") {
       lines.push(`- ${title} — ${item.status}`);
       if (item.detail) lines.push(`  - ${item.detail}`);
       if (item.notes) lines.push(`  - Notes: ${item.notes}`);
+      for (const note of evidenceEntryNotes(item.evidenceEntries)) lines.push(`  - ${note.replace(/\n/g, "\n    ")}`);
       if (item.citation) lines.push(`  - Citation details: ${item.citation}`);
       const source = sourceForResearchItem(item);
       const provider = source.sourceProvider || source.provenance?.provider;
       if (provider) lines.push(`  - Metadata provider: ${provider}${item.imported ? " (imported; recheck in the provider record)" : ""}`);
       for (const note of sourceIdentityNotes(source, { imported: item.imported })) lines.push(`  - ${note}`);
+      if (source.exploration) lines.push(`  - Connection: ${explorationRelationshipLabel(source.exploration.relationship)}; provider: ${source.exploration.provider || "not recorded"}; seed: ${source.exploration.seedId || "not recorded"}; observed: ${source.exploration.retrievedAt || "not recorded"}. A connection does not establish agreement or claim support.`);
       if (source.edition) lines.push(`  - Edition: ${source.edition}`);
       if (source.isbn) lines.push(`  - ISBN: ${source.isbn}`);
       if (source.doi) lines.push(`  - DOI: ${source.doi}`);
@@ -484,7 +534,7 @@ export function workspaceToMarkdown(workspace, topic = "Research topic") {
     lines.push("");
   }
 
-  for (const [heading, kinds] of [["Search runs", ["search-run"]], ["Searches recorded manually", ["manual-search"]], ["Opened resources", ["opened-resource"]], ["Earlier activity (type not recorded)", ["legacy-activity"]]]) {
+  for (const [heading, kinds] of [["Search runs", ["search-run"]], ["Citation exploration", ["citation-exploration"]], ["Searches recorded manually", ["manual-search"]], ["Opened resources", ["opened-resource"]], ["Earlier activity (type not recorded)", ["legacy-activity"]]]) {
     const entries = current.searchHistory.filter((item) => kinds.includes(item.kind));
     if (!entries.length) continue;
     lines.push(`## ${heading}`, "");
@@ -493,6 +543,15 @@ export function workspaceToMarkdown(workspace, topic = "Research topic") {
       if (entry.url) lines.push(`  - Link: ${entry.url}`);
       if (entry.usedAt) lines.push(`  - Recorded at: ${new Date(entry.usedAt).toISOString()}`);
       if (entry.resultNote) lines.push(`  - Result note: ${entry.resultNote}`);
+      if (entry.kind === "citation-exploration") {
+        const { seed, relationship, accessScope, coverage } = entry.exploration;
+        lines.push(`  - Relationship: ${explorationRelationshipLabel(relationship)}`, `  - Seed title: ${seed.title || entry.query}`,
+          `  - Seed DOI: ${seed.doi || "not recorded"}; OpenAlex identifier: ${seed.openAlexId || "not recorded"}`,
+          `  - Access scope: ${accessScope || "not recorded"}; outcome: ${entry.outcome}`,
+          `  - Coverage observations: ${JSON.stringify(coverage)}`, `  - Resolved criteria: ${JSON.stringify(entry.researchSpec)}`,
+          "  - This explored indexed connections to a selected source, not an ordinary topic search. Coverage is incomplete; connections do not establish agreement or claim support.");
+        for (const note of sourceIdentityNotes(seed)) lines.push(`  - Seed identity: ${note}`);
+      }
       if (entry.kind === "search-run") {
         lines.push(`  - Original request: ${entry.originalRequest}`, `  - Result count: ${entry.resultCount ?? "not recorded"}`,
           `  - Run outcome: ${entry.runStatus || "not recorded"}`,

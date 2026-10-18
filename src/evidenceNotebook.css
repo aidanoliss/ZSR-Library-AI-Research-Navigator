@@ -1,0 +1,22 @@
+.evidence-notebook { margin-top: 14px; border-top: 1px solid #dedbd4; padding-top: 14px; }
+.evidence-notebook > summary { cursor: pointer; font-size: .92rem; font-weight: 650; color: #222; padding: 5px 0; }
+.evidence-notebook-content { display: grid; gap: 12px; margin-top: 10px; }
+.evidence-notebook-content p { margin: 0; line-height: 1.5; }
+.evidence-notebook-content small { color: #595959; font-size: .8rem; line-height: 1.5; }
+.evidence-notebook .evidence-note { display: grid; gap: 13px; min-width: 0; margin: 0; padding: 16px; border: 1px solid #d4d4d4; border-radius: 12px; background: #fff; }
+.evidence-note legend { padding: 0 6px; font-size: .88rem; font-weight: 650; color: #222; }
+.evidence-note-status { font-size: .76rem; color: #555; }
+.evidence-note-status[data-checked="true"] { color: #286045; }
+.evidence-notebook .evidence-note label { display: grid; gap: 7px; font-size: .86rem; font-weight: 600; color: #292929; }
+.evidence-notebook .evidence-note textarea { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid #bcbcbc; border-radius: 8px; padding: 10px 12px; font: inherit; font-weight: 400; line-height: 1.5; resize: vertical; background: #fff; color: #222; }
+.evidence-notebook .evidence-note .evidence-confirm { display: flex; align-items: flex-start; gap: 10px; font-weight: 400; line-height: 1.5; }
+.evidence-notebook .evidence-confirm input { flex: 0 0 auto; width: 18px; height: 18px; margin: 2px 0 0; accent-color: #111; }
+.evidence-notebook button { justify-self: start; padding: 9px 13px; border-radius: 8px; font: inherit; font-size: .83rem; font-weight: 600; cursor: pointer; }
+.evidence-notebook .evidence-add { background: #111; color: #fff; border: 1px solid #111; }
+.evidence-notebook .evidence-remove, .evidence-notebook .evidence-undo button { background: #fff; color: #333; border: 1px solid #bbb; }
+.evidence-notebook button:disabled { opacity: .55; cursor: not-allowed; }
+.evidence-notebook :is(button, textarea, input, summary):focus-visible { outline: 3px solid #806326; outline-offset: 3px; }
+.evidence-undo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: .85rem; }
+.evidence-notebook .evidence-notice { font-size: .82rem; color: #4d4d4d; }
+.evidence-notice:empty { display: none; }
+@media (max-width: 500px) { .evidence-notebook .evidence-note { padding: 12px; } }

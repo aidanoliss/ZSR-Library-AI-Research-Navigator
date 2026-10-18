@@ -1,3 +1,4 @@
+import SearchCoverage from "./SearchCoverage.jsx";
 import { useId, useState } from "react";
 import ResearchRoadmap from "./ResearchRoadmap.jsx";
 import ResearchInterpretationPanel from "./ResearchInterpretationPanel.jsx";
@@ -1426,6 +1427,7 @@ export default function AssistantMessage({
             {resultLinks.map((link) => <a key={link.href} href={link.href} onClick={() => document.getElementById(link.href.slice(1))?.focus({ preventScroll: true })}>{link.label}</a>)}
           </nav>}
           {showCatalogResults ? <div id={`${sectionId}-sources`} tabIndex={-1}>{sourceSection}</div> : <div className="result-plan-empty"><p>Start with the search terms and recommended databases below, or find source leads directly.</p>{isLatest && <button type="button" onClick={() => onFollowup(`Find source leads for ${topic}`)}>Find sources</button>}</div>}
+          <SearchCoverage discovery={sourceDiscovery} plan={agentPlan} onRetry={isLatest && onRerunInterpretation ? () => onRerunInterpretation(`Search for sources on: ${effectiveSpec.topic}`, { researchSpec: effectiveSpec, mode: effectiveSpec.mode, changes: [{ label: "Coverage", after: "Retry provider searches" }] }) : null} onShowDatabases={() => document.getElementById(`${sectionId}-databases`)?.focus()} />
           <ResultDiscoveryOptions id={sectionId} spec={effectiveSpec} plan={agentPlan} onTrackSearch={onTrackSearch} />
         </div>
         <div id={`${sectionId}-panel-saved`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-saved`} hidden={resultView !== "saved"} tabIndex={0}>

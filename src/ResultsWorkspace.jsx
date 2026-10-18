@@ -1,3 +1,6 @@
+import EvidenceNotebook from "./EvidenceNotebook.jsx";
+import { ScopePriorityControls } from "./SearchClarification.jsx";
+import { applyScopePriorities, scopePriorityRows } from "./searchClarification.js";
 import { ResearchPrivacyContext } from "./researchPrivacy.js";
 import SourceIdentityNotice from "./SourceIdentityNotice.jsx";
 import { useContext, useEffect, useId, useRef, useState } from "react";
@@ -20,6 +23,8 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
   const [improving, setImproving] = useState(false);
   const [scope, setScope] = useState({ population: "", geography: "", method: "", comparison: "" });
   const [promptNotice, setPromptNotice] = useState("");
+  const [priorities, setPriorities] = useState({});
+  useEffect(() => setPriorities({}), [researchSpec]);
   const inputId = useId();
   const tabRefs = useRef({});
   useEffect(() => setDraft(topic || ""), [topic]);
@@ -75,6 +80,11 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
       </section>}
       {promptNotice && <p role="status">{promptNotice}</p>}
     </div>}
+    {onSearch && scopePriorityRows(researchSpec).length > 0 && <details className="scope-priority-editor"><summary>Required criteria & preferences</summary><ScopePriorityControls spec={researchSpec} priorities={priorities} onChange={setPriorities} /><button type="button" className="scope-apply" disabled={busy || !Object.keys(priorities).length} onClick={() => {
+      const next = applyScopePriorities(researchSpec, priorities);
+      onViewChange("results"); onSearch(`Search for sources on: ${next.topic}`, { researchSpec: next, mode: next.mode, changes: [{ label: "Scope priorities", after: "Updated required criteria and preferences" }] });
+    }}>Apply & search</button></details>}
+    {Object.keys(researchSpec?.preferredFacets || {}).length > 0 && <p className="scope-preference-tags">{Object.entries(researchSpec.preferredFacets).map(([key, value]) => <span key={key}>Preferred {key}: {value}</span>)}</p>}
     {error && <p className="error-note" role="alert">{error}</p>}
     <div className="result-active-requirements" aria-label="Requirements kept for this search">
       <span>{getSearchMode(researchSpec?.mode || mode).shortLabel}</span>
@@ -125,6 +135,7 @@ export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove
           <SourceIdentityNotice source={source} />
           {onUpdate && <label className="saved-source-status">Status<select value={item.status} onChange={(event) => onUpdate(item, { status: event.target.value })}>{RESEARCH_ITEM_STATUSES.map((value) => <option key={value.id} value={value.id}>{value.label}</option>)}</select></label>}
           {onUpdate ? <details className="saved-source-notes"><summary>My notes{item.notes ? " · added" : ""}</summary><label>Reading notes<textarea rows={3} maxLength={4000} value={item.notes || ""} onChange={(event) => onUpdate(item, { notes: event.target.value })} placeholder="Why it may help, useful pages, claims to check…" /></label><small>{privateMode ? "Kept only for this private session." : "Saved automatically in this browser."}</small></details> : item.notes && <p className="saved-result-note">{item.notes}</p>}
+          {onUpdate && <EvidenceNotebook item={item} onChange={(evidenceEntries) => onUpdate(item, { evidenceEntries })} />}
           {renderExtra?.(item)}
         </li>;
       })}</ul></>}

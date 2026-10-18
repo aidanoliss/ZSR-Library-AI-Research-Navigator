@@ -112,7 +112,8 @@ export function sourceMethodEvidence(source, method) {
     || sentences(source).filter((statement) => !AMBIGUOUS_STUDY_DESCRIPTION.test(statement)).some((statement) => /^(?:seawater |blood |soil )?samples were collected\b/.test(studyClause(statement)))
     || sentences(source).filter((statement) => !AMBIGUOUS_STUDY_DESCRIPTION.test(statement)).some((statement) => /^data from \w+ environmental monitoring programs were integrated\b/.test(studyClause(statement)));
   const empiricalDesign = ["randomized controlled trial", "randomised controlled trial", "cross sectional study", "cohort study", "longitudinal study"].includes(type)
-    || ["randomized controlled trial", "randomised controlled trial", "longitudinal study"].includes(titleMethod);
+    || ["randomized controlled trial", "randomised controlled trial", "longitudinal study"].includes(titleMethod)
+    || statements.some((statement) => ["randomized controlled trial", "randomised controlled trial", "cross sectional study", "cohort study", "longitudinal study"].some((design) => describesMethod(statement, design)));
   const nonRandomized = ["observational study", "cross sectional study", "cohort study", "nonrandomized trial", "non randomized trial"].some((design) => type === design || statements.some((statement) => describesMethod(statement, design)));
   if (requested === "randomized controlled trial" && nonRandomized && !review) return { status: "mismatch", detail: "The provider explicitly describes an observational or non-randomized design, not the requested randomized controlled trial." };
   // Scoping and systematic reviews answer different design requests. A

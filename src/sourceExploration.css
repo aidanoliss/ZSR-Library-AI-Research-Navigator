@@ -1,0 +1,19 @@
+.source-exploration { margin-top: .8rem; font-family: var(--font-sans, Arial, sans-serif); }
+.source-exploration-toggle { display: inline-flex; align-items: center; gap: .65rem; padding: .55rem .75rem; border: 1px solid #d8d6cf; border-radius: .6rem; background: #fff; color: #171717; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; }
+.source-exploration-toggle:hover { background: #f3f3f0; }
+.source-exploration-panel { margin-top: .6rem; padding: 1rem; border: 1px solid #deddd7; border-radius: .8rem; background: #fafaf8; }
+.source-exploration-options { display: flex; gap: .4rem; flex-wrap: wrap; }
+.source-exploration-options button { padding: .55rem .8rem; border: 1px solid #d4d4d0; border-radius: .55rem; background: #fff; color: #252525; font: inherit; font-size: .85rem; cursor: pointer; }
+.source-exploration-options button[aria-pressed="true"] { color: #fff; background: #171717; border-color: #171717; }
+.source-exploration-description, .source-exploration-status, .source-exploration-coverage, .source-exploration-results p { font-size: .85rem; line-height: 1.55; margin: .65rem 0; overflow-wrap: anywhere; }
+.source-exploration-description, .source-exploration-coverage, .source-exploration-meta { color: #575750; }
+.source-exploration-results { padding: 0; margin: .8rem 0; list-style: none; }
+.source-exploration-results > li { padding: 1rem 0; border-top: 1px solid #deddd7; }
+.source-exploration-results h5 { margin: .25rem 0; font: inherit; font-weight: 650; font-size: .95rem; line-height: 1.5; overflow-wrap: anywhere; }
+.source-exploration-results a, .source-exploration-scholar { color: #075bb5; text-decoration: underline; text-underline-offset: .18em; }
+.source-exploration-relation { font-size: .77rem !important; font-weight: 650; color: #4d4d47; }
+.source-exploration-results details { margin: .6rem 0; font-size: .85rem; }
+.source-exploration-results details ul { padding-left: 1.2rem; }
+.source-exploration-scholar { display: inline-block; font-size: .85rem; margin-top: .5rem; }
+.source-exploration button:focus-visible, .source-exploration a:focus-visible, .source-exploration summary:focus-visible { outline: 3px solid #806326; outline-offset: 3px; }
+@media (max-width: 540px) { .source-exploration-panel { padding: .8rem; } .source-exploration-options button { flex: 1 1 auto; } }

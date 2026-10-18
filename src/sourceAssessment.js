@@ -70,5 +70,17 @@ export function assessSourceRequirements(source = {}, specOrRequirements = {}) {
     if (populationGeography) checks.push(populationGeography);
   }
   const status = checks.some((check) => check.status === "mismatch") ? "mismatch" : checks.some((check) => check.status === "unverified") ? "unverified" : "meets";
-  return { status, checks, issues: checks.filter((check) => check.status !== "meets").map((check) => check.detail) };
+  const preferred = specOrRequirements.preferredFacets || {};
+  const preferenceChecks = [];
+  if (preferred.population) preferenceChecks.push(sourcePopulationCheck(source, preferred.population));
+  if (preferred.geography) preferenceChecks.push(sourceGeographyCheck(source, preferred.geography));
+  if (preferred.method) for (const method of preferred.method.split(/;\s*/).filter(Boolean)) {
+    preferenceChecks.push({ id: `preferred-method-${method}`, label: `Preferred method: ${method}`, ...sourceMethodEvidence(source, method) });
+  }
+  if (preferred.population || preferred.geography) {
+    const joint = sourcePopulationGeographyCheck(source, preferred.population || specOrRequirements.facets?.population, preferred.geography || specOrRequirements.facets?.geography);
+    if (joint) preferenceChecks.push(joint.status === "meets" && [...checks, ...preferenceChecks].some((check) => check && ["population", "geography"].includes(check.id) && check.status !== "meets")
+      ? { ...joint, status: "unverified", detail: "Population and location terms occur together, but the study population or setting remains unverified. Read the source's methods." } : joint);
+  }
+  return { status, checks, preferenceChecks: preferenceChecks.filter(Boolean).map((check) => ({ ...check, priority: "preferred" })), issues: checks.filter((check) => check.status !== "meets").map((check) => check.detail) };
 }

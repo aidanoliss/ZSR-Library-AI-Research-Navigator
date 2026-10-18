@@ -15,6 +15,7 @@ import {
   WORKSPACE_MAX_BYTES,
   isSavedSource,
   workspaceTabAfterKey,
+  explorationRelationshipLabel,
 } from "./researchWorkspace.js";
 import { assignmentProgress } from "./workspaceRequirements.js";
 import { RequirementProgress, SavedSourceEvidence, SourceComparison } from "./WorkspaceSourcePanels.jsx";
@@ -395,6 +396,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
             {!current.searchHistory.length && <EmptyState>No activity yet. Completed Navigator searches will appear here with their criteria.</EmptyState>}
             {[
               { kind: "search-run", label: "Search runs" },
+              { kind: "citation-exploration", label: "Citation exploration" },
               { kind: "manual-search", label: "Searches recorded manually" },
               { kind: "opened-resource", label: "Opened resources" },
               { kind: "legacy-activity", label: "Earlier activity · type not recorded" },
@@ -424,6 +426,24 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                       </details>
                       {onReplaySearch && entry.researchSpec?.topic && <button type="button" className="workspace-replay-search" onClick={() => onReplaySearch(entry)}>Run these criteria again</button>}
                       <p className="workspace-brief-help">Provider indexes change; a new run may return different results.</p>
+                    </>}
+                    {kind === "citation-exploration" && <>
+                      <p><strong>{explorationRelationshipLabel(entry.exploration.relationship)}</strong> · {entry.outcome}</p>
+                      <p>{entry.exploration.coverage.retrievedCount ?? "Unknown"} records retrieved; {entry.exploration.coverage.eligibleCount ?? "unknown"} retained after checks.</p>
+                      <details>
+                        <summary>Seed, provider filters &amp; criteria</summary>
+                        <p><strong>Selected source:</strong> {entry.exploration.seed.title || entry.query}</p>
+                        {entry.exploration.seed.doi && <p>Seed DOI: {entry.exploration.seed.doi}</p>}
+                        {entry.exploration.seed.openAlexId && <p>Seed OpenAlex identifier: {entry.exploration.seed.openAlexId}</p>}
+                        <p>Access scope: {entry.exploration.accessScope || "not recorded"} · Provider: {entry.exploration.coverage.provider || "not recorded"}</p>
+                        {entry.exploration.coverage.seedQuery?.query && <p><strong>Seed lookup:</strong> {entry.exploration.coverage.seedQuery.query}</p>}
+                        {entry.exploration.coverage.queries?.length > 0 ? <ul>{entry.exploration.coverage.queries.map((query, index) => <li key={index}><strong>{query.provider || "Provider not recorded"}</strong> · {query.dialect || "Dialect not recorded"}: {query.query}{query.sort ? ` · sort: ${query.sort}` : ""}{query.limit !== undefined ? ` · limit: ${query.limit}` : ""}</li>)}</ul>
+                          : entry.exploration.coverage.filter ? <p><strong>Executed provider filter:</strong> {entry.exploration.coverage.filter}</p> : <p>No executed provider filter was reported.</p>}
+                        <p>Observed: {entry.exploration.coverage.retrievedAt || "not recorded"} · Sample limit: {entry.exploration.coverage.candidateLimit ?? "not recorded"}</p>
+                        {entry.exploration.coverage.sampled && <p>Sampling: {entry.exploration.coverage.sampled}</p>}
+                        <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontSize: ".8rem" }}>{JSON.stringify(entry.researchSpec, null, 2)}</pre>
+                      </details>
+                      <p className="workspace-brief-help">This explored connections to a selected source. Citation coverage is incomplete; connections do not establish agreement or claim support. Return to that source to explore again.</p>
                     </>}
                     <label>Outcome or next step
                       <input maxLength={4000} value={entry.resultNote || ""} onChange={(event) => updateSearch(entry.id, event.target.value)} placeholder="e.g. Useful results; try narrowing by year" />

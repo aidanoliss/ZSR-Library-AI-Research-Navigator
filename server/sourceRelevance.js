@@ -228,8 +228,9 @@ export function rankSourceResults(results, researchSpec, limit = 10) {
     // Lexical density must never outweigh a complete request match. Within
     // partial matches, established scope beats repeated topical keywords.
     const tier = complete ? 3 : matchExplanation.missingConcepts.length === 0 ? 2 : 1;
+    const preferenceBonus = Math.min(15, (sourceAssessment.preferenceChecks || []).filter((check) => check.status === "meets").length * 5);
     const score = researchSpec?.knownItem ? Math.round(coverage * 100 + categoryScore + fieldScore - unverifiedRequirements * 12)
-      : Math.round(tier * 2000 + scopeCoverage * 1000 + coverage * 100 + categoryScore + Math.min(80, fieldScore) - unverifiedRequirements * 12);
+      : Math.round(tier * 2000 + preferenceBonus + scopeCoverage * 1000 + coverage * 100 + categoryScore + Math.min(80, fieldScore) - unverifiedRequirements * 12);
     return { ...result, sourceAssessment, matchExplanation, metadataRank: { score, coverage, scopeCoverage, requestFit: complete ? "metadata-supported" : "partial-or-unverified", basis: "title-abstract-subject-metadata" }, _position: position };
   }).filter((result) => result.sourceAssessment.status !== "mismatch" && result.matchExplanation.status !== "mismatch");
   return ranked.sort((a, b) => b.metadataRank.score - a.metadataRank.score || a._position - b._position)

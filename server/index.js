@@ -1,3 +1,5 @@
+import { exploreSources } from "./sourceExploration.js";
+import { parseSourceExplorationRequest } from "./sourceExplorationRequest.js";
 import { getDiscoveryReadiness } from "./discoveryReadiness.js";
 import "dotenv/config";
 import express from "express";
@@ -399,6 +401,20 @@ function deterministicPlanFallback(plan, resources = []) {
 }
 
 // Buffered endpoint: full conversation in, complete structured reply out.
+app.post("/api/explore-sources", async (req, res) => {
+  if (gate(req, res, "chat")) return;
+  const parsed = parseSourceExplorationRequest(req.body);
+  if (parsed.error) return res.status(400).json({ error: parsed.error });
+  const release = acquireChatSlot(clientKey(req));
+  if (!release) { res.setHeader("Retry-After", "2"); return res.status(429).json({ error: "The research service is busy. Please try again shortly." }); }
+  const controller = new AbortController();
+  const abort = () => { if (!res.writableEnded) controller.abort(); };
+  req.once("aborted", abort); res.once("close", abort);
+  try { res.json(await exploreSources(parsed, { signal: controller.signal })); }
+  catch { if (!res.headersSent) res.status(503).json({ error: "Citation exploration could not complete. Please try again." }); }
+  finally { req.off("aborted", abort); res.off("close", abort); release(); }
+});
+
 app.post("/api/chat", async (req, res) => {
   if (gate(req, res, "chat")) return;
   const parsed = parseChatRequest(req.body);

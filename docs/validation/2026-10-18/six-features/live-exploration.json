@@ -1,0 +1,332 @@
+{
+  "checkedAt": "2026-10-18T23:28:07.617Z",
+  "method": "Fresh public Crossref lookups through new local production endpoint. No AI call, full-text check, human relevance rating, or accuracy estimate. Seed comes from prior provider capture.",
+  "seed": {
+    "title": "The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
+    "doi": "10.1002/cl2.1339"
+  },
+  "researchSpec": {
+    "topic": "flipped classroom",
+    "mode": "scholarly",
+    "disciplines": [
+      "education"
+    ],
+    "concepts": [
+      {
+        "id": "parsed-1-flipped-classroom",
+        "preferredTerm": "flipped classroom",
+        "synonyms": [],
+        "required": true,
+        "source": "parsed"
+      }
+    ],
+    "comparison": null,
+    "knownItem": null,
+    "searchIntent": {
+      "originalQuestion": "flipped classroom",
+      "neutralQuestion": "What does research show about flipped classroom?",
+      "reformulated": false,
+      "explanation": "",
+      "requestedFocus": "",
+      "scopeNotes": []
+    },
+    "methodRequirements": {
+      "include": [],
+      "exclude": []
+    },
+    "sourceRequirements": {
+      "publicationYearFrom": null,
+      "publicationYearTo": null,
+      "peerReviewed": false,
+      "requestedSourceCount": null
+    },
+    "facets": {
+      "population": "",
+      "geography": "",
+      "timePeriod": "",
+      "method": "",
+      "documentType": "Scholarly articles"
+    },
+    "sourceContract": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ],
+      "excludedKinds": [
+        "news",
+        "market-report"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": false,
+      "flags": [],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "configVersion": "2026-08-10.2",
+    "planHash": "rp-5125ffa6"
+  },
+  "invalidBodyStatus": 400,
+  "responses": [
+    {
+      "relationship": "similar",
+      "httpStatus": 200,
+      "status": "success",
+      "message": "These leads come from a Crossref bibliographic search for your selected title, not a citation relationship. Metadata and citation coverage are incomplete. Verify relevance and access in the source.",
+      "results": [
+        {
+          "title": "PROTOCOL: The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
+          "doi": "10.1002/cl2.1041",
+          "url": "https://doi.org/10.1002%2Fcl2.1041",
+          "type": "journal article"
+        },
+        {
+          "title": "Exploring flipped classrooms in undergraduate nursing and health science: A systematic review",
+          "doi": "10.1016/j.nepr.2022.103417",
+          "url": "https://doi.org/10.1016%2Fj.nepr.2022.103417",
+          "type": "journal article"
+        },
+        {
+          "title": "Flipped classrooms with proper scheduling improve learning engagement",
+          "doi": "10.4103/efh.efh_57_19",
+          "url": "https://doi.org/10.4103%2Fefh.efh_57_19",
+          "type": "journal article"
+        },
+        {
+          "title": "Evaluating Whether Flipped Classrooms Improve Student Learning in Science Education: A Systematic Review and Meta-Analysis",
+          "doi": "10.1080/00313831.2021.1983868",
+          "url": "https://doi.org/10.1080%2F00313831.2021.1983868",
+          "type": "journal article"
+        },
+        {
+          "title": "Hybrid, Online, and Flipped Classrooms in Health Science",
+          "doi": "10.4018/978-1-4666-8571-0.ch003",
+          "url": "https://doi.org/10.4018%2F978-1-4666-8571-0.ch003",
+          "type": "book chapter"
+        },
+        {
+          "title": "Exploring flipped classrooms in undergraduate anatomy and physiology courses: a systematic review",
+          "doi": "10.1152/advan.00223.2025",
+          "url": "https://doi.org/10.1152%2Fadvan.00223.2025",
+          "type": "journal article"
+        },
+        {
+          "title": "Flipped but engaged? A systematic review of student engagement in higher education flipped classrooms incorporating the agentic dimension",
+          "doi": "10.1080/2331186x.2026.2644673",
+          "url": "https://doi.org/10.1080%2F2331186x.2026.2644673",
+          "type": "journal article"
+        },
+        {
+          "title": "Effects of the Traditional and Flipped Classrooms on Undergraduate Student Opinions and Success",
+          "doi": "10.1061/(asce)ei.1943-5541.0000259",
+          "url": "https://doi.org/10.1061%2F(asce)ei.1943-5541.0000259",
+          "type": "journal article"
+        },
+        {
+          "title": "Promoting Personalized Learning in Flipped Classrooms: A Systematic Review Study",
+          "doi": "10.3390/su141811393",
+          "url": "https://doi.org/10.3390%2Fsu141811393",
+          "type": "journal article"
+        },
+        {
+          "title": "The Effectiveness of Flipped Classroom Models in Undergraduate Medical Education: A Systematic Review",
+          "doi": "10.54393/pjhs.v6i8.3404",
+          "url": "https://doi.org/10.54393%2Fpjhs.v6i8.3404",
+          "type": "journal article"
+        }
+      ],
+      "coverage": {
+        "provider": "Crossref",
+        "relationship": "similar",
+        "retrievedAt": "2026-10-18T23:28:06.932Z",
+        "retrievedCount": 30,
+        "eligibleCount": 17,
+        "excludedCount": 13,
+        "candidateLimit": 30,
+        "exhaustive": false,
+        "constraintsPreserved": true,
+        "knownItemIdentityReplacedBySeed": false,
+        "accessScope": "both",
+        "queries": [
+          {
+            "query": "query.bibliographic=The+effects+of+flipped+classrooms+to+improve+learning+outcomes+in+undergraduate+health+professional+education%3A+A+systematic+review&rows=30",
+            "provider": "Crossref",
+            "dialect": "Crossref bibliographic search",
+            "limit": 30
+          }
+        ],
+        "seedQuery": {
+          "query": "10.1002/cl2.1339",
+          "provider": "Crossref",
+          "dialect": "DOI lookup"
+        },
+        "query": "query.bibliographic=The+effects+of+flipped+classrooms+to+improve+learning+outcomes+in+undergraduate+health+professional+education%3A+A+systematic+review&rows=30",
+        "sampled": "First bibliographic search page; not a citation relationship"
+      },
+      "seed": {
+        "title": "The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
+        "doi": "10.1002/cl2.1339",
+        "url": "https://doi.org/10.1002/cl2.1339"
+      }
+    },
+    {
+      "relationship": "references",
+      "httpStatus": 200,
+      "status": "success",
+      "message": "These leads come from Crossref's deposited reference list. Metadata and citation coverage are incomplete. Verify relevance and access in the source.",
+      "results": [
+        {
+          "title": "Comparison of Pharmaceutical Calculations Learning Outcomes Achieved Within a Traditional Lecture or Flipped Classroom Andragogy",
+          "doi": "10.5688/ajpe81470",
+          "url": "https://doi.org/10.5688%2Fajpe81470",
+          "type": "journal article"
+        },
+        {
+          "title": "Student Performance in a Pharmacotherapy Oncology Module Before and After Flipping the Classroom",
+          "doi": "10.5688/ajpe80231",
+          "url": "https://doi.org/10.5688%2Fajpe80231",
+          "type": "journal article"
+        },
+        {
+          "title": "Effectiveness of flipped classroom as a teaching\u2013learning method among undergraduate medical students \u2013 An interventional study",
+          "doi": "10.4103/jehp.jehp_163_19",
+          "url": "https://doi.org/10.4103%2Fjehp.jehp_163_19",
+          "type": "journal article"
+        },
+        {
+          "title": "Flipping the advanced cardiac life support classroom with team-based learning: comparison of cognitive testing performance for medical students at the University of California, Irvine, United States",
+          "doi": "10.3352/jeehp.2016.13.11",
+          "url": "https://doi.org/10.3352%2Fjeehp.2016.13.11",
+          "type": "journal article"
+        },
+        {
+          "title": "The \u201cflipped classroom\u201d approach: Stimulating positive learning attitudes and improving mastery of histology among medical students",
+          "doi": "10.1002/ase.1664",
+          "url": "https://doi.org/10.1002%2Fase.1664",
+          "type": "journal article"
+        },
+        {
+          "title": "The Effectiveness of a Simulation-Based Flipped Classroom in the Acquisition of Laparoscopic Suturing Skills in Medical Students\u2014A Pilot Study",
+          "doi": "10.1016/j.jsurg.2017.07.007",
+          "url": "https://doi.org/10.1016%2Fj.jsurg.2017.07.007",
+          "type": "journal article"
+        },
+        {
+          "title": "The effects of the flipped classroom in teaching evidence based nursing: A quasi-experimental study",
+          "doi": "10.1371/journal.pone.0210606",
+          "url": "https://doi.org/10.1371%2Fjournal.pone.0210606",
+          "type": "journal article"
+        },
+        {
+          "title": "Effectiveness of flipped classroom instructional model in teaching pharmaceutical calculations",
+          "doi": "10.1016/j.cptl.2016.06.011",
+          "url": "https://doi.org/10.1016%2Fj.cptl.2016.06.011",
+          "type": "journal article"
+        }
+      ],
+      "coverage": {
+        "provider": "Crossref",
+        "relationship": "references",
+        "retrievedAt": "2026-10-18T23:28:07.351Z",
+        "retrievedCount": 8,
+        "eligibleCount": 8,
+        "excludedCount": 0,
+        "candidateLimit": 8,
+        "exhaustive": false,
+        "constraintsPreserved": true,
+        "knownItemIdentityReplacedBySeed": false,
+        "accessScope": "both",
+        "queries": [
+          {
+            "query": "10.5688/ajpe81470",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.4103/jehp.jehp_163_19",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.5688/ajpe80231",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.3352/jeehp.2016.13.11",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.1002/ase.1664",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.1016/j.jsurg.2017.07.007",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.1371/journal.pone.0210606",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          },
+          {
+            "query": "10.1016/j.cptl.2016.06.011",
+            "provider": "Crossref",
+            "dialect": "Referenced DOI lookup",
+            "limit": 1
+          }
+        ],
+        "seedQuery": {
+          "query": "10.1002/cl2.1339",
+          "provider": "Crossref",
+          "dialect": "DOI lookup"
+        },
+        "indexedConnectionCount": 114,
+        "sampled": "First deposited references with DOIs; references without identifiers were not resolved",
+        "query": "10.5688/ajpe81470 | 10.4103/jehp.jehp_163_19 | 10.5688/ajpe80231 | 10.3352/jeehp.2016.13.11 | 10.1002/ase.1664 | 10.1016/j.jsurg.2017.07.007 | 10.1371/journal.pone.0210606 | 10.1016/j.cptl.2016.06.011",
+        "failedLookupCount": 0
+      },
+      "seed": {
+        "title": "The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
+        "doi": "10.1002/cl2.1339",
+        "url": "https://doi.org/10.1002/cl2.1339"
+      }
+    },
+    {
+      "relationship": "citing",
+      "httpStatus": 200,
+      "status": "unavailable",
+      "message": "Incoming citation lookup needs an indexed citation provider, which is not configured. Crossref's public metadata does not provide a complete citing-works list. Use Google Scholar's Cited by link after locating this title.",
+      "results": [],
+      "coverage": {
+        "provider": "Crossref",
+        "relationship": "citing",
+        "retrievedAt": "2026-10-18T23:28:07.615Z",
+        "retrievedCount": 0,
+        "eligibleCount": 0,
+        "excludedCount": 0,
+        "candidateLimit": 30,
+        "exhaustive": false,
+        "constraintsPreserved": true,
+        "knownItemIdentityReplacedBySeed": false,
+        "accessScope": "both",
+        "queries": []
+      }
+    }
+  ],
+  "artifactNote": "Public bibliographic metadata and retrieval status only; abstracts omitted. No human relevance labels."
+}

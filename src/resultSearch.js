@@ -1,3 +1,4 @@
+import { applyScopePriorities } from "./searchClarification.js";
 import { buildResearchSpec, inferExplicitModeRequest } from "../config/researchSpec.js";
 import { sourceRequirementUpdates } from "../config/sourceRequirements.js";
 
@@ -9,7 +10,10 @@ export function reviseSearchTopic(topic, current = {}, mode = "scholarly") {
   if (sourceRequirements.publicationYearFrom && sourceRequirements.publicationYearTo && sourceRequirements.publicationYearFrom > sourceRequirements.publicationYearTo) {
     throw new Error("The starting year is later than the ending year. Edit the date requirements in Search strategy.");
   }
-  return { ...fresh, sourceRequirements };
+  if (text === String(current.topic || "").trim()) return { ...current, sourceRequirements };
+  // Keep an explicit preference when the same scope is present in the edited topic.
+  const matchingPreferences = Object.fromEntries(Object.entries(current.preferredFacets || {}).filter(([key, value]) => String(fresh.facets?.[key] || "").toLowerCase() === String(value).toLowerCase()).map(([key]) => [key, "preferred"]));
+  return applyScopePriorities({ ...fresh, sourceRequirements }, matchingPreferences);
 }
 
 /** Transport completion does not imply that the source providers succeeded. */

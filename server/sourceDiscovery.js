@@ -105,6 +105,7 @@ export function sourceDiscoveryStatus(accessScopeId, liveResults = [], outcomes 
   const allOpenResults = [...separateOpenResults, ...mergedOpenResults];
   return {
     accessScope: scope,
+    completedAt: new Date().toISOString(),
     identity: sourceIdentityStatus(liveResults, researchSpec, outcomes),
     recovery: buildSearchRecovery(researchSpec, { outcomes, resultCount: liveResults.length }),
     lanes: {

@@ -57,3 +57,11 @@ LOG_MAX_RECORDS=1000
 ```
 
 Before an institutional pilot, the institution must decide whether even metadata-only feedback and handoff records are allowed, where they may be stored, who may read them, the deletion process, incident response, and the required student notice.
+
+
+### Research guidance additions (October 2026)
+
+- **Evidence notebook:** bounded student-authored claim/passage/location/limitations entries on saved sources. Stored with the existing local workspace, included in JSON/Markdown/RIS exports, and excluded from AI request context. Editing invalidates student confirmation; imports require a fresh check. Confirmation is a student attestation, not independent verification.
+- **Relevance feedback:** `zsr-source-feedback-v1` in browser local storage (up to 500 bounded entries), recording the student-selected reason, optional note, request, criteria, and source identity. No automatic feedback transmission. The user reviews and downloads JSON to share manually. Private mode shares an in-memory queue across searches, cleared on reload or when the mode remounts. The queue has remove and clear controls.
+- **Citation exploration:** `/api/explore-sources` receives a bibliographic seed, current research specification, relationship type, and access scope. It uses the same request limits and concurrent-request budget as chat. OpenAlex uses the existing server-side key when configured; Crossref public metadata supplies related title searches and DOI-linked references otherwise. No AI call or full text retrieval. Returned source relationships and actual query/filter observations are retained in the local Searches history and workspace exports.
+- **Scope preferences:** separate preferred population/location/method fields are stored in the reviewed research specification and search history. They can influence ranking but do not silently become required filters.
