@@ -252,3 +252,32 @@ test("a full search history permits repeats but rejects new queries without evic
   assert.equal(repeated.searchHistory[0].resultNote, "Keep result 0");
   assert.equal(repeated.searchHistory[0].usedAt, 1000);
 });
+
+test("unsave removes just the chosen option and restoring retains notes and metadata", async () => {
+  const { removeResearchItem } = await import("../src/researchWorkspace.js");
+  let original = addResearchItem(createResearchWorkspace(), { kind: "catalog", title: "Study", url: "https://example.org/study", notes: "Check table 2", status: "use", sourceRecord: { title: "Study", doi: "10.1234/test" } }, 10);
+  original = addResearchItem(original, { kind: "database", title: "Database route", url: "https://example.org/study" }, 11);
+  const saved = original.trail.find((item) => item.kind === "catalog");
+  const removed = removeResearchItem(original, { kind: "catalog", url: "https://example.org/study/" });
+  assert.equal(removed.trail.length, 1);
+  assert.equal(removed.trail[0].kind, "database");
+  assert.deepEqual(removed.assignment, original.assignment);
+  assert.deepEqual(removed.searchHistory, original.searchHistory);
+  const restored = addResearchItem(removed, saved);
+  assert.deepEqual(restored.trail.find((item) => item.kind === "catalog"), saved);
+  assert.equal(addResearchItem(restored, saved).trail.length, 2);
+  assert.equal(original.trail.length, 2);
+});
+
+test("saved-source filters search notes and authors without including database options", async () => {
+  const { filterSavedSources, updateResearchItem } = await import("../src/researchWorkspace.js");
+  let workspace = addResearchItem(createResearchWorkspace(), { kind: "catalog", title: "Urban heat", url: "https://example.org/heat", sourceRecord: { author: "Alex Smith", doi: "10.1234/heat" } });
+  const item = workspace.trail[0];
+  workspace = updateResearchItem(workspace, item, { notes: "Compare Boston", status: "use", title: "Do not replace metadata" });
+  assert.equal(workspace.trail[0].title, "Urban heat");
+  assert.equal(workspace.trail[0].sourceRecord.doi, "10.1234/heat");
+  workspace = addResearchItem(workspace, { kind: "database", title: "Alex Smith Boston", url: "https://example.org/database", status: "use" });
+  assert.equal(filterSavedSources(workspace.trail, "SMITH boston", "use").length, 1);
+  assert.equal(filterSavedSources(workspace.trail, "Smith", "promising").length, 0);
+  assert.equal(filterSavedSources(workspace.trail).length, 1);
+});

@@ -14,12 +14,15 @@ import { submittedResearchTopicContext } from "./conversationContext.js";
 import { conversationToMarkdown, downloadText } from "./exportPlan.js";
 import {
   addResearchItem,
+  removeResearchItem,
+  updateResearchItem,
   saveSourceNotes,
   addSearchHistoryEntry,
   assignmentContext,
   createResearchWorkspace,
   normalizeResearchWorkspace,
   researchItemKey,
+  isSavedSource,
 } from "./researchWorkspace.js";
 import {
   DEFAULT_MODE_ID,
@@ -804,6 +807,8 @@ export default function App() {
   const [storageError, setStorageError] = useState(storageReadFailed());
   const [storageRetry, setStorageRetry] = useState(0);
   const [actionNotice, setActionNotice] = useState("");
+  const [removedItem, setRemovedItem] = useState(null);
+  useEffect(() => { setRemovedItem(null); setActionNotice(""); }, [activeSessionId]);
 
   const hasConversation = messages.length > 0;
   const currentRequestIndex = Math.max(0, messages.findLastIndex((message) => message.role === "user"));
@@ -964,9 +969,37 @@ export default function App() {
 
   function saveResearchItem(item) {
     try {
-      changeResearchWorkspace(addResearchItem(workspaceRef.current, item));
+      const restore = removedItem?.sessionId === activeSessionId && researchItemKey(removedItem.item) === researchItemKey(item);
+      changeResearchWorkspace(addResearchItem(workspaceRef.current, restore ? removedItem.item : item));
+      if (restore) setRemovedItem(null);
       setActionNotice(`Saved “${item.title}” to My sources.`);
     } catch (cause) { setActionNotice(cause.message || "Could not save this source. Export your workspace before trying again."); }
+  }
+
+  function unsaveResearchItem(item) {
+    const existing = workspaceRef.current.trail.find((entry) => researchItemKey(entry) === researchItemKey(item));
+    if (!existing) return;
+    changeResearchWorkspace(removeResearchItem(workspaceRef.current, existing));
+    setRemovedItem({ item: existing, sessionId: activeSessionId });
+    setActionNotice(`Unsaved “${existing.title}”.`);
+  }
+
+  function undoUnsave() {
+    if (!removedItem || removedItem.sessionId !== activeSessionId) return;
+    try {
+      if (workspaceRef.current.trail.some((entry) => researchItemKey(entry) === researchItemKey(removedItem.item))) {
+        setRemovedItem(null);
+        setActionNotice("This item is already saved. Your latest notes were kept.");
+        return;
+      }
+      changeResearchWorkspace(addResearchItem(workspaceRef.current, removedItem.item));
+      setRemovedItem(null);
+      setActionNotice("Saved item restored, including its notes.");
+    } catch (cause) { setActionNotice(cause.message || "Could not restore this item."); }
+  }
+
+  function editSavedResearchItem(item, patch) {
+    changeResearchWorkspace(updateResearchItem(workspaceRef.current, item, patch));
   }
 
   function saveReadingNotes(item, notes) {
@@ -1365,6 +1398,10 @@ export default function App() {
                         : null}
                       onOpenPlanner={(questions) => openPlannerFromAssistant(submittedResearchTopicContext(messages, index), questions)}
                       onSaveResearchItem={saveResearchItem}
+                      onRemoveResearchItem={unsaveResearchItem}
+                      onUpdateResearchItem={editSavedResearchItem}
+                      removedItem={removedItem?.sessionId === activeSessionId ? removedItem.item : null}
+                      onUndoRemove={undoUnsave}
                       onSaveSourceNotes={saveReadingNotes}
                       onTrackSearch={trackSearch}
                       savedResearchItemKeys={savedResearchItemKeys}
@@ -1460,7 +1497,7 @@ export default function App() {
         </header>
 
         <nav className="research-toolbar no-print" aria-label="Research actions">
-          <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter((item) => item.kind !== "search" && item.kind !== "database").length}</span></button>
+          <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
           <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
           <details className="research-export-menu">
@@ -1482,7 +1519,7 @@ export default function App() {
           <button type="button" onClick={() => openWorkspace("review")}>Export My sources</button>
           <button type="button" onClick={() => { allowStorageRetry(); setStorageRetry((value) => value + 1); }}>Retry saving</button>
         </div>}
-        <div className="action-status no-print" role="status" aria-live="polite">{actionNotice}</div>
+        <div className="action-status no-print" role="status" aria-live="polite">{actionNotice}{removedItem?.sessionId === activeSessionId && <button type="button" onClick={undoUnsave}>Undo unsave</button>}</div>
         <div className="content-wrap">
           {!hasConversation ? (
             <section className="start-panel">
@@ -1597,6 +1634,11 @@ export default function App() {
       )}
       <HandoffModal open={handoffOpen} onClose={() => setHandoffOpen(false)} payload={handoffPayload} />
       <ResearchWorkspace
+        key={activeSessionId || "new"}
+        onRemoveResearchItem={unsaveResearchItem}
+        onUpdateResearchItem={editSavedResearchItem}
+        removedItem={removedItem?.sessionId === activeSessionId ? removedItem.item : null}
+        onUndoRemove={undoUnsave}
         open={researchWorkspaceOpen}
         workspace={researchWorkspace}
         topic={handoffPayload.topic}

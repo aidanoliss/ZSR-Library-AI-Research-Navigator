@@ -30,7 +30,7 @@ function safeSourceUrl(url) {
   return /^https?:\/\//i.test(String(url || "")) ? url : "";
 }
 
-function SourceRow({ result, researchSpec, onSaveResearchItem, onTrackSearch, savedResearchItemKeys, onSourceEvent, studyEnabled = false, evidenceNotes = [], savedItems = [], onSaveSourceNotes }) {
+function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys, onSourceEvent, studyEnabled = false, evidenceNotes = [], savedItems = [], onSaveSourceNotes }) {
   const [markedUseful, setMarkedUseful] = useState(false);
   const isOpenAccess = result.accessScope === "open-access";
   const ids = sourceIds(result);
@@ -76,7 +76,7 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onTrackSearch, sa
     {result.identityCheck?.status === "title-difference" && <p className="source-check-summary"><strong>Citation details need checking.</strong> This title differs from the DOI registry. See Details before citing.</p>}
     <div className="source-row-actions">
       {sourceUrl && <a className="source-open-button" href={sourceUrl} target="_blank" rel="noopener noreferrer" onClick={openSource}>Open source {Icons.external}</a>}
-      {onSaveResearchItem && <button type="button" className={`source-action-button ${saved ? "is-saved" : ""}`} disabled={saved} onClick={() => { onSaveResearchItem(savedItem); onSourceEvent?.("source_saved", { sourceId }); }} aria-label={`${saved ? "Saved" : "Save"} ${result.title || "source"}`}>{saved ? Icons.check : Icons.save}{saved ? "Saved" : "Save"}</button>}
+      {onSaveResearchItem && <button type="button" className={`source-action-button ${saved ? "is-saved" : ""}`} disabled={saved && !onRemoveResearchItem} onClick={() => { if (saved) onRemoveResearchItem?.(savedItem); else { onSaveResearchItem(savedItem); onSourceEvent?.("source_saved", { sourceId }); } }} aria-label={`${saved ? "Unsave" : "Save"} ${result.title || "source"}`}>{saved ? Icons.check : Icons.save}{saved ? "Unsave" : "Save"}</button>}
       <button type="button" className="source-action-button" onClick={() => { if (downloadRis([result], { filename: result.title || "research-source" })) onSourceEvent?.("exported", { sourceId }); }} aria-label={`Download RIS citation for ${result.title || "this source"}`} title="Download citation (.ris)">Cite</button>
     </div>
     {studyEnabled && <button type="button" className="source-study-useful" disabled={markedUseful} onClick={() => { setMarkedUseful(true); onSourceEvent?.("source_marked_useful", { sourceId }); }}>{markedUseful ? "Marked useful" : "Useful for my question"}</button>}
@@ -106,7 +106,7 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onTrackSearch, sa
   </li>;
 }
 
-export default function SourceResults({ liveResults = [], sourceDiscovery = null, researchSpec = {}, compact = false, followup = false, onSaveResearchItem, onTrackSearch, savedResearchItemKeys, onRerunInterpretation, onShowStrategy, onEditRequirements, onSourceEvent, studyEnabled = false, evidenceNotes = [], evidenceNotice = "", savedItems = [], onSaveSourceNotes }) {
+export default function SourceResults({ liveResults = [], sourceDiscovery = null, researchSpec = {}, compact = false, followup = false, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys, onRerunInterpretation, onShowStrategy, onEditRequirements, onSourceEvent, studyEnabled = false, evidenceNotes = [], evidenceNotice = "", savedItems = [], onSaveSourceNotes }) {
   const filterId = useId();
   const [filters, setFilters] = useState({ type: "all", from: "", to: "", sort: "relevance" });
   const [retryPending, setRetryPending] = useState(false);
@@ -163,8 +163,8 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
         <div className="source-lane-heading"><div><h3>{lane.label}</h3><span>{lane.id === "open-access" ? "Locations reported as open access; verify version and license." : "ZSR and bibliographic records; check full-text access."}</span></div>{visible.length > 0 && <button type="button" className="source-export-button" onClick={() => { if (downloadRis(visible, { filename: `${lane.id}-source-leads` })) visible.forEach((result) => onSourceEvent?.("exported", { sourceId: result.doi || result.url || researchItemKey(result) })); }}>Export citations</button>}</div>
         {OUTCOME_MESSAGES[outcome] && <p className="source-provider-status" role="status">{OUTCOME_MESSAGES[outcome]}</p>}
         {!visible.length ? <div className="source-empty-state" role="status"><p><strong>No leads match these display filters.</strong> The original search returned {lane.results.length} {lane.results.length === 1 ? "lead" : "leads"} in this group.</p><button type="button" onClick={resetFilters}>Clear filters</button></div> : <>
-          {first.length > 0 && <ul className="source-result-list">{first.map((result, index) => <SourceRow key={`${result.doi || result.url || result.title}-${index}`} result={result} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul>}
-          {more.length > 0 && <details className="source-more-results"><summary>Show {more.length}{first.length ? " more" : ""} {more.length === 1 ? "source" : "sources"}</summary><ul className="source-result-list">{more.map((result, index) => <SourceRow key={`${result.doi || result.url || result.title}-${index + first.length}`} result={result} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul></details>}
+          {first.length > 0 && <ul className="source-result-list">{first.map((result, index) => <SourceRow key={`${result.doi || result.url || result.title}-${index}`} result={result} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul>}
+          {more.length > 0 && <details className="source-more-results"><summary>Show {more.length}{first.length ? " more" : ""} {more.length === 1 ? "source" : "sources"}</summary><ul className="source-result-list">{more.map((result, index) => <SourceRow key={`${result.doi || result.url || result.title}-${index + first.length}`} result={result} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul></details>}
         </>}
       </section>;
     })}

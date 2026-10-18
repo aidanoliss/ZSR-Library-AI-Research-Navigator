@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { reviseSearchTopic, searchRunStatus } from "../src/resultSearch.js";
-import { buildResearchSpec } from "../config/researchSpec.js";
+import { buildResearchSpec, researchSpecQuery } from "../config/researchSpec.js";
 
 test("editing the topic rebuilds old concepts while retaining assignment requirements", () => {
   const current = buildResearchSpec("AI and cognitive offloading", { modeId: "scholarly" });
@@ -31,4 +31,21 @@ test("review timing distinguishes provider failures, empty searches, and plannin
   assert.equal(searchRunStatus({ sourceDiscovery: discovery("empty"), liveResults: [] }), "empty");
   assert.equal(searchRunStatus({ sourceDiscovery: discovery("success"), liveResults: [{}] }), "complete");
   assert.equal(searchRunStatus({ liveResults: [] }), "not_searched");
+});
+
+test("prompt refinement retains the full request and adds only user-supplied scope", async () => {
+  const { improveResearchPrompt } = await import("../src/resultSearch.js");
+  const topic = "Compare economic sanctions in authoritarian regimes versus democracies since 2000";
+  assert.equal(improveResearchPrompt(topic), topic);
+  assert.equal(improveResearchPrompt("", { geography: "Canada" }), "");
+  const prompt = improveResearchPrompt(topic, { geography: "Canada", method: "systematic reviews" });
+  assert.equal(prompt, `${topic}\nin Canada\nusing systematic reviews`);
+  assert.doesNotMatch(prompt, /Population:|United States|randomized/i);
+  const current = buildResearchSpec(topic);
+  current.sourceRequirements = { peerReviewed: true, publicationYearFrom: 2020, publicationYearTo: null, requestedSourceCount: 5 };
+  const revised = reviseSearchTopic(prompt, current);
+  assert.deepEqual(revised.sourceRequirements, current.sourceRequirements);
+  assert.match(revised.facets.geography, /Canada/i);
+  assert.match(revised.facets.method, /systematic/i);
+  assert.doesNotMatch(researchSpecQuery(revised), /\b(?:Location|Study|method|using)\b/i);
 });

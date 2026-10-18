@@ -22,3 +22,15 @@ export function searchRunStatus(payload = {}) {
   if (outcomes.some((outcome) => ["empty", "success"].includes(outcome))) return "empty";
   return "not_searched";
 }
+
+/** Add user-supplied scope without inventing facts or discarding the original request. */
+export function improveResearchPrompt(topic, scope = {}) {
+  const original = String(topic || "").trim();
+  if (!original) return "";
+  const fields = [["comparison", "versus"], ["population", "among"], ["geography", "in"], ["method", "using"]];
+  const additions = fields.flatMap(([key, label]) => {
+    const value = String(scope[key] || "").trim();
+    return value ? [`${label} ${value}`] : [];
+  });
+  return [original, ...additions].join("\n");
+}

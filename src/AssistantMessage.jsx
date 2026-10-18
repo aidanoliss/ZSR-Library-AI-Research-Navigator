@@ -613,24 +613,24 @@ function databasePreviewImage(item) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(databasePreviewSvg(item))}`;
 }
 
-function SaveResearchButton({ item, onSaveResearchItem, savedResearchItemKeys }) {
+function SaveResearchButton({ item, onSaveResearchItem, onRemoveResearchItem, savedResearchItemKeys }) {
   if (!onSaveResearchItem) return null;
   const saved = savedResearchItemKeys?.has(researchItemKey(item));
   return (
     <button
       type="button"
       className={`save-research-btn ${saved ? "saved" : ""}`}
-      onClick={() => onSaveResearchItem(item)}
-      disabled={saved}
-      aria-label={saved ? `${item.title} saved to research trail` : `Save ${item.title} to research trail`}
+      onClick={() => saved ? onRemoveResearchItem?.(item) : onSaveResearchItem(item)}
+      disabled={saved && !onRemoveResearchItem}
+      aria-label={saved ? `Unsave ${item.title}` : `Save ${item.title} to research trail`}
     >
       {Icon.save}
-      <span>{saved ? "Saved" : "Save to trail"}</span>
+      <span>{saved ? "Unsave" : "Save option"}</span>
     </button>
   );
 }
 
-function DatabaseStrategySection({ strategy = [], topic = "", onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
+function DatabaseStrategySection({ strategy = [], topic = "", onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   const visible = strategy.filter((item) => item?.database).slice(0, 4);
   if (!visible.length) return null;
 
@@ -690,7 +690,7 @@ function DatabaseStrategySection({ strategy = [], topic = "", onSaveResearchItem
                       </a>
                     )}
                   </div>
-                  <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
+                  <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
                   {item.az_area && (
                     <p className="database-area">
                       <strong>A-Z area:</strong> {item.az_area}
@@ -886,7 +886,7 @@ function StrategyTermGroup({ label, terms = [], linkBase }) {
   );
 }
 
-function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
+function AgentResourceCard({ resource, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   const [copyNotice, setCopyNotice] = useState("");
   const terms = (resource.searchTerms || []).slice(0, 1);
   const filters = (resource.filters || []).filter(Boolean);
@@ -935,7 +935,7 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
           } catch { setCopyNotice("Could not copy. Select the search text above to copy it manually."); }
         }}>{Icon.copy} Copy query</button>}
         {copyNotice && <p className="copy-search-status" role="status">{copyNotice}</p>}
-        <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
+        <SaveResearchButton item={savedItem} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} savedResearchItemKeys={savedResearchItemKeys} />
         <details className="agent-resource-details">
           <summary>About this database and recommendation</summary>
           <EvidenceChips
@@ -961,7 +961,7 @@ function AgentResourceCard({ resource, onSaveResearchItem, onTrackSearch, savedR
   );
 }
 
-function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visibleSearchTerms = [], onSaveResearchItem, onTrackSearch, savedResearchItemKeys }) {
+function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visibleSearchTerms = [], onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys }) {
   if (!plan?.query) return null;
   const firstFour = plan.recommendations.slice(0, plan.navigationOnly ? 4 : 1);
   const remaining = plan.recommendations.slice(plan.navigationOnly ? 4 : 1);
@@ -1005,7 +1005,7 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
         </div>
         <ul className="agent-resource-list">
           {firstFour.map((resource) => (
-            <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+            <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
           ))}
         </ul>
         {remaining.length > 0 && (
@@ -1013,7 +1013,7 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
             <summary>Other recommended databases ({remaining.length})</summary>
             <ul className="agent-resource-list">
               {remaining.map((resource) => (
-                <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+                <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
               ))}
             </ul>
           </details>
@@ -1026,7 +1026,7 @@ function ResearchAgentSection({ plan, compact = false, liveResultCount = 0, visi
             </p>
             <ul className="agent-resource-list">
               {otherStartingPoints.map((resource) => (
-                <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
+                <AgentResourceCard key={resource.id} resource={resource} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} />
               ))}
             </ul>
           </details>
@@ -1099,8 +1099,11 @@ export default function AssistantMessage({
   onFollowup,
   onRerunInterpretation,
   onOpenPlanner,
-  onSaveResearchItem,
+  onSaveResearchItem, onRemoveResearchItem,
   onSaveSourceNotes,
+  onUpdateResearchItem,
+  removedItem,
+  onUndoRemove,
   onTrackSearch,
   savedResearchItemKeys,
   savedItems = [],
@@ -1410,7 +1413,7 @@ export default function AssistantMessage({
   const useWorkspace = allowSourceSections && (showCatalogResults || showAgenticSearchPlan || showSearchPrimer);
   const effectiveSpec = researchSpec || agentPlan.researchSpec;
   const resultLinks = resultSectionLinks({ id: sectionId, spec: effectiveSpec, plan: agentPlan, showSources: showCatalogResults });
-  const sourceSection = <LiveResultsSection evidenceNotes={reply.evidence_notes || []} evidenceNotice={reply.evidence_notice || ""} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} liveResults={liveResults} sourceDiscovery={sourceDiscovery} researchSpec={effectiveSpec} followup={isFollowup} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onRerunInterpretation={isLatest ? onRerunInterpretation : null} onShowStrategy={() => { setRecoveryEditor(true); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onEditRequirements={() => { setRecoveryEditor(false); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} />;
+  const sourceSection = <LiveResultsSection evidenceNotes={reply.evidence_notes || []} evidenceNotice={reply.evidence_notice || ""} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} liveResults={liveResults} sourceDiscovery={sourceDiscovery} researchSpec={effectiveSpec} followup={isFollowup} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onRerunInterpretation={isLatest ? onRerunInterpretation : null} onShowStrategy={() => { setRecoveryEditor(true); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onEditRequirements={() => { setRecoveryEditor(false); setResultView("strategy"); setEditorRequest((value) => value + 1); }} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} />;
 
   return (
     <div className={`bubble assistant ${useWorkspace ? "results-workspace" : ""}`}>
@@ -1426,7 +1429,7 @@ export default function AssistantMessage({
           <ResultDiscoveryOptions id={sectionId} spec={effectiveSpec} plan={agentPlan} onTrackSearch={onTrackSearch} />
         </div>
         <div id={`${sectionId}-panel-saved`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-saved`} hidden={resultView !== "saved"} tabIndex={0}>
-          <SavedSourcesView items={savedItems} onManage={onOpenSavedSources} onSourceEvent={onSourceEvent} />
+          <SavedSourcesView items={savedItems} onRemove={onRemoveResearchItem} onUpdate={onUpdateResearchItem} removedItem={removedItem} onUndoRemove={onUndoRemove} onManage={onOpenSavedSources} onSourceEvent={onSourceEvent} />
         </div>
       </>}
       <div id={`${sectionId}-panel-strategy`} className="search-strategy-panel" role={useWorkspace ? "tabpanel" : undefined} aria-labelledby={useWorkspace ? `${sectionId}-tab-strategy` : undefined} hidden={useWorkspace && resultView !== "strategy"} tabIndex={useWorkspace ? 0 : undefined}>
@@ -1534,11 +1537,11 @@ export default function AssistantMessage({
 
 
       {showAgenticSearchPlan && !useWorkspace && (
-        <div id={`${sectionId}-databases`}><ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} visibleSearchTerms={displaySearchTerms} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
+        <div id={`${sectionId}-databases`}><ResearchAgentSection plan={agentPlan} compact={isFollowup} liveResultCount={liveResults?.length || 0} visibleSearchTerms={displaySearchTerms} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
       )}
 
       {showDatabaseStrategy && !useWorkspace && (
-        <div id={`${sectionId}-databases`}><DatabaseStrategySection strategy={databaseStrategy} topic={topic} onSaveResearchItem={onSaveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
+        <div id={`${sectionId}-databases`}><DatabaseStrategySection strategy={databaseStrategy} topic={topic} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} /></div>
       )}
 
       {allowSourceSections && showTopicSpecificPlan && (

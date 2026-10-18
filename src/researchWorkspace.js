@@ -205,6 +205,27 @@ export function addResearchItem(workspace, item, now = Date.now()) {
   return { ...current, trail: [next, ...current.trail] };
 }
 
+/** Remove only this saved option, preserving the brief, history and other records. */
+export function removeResearchItem(workspace, item) {
+  const current = normalizeResearchWorkspace(workspace);
+  const key = researchItemKey(item);
+  return { ...current, trail: current.trail.filter((entry) => researchItemKey(entry) !== key) };
+}
+
+export function updateResearchItem(workspace, item, patch) {
+  const current = normalizeResearchWorkspace(workspace);
+  const key = researchItemKey(item);
+  // Deliberately allow only student-editable fields; provider metadata stays intact.
+  return normalizeResearchWorkspace({ ...current, trail: current.trail.map((entry) => researchItemKey(entry) === key
+    ? { ...entry, notes: patch.notes ?? entry.notes, status: patch.status ?? entry.status } : entry) });
+}
+
+export function filterSavedSources(items, query = "", status = "all") {
+  const terms = String(query).toLowerCase().trim().split(/\s+/).filter(Boolean);
+  return items.filter(isSavedSource).filter((item) => (status === "all" || item.status === status)
+    && terms.every((term) => [item.title, item.sourceRecord?.author, item.sourceRecord?.containerTitle, item.notes].filter(Boolean).join(" ").toLowerCase().includes(term)));
+}
+
 /** Save a student's reading notes without duplicating the work or replacing its other fields. */
 export function saveSourceNotes(workspace, item, notes, now = Date.now()) {
   const current = normalizeResearchWorkspace(workspace);

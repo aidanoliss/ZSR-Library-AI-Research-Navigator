@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { SavedSourcesView } from "./ResultsWorkspace.jsx";
 import { downloadText } from "./exportPlan.js";
 import {
   COURSE_TEMPLATES,
@@ -47,7 +48,7 @@ function EmptyState({ children }) {
   return <p className="research-workspace-empty">{children}</p>;
 }
 
-export default function ResearchWorkspace({ open, workspace, topic, onChange, onClose, onHandoff, initialTab = "trail", researchSpec = null }) {
+export default function ResearchWorkspace({ open, workspace, topic, onChange, onClose, onHandoff, initialTab = "trail", researchSpec = null, onRemoveResearchItem, onUpdateResearchItem, removedItem, onUndoRemove }) {
   const closeButtonRef = useRef(null);
   const bodyRef = useRef(null);
   const previousFocusRef = useRef(null);
@@ -325,20 +326,14 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
             tabIndex={0}
             aria-labelledby="workspace-tab-trail"
           >
-            <div className="workspace-section-head">
-              <div>
-                <h3 id="workspace-trail-title">Saved research</h3>
-                <span>{current.trail.length} saved {current.trail.length === 1 ? "item" : "items"}</span>
-              </div>
-            </div>
-            <p className="workspace-brief-help">Keep promising sources here. Mark the ones you plan to use, then check your progress in Review.</p>
             <SourceComparison items={comparisonItems} spec={progress.spec} onClear={() => { setComparisonIds([]); announce("Comparison cleared."); }} />
-            {current.trail.some(isSavedSource) && <p className="workspace-evidence-note">Choose two or three sources to compare their details side by side.</p>}
-            {!current.trail.length ? (
-              <EmptyState>Your saved research will appear here. Choose Save on a search result to keep it with this project.</EmptyState>
-            ) : (
+            <SavedSourcesView items={current.trail} onRemove={onRemoveResearchItem} onUpdate={onUpdateResearchItem} removedItem={removedItem} onUndoRemove={onUndoRemove} renderExtra={(item) => <>
+              <label className="workspace-compare-choice"><input type="checkbox" checked={comparisonIds.includes(item.id)} onChange={() => toggleComparison(item.id)} aria-label={`Compare ${item.title}`} disabled={!comparisonIds.includes(item.id) && comparisonItems.length >= 3} />Compare source (up to 3)</label>
+              <details className="workspace-item-notes"><summary>Requirements & citation</summary><SavedSourceEvidence item={item} spec={progress.spec} /><label>Citation details<textarea maxLength={4000} rows={2} value={item.citation} onChange={(event) => updateTrailItem(item.id, { citation: event.target.value })} placeholder="Check author, title, date and DOI in the original record." /></label></details>
+            </>} />
+            {current.trail.some((item) => !isSavedSource(item)) && <details className="workspace-saved-options"><summary>Saved databases & search options ({current.trail.filter((item) => !isSavedSource(item)).length})</summary>
               <ul className="workspace-trail-list">
-                {current.trail.map((item) => (
+                {current.trail.filter((item) => !isSavedSource(item)).map((item) => (
                   <li key={item.id}>
                     <div className="workspace-item-head">
                       <div>
@@ -347,13 +342,9 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                           <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}{Icon.external}</a>
                         ) : <strong>{item.title}</strong>}
                       </div>
-                      <button type="button" onClick={() => removeTrailItem(item.id)} aria-label={`Remove ${item.title}`}>{Icon.trash}</button>
+                      <button type="button" onClick={() => onRemoveResearchItem ? onRemoveResearchItem(item) : removeTrailItem(item.id)} aria-label={`Unsave ${item.title}`}>{Icon.trash}</button>
                     </div>
                     {item.detail && <p>{item.detail}</p>}
-                    {isSavedSource(item) && <>
-                      <label className="workspace-compare-choice"><input type="checkbox" checked={comparisonIds.includes(item.id)} onChange={() => toggleComparison(item.id)} aria-label={`Compare ${item.title}`} disabled={!comparisonIds.includes(item.id) && comparisonItems.length >= 3} />Compare source</label>
-                      <SavedSourceEvidence item={item} spec={progress.spec} />
-                    </>}
                     <label>
                       Status
                       <select value={item.status} onChange={(event) => updateTrailItem(item.id, { status: event.target.value })}>
@@ -374,7 +365,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                   </li>
                 ))}
               </ul>
-            )}
+            </details>}
           </section>
         )}
 
