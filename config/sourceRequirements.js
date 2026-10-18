@@ -5,6 +5,7 @@ const SOURCE_COUNT_RE = new RegExp(`\\b(${COUNT})\\s+(?:(?:peer[- ]reviewed|scho
 const YEAR = "(?:18|19|20|21)\\d{2}";
 const DATE_RANGE_RE = new RegExp(`\\b(?:published\\s+|publication (?:years?|dates?)\\s*:?\\s*)?(?:between\\s+|from\\s+)?(${YEAR})\\s*(?:[-–]|to|through|and)\\s*(${YEAR})\\b`, "i");
 const DATE_BOUND_RE = new RegExp(`\\b(?:published\\s+|publication (?:years?|dates?)\\s*:?\\s*)?(since|after|before|from|until|through)\\s+(${YEAR})\\b`, "i");
+const EXACT_PUBLICATION_RE = new RegExp(`\\b(?:published\\s+in|publication (?:year|date)\\s*:?)\\s+(${YEAR})\\b`, "i");
 const RECENT_RE = /\b(?:published\s+(?:in\s+)?)?(?:the\s+)?(?:last|past|previous)\s+(\d{1,3})\s+years?\b/i;
 
 function year(value) {
@@ -25,7 +26,7 @@ export function normalizeSourceRequirements(value = {}) {
 
 function dateRequest(text, currentYear) {
   const value = String(text || "");
-  const candidates = [DATE_RANGE_RE, RECENT_RE, DATE_BOUND_RE].flatMap((pattern, kind) =>
+  const candidates = [DATE_RANGE_RE, RECENT_RE, DATE_BOUND_RE, EXACT_PUBLICATION_RE].flatMap((pattern, kind) =>
     [...value.matchAll(new RegExp(pattern.source, "gi"))].map((match) => ({ kind, match,
       explicit: /^(?:published|publication)\b/i.test(match[0]) || /\b(?:sources?|articles?|studies|papers?|books?|publications?)\s*$/i.test(value.slice(0, match.index)),
       // A date-only control or follow-up is a publication filter. A date attached
@@ -33,12 +34,15 @@ function dateRequest(text, currentYear) {
       standalone: !value.replace(match[0], "").replace(/\b(?:only|please|limit|restrict|it|them|to|the|date|range|years?|use)\b/gi, "").replace(/[\s.,:;!?-]/g, ""),
     }))
   );
-  const chosen = candidates.filter((candidate) => candidate.explicit || candidate.standalone)
+  // A quoted title or phrase is literal content, not a publication filter.
+  const quotedSpans = [...value.matchAll(/["“][^"”]+["”]/g)].map((match) => ({ start: match.index, end: match.index + match[0].length }));
+  const chosen = candidates.filter((candidate) => (candidate.explicit || candidate.standalone) && !quotedSpans.some((span) => candidate.match.index >= span.start && candidate.match.index < span.end))
     .sort((a, b) => Number(b.explicit) - Number(a.explicit) || a.kind - b.kind || a.match.index - b.match.index)[0];
   if (!chosen) return null;
   const { match, kind } = chosen;
   if (kind === 0) return { match: match[0], publicationYearFrom: Number(match[1]), publicationYearTo: Number(match[2]) };
   if (kind === 1) return { match: match[0], publicationYearFrom: currentYear - Number(match[1]) + 1, publicationYearTo: currentYear };
+  if (kind === 3) return { match: match[0], publicationYearFrom: Number(match[1]), publicationYearTo: Number(match[1]) };
   const bound = match;
   const before = /^(before|until|through)$/i.test(bound[1]);
   return {

@@ -1,7 +1,7 @@
 // Conservative descriptions of provider metadata, not assessments of findings.
 // Absence of a cue is unknown. Only explicit contradictions justify exclusion.
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
-const normalized = (value) => clean(value).toLowerCase().replace(/[_-]+/g, " ");
+const normalized = (value) => clean(value).toLowerCase().replace(/[_–—-]+/g, " ");
 
 export function sourceMetadataText(source = {}) {
   return clean(source.abstractText || source.abstractExcerpt).slice(0, 20000);
@@ -30,9 +30,9 @@ function sentences(source) {
 // provider sentence, including its structured-abstract heading.
 function studyClause(value) {
   let text = normalized(value);
-  const structured = /^(?:methods?|design|abstract|participants):\s*/.test(text);
+  const structured = /^(?:methods?(?: and results)?|design|abstract|participants):?\s+/.test(text);
   const contextual = /^based on (?:this|these) [^,;.!?]{1,80},\s*/.test(text);
-  text = text.replace(/^(?:methods?|design|abstract|participants):\s*/, "")
+  text = text.replace(/^(?:methods?(?: and results)?|design|abstract|participants):?\s+/, "")
     .replace(/^based on (?:this|these) [^,;.!?]{1,80},\s*/, "");
   // 'The study' under a Participants heading denotes this record's sample.
   // A bare 'the study' can refer to earlier cited work and stays ambiguous.
@@ -80,7 +80,7 @@ export function sourceMethodEvidence(source, method) {
   const requested = normalized(method);
   const aliases = METHOD_ALIASES[requested] || [requested];
   const statements = ownMethodStatements(source);
-  const titleMethod = normalized(String(source.title || "").split(/[:—–]|\s-\s/).at(-1)).match(/(?:^)\s*(?:a |an )?(systematic review|scoping review|meta analys(?:is|es)|randomi[sz]ed controlled trial|longitudinal study)(?:\s+and\s+meta analys(?:is|es))?\s*$/)?.[1];
+  const titleMethod = normalized(String(source.title || "").split(/[:—–]|\s-\s/).at(-1)).match(/(?:^)\s*(?:a |an )?(systematic review|scoping review|meta analys(?:is|es)|randomi[sz]ed controlled trial|longitudinal study)(?:\s+and\s+meta analys(?:is|es))?(?:\s+of\s+[^.!?]+)?\s*$/)?.[1];
   if (titleMethod && aliases.includes(titleMethod.replace("meta analyses", "meta analysis"))) {
     return { status: "meets", detail: `The provider title identifies this work as a ${titleMethod}. Verify its methods in the source.` };
   }
@@ -90,6 +90,9 @@ export function sourceMethodEvidence(source, method) {
   if (requested === "empirical study" && nonStudy) {
     return { status: "mismatch", detail: bookReview ? "The provider's title, type, or description identifies a book review, rather than an original empirical study. Follow the reviewed book for its original argument and methods." : `The provider labels this record “${type}”, rather than an original empirical study. Follow its references for original research.` };
   }
+  const qualitativeDesign = sourceMetadataText(source).split(/(?<=[.!?;])\s+/).find((statement) => /^(?:this|our|the) study (?:followed|used|employed) a qualitative (?:research )?design\b/.test(studyClause(statement)) && !AMBIGUOUS_STUDY_DESCRIPTION.test(studyClause(statement)));
+  const interviewDesign = sourceMetadataText(source).split(/(?<=[.!?;])\s+/).find((statement) => /^(?:a multi method data collection method was applied, where the study|(?:this|our) study|we) conducted\b.*\b(?:key informant|in depth|semi structured) interviews?\b/.test(studyClause(statement)) && !AMBIGUOUS_STUDY_DESCRIPTION.test(studyClause(statement)));
+  if (qualitativeDesign && (requested === "qualitative study" || requested === "qualitative interview" && interviewDesign)) return { status: "meets", detail: `The provider describes this work's qualitative design${interviewDesign ? " and interviews" : ""}: “${clean(interviewDesign || qualitativeDesign).slice(0, 260)}”. Verify the methods in the full text.` };
   const explicit = statements.find((statement) => aliases.some((alias) => describesMethod(statement, alias)));
   const empirical = statements.find((statement) => /^we (?:interviewed|surveyed|recruited|randomized|randomised)\s/.test(studyClause(statement))
     || /^(?:this|our|the present|the current) study (?:interviewed|surveyed|recruited|randomized|randomised)\s/.test(studyClause(statement))
@@ -98,10 +101,30 @@ export function sourceMethodEvidence(source, method) {
     const passage = clean(explicit || empirical);
     return { status: "meets", detail: `The provider abstract describes this work's method: “${passage.slice(0, 260)}”${passage.length > 260 ? " (excerpt)" : ""}. This has not been checked against the full text.` };
   }
-  const review = METHOD_ALIASES.review.includes(type) || statements.some((statement) => METHOD_ALIASES.review.some((alias) => describesMethod(statement, alias)));
+  const review = METHOD_ALIASES.review.includes(titleMethod) || METHOD_ALIASES.review.includes(type) || statements.some((statement) => METHOD_ALIASES.review.some((alias) => describesMethod(statement, alias)));
   const mixedDesign = statements.some((statement) => /\band (?:then )?(?:interviewed|surveyed|recruited|randomized|randomised|conducted interviews)\b/.test(normalized(statement)));
   if (requested === "empirical study" && review && !mixedDesign) {
     return { status: "mismatch", detail: "The provider describes a review, commentary, or primary document, rather than an original empirical study. Follow its references for original research." };
+  }
+  // Contradiction requires a declared design or original data collection, never
+  // the mere absence of a review/trial keyword. Preserve mixed designs for review.
+  const originalData = statements.some((statement) => /^(?:we|(?:in this study,? we)|(?:this|our) study) (?:recruited|randomi[sz]ed|surveyed|interviewed|collected)\b/.test(studyClause(statement)))
+    || sentences(source).filter((statement) => !AMBIGUOUS_STUDY_DESCRIPTION.test(statement)).some((statement) => /^(?:seawater |blood |soil )?samples were collected\b/.test(studyClause(statement)))
+    || sentences(source).filter((statement) => !AMBIGUOUS_STUDY_DESCRIPTION.test(statement)).some((statement) => /^data from \w+ environmental monitoring programs were integrated\b/.test(studyClause(statement)));
+  const empiricalDesign = ["randomized controlled trial", "randomised controlled trial", "cross sectional study", "cohort study", "longitudinal study"].includes(type)
+    || ["randomized controlled trial", "randomised controlled trial", "longitudinal study"].includes(titleMethod);
+  const nonRandomized = ["observational study", "cross sectional study", "cohort study", "nonrandomized trial", "non randomized trial"].some((design) => type === design || statements.some((statement) => describesMethod(statement, design)));
+  if (requested === "randomized controlled trial" && nonRandomized && !review) return { status: "mismatch", detail: "The provider explicitly describes an observational or non-randomized design, not the requested randomized controlled trial." };
+  // Scoping and systematic reviews answer different design requests. A
+  // meta-analysis can be part of either a systematic review or another design,
+  // so its presence alone is never a contradiction for a review request.
+  const incompatibleReview = { "systematic review": "scoping review", "scoping review": "systematic review" }[requested];
+  if (incompatibleReview && (type === incompatibleReview || titleMethod === incompatibleReview || statements.some((statement) => describesMethod(statement, incompatibleReview)))) {
+    return { status: "mismatch", detail: `The provider explicitly identifies this work as a ${incompatibleReview}, not the requested ${requested}. Its design serves a different evidence-synthesis purpose; it may be useful background.` };
+  }
+  const reviewRequested = ["systematic review", "scoping review", "meta analysis", "literature review"].includes(requested);
+  if (!mixedDesign && (requested === "randomized controlled trial" && review || reviewRequested && !review && (originalData || empiricalDesign))) {
+    return { status: "mismatch", detail: review ? "The provider identifies this work as a review or meta-analysis, not an original randomized controlled trial. Reviewed trials are not this article's study design." : "The provider describes original data collection or an original study design, not the requested evidence synthesis. This may be a background source, but does not meet the requested method." };
   }
   return { status: "unverified", detail: "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient." };
 }
@@ -124,7 +147,7 @@ export function sourceFormatDetailCheck(source, contract) {
 // Educational levels have a clear, limited incompatibility. Broad ages (e.g.
 // 'young adults') are not disjoint from college students and must not exclude.
 const COLLEGE = /\b(?:undergraduates?|(?:college|university) students?)\b/;
-const SCHOOL = /\b(?:(?:high|secondary|primary|elementary|middle) school (?:students?|pupils?)|schoolchildren|k 12 students?)\b/;
+const SCHOOL = /\b(?:(?:high|secondary|primary|elementary|middle) school (?:students?|pupils?)|schoolchildren|secondary (?:students?|pupils?)|k ?12(?: (?:students?|pupils?|education))?)\b/;
 
 export function sourcePopulationCheck(source, population) {
   if (!clean(population)) return null;
@@ -140,7 +163,7 @@ export function sourcePopulationCheck(source, population) {
   const samplePrefix = "^(?:methods?:\\s*)?(?:we (?:recruited|surveyed|interviewed|randomized|randomised)|(?:this|our|the present|the current) study (?:recruited|included|involved)|(?:the |our )?(?:sample|participants) (?:consisted of|comprised|included|were))\\s+(?:(?:a total of|a sample of|only|all|\\d+|male|female|first year)\\s+)*";
   const collegeSample = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${COLLEGE.source}`).test(sentence));
   const schoolSample = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${SCHOOL.source}`).test(sentence));
-  const requestedPattern = /\bundergraduates?\b/.test(requested) ? "\\bundergraduates?\\b" : COLLEGE.test(requested) ? COLLEGE.source : SCHOOL.test(requested) ? SCHOOL.source
+  const requestedPattern = /^first year\b/.test(requested) ? `\\bfirst year ${COLLEGE.test(requested) ? COLLEGE.source : "students?\\b"}` : /\bundergraduates?\b/.test(requested) ? "\\bundergraduates?\\b" : COLLEGE.test(requested) ? COLLEGE.source : SCHOOL.test(requested) ? SCHOOL.source
     : `\\b${requested.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?\\b`;
   const populationModifiers = "(?:(?:\\d+|first year|final year|male|female|(?:non )?[a-z]+(?: [a-z]+)? major)\\s+)*";
   // Participants must be the population itself, not its teachers or caregivers.
@@ -150,10 +173,13 @@ export function sourcePopulationCheck(source, population) {
     || new RegExp(`^(?:this|our|the present|the current) study focuses on\\s+${populationModifiers}${requestedPattern}`).test(sentence)
     || new RegExp(`^(?:in depth )?qualitative interviews (?:were|have been) conducted (?:with|among)\\s+${populationModifiers}${requestedPattern}`).test(sentence));
   // A mixed sample or a broader/overlapping population needs review, not rejection.
-  const conflict = COLLEGE.test(requested) && schoolSample && !college || SCHOOL.test(requested) && collegeSample && !school;
+  const title = normalized(source.title);
+  const explicitSchoolTitle = /\b(?:among|of|in|for) (?:[a-z]+ )?(?:k ?12(?: (?:students?|pupils?|education))?|secondary (?:students?|pupils?)|(?:high|secondary|primary|elementary|middle) school (?:students?|pupils?))\b/.test(title)
+    && !/\b(?:transition|college|university|undergraduates?|teachers?|educators?|protocol)\b/.test(title);
+  const conflict = COLLEGE.test(requested) && explicitSchoolTitle || COLLEGE.test(requested) && schoolSample && !college || SCHOOL.test(requested) && collegeSample && !school;
   return { id: "population", label: "Study population", status: match ? "meets" : conflict ? "mismatch" : "unverified",
     detail: match ? `The provider's study description names the requested population (${population}). Verify the sample and applicability in the source.`
-      : conflict ? `The provider's study description identifies ${school ? "school pupils" : "college students"}, which does not match the requested population (${population}).`
+      : conflict ? `The provider's study description identifies ${school || explicitSchoolTitle ? "school pupils" : "college students"}, which does not match the requested population (${population}).`
       : `The available metadata does not establish the requested population (${population}); check the study's sample or scope.` };
 }
 
@@ -180,14 +206,19 @@ function intervals(value) {
 
 export function sourcePeriodCheck(source, timePeriod, publicationYear) {
   if (!clean(timePeriod)) return null;
-  const requested = interval(timePeriod);
+  const requested = interval(timePeriod) || (/\b(?:world war ii|second world war|wwii)\b/i.test(timePeriod) ? { from: 1939, to: 1945 } : /\b(?:world war i|first world war|wwi)\b/i.test(timePeriod) ? { from: 1914, to: 1918 } : null);
   if (!requested) return null;
   const scope = sentences(source).filter((sentence) =>
     (/^(?:(?:methods?|data):\s*)?(?:we (?:used|analy[sz]ed|examined|studied)|(?:this|our|the present|the current) (?:study|paper|analysis) (?:uses?|used|analy[sz]es|analy[sz]ed|examines?|studies|covers?)|(?:the |our )?data (?:cover|span|were collected)|using (?:a |the )?(?:data|panel|survey))\b/.test(sentence)
       || /^(?:leveraging|using) (?:a |the )?period\b.{0,450},\s*we (?:explore|examine|analy[sz]e|study)\b/.test(sentence))
     && !AMBIGUOUS_STUDY_DESCRIPTION.test(sentence)
     && !/\b(?:forecast\w*|project(?:ed|ions?))\b/.test(sentence));
-  const ranges = scope.flatMap(intervals);
+  const historicalText = [source.title || "", ...sourceMetadataText(source).split(/(?<=[.!?;])\s+/).filter((statement) => /^(?:this (?:article|paper|study)|by integrating|focusing on|drawing on)\b/i.test(statement) && !AMBIGUOUS_STUDY_DESCRIPTION.test(normalized(statement)))].join(" ");
+  const periodText = historicalText.replace(/\b(?:after|before|following|prior to|post) (?:the )?(?:world war ii?|first world war|second world war|wwii?)\b/gi, "");
+  const firstWar = /\b(?:world war i|first world war|wwi)\b/i.test(periodText);
+  const secondWar = /\b(?:world war ii|second world war|wwii)\b/i.test(periodText);
+  const namedPeriods = [...(firstWar ? [{ from: 1914, to: 1918 }] : []), ...(secondWar ? [{ from: 1939, to: 1945 }] : [])];
+  const ranges = [...scope.flatMap(intervals), ...namedPeriods];
   const overlaps = (range) => (requested.from === null || range.to === null || range.to >= requested.from)
     && (requested.to === null || range.from === null || range.from <= requested.to);
   // Multiple periods can represent a historical comparison. Reject only when
@@ -215,7 +246,7 @@ export function sourceGeographyCheck(source, geography) {
     "north carolina": ["north carolina", "nc"],
   }[requested] || [requested];
   const place = aliases.map((value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
-  const location = new RegExp(`\\b(?:in|across|within|from|throughout)\\s+(?:the\\s+)?(?:${place})(?=$|[\\s,.;:])`, "i");
+  const location = new RegExp(`\\b(?:in|across|within|from|throughout)\\s+(?:the\\s+)?(?:(?:coastal|rural|urban|northern|southern|eastern|western|central)\\s+){0,2}(?:${place})(?=$|[\\s,.;:])`, "i");
   const title = normalized(source.title);
   const own = sourceMetadataText(source).split(/(?<=[.!?;])\s+/).filter((original) => {
     const clause = studyClause(original);
@@ -228,4 +259,38 @@ export function sourceGeographyCheck(source, geography) {
   return { id: "geography", label: "Study geography", status: passage ? "meets" : "unverified",
     detail: passage ? `The provider title or study description places this work in the requested geography (${geography}): “${clean(passage).slice(0, 260)}”. Verify its coverage in the source.`
       : `The metadata does not establish the requested study geography (${geography}). Background mentions, affiliations, and subject tags alone do not confirm coverage.` };
+}
+
+/** Do not join a population from one country/substudy to another country's name. */
+export function sourcePopulationGeographyCheck(source, population, geography) {
+  if (!clean(population) || !clean(geography)) return null;
+  const requested = normalized(population).replace(/\*/g, "");
+  const popPattern = requested === "women" ? /\bwomen(?:'s|’s)?\b/
+    : /\bundergraduates?\b/.test(requested) && !/first year/.test(requested) ? /\bundergraduates?\b/
+      : requested === "college students" ? COLLEGE
+        : new RegExp(`\\b${requested.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?\\b`);
+  const candidates = [
+    { title: source.title || "" },
+    ...sourceMetadataText(source).split(/(?<=[.!?;])\s+/).map((abstractText) => ({ abstractText })),
+  ];
+  const passage = candidates.find((span) => {
+    const text = normalized(span.title || span.abstractText);
+    if (!popPattern.test(text) || /\b(?:previous|prior|earlier|background|teachers of|caregivers of|parents of)\b/.test(text)) return false;
+    // A semicolon or clause listing distinct samples cannot be interpreted as
+    // one population/location pair simply because both terms occur nearby.
+    if (/\b(?:whereas|while|but|respectively)\b|;/.test(text)) return false;
+    const position = text.search(popPattern);
+    const tail = text.slice(position);
+    // Require geography after the population in its local phrase. Bounded
+    // grammar avoids linking women in Burkina Faso to an earlier Bangladesh.
+    const relation = tail.match(/^[\s\S]{1,100}?\b(?:in|from|across|within|of)\s+(?:the\s+)?(?:(?:coastal|rural|urban|northern|southern|eastern|western|central)\s+){0,2}([^,.;!?]+)/);
+    if (!relation) return false;
+    const placeAliases = { "united states": ["united states", "united states of america", "usa", "u.s."], "united kingdom": ["united kingdom", "uk", "u.k."], "north carolina": ["north carolina", "nc"] }[normalized(geography)] || [normalized(geography)];
+    const placeMatches = placeAliases.some((place) => new RegExp(`^${place.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[\\s,.;:])`).test(relation[1]));
+    return placeMatches
+      && (Boolean(span.title) || sourcePopulationCheck(span, population)?.status === "meets");
+  });
+  return { id: "population-geography", label: "Population and place together", status: passage ? "meets" : "unverified",
+    detail: passage ? `A single provider passage links the requested population and place: “${clean(passage.title || passage.abstractText).slice(0, 260)}”. Verify sampling and coverage in the full text.`
+      : `The metadata does not establish that ${population} and ${geography} describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship.` };
 }

@@ -15,7 +15,7 @@ export function RequirementProgress({ progress, id = "workspace-progress" }) {
         <span><strong>{progress.mismatches}</strong> do not meet checks</span>
       </div>}
       {progress.selected > 0 && !!progress.checks.length && <ul>{progress.checks.map((check) => <li key={check.id}><strong>{check.label}:</strong> {check.meets} supported · {check.unverified} unknown · {check.mismatch} outside requirement</li>)}</ul>}
-      {!!progress.duplicates && <p>{progress.duplicates} duplicate record{progress.duplicates === 1 ? "" : "s"} excluded from the count.</p>}
+      {!!progress.duplicates && <p>{progress.duplicates} duplicate record{progress.duplicates === 1 ? "" : "s"} or possible edition/version excluded from the count.</p>}
       {!progress.selected && <p>Save source leads and mark the ones you plan to use.</p>}
       {!!progress.spec.manualRequirements?.length && <ul>{progress.spec.manualRequirements.map((requirement) => <li key={requirement}>{requirement}</li>)}</ul>}
       {progress.selected > 0 && <p className="workspace-evidence-note">These checks use reported metadata. Verify each source before relying on it.</p>}

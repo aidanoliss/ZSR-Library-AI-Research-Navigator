@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { ResearchPrivacyContext } from "./researchPrivacy.js";
 import { SavedSourcesView } from "./ResultsWorkspace.jsx";
 import { downloadText } from "./exportPlan.js";
 import {
@@ -48,7 +49,8 @@ function EmptyState({ children }) {
   return <p className="research-workspace-empty">{children}</p>;
 }
 
-export default function ResearchWorkspace({ open, workspace, topic, onChange, onClose, onHandoff, initialTab = "trail", researchSpec = null, onRemoveResearchItem, onUpdateResearchItem, removedItem, onUndoRemove }) {
+export default function ResearchWorkspace({ open, workspace, topic, onChange, onClose, onHandoff, initialTab = "trail", researchSpec = null, onRemoveResearchItem, onUpdateResearchItem, removedItem, onUndoRemove, onReplaySearch }) {
+  const privateMode = useContext(ResearchPrivacyContext);
   const closeButtonRef = useRef(null);
   const bodyRef = useRef(null);
   const previousFocusRef = useRef(null);
@@ -228,7 +230,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
         <button ref={closeButtonRef} type="button" onClick={onClose} aria-label="Close research workspace">{Icon.close}</button>
       </header>
 
-      <p className="workspace-local-note">Your brief, saved research, and search activity. Saved in this browser.</p>
+      <p className="workspace-local-note">{privateMode ? "Private session • cleared when you end the session or reload. Export a copy to keep it." : "Your brief, saved research, and search activity. Saved in this browser."}</p>
 
       <nav className="research-workspace-tabs" role="tablist" aria-label="Research workspace sections">
         {TABS.map((item) => (
@@ -384,33 +386,53 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
                 <span>{current.searchHistory.length} recorded</span>
               </div>
             </div>
-            <p className="workspace-brief-help">Revisit searches and source links you opened. Add a note about what worked so you know what to try next.</p>
+            <p className="workspace-brief-help">Search runs preserve the request, resolved criteria, provider outcomes, and time. Opened links and manually recorded searches are separate activities.</p>
             <form className="workspace-manual-search" onSubmit={addManualSearch}>
               <label htmlFor="manual-search-note">Record a search you tried elsewhere</label>
               <input id="manual-search-note" maxLength={4000} value={manualQuery} onChange={(event) => setManualQuery(event.target.value)} placeholder='e.g. "economic sanctions" AND democracy' />
               <button type="submit" disabled={!manualQuery.trim()}>Save search</button>
             </form>
-            {!current.searchHistory.length ? (
-              <EmptyState>No activity yet. Searches and source links opened from Navigator are recorded here automatically.</EmptyState>
-            ) : (
-              <ul className="workspace-history-list">
-                {current.searchHistory.map((entry) => (
-                  <li key={entry.id}>
+            {!current.searchHistory.length && <EmptyState>No activity yet. Completed Navigator searches will appear here with their criteria.</EmptyState>}
+            {[
+              { kind: "search-run", label: "Search runs" },
+              { kind: "manual-search", label: "Searches recorded manually" },
+              { kind: "opened-resource", label: "Opened resources" },
+              { kind: "legacy-activity", label: "Earlier activity · type not recorded" },
+            ].map(({ kind, label }) => {
+              const entries = current.searchHistory.filter((entry) => entry.kind === kind);
+              return entries.length ? <section key={kind} aria-label={label}>
+                <h4>{label} ({entries.length})</h4>
+                <ul className="workspace-history-list">
+                  {entries.map((entry) => <li key={entry.id}>
                     <div className="workspace-item-head">
                       <div>
                         <span className="workspace-activity-meta">{entry.tool}{formatDate(entry.usedAt) && <time dateTime={new Date(entry.usedAt).toISOString()}>{formatDate(entry.usedAt)}</time>}</span>
                         {entry.url ? <a href={entry.url} target="_blank" rel="noopener noreferrer"><span className="workspace-query">{entry.query}</span>{Icon.external}</a> : <span className="workspace-query">{entry.query}</span>}
                       </div>
-                      <button type="button" onClick={() => removeSearch(entry.id)} aria-label={`Remove search ${entry.query}`}>{Icon.trash}</button>
+                      <button type="button" onClick={() => removeSearch(entry.id)} aria-label={`Remove activity ${entry.query}`}>{Icon.trash}</button>
                     </div>
-                    <label>
-                      Outcome or next step
+                    {kind === "search-run" && <>
+                      <p><strong>{entry.resultCount ?? "Unknown"} results</strong> · {entry.providers.map((provider) => `${provider.id}: ${provider.status}`).join("; ") || "Provider status not recorded"}</p>
+                      <details>
+                        <summary>Request, queries &amp; criteria</summary>
+                        <p><strong>Original request:</strong> {entry.originalRequest}</p>
+                        {entry.queries.length > 0 ? <ul>{entry.queries.map((query, index) => <li key={index}><strong>{query.provider || "Provider not recorded"}</strong> · {query.dialect || "Dialect not recorded"}: {query.query}</li>)}</ul> : <p>No executed query was reported.</p>}
+                        <p>Run outcome: {entry.runStatus || "not recorded"}</p>
+                        <p>Release: {entry.releaseId || "not recorded"} · Configuration: {entry.configVersion || "not recorded"}</p>
+                        <p>Started: {formatDate(entry.startedAt) || "not recorded"} · Completed: {formatDate(entry.completedAt) || "not recorded"}</p>
+                        <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontSize: ".8rem" }}>{JSON.stringify(entry.researchSpec, null, 2)}</pre>
+                      </details>
+                      {onReplaySearch && entry.researchSpec?.topic && <button type="button" className="workspace-replay-search" onClick={() => onReplaySearch(entry)}>Run these criteria again</button>}
+                      <p className="workspace-brief-help">Provider indexes change; a new run may return different results.</p>
+                    </>}
+                    <label>Outcome or next step
                       <input maxLength={4000} value={entry.resultNote || ""} onChange={(event) => updateSearch(entry.id, event.target.value)} placeholder="e.g. Useful results; try narrowing by year" />
                     </label>
-                  </li>
-                ))}
-              </ul>
-            )}
+                  </li>)}
+                </ul>
+              </section> : null;
+            })}
+
           </section>
         )}
 
@@ -449,7 +471,7 @@ export default function ResearchWorkspace({ open, workspace, topic, onChange, on
             </div>
             <details className="workspace-optional-fields">
               <summary>Back up or restore this project</summary>
-              <p className="workspace-evidence-note">Research is saved in this browser, not synced to your library account. Download a backup to keep a copy or move it to another browser.</p>
+              <p className="workspace-evidence-note">{privateMode ? "Private session • cleared when you end the session or reload. Export a copy to keep it." : "Research is saved in this browser, not synced to your library account. Download a backup to keep a copy or move it to another browser."}</p>
               <div className="workspace-portable-actions">
                 <button type="button" onClick={downloadWorkspace}>Download backup</button>
                 <button type="button" onClick={() => importRef.current?.click()} disabled={importing}>{importing ? "Reading file…" : "Restore backup"}</button>

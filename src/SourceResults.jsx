@@ -30,7 +30,11 @@ function safeSourceUrl(url) {
   return /^https?:\/\//i.test(String(url || "")) ? url : "";
 }
 
-function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys, onSourceEvent, studyEnabled = false, evidenceNotes = [], savedItems = [], onSaveSourceNotes }) {
+function SourceRow({ result: groupedResult, selectedEdition, onEditionChange, researchSpec, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys, onSourceEvent, studyEnabled = false, evidenceNotes = [], savedItems = [], onSaveSourceNotes }) {
+  const editions = [groupedResult, ...(groupedResult.relatedEditions || [])];
+  const editionId = (record) => record?.doi || record?.url || record?.id || record?.title;
+  const editionIndex = Math.max(0, editions.findIndex((record) => editionId(record) === editionId(selectedEdition)));
+  const result = editions[editionIndex] || groupedResult;
   const [markedUseful, setMarkedUseful] = useState(false);
   const isOpenAccess = result.accessScope === "open-access";
   const ids = sourceIds(result);
@@ -47,7 +51,7 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchI
   const savedEntry = savedItems.find((entry) => researchItemKey(entry) === researchItemKey(savedItem));
   const sourceId = result.doi || result.url || researchItemKey(savedItem);
   const openSource = () => {
-    onTrackSearch?.({ query: result.title, tool: isOpenAccess ? "Reported open-access location" : result.sourceProvider || "Source record", url: sourceUrl });
+    onTrackSearch?.({ kind: "opened-resource", query: result.title, tool: isOpenAccess ? "Reported open-access location" : result.sourceProvider || "Source record", url: sourceUrl });
     onSourceEvent?.("source_opened", { sourceId });
   };
   const links = [
@@ -60,6 +64,11 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchI
   const incompleteChecks = assessment.checks.filter((check) => check.status !== "meets");
 
   return <li className="source-result-row">
+    {editions.length > 1 && <label className="source-edition-picker">Edition or version
+      <select aria-label="Edition or version" value={editionIndex} onChange={(event) => { setMarkedUseful(false); onEditionChange?.(groupedResult, editions[Number(event.target.value)]); }}>
+        {editions.map((edition, index) => <option key={edition.doi || edition.url || index} value={index}>{[edition.edition, sourcePublicationYear(edition), edition.doi || edition.isbn || edition.sourceProvider || `Record ${index + 1}`].filter(Boolean).join(" · ")}</option>)}
+      </select><small>These may be editions or versions of the same work. Check the selected record. Save and Cite use its own metadata.</small>
+    </label>}
     <div className="source-result-heading"><SourceThumbnail source={result} /><div className="source-result-heading-text"><div className="source-result-kicker">
       <span title={role.basis}>{role.label}{role.inferred ? " · inferred" : ""}</span>
       {fit?.label && <span className={`source-fit-label fit-${fit.category || "background"}`} title="Interpretation based on title and abstract metadata; open the record to confirm.">{fit.label}</span>}
@@ -80,7 +89,7 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchI
       <button type="button" className="source-action-button" onClick={() => { if (downloadRis([result], { filename: result.title || "research-source" })) onSourceEvent?.("exported", { sourceId }); }} aria-label={`Download RIS citation for ${result.title || "this source"}`} title="Download citation (.ris)">Cite</button>
     </div>
     {studyEnabled && <button type="button" className="source-study-useful" disabled={markedUseful} onClick={() => { setMarkedUseful(true); onSourceEvent?.("source_marked_useful", { sourceId }); }}>{markedUseful ? "Marked useful" : "Useful for my question"}</button>}
-    <SourceReadingGuide source={result} savedItem={savedItem} savedEntry={savedEntry} onSaveSourceNotes={onSaveSourceNotes} onTrackSearch={onTrackSearch} />
+    <SourceReadingGuide key={sourceId} source={result} savedItem={savedItem} savedEntry={savedEntry} onSaveSourceNotes={onSaveSourceNotes} onTrackSearch={onTrackSearch} />
     <details className="source-record-details"><summary>Details <span>Metadata, requirements & access</span></summary><div className="source-record-details-body">
       <dl className="source-metadata-list">
         <div><dt>Source role</dt><dd>{role.basis}</dd></div>
@@ -88,7 +97,7 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchI
         {sourceAuthors(result) && <div><dt>Authors</dt><dd>{sourceAuthors(result)}</dd></div>}
         {journal && <div><dt>Publication</dt><dd>{journal}</dd></div>}
         {result.publisher && <div><dt>Publisher</dt><dd>{result.publisher}</dd></div>}
-        {[['volume', 'Volume'], ['issue', 'Issue'], ['pages', 'Pages'], ['isbn', 'ISBN'], ['issn', 'ISSN']].filter(([key]) => result[key]).map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{Array.isArray(result[key]) ? result[key].join('; ') : result[key]}</dd></div>)}
+        {[['edition', 'Edition'], ['volume', 'Volume'], ['issue', 'Issue'], ['pages', 'Pages'], ['isbn', 'ISBN'], ['issn', 'ISSN']].filter(([key]) => result[key]).map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{Array.isArray(result[key]) ? result[key].join('; ') : result[key]}</dd></div>)}
         {ids.doi && <div><dt>DOI</dt><dd>{ids.doi}</dd></div>}
         {ids.pmid && <div><dt>PMID</dt><dd>{ids.pmid}</dd></div>}
         <div><dt>Published</dt><dd>{year || "Not supplied"}</dd></div>
@@ -101,7 +110,7 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchI
       {!isOpenAccess && <p>Metadata does not confirm Wake Forest access. Check availability through ZSR.</p>}
       <p>Cite downloads provider metadata as an RIS file for Zotero and other citation managers. Verify missing fields and formatting with the <a href={LIBRARY_LINKS.zsrCitationGuide} target="_blank" rel="noopener noreferrer">ZSR citation guide</a>.</p>
       {result.fulfillment && <p>Availability can change. Confirm the location in ZSR before visiting or requesting.</p>}
-      {links.length > 0 && <div className="source-secondary-links" aria-label="Additional access options">{links.map((link) => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query: result.title, tool: link.label, url: link.url })}>{link.label}{Icons.external}</a>)}</div>}
+      {links.length > 0 && <div className="source-secondary-links" aria-label="Additional access options">{links.map((link) => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ kind: "opened-resource", query: result.title, tool: link.label, url: link.url })}>{link.label}{Icons.external}</a>)}</div>}
     </div></details>
   </li>;
 }
@@ -109,9 +118,19 @@ function SourceRow({ result, researchSpec, onSaveResearchItem, onRemoveResearchI
 export default function SourceResults({ liveResults = [], sourceDiscovery = null, researchSpec = {}, compact = false, followup = false, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys, onRerunInterpretation, onShowStrategy, onEditRequirements, onSourceEvent, studyEnabled = false, evidenceNotes = [], evidenceNotice = "", savedItems = [], onSaveSourceNotes }) {
   const filterId = useId();
   const [filters, setFilters] = useState({ type: "all", from: "", to: "", sort: "relevance" });
+  const [selectedEditions, setSelectedEditions] = useState({});
+  const editionKey = (record) => record.doi || record.url || record.id || record.title;
+  const selectEdition = (group, record) => setSelectedEditions((current) => ({ ...current, [editionKey(group)]: record }));
+  const exportRecord = (group) => {
+    const selected = selectedEditions[editionKey(group)];
+    return selected ? [group, ...(group.relatedEditions || [])].find((record) => editionKey(record) === editionKey(selected)) || group : group;
+  };
   const [retryPending, setRetryPending] = useState(false);
   const [retryError, setRetryError] = useState("");
-  const lanes = sourceResultLanes(liveResults, sourceDiscovery);
+  // Recheck restored results too: old sessions can contain superseded checks.
+  const checkedResults = liveResults.map((result) => ({ ...result, sourceAssessment: assessSourceRequirements(result, researchSpec) }));
+  const excludedCount = checkedResults.filter((result) => result.sourceAssessment.status === "mismatch").length;
+  const lanes = sourceResultLanes(checkedResults.filter((result) => result.sourceAssessment.status !== "mismatch"), sourceDiscovery);
   const allResults = lanes.flatMap((lane) => lane.results);
   const shownCount = filterSourceResults(allResults, filters).length;
   const localFiltersApplied = filters.type !== "all" || Boolean(filters.from || filters.to);
@@ -130,9 +149,10 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
     catch { setRetryError("The search could not restart. Try again or use a direct search link below."); }
     finally { setRetryPending(false); }
   };
-  if (!allResults.length && !lanes.some((lane) => lane.status?.requested)) return null;
+  if (!allResults.length && !excludedCount && !lanes.some((lane) => lane.status?.requested)) return null;
 
   return <div className={`source-results-workspace ${compact ? "is-compact" : ""} ${followup ? "is-followup" : ""}`}>
+    {excludedCount > 0 && <p className="source-results-trust"><strong>{excludedCount} {excludedCount === 1 ? "record excluded" : "records excluded"}.</strong> The reported metadata conflicts with a required source type, population, date, or method.</p>}
     {sourceDiscovery?.identity && sourceDiscovery.identity.status !== "matched" && <p className="source-identity-notice" role="status">{sourceDiscovery.identity.explanation || "The requested work has not been matched to its title and author."} Check the author and publication before using a related work in place of the original.</p>}
     {allResults.length > 0 && <div className="source-results-toolbar">
       <div className="source-results-summary"><strong>{shownCount} {shownCount === 1 ? "lead" : "leads"}{localFiltersApplied ? ` of ${allResults.length}` : ""}</strong><span>Filter only the retrieved leads below.</span></div>
@@ -148,7 +168,7 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
     </div>}
     {allResults.length > 0 && <p className="source-results-trust"><strong>Source records come from providers.</strong> AI guidance can hallucinate claims; topic-fit labels can also be wrong. <strong>Verify claims in the full source.</strong></p>}
     {retryError && <p className="source-provider-status" role="alert">{retryError}</p>}
-    {!allResults.length && <SourceEmptyState lanes={lanes} recovery={recovery} directQuery={directQuery} researchSpec={researchSpec} externalFilters={externalFilters} pending={retryPending} onRetry={onRerunInterpretation ? retry : null} onShowStrategy={onShowStrategy} onEditRequirements={onEditRequirements} onTrackSearch={onTrackSearch} />}
+    {!allResults.length && <SourceEmptyState excludedCount={excludedCount} lanes={lanes} recovery={recovery} directQuery={directQuery} researchSpec={researchSpec} externalFilters={externalFilters} pending={retryPending} onRetry={onRerunInterpretation ? retry : null} onShowStrategy={onShowStrategy} onEditRequirements={onEditRequirements} onTrackSearch={onTrackSearch} />}
     {evidenceNotice && <details className="source-record-details"><summary>About AI guidance &amp; evidence</summary><p className="source-results-trust">{evidenceNotice}</p></details>}
     {allResults.length > 0 && paginateSourceLanes(lanes, filters).map((lane) => {
       if (!lane.results.length && !lane.status?.requested && !lane.mergedResultCount) return null;
@@ -160,11 +180,11 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
       if (!lane.results.length && lane.mergedResultCount > 0) return <section className="source-merged-access-note" key={lane.id} aria-label="Open-access matches"><strong>Open-access links included</strong><p>{lane.mergedResultCount} open-access {lane.mergedResultCount === 1 ? "match is" : "matches are"} already included in Library sources. Open Details on those records for access options.{localFiltersApplied ? " Local filters may hide some records." : ""}</p>{OUTCOME_MESSAGES[outcome] && failed && <p>{OUTCOME_MESSAGES[outcome]}</p>}</section>;
       if (!lane.results.length) return <section className="source-merged-access-note" key={lane.id} aria-label={lane.label}><strong>{lane.label}: {failed ? "search incomplete" : "no additional sources"}</strong><p>{OUTCOME_MESSAGES[outcome] || "No results were reported for this collection."}</p>{failed && onRerunInterpretation && <button type="button" className="source-action-button" disabled={retryPending} onClick={() => retry({ kind: "retry", query: directQuery, researchSpec })}>{retryPending ? "Searching…" : "Retry source search"}</button>}</section>;
       return <section className={`source-result-lane ${lane.id}-lane`} key={lane.id} aria-label={lane.label}>
-        <div className="source-lane-heading"><div><h3>{lane.label}</h3><span>{lane.id === "open-access" ? "Locations reported as open access; verify version and license." : "ZSR and bibliographic records; check full-text access."}</span></div>{visible.length > 0 && <button type="button" className="source-export-button" onClick={() => { if (downloadRis(visible, { filename: `${lane.id}-source-leads` })) visible.forEach((result) => onSourceEvent?.("exported", { sourceId: result.doi || result.url || researchItemKey(result) })); }}>Export citations</button>}</div>
+        <div className="source-lane-heading"><div><h3>{lane.label}</h3><span>{lane.id === "open-access" ? "Locations reported as open access; verify version and license." : "ZSR and bibliographic records; check full-text access."}</span></div>{visible.length > 0 && <button type="button" className="source-export-button" onClick={() => { const exported = visible.map(exportRecord); if (downloadRis(exported, { filename: `${lane.id}-source-leads` })) exported.forEach((result) => onSourceEvent?.("exported", { sourceId: result.doi || result.url || researchItemKey(result) })); }}>Export citations</button>}</div>
         {OUTCOME_MESSAGES[outcome] && <p className="source-provider-status" role="status">{OUTCOME_MESSAGES[outcome]}</p>}
         {!visible.length ? <div className="source-empty-state" role="status"><p><strong>No leads match these display filters.</strong> The original search returned {lane.results.length} {lane.results.length === 1 ? "lead" : "leads"} in this group.</p><button type="button" onClick={resetFilters}>Clear filters</button></div> : <>
-          {first.length > 0 && <ul className="source-result-list">{first.map((result, index) => <SourceRow key={`${result.doi || result.url || result.title}-${index}`} result={result} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul>}
-          {more.length > 0 && <details className="source-more-results"><summary>Show {more.length}{first.length ? " more" : ""} {more.length === 1 ? "source" : "sources"}</summary><ul className="source-result-list">{more.map((result, index) => <SourceRow key={`${result.doi || result.url || result.title}-${index + first.length}`} result={result} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul></details>}
+          {first.length > 0 && <ul className="source-result-list">{first.map((result, index) => <SourceRow key={result.doi || result.url || result.id || `${result.title}-${index}`} result={result} selectedEdition={exportRecord(result)} onEditionChange={selectEdition} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul>}
+          {more.length > 0 && <details className="source-more-results"><summary>Show {more.length}{first.length ? " more" : ""} {more.length === 1 ? "source" : "sources"}</summary><ul className="source-result-list">{more.map((result, index) => <SourceRow key={result.doi || result.url || result.id || `${result.title}-${index + first.length}`} result={result} selectedEdition={exportRecord(result)} onEditionChange={selectEdition} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul></details>}
         </>}
       </section>;
     })}

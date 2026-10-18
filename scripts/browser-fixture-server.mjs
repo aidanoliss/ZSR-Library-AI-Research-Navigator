@@ -10,7 +10,7 @@ import { assessSourceRequirements } from "../src/sourceAssessment.js";
 const PROJECT_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const FIXTURE_TIME = "2026-09-15T12:00:00.000Z";
 const BODY_LIMIT = 131072;
-const TAG_RE = /\[fixture:(delay|error|empty|timeout|rate-limit|stream-retry)\]/gi;
+const TAG_RE = /\[fixture:(delay|error|empty|timeout|rate-limit|stream-retry|editions)\]/gi;
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".woff2": "font/woff2" };
 
 function fixtureControls(body) {
@@ -81,6 +81,12 @@ export function buildFixturePayload(body, origin = "http://127.0.0.1:3004") {
   const controls = fixtureControls(body);
   const empty = ["empty", "timeout", "rate-limit"].some((tag) => controls.has(tag));
   const liveResults = empty ? [] : fixtureSources(plan, origin, parsed.accessScope);
+  if (!empty && controls.has("editions")) {
+    const book = liveResults.find((record) => record.type === "book");
+    book.identityCheck = { status: "title-difference", provider: "Synthetic registry", registryTitle: "SYNTHETIC alternative title for warning test", detail: "Synthetic discrepancy for browser regression only.", checkedAt: FIXTURE_TIME, url: book.url };
+    book.edition = "First edition";
+    liveResults.push({ ...book, id: "synthetic-newer-edition", edition: "Second edition", date: "2025", publicationYear: 2025, url: `${origin}/__fixtures__/source/newer-book`, citation: { ...book.citation, year: 2025 }, identityCheck: null });
+  }
   const outcome = controls.has("timeout") ? "timeout" : controls.has("rate-limit") ? "rate_limited" : empty ? "empty" : "success";
   const lane = (scope) => {
     const requested = scope === "library" ? parsed.accessScope !== "open-access" : parsed.accessScope !== "library";

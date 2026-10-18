@@ -1129,7 +1129,9 @@ function articleTitleLike(query) {
   if (extractDoi(q) || extractPmid(q)) return true;
   if (/^".+"$/.test(q)) return true;
   if (/\b(?:article|paper|book)\s+(?:called|titled|named)\b/i.test(q)) return true;
-  if (/\b(?:19|20)\d{2}\b/.test(q) && /\b[A-Z][a-z'’-]+\s+[A-Z]{1,3}\b/.test(q)) return true;
+  // A year plus "War II" is not an author citation. Require an author-led
+  // bibliographic prefix instead of finding apparent initials anywhere.
+  if (/^[A-Z][a-z'’-]+,?\s+(?:[A-Z]\.?){1,3}(?=[\s.,;:(])/.test(q) && /\b(?:19|20)\d{2}\b/.test(q)) return true;
   return false;
 }
 
@@ -1369,7 +1371,11 @@ export function recommendResources(
       filters: [],
       expect: expectForResource(resource),
       caution: resource.notes,
-      nextStep: nextStepForResource(resource, q),
+      nextStep: effectiveModeId === "data" && ["icpsr", "statista"].includes(resource.id)
+        ? "Search the topic in this resource, then inspect the underlying dataset and codebook. Check the geographic unit (for example county rather than state), collection years, variables, sample and reuse terms. Coverage of this specific place is not confirmed."
+        : effectiveModeId === "primary" && ["special-collections", "digital-collections"].includes(resource.id)
+          ? "Search the topic or creator in collection descriptions and finding aids, then try each requested format separately. Check dates, provenance, who created the item and whose perspective it represents; ask Special Collections about undigitized material."
+          : nextStepForResource(resource, q),
     }))
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
 

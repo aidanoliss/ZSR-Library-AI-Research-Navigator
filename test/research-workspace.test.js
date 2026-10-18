@@ -32,7 +32,7 @@ test("saved research leads are deduplicated by kind and URL", () => {
   assert.equal(duplicate.trail[0].status, "promising");
 });
 
-test("search history records repeated searches as one updated entry", () => {
+test("search history preserves repeated searches as separate attempts", () => {
   const first = addSearchHistoryEntry(createResearchWorkspace(), {
     query: "cognitive offloading AND students",
     tool: "Google Scholar",
@@ -41,7 +41,7 @@ test("search history records repeated searches as one updated entry", () => {
     query: "cognitive offloading AND students",
     tool: "Google Scholar",
   }, 200);
-  assert.equal(repeated.searchHistory.length, 1);
+  assert.equal(repeated.searchHistory.length, 2);
   assert.equal(repeated.searchHistory[0].usedAt, 200);
 });
 
@@ -241,16 +241,14 @@ test("a full workspace rejects new saved items without evicting existing work", 
   assert.equal(duplicate.trail[99].notes, "Keep note 99");
 });
 
-test("a full search history permits repeats but rejects new queries without evicting notes", () => {
+test("a full search history rejects further attempts without evicting earlier notes", () => {
   let current = createResearchWorkspace();
   for (let index = 0; index < 100; index += 1) current = addSearchHistoryEntry(current, { query: `query ${index}`, tool: "Catalog", resultNote: `Keep result ${index}` }, index + 1);
   const before = structuredClone(current);
   assert.throws(() => addSearchHistoryEntry(current, { query: "New query", tool: "Catalog" }), (error) => error.code === "WORKSPACE_FULL" && /100 searches/.test(error.message));
   assert.deepEqual(current, before);
-  const repeated = addSearchHistoryEntry(current, { query: "query 0", tool: "Catalog" }, 1000);
-  assert.equal(repeated.searchHistory.length, 100);
-  assert.equal(repeated.searchHistory[0].resultNote, "Keep result 0");
-  assert.equal(repeated.searchHistory[0].usedAt, 1000);
+  assert.throws(() => addSearchHistoryEntry(current, { query: "query 0", tool: "Catalog" }, 1000), (error) => error.code === "WORKSPACE_FULL");
+  assert.deepEqual(current, before);
 });
 
 test("unsave removes just the chosen option and restoring retains notes and metadata", async () => {

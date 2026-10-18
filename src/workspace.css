@@ -147,3 +147,6 @@
   .research-workspace-drawer select { appearance: auto; background-image: none; }
   .research-workspace-drawer .research-workspace-tabs button.active { outline: 2px solid Highlight; }
 }
+
+.research-workspace-drawer .workspace-replay-search { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border: 1px solid #1b1b1b; border-radius: 10px; background: #1b1b1b; color: #fff; font: 600 .875rem/1.4 system-ui, sans-serif; cursor: pointer; }
+.research-workspace-drawer .workspace-replay-search:hover { background: #333; }

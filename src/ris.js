@@ -1,3 +1,5 @@
+import { sourceIdentityNotes } from "./researchWorkspace.js";
+
 /**
  * Provider-neutral RIS export for verified source-lead metadata.
  *
@@ -28,6 +30,7 @@ const FIELD_ORDER = Object.freeze([
   "SP",
   "EP",
   "PB",
+  "ET",
   "DO",
   "SN",
   "AN",
@@ -168,11 +171,13 @@ export function normalizeSourceLead(lead = {}) {
   if (issue) fields.IS = issue;
   Object.assign(fields, pageFields(lead.pages));
   if (publisher) fields.PB = publisher;
+  if (lead.edition) fields.ET = cleanValue(lead.edition);
   if (doi) fields.DO = doi;
   if (serialNumbers.length) fields.SN = serialNumbers;
   if (pmid) fields.AN = pmid;
   if (url) fields.UR = url;
-  if (provider) fields.N1 = `Metadata provider: ${provider}`;
+  const notes = [provider ? `Metadata provider: ${provider}` : "", ...sourceIdentityNotes(lead)].filter(Boolean);
+  if (notes.length) fields.N1 = notes.length === 1 ? notes[0] : notes;
 
   return fields;
 }
@@ -200,7 +205,7 @@ function leadKey(lead) {
   const authors = normalizeAuthors(lead?.authors ?? lead?.author).map(fingerprintPart).join("|");
   const date = fingerprintPart(firstValue(lead?.publicationYear, lead?.year, lead?.date, lead?.publicationDate));
   const container = fingerprintPart(firstValue(lead?.containerTitle, lead?.journalTitle, lead?.publicationTitle, lead?.journal));
-  return `metadata:${title}|${authors}|${date}|${container}`;
+  return `metadata:${title}|${authors}|${date}|${container}|${fingerprintPart(lead.edition)}`;
 }
 
 /** Keep the first copy of each selected source lead without merging metadata. */

@@ -1,0 +1,1460 @@
+{
+  "checkedAt": "2026-10-18T22:51:15.942Z",
+  "method": "Fresh public-provider smoke test of working-tree deterministic planner and source retrieval. No dotenv, AI requests, full text verification, or human relevance grades. Not production end-to-end and not an accuracy estimate.",
+  "cases": [
+    {
+      "query": "Peer-reviewed systematic reviews published since 2020 comparing online and in-person teaching for undergraduate students in the United States.",
+      "mode": "scholarly",
+      "researchSpec": {
+        "topic": "Peer-reviewed systematic reviews published since 2020 comparing online and in-person teaching for undergraduate students in the United States.",
+        "mode": "scholarly",
+        "disciplines": [
+          "education"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-online",
+            "preferredTerm": "online",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-2-in-person-teaching",
+            "preferredTerm": "in-person teaching",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-3-united-states",
+            "preferredTerm": "United States",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          }
+        ],
+        "comparison": {
+          "conceptIds": [
+            "parsed-1-online",
+            "parsed-2-in-person-teaching"
+          ],
+          "terms": [
+            "online",
+            "in-person teaching"
+          ]
+        },
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Peer-reviewed systematic reviews published since 2020 comparing online and in-person teaching for undergraduate students in the United States.",
+          "neutralQuestion": "What does research show about online and in-person teaching and United States among undergraduates?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [
+            "systematic review"
+          ],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": 2020,
+          "publicationYearTo": null,
+          "peerReviewed": true,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "undergraduates",
+          "geography": "United States",
+          "timePeriod": "",
+          "method": "systematic review",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-7ac26970"
+      },
+      "queries": [
+        "(online OR \"in-person teaching\") AND \"United States\" AND undergraduates AND (\"systematic review\" OR \"systematic reviews\")"
+      ],
+      "resources": [
+        {
+          "id": "eric",
+          "name": "ERIC",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=ERIC"
+        },
+        {
+          "id": "education-source",
+          "name": "Education Source",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=Education%20Source"
+        },
+        {
+          "id": "academic-search-premier",
+          "name": "Academic Search Premier",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=Academic%20Search%20Premier"
+        },
+        {
+          "id": "proquest-research-library",
+          "name": "ProQuest Research Library",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=ProQuest%20Research%20Library"
+        }
+      ],
+      "records": [
+        {
+          "title": "Developing an online learner satisfaction framework in higher education through a systematic review of research",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1186_s41239_022_00355_5&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1186/s41239-022-00355-5",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2022; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "meets",
+                "detail": "The provider abstract describes this work's method: “In this systematic review, we examine 98 articles which studied various aspects of online learner satisfaction.”. This has not been checked against the full text."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Supporting source · partial topic match",
+            "evidence": [
+              {
+                "concept": "online",
+                "field": "title",
+                "term": "online",
+                "excerpt": "Developing an online learner satisfaction framework in higher education through a systematic review of research"
+              },
+              {
+                "concept": "United States",
+                "field": "abstract",
+                "term": "United States",
+                "excerpt": "Among these 98 studies, the journal Internet and Higher Education published the highest number of articles ( n = 8), and the majority of studies were conducted in the United States ( n = 37)."
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "online",
+              "United States"
+            ],
+            "missingConcepts": [
+              "in-person teaching"
+            ],
+            "missingFacets": [
+              "undergraduates",
+              "United States",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions online; United States. Not found in the supplied metadata: in-person teaching. Facets not established: undergraduates; United States; population–geography relationship. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "metadataRank": {
+            "score": 2259,
+            "coverage": 0.6666666666666666,
+            "scopeCoverage": 0.2,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "title-matched",
+            "provider": "Crossref",
+            "doi": "10.1186/s41239-022-00355-5",
+            "registryTitle": "Developing an online learner satisfaction framework in higher education through a systematic review of research",
+            "url": "https://doi.org/10.1186%2Fs41239-022-00355-5",
+            "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+            "checkedAt": "2026-10-18T22:51:19.436Z"
+          }
+        },
+        {
+          "title": "The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1002_cl2_1339&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1002/cl2.1339",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2023; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "meets",
+                "detail": "The provider title identifies this work as a systematic review. Verify its methods in the source."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Supporting source · partial topic match",
+            "evidence": [
+              {
+                "concept": "online",
+                "field": "abstract",
+                "term": "online",
+                "excerpt": "Search Methods We identified relevant studies by searching MEDLINE (Ovid), APA PsycINFO, Education Resources Information Center (ERIC) as well as several more electronic databases, registries, search engines, websites, and online directories."
+              },
+              {
+                "concept": "United States",
+                "field": "abstract",
+                "term": "United States",
+                "excerpt": "Among these 45 studies identified, 16 (35.6%) were conducted in the United States, six studies in China, four studies in Taiwan, three in India, two studies each in Australia and Canada, followed by nine single studies from Brazil, German, Iran, Norway, South Korea, Spain, the United Kingdom, Saudi Arabia, and Turkey."
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "online",
+              "United States"
+            ],
+            "missingConcepts": [
+              "in-person teaching"
+            ],
+            "missingFacets": [
+              "undergraduates",
+              "United States",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions online; United States. Not found in the supplied metadata: in-person teaching. Facets not established: undergraduates; United States; population–geography relationship. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "metadataRank": {
+            "score": 2256,
+            "coverage": 0.6666666666666666,
+            "scopeCoverage": 0.2,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "unverified",
+            "detail": "A matching Crossref registry record was not available. This does not establish whether the source is real or false.",
+            "checkedAt": "2026-10-18T22:51:19.468Z"
+          }
+        },
+        {
+          "title": "Self-Compassion and Sexual Assault Victimization: A Systematic Review",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1177_15248380261476691&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1177/15248380261476691",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2026; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "meets",
+                "detail": "The provider title identifies this work as a systematic review. Verify its methods in the source."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Supporting source · partial topic match",
+            "evidence": [
+              {
+                "concept": "online",
+                "field": "abstract",
+                "term": "online",
+                "excerpt": "Samples were drawn primarily from the United States, Canada, and Western Europe and frequently relied on undergraduate or online convenience samples."
+              },
+              {
+                "concept": "United States",
+                "field": "abstract",
+                "term": "United States",
+                "excerpt": "Samples were drawn primarily from the United States, Canada, and Western Europe and frequently relied on undergraduate or online convenience samples."
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "online",
+              "United States"
+            ],
+            "missingConcepts": [
+              "in-person teaching"
+            ],
+            "missingFacets": [
+              "undergraduates",
+              "United States",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions online; United States. Not found in the supplied metadata: in-person teaching. Facets not established: undergraduates; United States; population–geography relationship. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "metadataRank": {
+            "score": 2256,
+            "coverage": 0.6666666666666666,
+            "scopeCoverage": 0.2,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "unverified",
+            "detail": "A matching Crossref registry record was not available. This does not establish whether the source is real or false.",
+            "checkedAt": "2026-10-18T22:51:19.473Z"
+          }
+        },
+        {
+          "title": "Scoping Review of Medical Students' Perceptions of the Field of Dermatology",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_2774498798&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1002/ski2.171",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2023; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "unverified",
+                "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient.",
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Supporting source · partial topic match",
+            "evidence": [
+              {
+                "concept": "online",
+                "field": "abstract",
+                "term": "online",
+                "excerpt": "Results A total of nine articles met inclusion criteria and eight are included in this review since one was not accessible online."
+              },
+              {
+                "concept": "United States",
+                "field": "abstract",
+                "term": "United States",
+                "excerpt": "Conclusions This review demonstrates the need to further investigate medical student perceptions of dermatology, particularly in the United States."
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "online",
+              "United States"
+            ],
+            "missingConcepts": [
+              "in-person teaching"
+            ],
+            "missingFacets": [
+              "undergraduates",
+              "United States",
+              "systematic review",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions online; United States. Not found in the supplied metadata: in-person teaching. Facets not established: undergraduates; United States; systematic review; population–geography relationship. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "metadataRank": {
+            "score": 2044,
+            "coverage": 0.6666666666666666,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "title-matched",
+            "provider": "Crossref",
+            "doi": "10.1002/ski2.171",
+            "registryTitle": "Scoping Review of Medical Students' Perceptions of the Field of Dermatology",
+            "url": "https://doi.org/10.1002%2Fski2.171",
+            "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+            "checkedAt": "2026-10-18T22:51:19.499Z"
+          }
+        },
+        {
+          "title": "German-speaking medical students on international electives: an analysis of popular elective destinations and disciplines",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2562565386&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1186/s12992-021-00742-z",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2021; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "unverified",
+                "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient.",
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (United States). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "The metadata does not establish that undergraduates and United States describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Supporting source · partial topic match",
+            "evidence": [
+              {
+                "concept": "online",
+                "field": "abstract",
+                "term": "online",
+                "excerpt": "In order to obtain analytical data that could assist medical elective framework development, we systematically reviewed the two largest German online databases cataloguing abroad elective testimonies."
+              },
+              {
+                "concept": "United States",
+                "field": "abstract",
+                "term": "United States",
+                "excerpt": "Interest in abroad electives in the United States (U.S.), a traditionally popular destination, was much lower than expected."
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "online",
+              "United States"
+            ],
+            "missingConcepts": [
+              "in-person teaching"
+            ],
+            "missingFacets": [
+              "undergraduates",
+              "United States",
+              "systematic review",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions online; United States. Not found in the supplied metadata: in-person teaching. Facets not established: undergraduates; United States; systematic review; population–geography relationship. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "metadataRank": {
+            "score": 2044,
+            "coverage": 0.6666666666666666,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "title-matched",
+            "provider": "Crossref",
+            "doi": "10.1186/s12992-021-00742-z",
+            "registryTitle": "German-speaking medical students on international electives: an analysis of popular elective destinations and disciplines",
+            "url": "https://doi.org/10.1186%2Fs12992-021-00742-z",
+            "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+            "checkedAt": "2026-10-18T22:51:19.566Z"
+          }
+        }
+      ],
+      "elapsedMs": 3584,
+      "outcomes": {
+        "library": [
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "(online OR \"in-person teaching\") AND \"United States\" AND undergraduates AND (\"systematic review\" OR \"systematic reviews\")",
+            "retrievedCount": 80,
+            "resultCount": 5
+          },
+          {
+            "provider": "Crossref",
+            "status": "empty",
+            "query": "(online OR \"in-person teaching\") AND \"United States\" AND undergraduates AND (\"systematic review\" OR \"systematic reviews\")",
+            "retrievedCount": 30,
+            "resultCount": 0,
+            "emptyReason": "no_eligible_records"
+          }
+        ],
+        "openAccess": []
+      }
+    },
+    {
+      "query": "Find peer-reviewed articles published since 2020 about women workers in Britain during World War II, 1939 to 1945.",
+      "mode": "scholarly",
+      "researchSpec": {
+        "topic": "Find peer-reviewed articles published since 2020 about women workers in Britain during World War II, 1939 to 1945.",
+        "mode": "scholarly",
+        "disciplines": [
+          "history-humanities"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-women-workers",
+            "preferredTerm": "women workers",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-2-britain",
+            "preferredTerm": "Britain",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "world-war-ii",
+            "preferredTerm": "World War II",
+            "synonyms": [
+              "Second World War",
+              "WWII"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Find peer-reviewed articles published since 2020 about women workers in Britain during World War II, 1939 to 1945.",
+          "neutralQuestion": "What does research show about women workers and Britain and World War II among women 1939 to 1945?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": [
+            "“1939 to 1945” describes the period being studied; it is not a publication-date limit. Check that each source covers this period."
+          ]
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": 2020,
+          "publicationYearTo": null,
+          "peerReviewed": true,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "women",
+          "geography": "Britain",
+          "timePeriod": "1939 to 1945",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-1e01fdcd"
+      },
+      "queries": [
+        "\"women workers\" AND Britain AND \"World War II\"",
+        "\"women workers\" AND Britain AND (\"World War II\" OR \"Second World War\" OR WWII)",
+        "\"women workers\" AND Britain AND \"Second World War\""
+      ],
+      "resources": [
+        {
+          "id": "historical-abstracts",
+          "name": "Historical Abstracts",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=Historical%20Abstracts"
+        },
+        {
+          "id": "jstor",
+          "name": "JSTOR",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=JSTOR"
+        },
+        {
+          "id": "project-muse",
+          "name": "Project MUSE",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=Project%20MUSE"
+        },
+        {
+          "id": "academic-search-premier",
+          "name": "Academic Search Premier",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=Academic%20Search%20Premier"
+        }
+      ],
+      "records": [
+        {
+          "title": "A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1080_09612025_2024_2373505&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/09612025.2024.2373505",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2025; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (women); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "meets",
+                "detail": "The provider title or study description places this work in the requested geography (Britain): “A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain”. Verify its coverage in the source."
+              },
+              {
+                "id": "study-period",
+                "label": "Period studied",
+                "status": "unverified",
+                "detail": "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "meets",
+                "detail": "A single provider passage links the requested population and place: “A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain”. Verify sampling and coverage in the full text."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (women); check the study's sample or scope.",
+              "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "women workers",
+                "field": "abstract",
+                "term": "women workers",
+                "excerpt": "Focusing on the National Union of Women Teachers (NUWT) and the National Association of Women Civil Servants (NAWCS), this article looks at activism and campaigning for married women workers after the abolition of the marriage bar in both teaching (1944) and the Civil Service (1946)."
+              },
+              {
+                "concept": "Britain",
+                "field": "title",
+                "term": "Britain",
+                "excerpt": "A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain"
+              },
+              {
+                "concept": "World War II",
+                "field": "title",
+                "term": "Second World War",
+                "excerpt": "A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "women workers",
+              "Britain",
+              "World War II"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "women",
+              "1939 to 1945"
+            ],
+            "explanation": "Metadata mentions women workers; Britain; World War II. Facets not established: women; 1939 to 1945. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 4637,
+            "coverage": 1,
+            "scopeCoverage": 0.5,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "title-matched",
+            "provider": "Crossref",
+            "doi": "10.1080/09612025.2024.2373505",
+            "registryTitle": "A new phase of activism: women’s occupational organisations and married women’s paid work after the Second World War in Britain",
+            "url": "https://doi.org/10.1080%2F09612025.2024.2373505",
+            "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+            "checkedAt": "2026-10-18T22:51:20.987Z"
+          }
+        },
+        {
+          "title": "Women and the ACT, 1933–59",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_oup_upso_upso_9781529206296_chapter_002&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1332/policypress/9781529206296.003.0002",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2020; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "unverified",
+                "detail": "Peer review is not established by the metadata; verify it with the journal or database."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (women); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (Britain). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "study-period",
+                "label": "Period studied",
+                "status": "unverified",
+                "detail": "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that women and Britain describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "Peer review is not established by the metadata; verify it with the journal or database.",
+              "The available metadata does not establish the requested population (women); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (Britain). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied.",
+              "The metadata does not establish that women and Britain describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "women workers",
+                "field": "abstract",
+                "term": "women workers",
+                "excerpt": "It argues that the ACT introduced agreements and adopted organisational practices which safeguarded men’s jobs in response to the influx of women workers into the film industry during the war."
+              },
+              {
+                "concept": "Britain",
+                "field": "abstract",
+                "term": "Britain",
+                "excerpt": "This chapter also surveys women’s activity in the ACT between 1933 and 1959 to consider the evidence for a feminist consciousness among women activists in the decades between Britain’s first and second-wave feminist movements."
+              },
+              {
+                "concept": "World War II",
+                "field": "abstract",
+                "term": "Second World War",
+                "excerpt": "Secondly, this chapter reflects upon the consolidation of the ACT’s power in the film industry and its gendered union structure during the Second World War."
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "women workers",
+              "Britain",
+              "World War II"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "women",
+              "Britain",
+              "1939 to 1945",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions women workers; Britain; World War II. Facets not established: women; Britain; 1939 to 1945; population–geography relationship. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 4095,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "unverified",
+            "detail": "A matching Crossref registry record was not available. This does not establish whether the source is real or false.",
+            "checkedAt": "2026-10-18T22:51:21.049Z"
+          }
+        },
+        {
+          "title": "Women and the ACT, 1933-59",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_bup_books_10_51952_9781529206302_ch001&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.51952/9781529206302.ch001",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2021; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "unverified",
+                "detail": "Peer review is not established by the metadata; verify it with the journal or database."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (women); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (Britain). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "study-period",
+                "label": "Period studied",
+                "status": "unverified",
+                "detail": "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that women and Britain describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "Peer review is not established by the metadata; verify it with the journal or database.",
+              "The available metadata does not establish the requested population (women); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (Britain). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied.",
+              "The metadata does not establish that women and Britain describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "women workers",
+                "field": "abstract",
+                "term": "women workers",
+                "excerpt": "It argues that the ACT introduced agreements and adopted organisational practices which safeguarded men's jobs in response to the influx of women workers into the film industry during the war."
+              },
+              {
+                "concept": "Britain",
+                "field": "abstract",
+                "term": "Britain",
+                "excerpt": "This chapter also surveys women's activity in the ACT between 1933 and 1959 to consider the evidence for a feminist consciousness among women activists in the decades between Britain's first and second-wave feminist movements."
+              },
+              {
+                "concept": "World War II",
+                "field": "abstract",
+                "term": "Second World War",
+                "excerpt": "Secondly, this chapter reflects upon the consolidation of the ACT's power in the film industry and its gendered union structure during the Second World War."
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "women workers",
+              "Britain",
+              "World War II"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "women",
+              "Britain",
+              "1939 to 1945",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions women workers; Britain; World War II. Facets not established: women; Britain; 1939 to 1945; population–geography relationship. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 4095,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "unverified",
+            "detail": "A matching Crossref registry record was not available. This does not establish whether the source is real or false.",
+            "checkedAt": "2026-10-18T22:51:20.979Z"
+          }
+        },
+        {
+          "title": "‘I think I was the only Chinese girl working there’: Race and gender in the chocolate factory",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_cambridge_corebooks_9781526118615_c5&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.7765/9781526118615.00013",
+          "sourceProvider": "ZSR discovery",
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2026; required 2020–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "unverified",
+                "detail": "Peer review is not established by the metadata; verify it with the journal or database."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (women); check the study's sample or scope."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "unverified",
+                "detail": "The metadata does not establish the requested study geography (Britain). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+              },
+              {
+                "id": "study-period",
+                "label": "Period studied",
+                "status": "unverified",
+                "detail": "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied."
+              },
+              {
+                "id": "population-geography",
+                "label": "Population and place together",
+                "status": "unverified",
+                "detail": "The metadata does not establish that women and Britain describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+              }
+            ],
+            "issues": [
+              "Peer review is not established by the metadata; verify it with the journal or database.",
+              "The available metadata does not establish the requested population (women); check the study's sample or scope.",
+              "The metadata does not establish the requested study geography (Britain). Background mentions, affiliations, and subject tags alone do not confirm coverage.",
+              "Confirm coverage of the requested subject period (1939 to 1945). Publication date alone does not establish the period studied.",
+              "The metadata does not establish that women and Britain describe the same study group. Separate mentions, countries, or substudies do not confirm this relationship."
+            ]
+          },
+          "matchExplanation": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "women workers",
+                "field": "abstract",
+                "term": "women workers",
+                "excerpt": "This chapter focuses on the experiences of women workers on the shopfloor of the Rowntree factory in York."
+              },
+              {
+                "concept": "Britain",
+                "field": "abstract",
+                "term": "Britain",
+                "excerpt": "The work of Nellie, Carmen and Julie illustrates the ways in which the Rowntree firm is implicated in imperial and postcolonial histories, and in the wider story of race relations in Britain."
+              },
+              {
+                "concept": "World War II",
+                "field": "abstract",
+                "term": "Second World War",
+                "excerpt": "The first, Nellie, was born in Liverpool to Chinese parents, and moved to York during the Second World War."
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "women workers",
+              "Britain",
+              "World War II"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "women",
+              "Britain",
+              "1939 to 1945",
+              "population–geography relationship"
+            ],
+            "explanation": "Metadata mentions women workers; Britain; World War II. Facets not established: women; Britain; 1939 to 1945; population–geography relationship. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 4095,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "identityCheck": {
+            "status": "title-difference",
+            "provider": "Crossref",
+            "doi": "10.7765/9781526118615.00013",
+            "registryTitle": "‘I think I was the only Chinese girl working there’",
+            "url": "https://doi.org/10.7765%2F9781526118615.00013",
+            "detail": "The provider title differs from the DOI registry title. This can be a title variant or a metadata error; check the original record before citing.",
+            "checkedAt": "2026-10-18T22:51:21.016Z"
+          }
+        }
+      ],
+      "elapsedMs": 1463,
+      "outcomes": {
+        "library": [
+          {
+            "provider": "Primo public",
+            "status": "empty",
+            "query": "\"women workers\" AND Britain AND \"World War II\"",
+            "retrievedCount": 15,
+            "resultCount": 0,
+            "emptyReason": "no_eligible_records"
+          },
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "\"women workers\" AND Britain AND \"Second World War\"",
+            "retrievedCount": 35,
+            "resultCount": 4
+          },
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "\"women workers\" AND Britain AND (\"World War II\" OR \"Second World War\" OR WWII)",
+            "retrievedCount": 40,
+            "resultCount": 4
+          },
+          {
+            "provider": "Crossref",
+            "status": "empty",
+            "query": "\"women workers\" AND Britain AND \"World War II\"",
+            "retrievedCount": 30,
+            "resultCount": 0,
+            "emptyReason": "no_eligible_records"
+          },
+          {
+            "provider": "Crossref",
+            "status": "empty",
+            "query": "\"women workers\" AND Britain AND (\"World War II\" OR \"Second World War\" OR WWII)",
+            "retrievedCount": 30,
+            "resultCount": 0,
+            "emptyReason": "no_eligible_records"
+          }
+        ],
+        "openAccess": []
+      }
+    },
+    {
+      "query": "Find primary datasets on housing affordability and eviction in Forsyth County, North Carolina from 2015 to 2024.",
+      "mode": "data",
+      "researchSpec": {
+        "topic": "Find primary datasets on housing affordability and eviction in Forsyth County, North Carolina from 2015 to 2024.",
+        "mode": "data",
+        "disciplines": [
+          "interdisciplinary"
+        ],
+        "concepts": [
+          {
+            "id": "dataset",
+            "preferredTerm": "dataset",
+            "synonyms": [
+              "data set",
+              "survey data"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "parsed-2-housing-affordability",
+            "preferredTerm": "housing affordability",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-3-eviction",
+            "preferredTerm": "eviction",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-4-forsyth-county-north-carolina",
+            "preferredTerm": "Forsyth County North Carolina",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Find primary datasets on housing affordability and eviction in Forsyth County, North Carolina from 2015 to 2024.",
+          "neutralQuestion": "What does research show about dataset and housing affordability and eviction and Forsyth County North Carolina 2015 to 2024?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": [
+            "“from 2015 to 2024” describes the period being studied; it is not a publication-date limit. Check that each source covers this period."
+          ]
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "North Carolina",
+          "timePeriod": "2015 to 2024",
+          "method": "",
+          "documentType": "Data and statistics"
+        },
+        "sourceContract": {
+          "id": "data",
+          "label": "Data and statistics",
+          "requiredKinds": [
+            "dataset",
+            "statistics"
+          ],
+          "allowedKinds": [
+            "dataset",
+            "statistics",
+            "market-report"
+          ],
+          "excludedKinds": [
+            "news",
+            "book"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-15e99f65"
+      },
+      "queries": [
+        "dataset AND \"housing affordability\" AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\"",
+        "(dataset OR \"data set\" OR \"survey data\") AND \"housing affordability\" AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\"",
+        "\"data set\" AND \"housing affordability\" AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\""
+      ],
+      "resources": [
+        {
+          "id": "icpsr",
+          "name": "ICPSR",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=ICPSR"
+        },
+        {
+          "id": "statista",
+          "name": "Statista",
+          "url": "https://guides.zsr.wfu.edu/az.php?q=Statista"
+        }
+      ],
+      "records": [],
+      "elapsedMs": 357,
+      "outcomes": {
+        "library": [
+          {
+            "provider": "Primo public",
+            "status": "empty",
+            "query": "(dataset OR \"data set\" OR \"survey data\") AND \"housing affordability\" AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\"",
+            "retrievedCount": 0,
+            "resultCount": 0,
+            "emptyReason": "no_records"
+          },
+          {
+            "provider": "Primo public",
+            "status": "empty",
+            "query": "dataset AND \"housing affordability\" AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\"",
+            "retrievedCount": 0,
+            "resultCount": 0,
+            "emptyReason": "no_records"
+          },
+          {
+            "provider": "Primo public",
+            "status": "empty",
+            "query": "\"data set\" AND \"housing affordability\" AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\"",
+            "retrievedCount": 0,
+            "resultCount": 0,
+            "emptyReason": "no_records"
+          },
+          {
+            "provider": "Primo public",
+            "status": "empty",
+            "query": "dataset AND (housing AND affordability) AND eviction AND (Forsyth AND County AND North AND Carolina) AND \"North Carolina\"",
+            "retrievedCount": 0,
+            "resultCount": 0,
+            "emptyReason": "no_records"
+          }
+        ],
+        "openAccess": []
+      }
+    }
+  ]
+}

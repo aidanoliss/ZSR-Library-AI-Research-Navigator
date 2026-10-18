@@ -1,3 +1,5 @@
+import { groupRelatedSourceResults } from "./sourceDedup.js";
+
 export const RESEARCH_ITEM_STATUSES = [
   { id: "promising", label: "Promising" },
   { id: "opened", label: "Opened" },
@@ -109,6 +111,40 @@ function boundedMetadata(value, depth = 0) {
   return Object.fromEntries(allowed.filter((key) => value[key] !== undefined).map((key) => [key, key === "url" ? safeUrl(value[key]) : boundedMetadata(value[key], depth + 1)]));
 }
 
+const IDENTITY_STATUSES = new Set(["unverified", "title-matched", "title-difference"]);
+
+/** Registry observations are evidence, not a verification of the source's claims. */
+export function normalizeIdentityCheck(value, { imported = false } = {}) {
+  if (!plainObject(value)) return undefined;
+  const observedStatus = IDENTITY_STATUSES.has(value.observedStatus) ? value.observedStatus
+    : IDENTITY_STATUSES.has(value.status) ? value.status : "unverified";
+  const historical = imported || value.historical === true;
+  const result = { status: historical ? "unverified" : observedStatus };
+  for (const key of ["provider", "doi", "registryTitle", "detail", "checkedAt"]) {
+    if (typeof value[key] === "string") result[key] = textValue(value[key], key === "registryTitle" ? 1000 : 2000);
+  }
+  if (value.url) result.url = safeUrl(value.url);
+  if (historical) { result.historical = true; result.observedStatus = observedStatus; }
+  return result;
+}
+
+export function sourceIdentityNotes(source, { imported = false } = {}) {
+  const check = normalizeIdentityCheck(source?.identityCheck, { imported });
+  if (!check) return [];
+  const status = check.observedStatus || check.status;
+  const lines = [status === "title-difference" ? "Citation details need checking: provider and DOI registry titles differ."
+    : status === "title-matched" ? "DOI/title matched registry metadata; findings and other citation fields were not verified."
+      : "DOI identity check unverified; no conclusion about source validity can be drawn."];
+  if (check.historical) lines.push("Imported historical check; not currently verified. Recheck the original record before citing.");
+  if (check.registryTitle) lines.push(`Registry title: ${check.registryTitle}`);
+  if (check.provider) lines.push(`Identity-check provider: ${check.provider}`);
+  if (check.doi) lines.push(`Checked DOI: ${check.doi}`);
+  if (check.checkedAt) lines.push(`Identity checked at: ${check.checkedAt}`);
+  if (check.url) lines.push(`Registry record: ${check.url}`);
+  if (check.detail) lines.push(check.detail);
+  return lines;
+}
+
 export function normalizeSourceRecord(value) {
   if (!plainObject(value)) return {};
   const record = {};
@@ -127,12 +163,14 @@ export function normalizeSourceRecord(value) {
     if (!plainObject(value[field])) continue;
     record[field] = Object.fromEntries(allowed.filter((key) => value[field][key] !== undefined).map((key) => [key, /url$/i.test(key) ? safeUrl(value[field][key]) : boundedMetadata(value[field][key])]));
   }
+  if (value.identityCheck) record.identityCheck = normalizeIdentityCheck(value.identityCheck);
   return record;
 }
 
 function normalizeTrailItem(item, index = 0) {
   if (!plainObject(item) || !textValue(item.title || item.query).trim()) return null;
   const sourceRecord = normalizeSourceRecord(item.sourceRecord || item);
+  if (item.imported && sourceRecord.identityCheck) sourceRecord.identityCheck = normalizeIdentityCheck(sourceRecord.identityCheck, { imported: true });
   const kind = ITEM_KINDS.has(item.kind) ? item.kind : "lead";
   return {
     id: textValue(item.id || `trail-restored-${index}`, 160),
@@ -155,18 +193,52 @@ function normalizeAssignment(value) {
   return assignment;
 }
 
+// Preserve the complete resolved criteria, with a bounded JSON-only snapshot.
+const SPEC_FIELDS = ["topic", "mode", "disciplines", "concepts", "comparison", "knownItem", "searchIntent", "methodRequirements", "sourceRequirements", "facets", "sourceContract", "safety", "configVersion", "planHash"];
+function snapshot(value, depth = 0) {
+  if (depth > 5) return undefined;
+  if (typeof value === "string") return textValue(value, 4000);
+  if (typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value)) || value === null) return value;
+  if (Array.isArray(value)) return value.slice(0, 40).map((item) => snapshot(item, depth + 1)).filter((item) => item !== undefined);
+  if (!plainObject(value)) return undefined;
+  return Object.fromEntries(Object.entries(value).filter(([key]) => !["__proto__", "constructor", "prototype"].includes(key)).slice(0, 50)
+    .map(([key, item]) => [textValue(key, 80), snapshot(item, depth + 1)]).filter(([, item]) => item !== undefined));
+}
+function timestamp(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 && number <= 8640000000000000 ? number : fallback;
+}
 function normalizeHistoryItem(entry, index) {
-  if (!plainObject(entry) || !textValue(entry.query).trim()) return null;
-  const query = textValue(entry.query).trim();
-  const tool = textValue(entry.tool || "Search", 200).trim();
-  const url = safeUrl(entry.url);
-  return {
-    id: textValue(entry.id || `search-restored-${index}`, 160),
-    key: `${query.toLowerCase()}|${tool.toLowerCase()}|${url.toLowerCase()}`,
-    query, tool, url,
-    resultNote: textValue(entry.resultNote),
-    usedAt: Number.isFinite(Number(entry.usedAt)) ? Number(entry.usedAt) : 0,
+  if (!plainObject(entry) || !textValue(entry.query || entry.originalRequest).trim()) return null;
+  const query = textValue(entry.query || entry.originalRequest).trim();
+  const id = textValue(entry.id || `search-restored-${index}`, 160);
+  const kind = ["search-run", "manual-search", "opened-resource", "legacy-activity"].includes(entry.kind) ? entry.kind : "legacy-activity";
+  const record = {
+    id, key: id, kind, query,
+    tool: textValue(entry.tool || (kind === "search-run" ? "Navigator" : "Search"), 200).trim(),
+    url: safeUrl(entry.url), resultNote: textValue(entry.resultNote),
+    usedAt: timestamp(entry.usedAt),
   };
+  if (kind === "search-run") {
+    record.originalRequest = textValue(entry.originalRequest || query);
+    record.searchConfig = plainObject(entry.searchConfig) ? Object.fromEntries(["accessScope", "subjectFocusId", "responseStyle"].filter((key) => typeof entry.searchConfig[key] === "string").map((key) => [key, textValue(entry.searchConfig[key], 160)])) : {};
+    record.queries = Array.isArray(entry.queries) ? entry.queries.slice(0, 40).map((item) => typeof item === "string"
+      ? { query: textValue(item), provider: "", dialect: "" }
+      : { query: textValue(item?.query), provider: textValue(item?.provider, 200), dialect: textValue(item?.dialect, 200) }).filter((item) => item.query) : [];
+    record.researchSpec = plainObject(entry.researchSpec) ? Object.fromEntries(SPEC_FIELDS.filter((key) => entry.researchSpec[key] !== undefined).map((key) => [key, snapshot(entry.researchSpec[key])])) : {};
+    record.providers = Array.isArray(entry.providers) ? entry.providers.slice(0, 40).map((item) => ({
+      id: textValue(item?.id || item?.provider, 200), status: textValue(item?.status, 120),
+      count: Number.isInteger(item?.count) && item.count >= 0 ? item.count : null,
+      lane: textValue(item?.lane, 200), query: textValue(item?.query),
+    })) : [];
+    record.runStatus = textValue(entry.runStatus || "unknown", 80);
+    record.resultCount = Number.isInteger(entry.resultCount) && entry.resultCount >= 0 ? entry.resultCount : null;
+    record.releaseId = textValue(entry.releaseId, 160);
+    record.configVersion = textValue(entry.configVersion || record.researchSpec.configVersion, 160);
+    record.startedAt = timestamp(entry.startedAt, record.usedAt);
+    record.completedAt = timestamp(entry.completedAt, record.usedAt);
+  }
+  return record;
 }
 
 function uniqueBy(items, keyFor) {
@@ -185,7 +257,7 @@ export function normalizeResearchWorkspace(value) {
   return {
     assignment: normalizeAssignment(value?.assignment),
     trail: uniqueBy(uniqueBy(trail, researchItemKey), (item) => item.id),
-    searchHistory: uniqueBy(uniqueBy(searchHistory, (item) => item.key), (item) => item.id),
+    searchHistory: uniqueBy(searchHistory, (item) => item.id),
   };
 }
 
@@ -235,15 +307,21 @@ export function saveSourceNotes(workspace, item, notes, now = Date.now()) {
   return addResearchItem(current, { ...item, notes: boundedNotes }, now);
 }
 
+/** Each attempt is a separate observation; never replace an earlier run's notes. */
 export function addSearchHistoryEntry(workspace, entry, now = Date.now()) {
   const current = normalizeResearchWorkspace(workspace);
-  const next = normalizeHistoryItem({ ...entry, usedAt: now }, current.searchHistory.length);
+  const baseId = textValue(entry.id || `search-${now}-${current.searchHistory.length}`, 140);
+  let id = baseId;
+  let suffix = 1;
+  while (current.searchHistory.some((item) => item.id === id)) id = `${baseId}-${suffix++}`;
+  const next = normalizeHistoryItem({ ...entry, id, kind: entry.kind || "manual-search", usedAt: now }, current.searchHistory.length);
   if (!next) return current;
-  const existing = current.searchHistory.find((item) => item.key === next.key);
-  if (!existing && current.searchHistory.length >= WORKSPACE_MAX_ITEMS) throw Object.assign(new Error("Your workspace already has 100 searches. Remove an unused search or start a new chat before recording another."), { code: "WORKSPACE_FULL" });
-  next.id = existing?.id || `search-${now}-${current.searchHistory.length}`;
-  next.resultNote = existing?.resultNote || next.resultNote;
-  return { ...current, searchHistory: [next, ...current.searchHistory.filter((item) => item.id !== next.id)] };
+  if (current.searchHistory.length >= WORKSPACE_MAX_ITEMS) throw Object.assign(new Error("Your workspace already has 100 searches. Export a backup, then remove an unused activity or start a new chat before recording another."), { code: "WORKSPACE_FULL" });
+  return { ...current, searchHistory: [next, ...current.searchHistory] };
+}
+
+export function addSearchRun(workspace, entry, now = Date.now()) {
+  return addSearchHistoryEntry(workspace, { ...entry, kind: "search-run", tool: "Navigator" }, now);
 }
 
 export function isSavedSource(item) {
@@ -251,13 +329,45 @@ export function isSavedSource(item) {
 }
 
 export function sourceForResearchItem(item) {
-  return { ...normalizeSourceRecord(item?.sourceRecord || item), title: textValue(item?.title), url: safeUrl(item?.url) };
+  const source = { ...normalizeSourceRecord(item?.sourceRecord || item), title: textValue(item?.title), url: safeUrl(item?.url) };
+  if (source.identityCheck && item?.imported) source.identityCheck = normalizeIdentityCheck(source.identityCheck, { imported: true });
+  return source;
 }
 
-export function savedSourceIdentity(item) {
+function savedRecordIdentity(item) {
   const source = sourceForResearchItem(item);
   const doi = textValue(source.doi || source.citation?.doi).replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, "").toLowerCase().trim();
   return doi ? `doi:${doi}` : `record:${safeUrl(item.url).replace(/\/$/, "").toLowerCase() || item.title.toLowerCase()}`;
+}
+
+/** Counting identity only. Separate editions remain separate saved/citable records. */
+export function savedSourceIdentityMap(peers = []) {
+  const authorText = (value) => typeof value === "string" ? value : value && typeof value === "object"
+    ? value.name || value.displayName || [value.given || value.givenName, value.family || value.familyName].filter(Boolean).join(" ") : "";
+  const records = peers.filter(isSavedSource).map((candidate) => {
+    const source = sourceForResearchItem(candidate);
+    const authors = source.authors || source.citation?.authors || [];
+    return {
+      ...source,
+      type: ["book", "book-chapter"].includes(source.sourceKind) ? source.sourceKind : source.type,
+      author: authorText(source.author),
+      authors: (Array.isArray(authors) ? authors : [authors]).map(authorText).filter(Boolean),
+      savedRecordKey: researchItemKey(candidate),
+      countingKey: savedRecordIdentity(candidate),
+    };
+  });
+  const identities = new Map();
+  for (const group of groupRelatedSourceResults(records)) {
+    const versions = [group, ...(group.relatedEditions || [])];
+    const id = versions.length > 1 ? `possible-work:${versions.map((record) => record.countingKey).sort().join("|")}` : group.countingKey;
+    for (const record of versions) identities.set(record.savedRecordKey, id);
+  }
+  return identities;
+}
+
+export function savedSourceIdentity(item, peers = []) {
+  const identities = peers instanceof Map ? peers : savedSourceIdentityMap(peers);
+  return identities.get(researchItemKey(item)) || savedRecordIdentity(item);
 }
 
 function validatePortableValue(value, depth = 0, field = "workspace") {
@@ -308,7 +418,7 @@ export function parseWorkspaceImport(json) {
   for (const item of value.searchHistory) if (!plainObject(item) || typeof item.query !== "string" || !item.query.trim() || typeof item.id !== "string" || !item.id) throw new Error("Every saved search must include an ID and search text.");
   const workspace = normalizeResearchWorkspace(value);
   workspace.assignment.enabled = false; // An imported file cannot opt the student into sending its assignment to AI.
-  workspace.trail = workspace.trail.map((item) => ({ ...item, imported: true }));
+  workspace.trail = workspace.trail.map((item) => normalizeTrailItem({ ...item, imported: true }));
   return { workspace, topic: textValue(payload.topic, 1000) };
 }
 
@@ -324,8 +434,8 @@ export function mergeWorkspaceImport(workspace, imported, now = Date.now()) {
   const assignment = hasBrief ? current.assignment : { ...incoming.assignment, enabled: false };
   const merged = {
     assignment,
-    trail: [...current.trail, ...addedItems.map((item, index) => ({ ...item, id: `import-${now}-${index}`, imported: true }))],
-    searchHistory: [...current.searchHistory, ...addedSearches.map((entry, index) => ({ ...entry, id: `import-search-${now}-${index}` }))],
+    trail: [...current.trail, ...addedItems.map((item, index) => normalizeTrailItem({ ...item, id: `import-${now}-${index}`, imported: true }))],
+    searchHistory: [...current.searchHistory, ...addedSearches.map((entry, index) => ({ ...entry, id: entry.id }))],
   };
   return { workspace: merged, addedItems: addedItems.length, addedSearches: addedSearches.length, skippedDuplicates: incoming.trail.length + incoming.searchHistory.length - addedItems.length - addedSearches.length, keptExistingBrief: hasBrief };
 }
@@ -363,6 +473,9 @@ export function workspaceToMarkdown(workspace, topic = "Research topic") {
       const source = sourceForResearchItem(item);
       const provider = source.sourceProvider || source.provenance?.provider;
       if (provider) lines.push(`  - Metadata provider: ${provider}${item.imported ? " (imported; recheck in the provider record)" : ""}`);
+      for (const note of sourceIdentityNotes(source, { imported: item.imported })) lines.push(`  - ${note}`);
+      if (source.edition) lines.push(`  - Edition: ${source.edition}`);
+      if (source.isbn) lines.push(`  - ISBN: ${source.isbn}`);
       if (source.doi) lines.push(`  - DOI: ${source.doi}`);
       if (source.date || source.year || source.publicationYear) lines.push(`  - Publication date: ${source.date || source.year || source.publicationYear}`);
       if (source.openAccess?.license) lines.push(`  - Provider-reported source license: ${source.openAccess.license}`);
@@ -371,13 +484,25 @@ export function workspaceToMarkdown(workspace, topic = "Research topic") {
     lines.push("");
   }
 
-  lines.push("## Searches tried", "");
-  if (!current.searchHistory.length) {
-    lines.push("No searches recorded yet.", "");
-  } else {
-    for (const entry of current.searchHistory) {
+  for (const [heading, kinds] of [["Search runs", ["search-run"]], ["Searches recorded manually", ["manual-search"]], ["Opened resources", ["opened-resource"]], ["Earlier activity (type not recorded)", ["legacy-activity"]]]) {
+    const entries = current.searchHistory.filter((item) => kinds.includes(item.kind));
+    if (!entries.length) continue;
+    lines.push(`## ${heading}`, "");
+    for (const entry of entries) {
       lines.push(`- \`${entry.query}\` in ${entry.tool}`);
+      if (entry.url) lines.push(`  - Link: ${entry.url}`);
+      if (entry.usedAt) lines.push(`  - Recorded at: ${new Date(entry.usedAt).toISOString()}`);
       if (entry.resultNote) lines.push(`  - Result note: ${entry.resultNote}`);
+      if (entry.kind === "search-run") {
+        lines.push(`  - Original request: ${entry.originalRequest}`, `  - Result count: ${entry.resultCount ?? "not recorded"}`,
+          `  - Run outcome: ${entry.runStatus || "not recorded"}`,
+          `  - Release: ${entry.releaseId || "not recorded"}; configuration: ${entry.configVersion || "not recorded"}`);
+        if (Object.keys(entry.searchConfig || {}).length) lines.push(`  - Search settings: ${JSON.stringify(entry.searchConfig)}`);
+        for (const query of entry.queries) lines.push(`  - Executed query (${query.provider || "provider not recorded"}; ${query.dialect || "dialect not recorded"}): ${query.query}`);
+        for (const provider of entry.providers) lines.push(`  - Provider: ${provider.id}; lane: ${provider.lane || "not recorded"}; outcome: ${provider.status}; records: ${provider.count ?? "not recorded"}`);
+        lines.push(`  - Started: ${new Date(entry.startedAt).toISOString()}; completed: ${new Date(entry.completedAt).toISOString()}`,
+          `  - Resolved criteria: ${JSON.stringify(entry.researchSpec)}`, "  - Rerunning these criteria may return different records as provider indexes change.");
+      }
     }
     lines.push("");
   }

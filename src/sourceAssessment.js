@@ -1,5 +1,5 @@
 import { SOURCE_KINDS, SOURCE_MODE_CONTRACTS } from "../config/resourceCapabilities.js";
-import { sourceFormatDetailCheck, sourceMethodEvidence, sourcePopulationCheck, sourcePeriodCheck, sourceGeographyCheck } from "./sourceMetadataChecks.js";
+import { sourceFormatDetailCheck, sourceMethodEvidence, sourcePopulationCheck, sourcePeriodCheck, sourceGeographyCheck, sourcePopulationGeographyCheck } from "./sourceMetadataChecks.js";
 
 /** Metadata checks only: neither an article type nor a DOI proves peer review. */
 export function sourcePublicationYear(source = {}) {
@@ -66,6 +66,8 @@ export function assessSourceRequirements(source = {}, specOrRequirements = {}) {
     if (population) checks.push(population);
     if (geography) checks.push(geography);
     if (period) checks.push(period);
+    const populationGeography = sourcePopulationGeographyCheck(source, specOrRequirements.facets?.population, specOrRequirements.facets?.geography);
+    if (populationGeography) checks.push(populationGeography);
   }
   const status = checks.some((check) => check.status === "mismatch") ? "mismatch" : checks.some((check) => check.status === "unverified") ? "unverified" : "meets";
   return { status, checks, issues: checks.filter((check) => check.status !== "meets").map((check) => check.detail) };

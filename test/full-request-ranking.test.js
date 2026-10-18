@@ -8,7 +8,7 @@ const base = {type:'article',sourceKind:'scholarly-article'};
 const spec = {mode:'scholarly',concepts:[{id:'sleep',preferredTerm:'sleep'},{id:'attention',preferredTerm:'attention'}],facets:{population:'undergraduates',geography:'Canada'},methodRequirements:{include:['randomized controlled trial'],exclude:[]}};
 const checked = (source,id) => assessSourceRequirements(source,spec).checks.find(c=>c.id===id);
 test('complete request evidence outranks title keyword density and unknown scope',()=>{
-  const complete={...base,doi:'10.9999/complete',title:'An experimental investigation',abstractText:'This study examines sleep and attention in Canada. We recruited 120 undergraduates. We conducted a randomized controlled trial.'};
+  const complete={...base,doi:'10.9999/complete',title:'An experimental investigation',abstractText:'This study examines sleep and attention in Canada. We recruited 120 undergraduates in Canada. We conducted a randomized controlled trial.'};
   const partial={...base,doi:'10.9999/partial',title:'Sleep and attention in Canadian university students: a randomized controlled trial',abstractText:'This study examines sleep and attention in Canada. We recruited 120 university students. We conducted a randomized controlled trial.'};
   const keyword={...base,doi:'10.9999/keywords',title:'Sleep and attention: Canada, undergraduates and randomized controlled trials',abstractText:'Previous studies recruited undergraduates in Canada. This paper discusses future research.'};
   const rows=rankSourceResults([keyword,partial,complete],spec);

@@ -51,6 +51,15 @@ export function buildSearchRecovery(researchSpec, { outcomes = {}, resultCount =
     buttonLabel: "Retry source search",
     explanation: "A source provider did not complete its search. This does not establish that no relevant sources exist.",
   };
+  // Bibliographic APIs do not comprehensively index datasets or archival
+  // finding aids. Keep the request intact and route to the appropriate tools.
+  if (["data", "primary"].includes(researchSpec.mode)) return {
+    kind: "manual", reason, query, researchSpec, buttonLabel: "Edit search", preservedRequirements,
+    explanation: researchSpec.mode === "data"
+      ? "No dataset has been confirmed for this request. Use the recommended data resources and ZSR Research Guides to locate a dataset or its original publisher. Check the requested place, years, variables and codebook. A catalog's empty result does not establish that the data does not exist."
+      : "No archival item has been confirmed for this request. Use ZSR Special Collections and Digital Collections below; search collection descriptions or finding aids, and try the requested formats separately. Ask Special Collections about undigitized holdings. An empty catalog search does not establish that these sources do not exist.",
+    changes: ["Keep the complete request; switch from bibliographic discovery to the recommended specialized resources. Share the research question and attempted searches with a librarian if coverage remains unclear."],
+  };
   const optional = (researchSpec.concepts || []).filter((concept) => concept.required === false);
   const expandedSpec = { ...researchSpec, searchExpansion: "full-synonyms" };
   const expandedQuery = sourceQueryVariants(expandedSpec)[0] || "";

@@ -169,10 +169,12 @@ export function assessSourceRelevance(source, researchSpec) {
   const comparisonTerms = researchSpec?.comparison?.terms || [];
   const isComparisonSide = (concept) => comparisonIds.includes(concept.id) || comparisonTerms.includes(concept.preferredTerm);
   const anchors = required.filter((concept) => !isComparisonSide(concept));
-  const anchorMatch = anchors.length > 0 && anchors.every((concept) => matched.includes(concept));
+  const anchorMatch = anchors.every((concept) => matched.includes(concept));
   const matchedSides = matched.filter(isComparisonSide).length;
-  // Partial comparisons remain explicitly labeled; incomplete non-comparison topics fail closed.
-  const partialComparison = comparisonTerms.length >= 2 && anchorMatch && missing.length > 0;
+  // A shared location, population, or method is not topical evidence. Retain
+  // one-sided comparison leads only when an actual comparison arm and every
+  // independent topic anchor match; zero-arm records fail closed.
+  const partialComparison = comparisonTerms.length >= 2 && matchedSides > 0 && anchorMatch && missing.length > 0;
   const topicStatus = !required.length ? "unverified" : !missing.length ? "meets" : partialComparison ? "partial" : "mismatch";
   const relationship = comparisonRelationship(fields, researchSpec, required);
   const category = comparisonTerms.length >= 2 && !missing.length && relationship?.status === "comparison-indicated" ? "direct-comparison"
@@ -193,6 +195,8 @@ export function assessSourceRelevance(source, researchSpec) {
     const check = assessment.checks.find((item) => item.id === checkId);
     return check ? check.status !== "meets" : !fields.some(({ words }) => termMatches(term, words));
   }).map(({ term }) => term))];
+  const relationshipCheck = assessment.checks.find((check) => check.id === "population-geography");
+  if (relationshipCheck && relationshipCheck.status !== "meets") missingFacets.push("population–geography relationship");
   const status = topicStatus === "meets" && (missingFacets.length || (relationship && relationship.status !== "comparison-indicated")) ? "partial" : topicStatus;
   const scopeLabel = missingFacets.length && !missing.length
     ? category === "direct-comparison" ? "Comparison indicated · scope needs checking" : category === "full-topic-match" ? "Topic match · scope needs checking" : label

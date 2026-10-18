@@ -1,4 +1,6 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { ResearchPrivacyContext } from "./researchPrivacy.js";
+import SourceIdentityNotice from "./SourceIdentityNotice.jsx";
+import { useContext, useEffect, useId, useRef, useState } from "react";
 import { reviseSearchTopic, improveResearchPrompt } from "./resultSearch.js";
 import { getSearchMode } from "../config/libraryLinks.js";
 import { filterSavedSources, isSavedSource, RESEARCH_ITEM_STATUSES, sourceForResearchItem } from "./researchWorkspace.js";
@@ -89,6 +91,7 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
 }
 
 export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove, onUpdate, removedItem, onUndoRemove, renderExtra }) {
+  const privateMode = useContext(ResearchPrivacyContext);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [exportNotice, setExportNotice] = useState("");
@@ -102,7 +105,7 @@ export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove
         catch { setExportNotice("Citation download failed. Try again."); }
       }}>Export {visible.length} {visible.length === 1 ? "citation" : "citations"}</button>}</div>
     </div>
-    <p className="saved-collection-help">Your shortlist for this research topic. Saved in this browser; export a backup from Review to keep your notes.</p>
+    <p className="saved-collection-help">{privateMode ? "Private shortlist. Export a backup before ending this session or reloading." : "Your shortlist for this research topic. Saved in this browser; export a backup from Review to keep your notes."}</p>
     {removedItem && <div className="saved-undo" role="status"><span>Unsaved “{removedItem.title}”.</span><button type="button" onClick={onUndoRemove}>Undo unsave</button></div>}
     {exportNotice && <p role="status">{exportNotice}</p>}
     {sources.length > 0 && <div className="saved-collection-filters">
@@ -118,9 +121,10 @@ export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove
           <div className="saved-source-title"><div><span className="saved-source-type">{sourceTypeLabel(sourceTypeKey(source))}</span>
           {item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={() => onSourceEvent?.("source_opened", { sourceId: item.url || item.id })}>{item.title}</a> : <strong>{item.title}</strong>}</div>
           {onRemove && <button type="button" onClick={() => onRemove(item)} aria-label={`Unsave ${item.title}`}>Unsave</button>}</div>
-          <p>{[source.author, sourcePublicationYear(source), source.containerTitle].filter(Boolean).join(" · ") || "Open the record to check citation details."}</p>
+          <p>{[source.author, sourcePublicationYear(source), source.edition, source.containerTitle].filter(Boolean).join(" · ") || "Open the record to check citation details."}</p>
+          <SourceIdentityNotice source={source} />
           {onUpdate && <label className="saved-source-status">Status<select value={item.status} onChange={(event) => onUpdate(item, { status: event.target.value })}>{RESEARCH_ITEM_STATUSES.map((value) => <option key={value.id} value={value.id}>{value.label}</option>)}</select></label>}
-          {onUpdate ? <details className="saved-source-notes"><summary>My notes{item.notes ? " · added" : ""}</summary><label>Reading notes<textarea rows={3} maxLength={4000} value={item.notes || ""} onChange={(event) => onUpdate(item, { notes: event.target.value })} placeholder="Why it may help, useful pages, claims to check…" /></label><small>Saved automatically in this browser.</small></details> : item.notes && <p className="saved-result-note">{item.notes}</p>}
+          {onUpdate ? <details className="saved-source-notes"><summary>My notes{item.notes ? " · added" : ""}</summary><label>Reading notes<textarea rows={3} maxLength={4000} value={item.notes || ""} onChange={(event) => onUpdate(item, { notes: event.target.value })} placeholder="Why it may help, useful pages, claims to check…" /></label><small>{privateMode ? "Kept only for this private session." : "Saved automatically in this browser."}</small></details> : item.notes && <p className="saved-result-note">{item.notes}</p>}
           {renderExtra?.(item)}
         </li>;
       })}</ul></>}

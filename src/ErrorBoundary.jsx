@@ -21,7 +21,7 @@ export default class ErrorBoundary extends React.Component {
     return (
       <main className="fatal-error" role="alert">
         <h1>The navigator could not display this response</h1>
-        <p>Your saved research sessions remain in this browser. Reload the page or start a new topic, then try again.</p>
+        <p>Previously saved sessions remain in this browser. Research in a private session will be cleared by reloading.</p>
         {showLocalDetail && <pre>{String(error?.stack || error?.message || error)}</pre>}
         <button type="button" onClick={() => window.location.reload()}>Reload navigator</button>
       </main>

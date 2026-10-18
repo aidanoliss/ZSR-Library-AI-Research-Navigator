@@ -4,14 +4,14 @@ import { RESOURCE_CONFIG_VERSION, SOURCE_MODE_CONTRACTS, getSourceModeContract }
 import { extractSourceRequirements, normalizeSourceRequirements, sourceRequirementUpdates, stripSourceRequirementText, subjectDateScope } from "./sourceRequirements.js";
 
 const REQUEST_WORDS = new Set([
-  "about", "affect", "affects", "association", "between", "can", "compare",
+  "about", "affect", "affects", "association", "between", "can", "compare", "compares", "compared", "comparing", "contrasting",
   "could", "did", "do", "does", "effect", "effects", "evidence", "explore",
   "find", "focused", "give", "help", "how", "impact", "impacts", "into",
   "lead", "leads", "main", "more", "provide", "prove", "question", "reason",
   "relationship", "show",
   "suggest", "that", "the", "these", "this", "those", "topic", "what", "when",
   "where", "which", "why", "with", "without", "would", "from", "every", "all",
-  "use", "using", "need", "want", "please", "me", "for", "of", "are", "was", "were",
+  "to", "or", "use", "using", "need", "want", "please", "me", "for", "of", "are", "was", "were",
   "exploring", "looking", "understand", "differences", "similarities",
   "representations", "regarding", "published", "publication",
   "only", "limit", "restrict", "publications",
@@ -26,7 +26,9 @@ const CANONICAL_CONCEPTS = [
   { id: "social-media", preferredTerm: "social media", synonyms: ["social platform*", "online social networking", "platform use", "Instagram", "TikTok", "Snapchat"], pattern: /\b(social media|social platforms?|online social network(?:ing)?|platform use|instagram|tiktok|snapchat)\b/i },
   { id: "adolescents", preferredTerm: "adolescent*", synonyms: ["teen*", "youth", "young people"], pattern: /\b(adolescents?|teenagers?|teens?|youth|young people)\b/i, facet: "population" },
   { id: "children", preferredTerm: "child*", synonyms: ["children", "pediatric"], pattern: /\b(children|child|pediatric)\b/i, facet: "population" },
-  { id: "college-students", preferredTerm: "college students", synonyms: ["university students", "undergraduates", "first-year students"], pattern: /\b(college students?|university students?|undergraduates?|first[- ]year (?:college )?students?)\b/i, facet: "population" },
+  { id: "first-year-students", preferredTerm: "first-year students", synonyms: [], pattern: /\bfirst[- ]year (?:college |university |undergraduate )?students?\b/i, facet: "population" },
+  { id: "women", preferredTerm: "women", synonyms: ["female participants"], pattern: /\bwomen\b(?=$|\s*[,.;:]|\s+(?:and|or|in|from|with|among|across|during)\b)/i, facet: "population" },
+  { id: "college-students", preferredTerm: "college students", synonyms: ["university students", "undergraduates"], pattern: /\b(college students?|university students?|undergraduates?(?: students?)?)\b/i, facet: "population" },
   { id: "older-adults", preferredTerm: "older adults", synonyms: ["elderly", "aging population"], pattern: /\b(older adults?|elderly|aging population)\b/i, facet: "population" },
   { id: "mental-health", preferredTerm: "mental health", synonyms: ["psychological well-being", "well-being", "wellbeing"], pattern: /\b(mental health|psychological well[- ]?being|well[- ]?being)\b/i },
   { id: "depression", preferredTerm: "depression", synonyms: ["depressive symptoms"], pattern: /\b(depression|depressive symptoms?)\b/i },
@@ -37,6 +39,7 @@ const CANONICAL_CONCEPTS = [
   { id: "cognitive-offloading", preferredTerm: "cognitive offloading", synonyms: ["external memory", "distributed cognition", "memory reliance"], pattern: /\b(cognitive offload(?:ing)?|external memory|distributed cognition|memory reliance)\b/i },
   { id: "sleep-deprivation", preferredTerm: "sleep deprivation", synonyms: ["sleep loss", "insufficient sleep"], pattern: /\b(sleep deprivation|sleep loss|insufficient sleep)\b/i },
   { id: "executive-function", preferredTerm: "executive function", synonyms: ["executive functioning", "cognitive control"], pattern: /\b(executive function(?:ing)?|cognitive control)\b/i },
+  { id: "ai-writing-assistants", preferredTerm: "AI writing assistants", synonyms: ["AI writing tools", "automated writing assistants"], pattern: /\b(?:AI|artificial intelligence|automated) writing (?:assistants?|tools?)\b/i },
   { id: "artificial-intelligence", preferredTerm: "artificial intelligence", synonyms: ["AI", "algorithm*", "automated decision making"], pattern: /\b(artificial intelligence|AI|algorithm(?:ic)?|automated decision(?: making)?|machine learning)\b/i },
   { id: "algorithmic-bias", preferredTerm: "algorithmic bias", synonyms: ["automated discrimination", "algorithmic discrimination", "AI bias"], pattern: /\b(algorithmic bias|algorithmic discrimination|automated discrimination|AI bias|biased automated)\b/i },
   { id: "employment", preferredTerm: "employment", synonyms: ["hiring", "job applicant*", "workplace"], pattern: /\b(employment|hiring|job applicants?|workplace)\b/i },
@@ -50,6 +53,10 @@ const CANONICAL_CONCEPTS = [
   { id: "carbon-sequestration", preferredTerm: "carbon sequestration", synonyms: ["carbon storage", "carbon capture"], pattern: /\b(carbon[- ]sequestration|carbon storage|carbon capture)\b/i },
   { id: "trauma", preferredTerm: "trauma", synonyms: ["PTSD", "traumatic stress"], pattern: /\b(trauma|PTSD|traumatic stress)\b/i },
   { id: "literature-fiction", preferredTerm: "literature OR fiction", synonyms: ["novel*", "literary", "narrative"], pattern: /\b(literature|fiction|novels?|literary|narratives?)\b/i },
+  { id: "world-war-ii", preferredTerm: "World War II", synonyms: ["Second World War", "WWII"], pattern: /\b(?:world war (?:ii|2)|second world war|wwii)\b/i },
+  { id: "world-war-i", preferredTerm: "World War I", synonyms: ["First World War", "WWI"], pattern: /\b(?:world war (?:i|1)|first world war|wwi)\b/i },
+  { id: "archival-personal-records", preferredTerm: "letters OR diaries", synonyms: [], pattern: /\b(?:letters?\s+(?:and|or|and\/or)\s+diaries|diaries\s+(?:and|or|and\/or)\s+letters?)\b/i },
+  { id: "enslaved-people", preferredTerm: '("enslaved people" OR "formerly enslaved people")', synonyms: [], pattern: /\benslaved or formerly enslaved people\b/i },
   { id: "postwar", preferredTerm: "postwar", synonyms: ["post-war", "after World War II"], pattern: /\b(post[- ]?war|after (?:world war (?:ii|2)|wwii))\b/i },
   { id: "jazz-venues", preferredTerm: "jazz clubs", synonyms: ["jazz venues", "jazz-club culture"], pattern: /\b(jazz clubs?|jazz venues?|jazz[- ]club culture|jazz)\b/i },
   { id: "urban-context", preferredTerm: "urban", synonyms: ["city", "metropolitan"], pattern: /\b(large cities|major cities|metropolitan areas|urban|city|metropolitan)\b/i },
@@ -182,10 +189,10 @@ export function inferExplicitModeRequest(text, fallback = DEFAULT_MODE_ID) {
   // "studies of newspaper coverage", newspaper is the subject, not the format.
   if (/^(?:(?:peer[- ]reviewed|scholarly|academic|scientific|journal|empirical|experimental|primary|original|recent)\s+)*(?:research|studies|study|articles?|papers?)\b/i.test(value) || /^(?:systematic|scoping|literature) reviews?\b/i.test(value)) return "scholarly";
   if (/^(?:primary sources?|archival (?:sources?|materials?)|original documents?)\b/i.test(value)) return "primary";
-  if (/^(?:books?|e-?books?|monographs?|background sources?|handbooks?)(?:\s+(?:about|on|of|for|introducing|regarding|concerning)\b|$)/i.test(value)) return "books";
+  if (/^(?:(?:scholarly|academic)\s+)?(?:books?|e-?books?|monographs?|background sources?|handbooks?)(?:\s+(?:about|on|of|for|introducing|regarding|concerning)\b|$)/i.test(value)) return "books";
   if (/^(?:news(?:paper)?(?: articles?| reports?| coverage)?|current events?|press coverage)\b/i.test(value)) return "news";
   if (/^(?:compare|contrast)\b/i.test(value) && /\b(?:newspaper coverage|press coverage|news reports?)\b/i.test(value) && !/\b(?:studies|research|scholarly|peer[- ]reviewed|journal articles?)\b/i.test(value)) return "news";
-  if (/^(?:datasets?|statistics?|market data|survey data|numerical data)\b/i.test(value)) return "data";
+  if (/^(?:(?:primary|original|raw|open|public|longitudinal|historical)\s+)*(?:datasets?|data sets?|statistics?|market data|survey data|numerical data)\b/i.test(value)) return "data";
   if (/^(?:company financials?|financial statements?|annual reports?|10-k|revenue and debt)\b/i.test(value)) return "data";
   if (/\b(?:market research|market growth|brand positioning|consumer preferences?|rolex|luxury watches?|energy drinks?)\b/i.test(value) &&
       !/\b(?:peer[- ]reviewed|scholarly|journal articles?)\b/i.test(value)) return "data";
@@ -204,8 +211,10 @@ function contextDisciplines(text, focusId) {
 }
 
 function populationFacet(text) {
+  const firstYear = text.match(/\bfirst[- ]year (?:college |university |undergraduate )?students?\b/i)?.[0];
+  if (firstYear) return firstYear.replace(/first year/i, "first-year").toLowerCase();
   if (/\bundergraduates?\b/i.test(text)) return "undergraduates";
-  return CANONICAL_CONCEPTS.find((concept) => concept.facet === "population" && concept.pattern.test(text))?.preferredTerm || "";
+  return CANONICAL_CONCEPTS.find((concept) => concept.facet === "population" && concept.pattern.test(text))?.preferredTerm || (/\bwomen\b/i.test(text) ? "women" : "");
 }
 
 function timeFacet(text) {
@@ -221,7 +230,7 @@ function geographyFacet(text) {
   if (/\bUS\b/.test(text)) return "United States";
   return clean(
     text.match(/\b(?:by country|countries)\b/i)?.[0]?.replace(/^by\s+/i, "") ||
-    text.match(/\b(?:United States|U\.S\.|North Carolina|Europe|European Union|Global South|Latin America|Africa|Asia|Canada|United Kingdom|UK|Bangladesh|India|China|Australia|New Zealand|Germany|France|Brazil|Kenya|South Africa|Mexico|Japan|rural communities|urban communities)\b/i)?.[0] || ""
+    text.match(/\b(?:United States|U\.S\.|North Carolina|Europe|European Union|Global South|Latin America|Africa|Asia|Canada|Great Britain|Britain|United Kingdom|UK|Bangladesh|India|China|Australia|New Zealand|Germany|France|Brazil|Kenya|South Africa|Mexico|Japan|rural communities|urban communities)\b/i)?.[0] || ""
   );
 }
 
@@ -287,7 +296,7 @@ function plausiblePersonalAuthor(value) {
  * or explicitly named titles are also accepted after a singular item type.
  */
 export function extractKnownItemRequest(query) {
-  const input = clean(query).replace(/[?.!]+$/, "").trim();
+  const input = clean(stripSourceRequirementText(query)).replace(/[?.!,;]+$/, "").trim();
   if (!input) return null;
 
   const sourceMatch = input.match(
@@ -332,14 +341,40 @@ function requestBody(query) {
     .replace(/^(?:(?:can|could|would)\s+you\s+)?(?:please\s+)?(?:help\s+me\s+)?(?:(?:find|show|give|provide|locate|get)(?:\s+me)?\s+|(?:i\s+)?(?:need|want)\s+|i(?:'m| am)\s+(?:interested in|looking for|researching)\s+)/i, "");
 }
 
+/** Expand only explicit educational modality ellipsis, never arbitrary shared words. */
+function expandComparisonEllipsis(text) {
+  const value = String(text || "");
+  if (!/\b(?:compar(?:e|ed|ing|ison)|contrast(?:ing)?|versus|vs\.?)\b/i.test(value)) return value;
+  const quoted = [...value.matchAll(/["“][^"”]+["”]/g)].map((match) => ({ start: match.index, end: match.index + match[0].length }));
+  const modality = "(?:online|in-person|in person|face-to-face|face to face|remote)";
+  const joiner = "(?:and|versus|vs\\.?|compared with|compared to)";
+  const head = "(?:teaching|instruction|learning|education|classes|courses)";
+  const boundary = "(?=\\s+(?:for|among|in|on|with|during|at|across|and|versus)\\b|[.,;:?!]|$)";
+  const patterns = [
+    { pattern: new RegExp(`\\b(${modality})\\s+(${joiner})\\s+(${modality})\\s+(${head})${boundary}`, "gi"), trailingHead: true },
+    { pattern: new RegExp(`\\b(${modality})\\s+(${head})\\s+(${joiner})\\s+(${modality})${boundary}`, "gi"), trailingHead: false },
+  ];
+  const replacements = patterns.flatMap(({ pattern, trailingHead }) => [...value.matchAll(pattern)]
+    .filter((match) => !quoted.some((span) => match.index < span.end && match.index + match[0].length > span.start))
+    .map((match) => ({ start: match.index, end: match.index + match[0].length,
+      text: trailingHead ? `${match[1]} ${match[4]} ${match[2]} ${match[3]} ${match[4]}`
+        : `${match[1]} ${match[2]} ${match[3]} ${match[4]} ${match[2]}` })));
+  let expanded = value;
+  for (const replacement of replacements.sort((a, b) => b.start - a.start)) expanded = `${expanded.slice(0, replacement.start)}${replacement.text}${expanded.slice(replacement.end)}`;
+  return expanded;
+}
+
 function researchTopicBody(query) {
-  return requestBody(query)
+  return requestBody(expandComparisonEllipsis(query))
+    .replace(/^(?:(?:primary|original|raw|open|public|longitudinal|historical)\s+)*(?:datasets?|data sets?)\s+(?:on|about|of|for|regarding)\s+/i, "dataset ")
+    // Comparison verbs describe the task; the two sides remain topical terms.
+    .replace(/\b(?:comparing|compare|contrast(?:ing)?)\s+(.+?)\s+(?:with|to)\s+/i, "$1 and ")
     // Strip only a source request at the head. Book banning and newspaper
     // coverage elsewhere in the sentence remain legitimate research subjects.
     .replace(/^(?:(?:an?|the|some|recent|introductory|open[- ]access)\s+)*(?:(?:peer[- ]reviewed|scholarly|academic|scientific|journal)\s+)*(?:primary sources?|archival materials?|original documents?|background sources?|news(?:paper)? articles?|(?:books?|e-?books?|monographs?|handbooks?)(?=\s+(?:introducing|about|on|of|for|regarding|concerning)\b|$)|sources?|articles?|studies|papers?|research|evidence)\b\s*(?:(?:introducing|providing background on|about|on|of|regarding|concerning)\s+)?/i, "")
     .replace(/^(?:how|why)\s+(?:does|do|did|can|could)\s+(.+?)\s+(?:change|alter|increase|reduce|predict)\s+(.+)$/i, "$1 and $2")
     .replace(/^(?:can|could|would|please|help|find|show|give|provide|tell|i need|i want)\b[\s,:-]*/i, "")
-    .replace(/^(?:me\s+)?(?:explore|compare|contrast|understand|research|analy[sz]e|investigate|examine)\b[\s,:-]*/i, "")
+    .replace(/^(?:me\s+)?(?:explore|compar(?:e|ing)|contrast(?:ing)?|understand|research|analy[sz]e|investigate|examine)\b[\s,:-]*/i, "")
     .replace(/^(?:me\s+)?(?:more\s+)?(?:(?:sources?|articles?|research|results?|leads?)\b[\s,:-]*)+/i, "")
     .replace(/^(?:focused on|about|regarding|the relationship between|association between)\s+/i, "")
     .replace(/^(?:how|why|whether)\s+(?:does|do|did|can|could|might|may|is|are|were)\s+/i, "")
@@ -377,7 +412,7 @@ function genericConcepts(query) {
     .split(/\s+(?:and|versus|vs\.?|among|within|during|after|before|across|on|in|for|between|about|regarding|concerning|by)\s+/i)
     .map((chunk) => chunk
       .split(/\s+/)
-      .filter((word) => word.length > 2 && !REQUEST_WORDS.has(word.toLowerCase()))
+      .filter((word) => (word.length > 2 || /^(?:I|II|III|IV|V|VI|VII|VIII|IX|X)$/.test(word)) && !REQUEST_WORDS.has(word.toLowerCase()))
       .join(" "))
     .filter(Boolean).map((preferredTerm) => ({ preferredTerm }));
   return uniqBy([...quoted, ...chunks], (item) => item.preferredTerm.toLowerCase())
@@ -410,7 +445,9 @@ function extractConcepts(query) {
     }))
   ).filter((span) => !quotedSpans.some((quoted) => span.start < quoted.end && span.end > quoted.start))]
     .sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
-  const spans = matches;
+  const spans = matches.filter((span) => !matches.some((other) => other !== span &&
+    ((other.concept.facet === "population" && span.concept.facet === "population") || (other.concept.id === "ai-writing-assistants" && span.concept.id === "artificial-intelligence")) &&
+    other.start <= span.start && other.end >= span.end && other.end - other.start > span.end - span.start));
   const multiplePopulations = new Set(spans.filter((span) => span.concept.facet === "population").map((span) => span.concept.id)).size > 1;
   const concepts = [];
   let position = 0;
@@ -426,7 +463,8 @@ function extractConcepts(query) {
       const observed = span.matchedText.toLowerCase();
       return normalized.endsWith("*") ? observed.startsWith(normalized.slice(0, -1)) : observed === normalized;
     });
-    const preferredTerm = matchedKnownTerm ? span.matchedText : concept.preferredTerm;
+    const preferredTerm = /\bOR\b/.test(concept.preferredTerm) ? concept.preferredTerm
+      : matchedKnownTerm || concept.id === "first-year-students" ? span.matchedText : concept.preferredTerm;
     // Population is retained as a facet and is added by every query compiler.
     if (facet !== "population" || multiplePopulations) concepts.push({
       ...concept,
@@ -480,26 +518,29 @@ function searchIntentFor(topic, concepts, facets, knownItem = null) {
 
 /** Comparison intent is a search structure, never a claim about the answer. */
 export function researchComparison(topic, concepts = []) {
-  if (!/\b(?:vs\.?|versus|compar(?:e|es|ed|ing|ison)|contrast|differences? between)\b/i.test(topic)) return null;
+  const comparisonTopic = expandComparisonEllipsis(topic);
+  if (!/\b(?:vs\.?|versus|compar(?:e|es|ed|ing|ison)|contrast|differences? between)\b/i.test(comparisonTopic)) return null;
   const required = concepts.filter((concept) => concept.required !== false);
   if (required.length < 2) return null;
   const positioned = required.map((concept) => {
     const positions = [concept.preferredTerm, ...(concept.synonyms || [])].map((term) => {
       const escaped = String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\\*/g, "[a-z]*");
-      return String(topic).search(new RegExp(`\\b${escaped}\\b`, "i"));
+      return comparisonTopic.search(new RegExp(`\\b${escaped}\\b`, "i"));
     }).filter((position) => position >= 0);
     const vocabulary = CANONICAL_CONCEPTS.find((entry) => entry.id === concept.id);
-    const vocabularyPosition = vocabulary ? String(topic).search(vocabulary.pattern) : -1;
+    const vocabularyPosition = vocabulary ? comparisonTopic.search(vocabulary.pattern) : -1;
     if (vocabularyPosition >= 0) positions.push(vocabularyPosition);
     return { concept, position: positions.length ? Math.min(...positions) : -1 };
   }).filter((item) => item.position >= 0).sort((a, b) => a.position - b.position);
-  const divider = String(topic).match(/\b(?:vs\.?|versus|compared (?:with|to)|in contrast (?:to|with))\b/i);
+  const divider = comparisonTopic.match(/\b(?:vs\.?|versus|compared (?:with|to)|in contrast (?:to|with))\b/i);
   // In "compare loneliness in adolescents and older adults", loneliness is
   // the common outcome. The two population concepts are the compared sides.
   const populations = positioned.filter(({ concept }) => CANONICAL_CONCEPTS.some((entry) => entry.id === concept.id && entry.facet === "population"));
+  const instruction = comparisonTopic.match(/\b(?:compar(?:e|ing)|contrast(?:ing)?)\b/i);
+  const comparisonTerms = instruction ? positioned.filter((item) => item.position > instruction.index) : positioned;
   const sides = divider
     ? [positioned.filter((item) => item.position < divider.index).at(-1)?.concept, positioned.find((item) => item.position > divider.index)?.concept]
-    : (populations.length === 2 ? populations : positioned).slice(0, 2).map((item) => item.concept);
+    : (populations.length === 2 ? populations : comparisonTerms).slice(0, 2).map((item) => item.concept);
   const [left, right] = sides;
   if (!left || !right || left.id === right.id) return null;
   return { conceptIds: [left.id, right.id], terms: [left.preferredTerm, right.preferredTerm] };

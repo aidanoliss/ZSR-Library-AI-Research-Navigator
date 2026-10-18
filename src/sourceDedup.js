@@ -143,6 +143,14 @@ function mergeMetadata(primary, other) {
     merged.abstractSource = abstractOwner.abstractSource || abstractOwner.sourceProvider || "Provider metadata";
     merged.abstractTruncated = Boolean(abstractOwner.abstractTruncated);
   }
+  const identityChecks = [primary, other].flatMap((record) => record.identityChecks?.length ? record.identityChecks : record.identityCheck ? [{ ...record.identityCheck, recordTitle: record.title, sourceProvider: record.sourceProvider }] : []);
+  if (identityChecks.length) {
+    merged.identityChecks = [...new Map(identityChecks.map((check) => [JSON.stringify([check.doi, check.status, check.registryTitle, check.recordTitle, check.checkedAt]), check])).values()];
+    // A corroborated mismatch from either provider must survive deduplication.
+    // Retain its record title and provenance rather than silently applying the
+    // other provider's successful check to every manifestation of this record.
+    merged.identityCheck = merged.identityChecks.find((check) => check.status === "title-difference") || primary.identityCheck || other.identityCheck;
+  }
   if (primary.peerReviewed == null && other.peerReviewed != null) merged.peerReviewed = other.peerReviewed;
   if (primary.peerReviewed === false || other.peerReviewed === false) merged.peerReviewed = false;
   merged.accessLinks = accessLinks({ ...primary, accessLinks: [...accessLinks(primary), ...accessLinks(other)] });
@@ -160,4 +168,34 @@ export function uniqueSourceResults(results = []) {
     else unique[index] = mergeMetadata(unique[index], result);
   }
   return unique;
+}
+
+function likelyManifestation(a, b) {
+  const book = (record) => /^(?:book|ebook|e book|monograph)$/.test(normalizedTitle(record.type));
+  const title = (record) => normalizedTitle(record.title).replace(/^(?:a|an|the)\s+/, "");
+  if (!(book(a) && book(b) || isChapter(a) && isChapter(b))) return false;
+  const titleA = title(a);
+  if (titleA.length < 12 || titleA !== title(b)) return false;
+  if (!authorKeys(a).length || !authorKeys(a).some((author) => authorKeys(b).includes(author))) return false;
+  if (book(a) && book(b)) return true;
+  // Chapter titles such as "Introduction" recur in unrelated books. Require
+  // substantial matching text or a shared container and compatible page span.
+  const opening = (record) => normalizedTitle(record.abstractText || record.abstractExcerpt).slice(0, 200);
+  const sameOpening = opening(a).length >= 160 && opening(a) === opening(b);
+  const sameContainer = normalizedTitle(a.containerTitle) && normalizedTitle(a.containerTitle) === normalizedTitle(b.containerTitle);
+  return sameOpening || Boolean(sameContainer && a.pages && b.pages && !chapterPagesConflict(a, b));
+}
+
+/** View grouping only: each edition keeps its own title, DOI, year and citation. */
+export function groupRelatedSourceResults(results = []) {
+  const groups = [];
+  for (const record of results) {
+    const index = groups.findIndex((candidate) => likelyManifestation(candidate, record));
+    if (index < 0) groups.push(record);
+    else groups[index] = {
+      ...groups[index],
+      relatedEditions: [...(groups[index].relatedEditions || []), { ...record, relationship: isChapter(record) ? "possible-chapter-version" : "possible-edition" }],
+    };
+  }
+  return groups;
 }

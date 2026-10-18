@@ -102,8 +102,8 @@
 .zsr-app .source-results-workspace a[href] { color: #0759b0; text-decoration: underline; text-underline-offset: 3px; }
 .zsr-app .source-results-workspace a[href]:hover { color: #003d82; }
 /* Wake Forest Old Gold: https://brand.wfu.edu/our-brand-identity/color-patterns-papers/ */
-.zsr-app .source-results-workspace a.source-open-button[href] { color: #fff; background: #9e7e38; border-color: #9e7e38; text-decoration: none; }
-.zsr-app .source-results-workspace a.source-open-button[href]:hover { color: #fff; background: #8c6d2c; border-color: #8c6d2c; text-decoration: none; }
+.zsr-app .source-results-workspace a.source-open-button[href] { color: #fff; background: #806326; border-color: #806326; text-decoration: none; }
+.zsr-app .source-results-workspace a.source-open-button[href]:hover { color: #fff; background: #6e5420; border-color: #6e5420; text-decoration: none; }
 .zsr-app .research-toolbar > a[href], .zsr-app .research-toolbar > a[href]:hover { color: var(--control-black); text-decoration: none; }
 .result-section-links { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 20px; padding: 10px 14px; border: 1px solid #e2e4e7; border-radius: 9px; background: #f8f9fb; font: 600 .8rem/1.5 system-ui, sans-serif; }
 .result-section-links > span { color: #626875; font-weight: 450; }
@@ -169,3 +169,8 @@
 
 .result-topic-search textarea { resize: vertical; }
 .result-topic-search > div { align-items: flex-start; }
+
+.research-privacy-status { margin: 0; padding: 12px 24px; color: #4c4942; background: #f5f3ed; font: 400 .85rem/1.6 system-ui, sans-serif; border-bottom: 1px solid #ddd8cc; }
+.source-edition-picker { display: grid; gap: 8px; margin: 0 0 18px; font: 500 .875rem/1.5 system-ui, sans-serif; }
+.source-edition-picker select { width: 100%; max-width: 100%; padding: 12px 36px 12px 12px; }
+.source-edition-picker small { font-weight: 400; }

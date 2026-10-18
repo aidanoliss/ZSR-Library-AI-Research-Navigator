@@ -1,6 +1,6 @@
 import { normalizeSourceRequirements, sourceRequirementUpdates } from "../config/sourceRequirements.js";
 import { assessSourceRequirements, sourceKindFromMetadata, sourcePeerReviewStatus, sourcePublicationYear } from "./sourceAssessment.js";
-import { isSavedSource, normalizeResearchWorkspace, savedSourceIdentity, sourceForResearchItem } from "./researchWorkspace.js";
+import { isSavedSource, normalizeResearchWorkspace, savedSourceIdentity, savedSourceIdentityMap, sourceForResearchItem } from "./researchWorkspace.js";
 
 export const REQUIREMENT_STATUS_LABELS = { meets: "Supported by metadata", unverified: "Needs verification", mismatch: "Does not meet" };
 
@@ -66,9 +66,10 @@ export function assignmentProgress(workspace, researchSpec = null) {
   const current = normalizeResearchWorkspace(workspace);
   const spec = workspaceRequirementSpec(current.assignment, researchSpec);
   const selected = current.trail.filter((item) => isSavedSource(item) && item.status === "use");
+  const identities = savedSourceIdentityMap(selected);
   const seen = new Set();
   const unique = selected.filter((item) => {
-    const id = savedSourceIdentity(item);
+    const id = savedSourceIdentity(item, identities);
     if (seen.has(id)) return false;
     seen.add(id);
     return true;

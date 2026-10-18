@@ -1,12 +1,12 @@
 import { sourceKindFromMetadata, sourcePublicationYear } from "./sourceAssessment.js";
-import { uniqueSourceResults } from "./sourceDedup.js";
+import { uniqueSourceResults, groupRelatedSourceResults } from "./sourceDedup.js";
 
 /** Count a work once while retaining the separate access options merged into its record. */
 export function sourceResultLanes(results = [], discovery = null) {
-  const records = uniqueSourceResults([
+  const records = groupRelatedSourceResults(uniqueSourceResults([
     ...results.filter((result) => result?.accessScope !== "open-access"),
     ...results.filter((result) => result?.accessScope === "open-access"),
-  ]);
+  ]));
   const library = records.filter((result) => result.accessScope !== "open-access");
   const mergedAccessCount = library.filter((result) => result.accessLinks?.some((link) => link.accessScope === "open-access")).length;
   return [
@@ -39,13 +39,21 @@ export function sourceTypeOptions(results = []) {
 export function filterSourceResults(results = [], { type = "all", from = "", to = "", sort = "relevance" } = {}) {
   const fromYear = /^\d{4}$/.test(String(from)) ? Number(from) : null;
   const toYear = /^\d{4}$/.test(String(to)) ? Number(to) : null;
-  const filtered = results.filter((result) => {
+  const passes = (result) => {
     if (type !== "all" && sourceTypeKey(result) !== type) return false;
     const year = sourcePublicationYear(result);
     if ((fromYear !== null || toYear !== null) && year === null) return false;
     if (fromYear !== null && year < fromYear) return false;
     if (toYear !== null && year > toYear) return false;
     return true;
+  };
+  // Filtering chooses an eligible manifestation; it must not hide a 2015
+  // edition merely because the grouped representative was published in 1990.
+  const filtered = results.flatMap((result) => {
+    if (!result.relatedEditions?.length) return passes(result) ? [result] : [];
+    const { relatedEditions, ...primary } = result;
+    const eligible = [primary, ...relatedEditions].filter(passes);
+    return eligible.length ? [{ ...eligible[0], relatedEditions: eligible.slice(1) }] : [];
   });
   // Provider-ranked order is stable, including ties and undated records.
   return sort === "newest" ? filtered.sort((a, b) => (sourcePublicationYear(b) ?? -Infinity) - (sourcePublicationYear(a) ?? -Infinity)) : filtered;

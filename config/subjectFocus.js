@@ -114,8 +114,8 @@ export const SUBJECT_FOCUSES = [
     prompt:
       "Prioritize historical context, humanities scholarship, primary-source awareness, subject headings, and citation trails.",
     resourceIds: ["historical-abstracts", "jstor", "project-muse", "academic-search-premier"],
-    keywords: ["history", "historical", "humanities", "culture", "literature", "novel", "archive", "primary source", "manuscript"],
-    patterns: [/\b(history|historical|humanities|literature|novels?|fiction|poetry|postwar|culture|jazz|archive|archival|primary source|cold war|russia|poland|soviet|medieval|manuscript|religion|philosophy|ethics|moral responsibility|classics|art history|music history|book history|print culture|printing|typograph|watermarks?|almanacs?|material culture)\b/i],
+    keywords: ["history", "historical", "humanities", "culture", "literature", "novel", "archive", "primary source", "manuscript", "World War I", "World War II", "First World War", "Second World War"],
+    patterns: [/\b(history|historical|humanities|literature|novels?|fiction|poetry|postwar|culture|jazz|archive|archival|primary source|world war (?:i|ii|1|2)|(?:first|second) world war|wwi|wwii|cold war|russia|poland|soviet|medieval|manuscript|religion|philosophy|ethics|moral responsibility|classics|art history|music history|book history|print culture|printing|typograph|watermarks?|almanacs?|material culture)\b/i],
   },
   {
     id: "education",

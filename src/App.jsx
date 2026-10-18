@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ResearchPrivacyContext, readPrivateMode, setPrivateModePreference } from "./researchPrivacy.js";
+import { searchRunSnapshot } from "./searchRunHistory.js";
 import AdminPanel from "./AdminPanel.jsx";
 import { allowStorageRetry, readStoredJSON, readStoredText, removeStoredValue, storageReadFailed, writeStoredText } from "./browserStorage.js";
 import { inferExplicitModeRequest } from "../config/researchSpec.js";
@@ -18,6 +20,7 @@ import {
   updateResearchItem,
   saveSourceNotes,
   addSearchHistoryEntry,
+  addSearchRun,
   assignmentContext,
   createResearchWorkspace,
   normalizeResearchWorkspace,
@@ -766,8 +769,17 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
 }
 
 export default function App() {
+  const [privateMode, setPrivateMode] = useState(readPrivateMode);
+  function changePrivacy(next) {
+    setPrivateModePreference(next);
+    setPrivateMode(next);
+  }
+  return <ResearchPrivacyContext.Provider value={privateMode}><ResearchApp key={privateMode ? "private" : "saved"} privateMode={privateMode} onPrivacyChange={changePrivacy} /></ResearchPrivacyContext.Provider>;
+}
+
+function ResearchApp({ privateMode, onPrivacyChange }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(() => window.matchMedia("(min-width: 861px)").matches);
-  const [input, setInput] = useState(() => readStoredText(STORAGE_KEY, initialTopicFromUrl()));
+  const [input, setInput] = useState(() => privateMode ? "" : readStoredText(STORAGE_KEY, initialTopicFromUrl()));
   const [messages, setMessages] = useState([]);
   const [mode, setMode] = useState(DEFAULT_MODE_ID);
   const [responseStyle, setResponseStyle] = useState(DEFAULT_RESPONSE_STYLE_ID);
@@ -782,10 +794,10 @@ export default function App() {
   const [researchWorkspace, setResearchWorkspace] = useState(() => createResearchWorkspace());
   const [researchWorkspaceOpen, setResearchWorkspaceOpen] = useState(false);
   const [workspaceTab, setWorkspaceTab] = useState("trail");
-  const [sessions, setSessions] = useState(() => readSessions());
-  const [folders, setFolders] = useState(() => readFolders());
+  const [sessions, setSessions] = useState(() => privateMode ? [] : readSessions());
+  const [folders, setFolders] = useState(() => privateMode ? [{ id: DEFAULT_FOLDER_ID, name: "General" }] : readFolders());
   const [activeFolderId, setActiveFolderId] = useState(DEFAULT_FOLDER_ID);
-  const [activeSessionId, setActiveSessionId] = useState(() => readStoredText(ACTIVE_SESSION_KEY, ""));
+  const [activeSessionId, setActiveSessionId] = useState(() => privateMode ? "" : readStoredText(ACTIVE_SESSION_KEY, ""));
   const [adminOpen, setAdminOpen] = useState(() => new URLSearchParams(window.location.search).has("admin"));
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [plannerDraft, setPlannerDraft] = useState(null);
@@ -794,7 +806,7 @@ export default function App() {
   const studyRef = useRef(null);
   if (!studyRef.current) {
     let storage;
-    try { storage = window.sessionStorage; } catch { storage = null; }
+    try { storage = privateMode ? null : window.sessionStorage; } catch { storage = null; }
     studyRef.current = createSearchMetricsSession({ sessionId: "current-tab", storage });
   }
   const [studyEnabled, setStudyEnabled] = useState(() => studyRef.current.isEnabled());
@@ -804,7 +816,7 @@ export default function App() {
   const requestRef = useRef(null);
   const workspaceRef = useRef(researchWorkspace);
   workspaceRef.current = researchWorkspace;
-  const [storageError, setStorageError] = useState(storageReadFailed());
+  const [storageError, setStorageError] = useState(!privateMode && storageReadFailed());
   const [storageRetry, setStorageRetry] = useState(0);
   const [actionNotice, setActionNotice] = useState("");
   const [removedItem, setRemovedItem] = useState(null);
@@ -820,6 +832,7 @@ export default function App() {
   );
 
   useEffect(() => {
+    if (privateMode) return;
     const written = [
       writeStoredText(STORAGE_KEY, input),
       writeStoredText(SESSIONS_KEY, JSON.stringify(sessions)),
@@ -827,7 +840,7 @@ export default function App() {
       activeSessionId ? writeStoredText(ACTIVE_SESSION_KEY, activeSessionId) : removeStoredValue(ACTIVE_SESSION_KEY),
     ];
     setStorageError(written.some((ok) => !ok));
-  }, [input, sessions, folders, activeSessionId, storageRetry]);
+  }, [input, sessions, folders, activeSessionId, storageRetry, privateMode]);
 
   useEffect(() => () => requestRef.current?.abort(), []);
 
@@ -847,7 +860,7 @@ export default function App() {
     const session = sessions.find((item) => item.id === activeSessionId);
     if (!session) {
       setActiveSessionId("");
-      removeStoredValue(ACTIVE_SESSION_KEY);
+      if (!privateMode) removeStoredValue(ACTIVE_SESSION_KEY);
       return;
     }
     setMode(session.mode || DEFAULT_MODE_ID);
@@ -1065,7 +1078,7 @@ export default function App() {
     setResearchWorkspaceOpen(false);
     setPlannerDraft(null);
     setError("");
-    removeStoredValue(ACTIVE_SESSION_KEY);
+    if (!privateMode) removeStoredValue(ACTIVE_SESSION_KEY);
   }
 
   function openSession(id) {
@@ -1120,23 +1133,39 @@ export default function App() {
 
   async function send(text = input, options = {}) {
     const content = String(text || "").trim();
+    const requestAccessScope = options.searchConfig?.accessScope || accessScope;
+    const requestSubjectFocusId = options.searchConfig?.subjectFocusId || subjectFocusId;
+    const requestResponseStyle = options.searchConfig?.responseStyle || responseStyle;
     if (!content || loading) return;
-    if (!options.skipPlanner && responseStyle === "plan") {
+    if (!options.skipPlanner && requestResponseStyle === "plan") {
       setPlannerDraft({ topic: content, questions: options.questions || [] });
       return;
     }
 
     const searchMetricId = crypto.randomUUID();
-    studyRef.current.record("search_started", { searchId: searchMetricId, accessScope });
+    const startedAt = new Date().toISOString();
+    studyRef.current.record("search_started", { searchId: searchMetricId, accessScope: requestAccessScope });
     setFollowupOpen(false);
     const requestMode = options.modeOverride || options.mode || inferExplicitModeRequest(content, mode);
     const controller = new AbortController();
-    controller.signal.addEventListener("abort", () => studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: "cancelled" }), { once: true });
+    controller.signal.addEventListener("abort", () => {
+      studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: "cancelled" });
+      recordRun(lastSourcePayload || {}, "cancelled");
+      const cancelledMessages = currentRunMessages.map((message) => message.searchMetricId === searchMetricId
+        ? { ...message, guidancePending: false, guidanceUnavailable: true } : message);
+      setMessages(cancelledMessages);
+      saveSession(cancelledMessages, requestMode, requestResponseStyle, sessionId, requestSubjectFocusId, workspaceRef.current, requestAccessScope);
+    }, { once: true });
     requestRef.current = controller;
     if (requestMode !== mode) setMode(requestMode);
+    if (options.replay) {
+      setAccessScope(requestAccessScope);
+      setSubjectFocusId(requestSubjectFocusId);
+      setResponseStyle(requestResponseStyle);
+    }
     const focusText = options.researchSpec?.topic || submittedResearchTopicContext([...messages, { role: "user", content }]);
-    const requestFocus = resolveSubjectFocus(subjectFocusId, focusText);
-    const requestAssignmentContext = assignmentContext(researchWorkspace.assignment);
+    const requestFocus = resolveSubjectFocus(requestSubjectFocusId, focusText);
+    const requestAssignmentContext = options.replay ? "" : assignmentContext(researchWorkspace.assignment);
     const userMessage = options.plannerContext
       ? { role: "user", content, plannerContext: options.plannerContext }
       : { role: "user", content };
@@ -1147,19 +1176,35 @@ export default function App() {
     }
     userMessage.subjectFocusId = requestFocus.id;
     userMessage.subjectFocusLabel = requestFocus.label;
-    userMessage.subjectFocusAuto = subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID;
+    userMessage.subjectFocusAuto = requestSubjectFocusId === DEFAULT_SUBJECT_FOCUS_ID;
     if (requestAssignmentContext) userMessage.assignmentContext = requestAssignmentContext;
     const nextMessages = [
       ...messages.map((message, index) => isCorrection && index === options.correctionOfIndex ? { ...message, supersededByCorrection: true } : message),
       userMessage,
     ];
     const sessionId = activeSessionId || crypto.randomUUID();
-    saveSession(nextMessages, requestMode, responseStyle, sessionId);
+    saveSession(nextMessages, requestMode, requestResponseStyle, sessionId);
     setMessages(nextMessages);
     setInput("");
     setError("");
     setLoading(true);
     const assistantCreatedAt = Date.now();
+    let runRecorded = false;
+    let lastSourcePayload = null;
+    let currentRunMessages = nextMessages;
+    function recordRun(payload, status) {
+      if (runRecorded) return;
+      runRecorded = true;
+      try {
+        const nextWorkspace = addSearchRun(workspaceRef.current, searchRunSnapshot({
+          id: searchMetricId, originalRequest: content, startedAt, payload,
+          researchSpec: options.researchSpec, status,
+          searchConfig: { accessScope: requestAccessScope, subjectFocusId: requestSubjectFocusId, responseStyle: requestResponseStyle },
+        }));
+        workspaceRef.current = nextWorkspace;
+        setResearchWorkspace(nextWorkspace);
+      } catch { setActionNotice("This run could not be added to Searches because the workspace is full. Export a backup and start a new research session."); }
+    }
     function presentPayload(finalPayload, guidancePending = false) {
       const assistantMessage = {
         searchMetricId,
@@ -1191,29 +1236,30 @@ export default function App() {
           null,
         createdAt: assistantCreatedAt,
         mode: requestMode,
-        responseStyle,
+        responseStyle: requestResponseStyle,
         subjectFocusId: requestFocus.id,
         subjectFocusLabel: requestFocus.label,
-        subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
-        accessScope,
+        subjectFocusAuto: requestSubjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
+        accessScope: requestAccessScope,
         ...(isCorrection ? { isCorrectionResult: true, correctionChanges: options.correctionChanges || [] } : {}),
       };
       const finished = [...nextMessages, assistantMessage];
+      currentRunMessages = finished;
       setMessages(finished);
-      saveSession(finished, requestMode, responseStyle, sessionId, subjectFocusId, workspaceRef.current);
+      saveSession(finished, requestMode, requestResponseStyle, sessionId, requestSubjectFocusId, workspaceRef.current, requestAccessScope);
     }
 
     try {
       const requestPayload = {
         mode: requestMode,
-        accessScope,
-        responseStyle,
-        subjectFocusId,
+        accessScope: requestAccessScope,
+        responseStyle: requestResponseStyle,
+        subjectFocusId: requestSubjectFocusId,
         assignmentContext: requestAssignmentContext,
         plannerContext: options.plannerContext || "",
-        ...((options.previousResearchSpec || latestResearchSpec) ? { previousResearchSpec: options.previousResearchSpec || latestResearchSpec } : {}),
+        ...(!options.replay && (options.previousResearchSpec || latestResearchSpec) ? { previousResearchSpec: options.previousResearchSpec || latestResearchSpec } : {}),
         ...(options.researchSpec ? { researchSpec: options.researchSpec } : {}),
-        messages: nextMessages.map((m) => ({
+        messages: (options.replay ? [userMessage] : nextMessages).map((m) => ({
           role: m.role,
           content: m.role === "assistant"
             ? (m.reply?.message || m.content || "")
@@ -1223,11 +1269,12 @@ export default function App() {
       const finalPayload = await requestChatReply(requestPayload, {
         signal: controller.signal,
         onSources: (payload) => {
-          if (!controller.signal.aborted && requestRef.current === controller) presentPayload(payload, true);
+          if (!controller.signal.aborted && requestRef.current === controller) { lastSourcePayload = payload; presentPayload(payload, true); }
         },
       });
       if (controller.signal.aborted || requestRef.current !== controller) return;
       studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: (finalPayload.liveResults || []).length, status: searchRunStatus(finalPayload) });
+      recordRun(finalPayload, searchRunStatus(finalPayload));
       presentPayload(finalPayload);
     } catch (err) {
       if (controller.signal.aborted || requestRef.current !== controller) return;
@@ -1243,9 +1290,9 @@ export default function App() {
           assignmentContext: requestAssignmentContext,
           plannerContext: options.plannerContext || "",
           researchSpec: options.researchSpec,
-          previousResearchSpec: options.previousResearchSpec || latestResearchSpec,
+          previousResearchSpec: options.replay ? null : options.previousResearchSpec || latestResearchSpec,
           latestUserText: content,
-          hasPriorTopic: messages.some((message) => message.role === "user"),
+          hasPriorTopic: !options.replay && messages.some((message) => message.role === "user"),
         })
       );
       const fallback = [
@@ -1255,7 +1302,7 @@ export default function App() {
           content: failureMessage,
           reply: {
             message: failureMessage,
-            ...(["hybrid", "sources"].includes(responseStyle)
+            ...(["hybrid", "sources"].includes(requestResponseStyle)
               ? {
                   source_notice: "The AI answer was interrupted. The named database routes and locally generated searches below may or may not be fully relevant; verify every result you open.",
                 }
@@ -1273,15 +1320,16 @@ export default function App() {
           },
           researchPlan: deterministicFallbackPlan,
           mode: requestMode,
-          responseStyle,
+          responseStyle: requestResponseStyle,
           subjectFocusId: requestFocus.id,
           subjectFocusLabel: requestFocus.label,
-          subjectFocusAuto: subjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
+          subjectFocusAuto: requestSubjectFocusId === DEFAULT_SUBJECT_FOCUS_ID,
           ...(isCorrection ? { isCorrectionResult: true, correctionFailed: true, correctionChanges: options.correctionChanges || [] } : {}),
         },
       ];
+      recordRun(fallback.at(-1), "error");
       setMessages(fallback);
-      saveSession(fallback, requestMode, responseStyle, sessionId, subjectFocusId, workspaceRef.current);
+      saveSession(fallback, requestMode, requestResponseStyle, sessionId, requestSubjectFocusId, workspaceRef.current, requestAccessScope);
     } finally {
       if (requestRef.current === controller) {
         requestRef.current = null;
@@ -1499,6 +1547,7 @@ export default function App() {
         <nav className="research-toolbar no-print" aria-label="Research actions">
           <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
           <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
+          <button type="button" aria-pressed={privateMode} onClick={() => { cancelRequest(); onPrivacyChange(!privateMode); }}>{privateMode ? "End private session" : "Start private session"}</button>
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
           <details className="research-export-menu">
             <summary>Export &amp; share</summary>
@@ -1513,6 +1562,9 @@ export default function App() {
             </div>
           </details>
         </nav>
+        <p className="research-privacy-status" role="status">{privateMode
+          ? <><strong>Private session.</strong> Research stays in memory and clears when you end this session or reload. Downloads remain on this computer. Searches still go to the service.</>
+          : <>Research saves automatically on this browser. <strong>Using a shared computer?</strong> Start a private session before searching. Earlier saved research stays on this computer.</>}</p>
         {storageError && <div className="storage-warning" role="alert">
           <strong>Your latest changes could not be saved in this browser.</strong>
           <p>Keep this tab open and export My sources before reloading. If stored data could not be read, retrying will replace it with the research currently visible here.</p>
@@ -1569,7 +1621,7 @@ export default function App() {
                   ))}
                 </div>
               </form>
-              <p className="entry-privacy">Your request goes to an AI service. Avoid personal or sensitive information. Saved research stays in this browser.</p>
+              <p className="entry-privacy">Your request goes to an AI service. Avoid personal or sensitive information. {privateMode ? "Private research is not saved to browser storage." : "Saved research stays in this browser."}</p>
               <details className="search-options">
                 <summary>Optional search settings <span>{activeMode.shortLabel} · {getAccessScope(accessScope).label}</span></summary>
                 <ModeSelector providerStatus={providerStatus} value={mode} onChange={setMode} accessScope={accessScope} onAccessScopeChange={setAccessScope} responseStyle={responseStyle} onResponseStyleChange={setResponseStyle} />
@@ -1644,6 +1696,7 @@ export default function App() {
         topic={handoffPayload.topic}
         initialTab={workspaceTab}
         researchSpec={latestResearchSpec}
+        onReplaySearch={(entry) => { setResearchWorkspaceOpen(false); send(entry.originalRequest || entry.query, { skipPlanner: true, replay: true, searchConfig: entry.searchConfig, researchSpec: entry.researchSpec, modeOverride: entry.researchSpec?.mode }); }}
         onChange={changeResearchWorkspace}
         onClose={() => setResearchWorkspaceOpen(false)}
         onHandoff={() => {
