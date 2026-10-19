@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { exploreSources } from "../server/sourceExploration.js";
 import { buildResearchSpec } from "../config/researchSpec.js";
-import { requestSourceExploration, sourceExplorationSeed } from "../src/sourceExploration.js";
+import { explorationExcerpt, explorationStatus, requestSourceExploration, sourceExplorationSeed } from "../src/sourceExploration.js";
 import { sourceMethodEvidence } from "../src/sourceMetadataChecks.js";
 import { exploreCrossrefSources } from "../server/crossrefExploration.js";
 
@@ -275,7 +275,7 @@ test("Crossref reference empty, malformed, rate-limit, and timeout states remain
 
 test("Crossref known-item exploration retains source-format constraints and excludes seed editions", async () => {
   const researchSpec = buildResearchSpec("Find the book Governing the Commons by Elinor Ostrom");
-  const f = crossrefFixture(crossrefSeed(), [crossrefWork(2, { title: ["Another institutional theory book"], type: "book" }), crossrefWork(3), crossrefWork(4, { title: [seed.title], type: "book" })]);
+  const f = crossrefFixture(crossrefSeed(), [crossrefWork(2, { title: ["Climate change and biodiversity in institutions"], type: "book" }), crossrefWork(3), crossrefWork(4, { title: [seed.title], type: "book" })]);
   const result = await exploreSources({ seed, researchSpec }, f.options);
   assert.equal(result.results.length, 1); assert.equal(result.results[0].type, "book");
   assert.equal(result.coverage.knownItemIdentityReplacedBySeed, true);
@@ -300,4 +300,37 @@ test("Crossref DOI 404 permits only an explicitly unverified related title searc
     assert.equal(error.results.length, 0); assert.equal(calls, 1);
     assert.equal(error.status, status === 429 ? "rate_limited" : "unavailable");
   }
+});
+
+
+test("Crossref related searches exclude generic title matches even when no topic concepts remain", async () => {
+  const f = crossrefFixture(crossrefSeed(), [
+    crossrefWork(2, { title: ["Research studies and systematic review methods"] }),
+    crossrefWork(3, { title: ["Climate change and biodiversity in forests"] }),
+    crossrefWork(4, { title: ["Climate and mathematical models"] }),
+  ]);
+  const result = await exploreCrossrefSources({ seed, researchSpec: {} }, f.options);
+  assert.deepEqual(result.results.map((item) => item.doi), ["10.1234/work3"]);
+  assert.equal(result.coverage.excludedCount, 2);
+});
+
+test("related title screening allows substantive abstract overlap but does not affect actual references", async () => {
+  const records = [crossrefWork(2, { title: ["Forest resilience"], abstract: "We examine biodiversity under climate change." }), crossrefWork(3, { title: ["A statistical method"] })];
+  const similar = crossrefFixture(crossrefSeed(), records);
+  assert.equal((await exploreCrossrefSources({ seed, researchSpec: {} }, similar.options)).results.length, 1);
+  const references = crossrefFixture(crossrefSeed(), records);
+  assert.equal((await exploreCrossrefSources({ seed, researchSpec: {}, relationship: "references" }, references.options)).results.length, 2);
+});
+
+test("exploration presents useful short outcomes without suppressing identity and partial-result warnings", () => {
+  const success = explorationStatus({ status: "success", results: [{}, {}], coverage: { seedLookupStatus: "not_found", failedLookupCount: 1 } });
+  assert.equal(success.title, "2 similar sources found");
+  assert.match(success.detail, /DOI could not be confirmed/);
+  assert.match(success.detail, /partial/);
+  assert.match(explorationStatus({ status: "identity_mismatch" }).detail, /wrong work/);
+  assert.match(explorationStatus({ status: "unavailable" }, "citing").detail, /Cited by/);
+  assert.match(explorationStatus({ status: "empty" }).detail, /Google Scholar/);
+  assert.equal(explorationExcerpt({ abstractText: "<p>Actual provider text.</p>" }), "Actual provider text.");
+  assert.ok(explorationExcerpt({ abstractText: "Source sentence. ".repeat(100) }).length <= 260);
+  assert.equal(explorationExcerpt({ description: "Invented summary is not an abstract" }), "");
 });

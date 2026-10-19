@@ -9,6 +9,18 @@ const first = (value) => Array.isArray(value) ? value[0] : value;
 const doiOf = (value) => extractDoiIdentifier(clean(value, 350)).toLowerCase();
 const retracted = (record) => record?.is_retracted === true || /^(?:retraction|withdrawal)$/i.test(record?.subtype || "") || (Array.isArray(record?.["update-to"]) && record["update-to"].some((update) => /retract|withdraw/i.test(update?.type || "")));
 
+// A title search can return generic matches ("study", "effect", "review").
+// Require overlap in substantive words before calling a result related. This is
+// a lexical screening rule, not a semantic or full-text relevance guarantee.
+const TITLE_STOP_WORDS = new Set("a an and as at by for from in into of on or the to with without study studies research review systematic meta analysis effects effect impact impacts evidence results result case approach approaches using based introduction chapter book article perspective perspectives new comparative comparison international journal current advances".split(" "));
+function relatedTitleMatch(source, seedTitle) {
+  const terms = [...new Set(titleKey(seedTitle).split(" ").filter((term) => term.length > 2 && !/^\d+$/.test(term) && !TITLE_STOP_WORDS.has(term)))];
+  if (!terms.length) return false;
+  const textTerms = new Set(titleKey(`${source.title} ${source.abstractText || ""}`).split(" "));
+  const matches = terms.filter((term) => textTerms.has(term));
+  return matches.length >= Math.min(2, terms.length);
+}
+
 function mapRecord(record, relationship, seed, retrievedAt) {
   const doi = doiOf(record?.DOI);
   const title = clean(first(record?.title));
@@ -118,7 +130,8 @@ export async function exploreCrossrefSources({ seed = {}, relationship = "simila
       records = found.items.slice(0, candidateLimit);
     }
     coverage.retrievedCount = records.length;
-    const candidates = records.map((record) => mapRecord(record, relationship, resolvedSeed, retrievedAt)).filter(Boolean);
+    const candidates = records.map((record) => mapRecord(record, relationship, resolvedSeed, retrievedAt)).filter(Boolean)
+      .filter((source) => relationship !== "similar" || relatedTitleMatch(source, resolvedSeed.title));
     const { knownItem, ...explorationSpec } = researchSpec;
     if (knownItem) explorationSpec.concepts = (explorationSpec.concepts || []).filter((concept) => titleKey(concept.preferredTerm) !== titleKey(knownItem.title) && titleKey(concept.preferredTerm) !== titleKey(knownItem.author));
     const ranked = rankSourceResults(candidates, explorationSpec, candidateLimit);

@@ -4,7 +4,7 @@ import { RESOURCE_CONFIG_VERSION, SOURCE_MODE_CONTRACTS, getSourceModeContract }
 import { extractSourceRequirements, normalizeSourceRequirements, sourceRequirementUpdates, stripSourceRequirementText, subjectDateScope } from "./sourceRequirements.js";
 
 const REQUEST_WORDS = new Set([
-  "about", "affect", "affects", "association", "between", "can", "compare", "compares", "compared", "comparing", "contrasting",
+  "about", "against", "affect", "affects", "association", "between", "can", "compare", "compares", "compared", "comparing", "contrasting",
   "could", "did", "do", "does", "effect", "effects", "evidence", "explore",
   "find", "focused", "give", "help", "how", "impact", "impacts", "into",
   "lead", "leads", "main", "more", "provide", "prove", "question", "reason",
@@ -365,7 +365,7 @@ function expandComparisonEllipsis(text) {
 }
 
 function researchTopicBody(query) {
-  return requestBody(expandComparisonEllipsis(query))
+  return normalizeExampleRequest(requestBody(expandComparisonEllipsis(query)))
     .replace(/^(?:(?:primary|original|raw|open|public|longitudinal|historical)\s+)*(?:datasets?|data sets?)\s+(?:on|about|of|for|regarding)\s+/i, "dataset ")
     // Comparison verbs describe the task; the two sides remain topical terms.
     .replace(/\b(?:comparing|compare|contrast(?:ing)?)\s+(.+?)\s+(?:with|to)\s+/i, "$1 and ")
@@ -399,6 +399,22 @@ function researchTopicBody(query) {
     .trim();
 }
 
+// These phrases ask for examples or an explanation; requiring their literal
+// wording in every record prevents ordinary scholarly titles from matching.
+// Keep concrete outcomes (e.g. election results) and quoted wording untouched.
+const BROAD_OUTCOME_REQUEST = /\s+and\s+(?:(?:what\s+(?:was|were)\s+)?(?:the|their|its)\s+)(?:results?|outcomes?|consequences?)(?:\s+(?:was|were))?[?.!,;:\s]*(?:only[?.!,;:\s]*)?$/i;
+
+function normalizeExampleRequest(value) {
+  return String(value || "").split(/(["“][^"”]*["”])/g).map((part, index) => {
+    if (index % 2) return part;
+    const text = index === 0 ? part.replace(/^(?:(?:some|specific|historical|real[- ]world)\s+)?examples?\s+(?:of|where)\s+/i, "") : part;
+    return text
+      .replace(/\bhaving\s+(.+?)\s+(?:used|imposed|applied|levied)\s+against\s+(?:them|it|him|her)\b/gi, "$1")
+      .replace(/\b(?:used|imposed|applied|levied)\s+against\s+/gi, " and ")
+      .replace(BROAD_OUTCOME_REQUEST, "");
+  }).join("");
+}
+
 function genericConcepts(query) {
   // The full request has already been parsed. Reapplying request stripping to
   // residual spans would erase topical words, e.g. "book" in book banning.
@@ -409,7 +425,7 @@ function genericConcepts(query) {
   const quoted = [...value.matchAll(/["“]([^"”]{2,160})["”]/g)].map((match) => ({ preferredTerm: clean(match[1]), exactPhrase: true }));
   const chunks = value
     .replace(/["“]([^"”]{2,160})["”]/g, " ")
-    .split(/\s+(?:and|versus|vs\.?|among|within|during|after|before|across|on|in|for|between|about|regarding|concerning|by)\s+/i)
+    .split(/\s+(?:and|versus|vs\.?|among|within|during|after|before|across|on|in|for|between|about|regarding|concerning|by|against)\s+/i)
     .map((chunk) => chunk
       .split(/\s+/)
       .filter((word) => (word.length > 2 || /^(?:I|II|III|IV|V|VI|VII|VIII|IX|X)$/.test(word)) && !REQUEST_WORDS.has(word.toLowerCase()))
@@ -500,7 +516,8 @@ function safetyFor(query) {
 function searchIntentFor(topic, concepts, facets, knownItem = null) {
   const safety = safetyFor(topic);
   const requestedFocus = /\b(?:benefits and (?:drawbacks|risks|harms)|advantages and disadvantages|pros and cons)\b/i.test(topic) ? "benefits-and-harms"
-    : /\b(?:adverse|harmful|side effects?|damag(?:e|es)|harms?|bad for)\b/i.test(topic) ? "adverse-effects" : "";
+    : /\b(?:adverse|harmful|side effects?|damag(?:e|es)|harms?|bad for)\b/i.test(topic) ? "adverse-effects"
+      : BROAD_OUTCOME_REQUEST.test(extractMethodRequirements(stripSourceRequirementText(topic)).topicText) ? "outcomes" : "";
   const terms = concepts.map((concept) => concept.preferredTerm.replace(/\*/g, "")).filter(Boolean);
   const population = facets.population.replace(/adolescent\*/g, "adolescents").replace(/child\*/g, "children").replace(/\*/g, "");
   const scope = [population && `among ${population}`, facets.geography && !terms.some((term) => term.toLowerCase().includes(facets.geography.toLowerCase())) && `in ${facets.geography}`, facets.timePeriod].filter(Boolean).join(" ");
@@ -508,7 +525,7 @@ function searchIntentFor(topic, concepts, facets, knownItem = null) {
   return {
     originalQuestion: topic,
     neutralQuestion: knownItem ? `Locate ${knownItem.title}${knownItem.author ? ` by ${knownItem.author}` : ""}.`
-      : `What does research show about ${terms.join(" and ") || "this topic"}${scope ? ` ${scope}` : ""}${reformulated && requestedFocus === "adverse-effects" ? ", including possible adverse effects" : ""}?`,
+      : `What does research show about ${terms.join(" and ") || "this topic"}${scope ? ` ${scope}` : ""}${requestedFocus === "outcomes" ? ", including reported outcomes" : reformulated && requestedFocus === "adverse-effects" ? ", including possible adverse effects" : ""}?`,
     reformulated,
     explanation: reformulated ? `The search tests the relationship without treating the proposed conclusion as established.${requestedFocus === "adverse-effects" ? " Your interest in possible harms is retained." : ""} Findings need to be assessed on their evidence.` : "",
     requestedFocus,
@@ -820,7 +837,7 @@ export function continueResearchSpec(baseSpec, previousSpec, latestText = "", co
   if (!previousSpec || typeof previousSpec !== "object" || Array.isArray(previousSpec)) return baseSpec;
   const priorBase = buildResearchSpec(previousSpec.topic || baseSpec.topic, { modeId: baseSpec.mode });
   const previous = mergeSuppliedResearchSpec(priorBase, previousSpec);
-  const refinement = String(latestText).match(/\b(?:focus(?:ing)? on|narrow(?: it| this| the topic)? to|add(?:ing)?|also include|specifically)\s+(.+)/i)?.[1];
+  const refinement = String(latestText).match(/\b(?:focus(?:ing)? on|narrow(?: it| this| the topic)? to|add(?:ing)?|also include|specifically|what about|how about)\s+(.+)/i)?.[1];
   const refinedConcepts = refinement ? extractConcepts(refinement) : [];
   const spec = {
     ...previous,

@@ -182,6 +182,44 @@ test("new and complex topics retain their actors, outcomes and setting without q
   }
 });
 
+test("requests for examples do not require conversational scaffolding in source records", () => {
+  const prompt = "Examples of Russia having sanctions used against them and the result";
+  const plan = buildResearchPlan(prompt);
+  assert.equal(plan.researchSpec.searchIntent.originalQuestion, prompt);
+  assert.equal(plan.researchSpec.searchIntent.requestedFocus, "outcomes");
+  assert.match(plan.researchSpec.searchIntent.neutralQuestion, /reported outcomes/);
+  for (const query of everySearch(plan)) {
+    assert.match(query, /Russia/i);
+    assert.match(query, /sanctions/i);
+    assert.doesNotMatch(query, /examples|having|used|against|\bresult\b/i);
+    assert.equal(queryMatchesText(query, "Economic sanctions and Russia"), true, query);
+    assert.equal(queryMatchesText(query, "Economic sanctions and Iran"), false, query);
+  }
+  const equivalent = buildResearchSpec("Give me examples of sanctions imposed against Russia and their consequences");
+  assert.equal(researchSpecQuery(equivalent), "sanctions AND Russia");
+  assert.equal(equivalent.searchIntent.requestedFocus, "outcomes");
+  for (const phrase of ["Sanctions against Russia", "Trade sanctions against Russia"]) {
+    const direct = buildResearchPlan(phrase);
+    for (const query of everySearch(direct)) {
+      assert.match(query, /Russia/);
+      assert.match(query, /sanctions/i);
+      assert.doesNotMatch(query, /against/i);
+    }
+  }
+
+  const specific = researchSpecQuery(buildResearchSpec("Examples of sanctions and election results"));
+  assert.match(specific, /elections AND results/);
+  const quoted = researchSpecQuery(buildResearchSpec(`"${prompt}"`));
+  assert.equal(quoted, `"${prompt}"`);
+
+  const constrained = buildResearchSpec(`${prompt}; only peer-reviewed sources published since 2020, not literature reviews`);
+  assert.equal(constrained.sourceRequirements.publicationYearFrom, 2020);
+  assert.equal(constrained.sourceRequirements.peerReviewed, true);
+  assert.deepEqual(constrained.methodRequirements.exclude, ["literature review"]);
+  assert.doesNotMatch(researchSpecQuery(constrained), /\bresult\b/i);
+  assert.equal(constrained.searchIntent.requestedFocus, "outcomes");
+});
+
 test("long unmatched topic phrases use separate keywords while explicitly quoted phrases stay exact", () => {
   const ordinary = buildResearchSpec("Floating wetland nutrient capture efficiency");
   const explicit = buildResearchSpec('Find studies about "floating wetland nutrient capture efficiency"');

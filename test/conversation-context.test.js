@@ -7,6 +7,8 @@ import {
   submittedResearchTopicContext,
   startsIndependentResearchTurn,
 } from "../src/conversationContext.js";
+import { parseChatRequest } from "../server/chatRequest.js";
+import { buildResearchSpec, continueResearchSpec, researchSpecQuery } from "../config/researchSpec.js";
 
 test("submitted context ignores unsent draft text by accepting messages only", () => {
   const messages = [
@@ -106,4 +108,31 @@ test("topic-bearing source requests remain part of the research topic", () => {
 
   assert.equal(isSourceOnlyFollowup(messages[0].content), false);
   assert.equal(submittedResearchTopicContext(messages), messages[0].content);
+});
+
+test("a short country follow-up retains the subject and explicit source requirements", () => {
+  const topic = "economic sanctions; peer-reviewed sources since 2020, not literature reviews";
+  const previous = buildResearchSpec(topic);
+  const followup = "What about Russia?";
+  const request = parseChatRequest({ messages: [{ role: "user", content: topic }, { role: "assistant", content: "Sources" }, { role: "user", content: followup }], previousResearchSpec: previous });
+  assert.equal(startsIndependentResearchTurn(followup, true), false);
+  assert.ok(request.previousResearchSpec);
+  const spec = continueResearchSpec(buildResearchSpec(request.studentText), request.previousResearchSpec, followup);
+  assert.match(researchSpecQuery(spec), /sanctions.*Russia/i);
+  assert.equal(spec.sourceRequirements.publicationYearFrom, 2020);
+  assert.equal(spec.sourceRequirements.peerReviewed, true);
+  assert.deepEqual(spec.methodRequirements.exclude, ["literature review"]);
+});
+
+test("a complete Russia question replaces a prior comparison without erasing visible chat history", () => {
+  const topic = "sanctions in authoritarian regimes versus democracies";
+  const prompt = "Examples of Russia having sanctions used against them and the result";
+  const messages = [{ role: "user", content: topic }, { role: "assistant", content: "Earlier sources" }, { role: "user", content: prompt }];
+  const request = parseChatRequest({ messages, previousResearchSpec: buildResearchSpec(topic) });
+  assert.equal(request.previousResearchSpec, null);
+  assert.equal(request.studentText, prompt);
+  assert.equal(messages.length, 3, "context selection must not mutate UI messages");
+  const spec = buildResearchSpec(request.studentText);
+  assert.equal(spec.comparison, null);
+  assert.equal(researchSpecQuery(spec), "Russia AND sanctions");
 });

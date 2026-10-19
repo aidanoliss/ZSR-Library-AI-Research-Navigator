@@ -17,3 +17,19 @@
 .source-exploration-scholar { display: inline-block; font-size: .85rem; margin-top: .5rem; }
 .source-exploration button:focus-visible, .source-exploration a:focus-visible, .source-exploration summary:focus-visible { outline: 3px solid #806326; outline-offset: 3px; }
 @media (max-width: 540px) { .source-exploration-panel { padding: .8rem; } .source-exploration-options button { flex: 1 1 auto; } }
+
+.source-exploration-heading { margin: 0 0 .8rem; font: inherit; font-size: 1rem; font-weight: 700; color: #171717; }
+.source-exploration-status { padding: .85rem 1rem; border-radius: .65rem; background: #efefeb; color: #343630; }
+.source-exploration-status > strong { display: block; color: #171717; font-size: .95rem; }
+.source-exploration-status p { margin: .25rem 0 0; }
+.source-exploration-results > li { padding: 1rem; margin: .65rem 0; border: 1px solid #deddd7; border-radius: .7rem; background: #fff; }
+.source-exploration-results h5 { font-size: 1rem; line-height: 1.45; }
+.source-exploration-excerpt { color: #373a35; }
+.source-exploration-excerpt > span { font-weight: 650; }
+.source-exploration-no-abstract { color: #676961; }
+.source-exploration-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: .8rem; }
+.source-exploration-actions > a { font-size: .875rem; font-weight: 650; }
+.source-exploration-coverage { padding: .65rem 0; }
+.source-exploration-coverage > summary { cursor: pointer; font-weight: 600; color: #484b44; }
+@media (max-width: 540px) { .source-exploration-results > li { padding: .85rem; } }
+.source-exploration-kind { display: inline-block; margin-bottom: 7px; color: #5b645e; font: 500 .72rem/1.4 system-ui, sans-serif; text-transform: capitalize; }

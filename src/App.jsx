@@ -807,7 +807,6 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   const [plannerDraft, setPlannerDraft] = useState(null);
   const [clarificationDraft, setClarificationDraft] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [followupOpen, setFollowupOpen] = useState(false);
   const studyRef = useRef(null);
   if (!studyRef.current) {
     let storage;
@@ -826,9 +825,14 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   const [actionNotice, setActionNotice] = useState("");
   const [removedItem, setRemovedItem] = useState(null);
   useEffect(() => { setRemovedItem(null); setActionNotice(""); }, [activeSessionId]);
+  useEffect(() => {
+    if (!actionNotice) return;
+    const timeout = setTimeout(() => setActionNotice(""), 8000);
+    return () => clearTimeout(timeout);
+  }, [actionNotice]);
 
   const hasConversation = messages.length > 0;
-  const currentRequestIndex = Math.max(0, messages.findLastIndex((message) => message.role === "user"));
+  const latestUserIndex = messages.findLastIndex((message) => message.role === "user");
   const activeMode = getSearchMode(mode);
   const subjectFocusSeed = useMemo(() => submittedResearchTopicContext(messages), [messages]);
   const effectiveSubjectFocus = useMemo(
@@ -880,7 +884,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   // Scroll only when a new question is asked — not while "Thinking" animates or
   // results stream in, so the page doesn't jump under the reader.
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [messages.filter((m) => m.role === "user").length]);
 
   const updatedResultRef = useRef(null);
@@ -1120,7 +1124,6 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   }
 
   function openPlanner(topicText = input, questions = []) {
-    setFollowupOpen(true);
     const content = String(topicText || input || "").trim();
     if (!content) return;
     setPlannerDraft({ topic: content, questions });
@@ -1157,7 +1160,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     const searchMetricId = crypto.randomUUID();
     const startedAt = new Date().toISOString();
     studyRef.current.record("search_started", { searchId: searchMetricId, accessScope: requestAccessScope });
-    setFollowupOpen(false);
+    setActionNotice("");
     const requestMode = options.modeOverride || options.mode || inferExplicitModeRequest(content, mode);
     const controller = new AbortController();
     controller.signal.addEventListener("abort", () => {
@@ -1427,12 +1430,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
 
   function renderConversationMessage(message, index) {
     if (message.role === "user") {
-      const next = messages[index + 1];
-      const shownInSearch = index === currentRequestIndex && next?.role === "assistant";
-      const originalTopic = next?.researchSpec?.topic || next?.researchPlan?.researchSpec?.topic;
-      if (shownInSearch && (originalTopic === message.content || message.isCorrectionRequest) && !message.assignmentContext && !message.plannerContext) return null;
-      const request = <div className="bubble user"><span>Research request</span><p>{message.displayContent || message.content}</p>{message.assignmentContext && <RequestMetaSummary message={{ assignmentContext: message.assignmentContext }} />}<PlannerContextSummary context={message.plannerContext} /></div>;
-      return shownInSearch ? <details className="request-context" key={`${message.role}-${index}`}><summary>Request details</summary>{request}</details> : <div key={`${message.role}-${index}`}>{request}</div>;
+      return <div className="conversation-request" ref={index === latestUserIndex ? scrollRef : null} key={`${message.role}-${index}`}><div className="bubble user"><span>You</span><p>{message.displayContent || message.content}</p>{message.assignmentContext && <RequestMetaSummary message={{ assignmentContext: message.assignmentContext }} />}<PlannerContextSummary context={message.plannerContext} /></div></div>;
     }
                   const assistant = (
                     <AssistantMessage
@@ -1528,7 +1526,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   }
 
   return (
-    <div className={`zsr-app ${hasConversation ? "has-conversation" : ""} ${sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed"}`}>
+    <div className={`zsr-app ${hasConversation ? "has-conversation" : ""} ${privateMode ? "is-private" : ""} ${sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed"}`}>
       <SessionSidebar
         expanded={sidebarExpanded}
         onExpandedChange={setSidebarExpanded}
@@ -1574,16 +1572,18 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             </div>
           </details>
         </nav>
-        <p className="research-privacy-status" role="status">{privateMode
-          ? <><strong>Private session.</strong> Research stays in memory and clears when you end this session or reload. Downloads remain on this computer. Searches still go to the service.</>
-          : <>Research saves automatically on this browser. <strong>Using a shared computer?</strong> Start a private session before searching. Earlier saved research stays on this computer.</>}</p>
+        {privateMode ? <aside className="private-session-banner" aria-label="Private session active">
+          <span className="private-session-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v3"/></svg></span>
+          <div><strong>Private session is on</strong><span>Research is not saved in this browser.</span></div>
+          <details><summary>What this means</summary><p>Research clears when you end this session or reload. Searches still go to our service and search providers; private mode is not anonymous browsing. Downloads and earlier saved research remain on this computer.</p></details>
+        </aside> : <p className="research-privacy-status">Research saves in this browser. On a shared computer? <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(true); }}>Start a private session</button>.</p>}
         {storageError && <div className="storage-warning" role="alert">
           <strong>Your latest changes could not be saved in this browser.</strong>
           <p>Keep this tab open and export My sources before reloading. If stored data could not be read, retrying will replace it with the research currently visible here.</p>
           <button type="button" onClick={() => openWorkspace("review")}>Export My sources</button>
           <button type="button" onClick={() => { allowStorageRetry(); setStorageRetry((value) => value + 1); }}>Retry saving</button>
         </div>}
-        <div className="action-status no-print" role="status" aria-live="polite">{actionNotice}{removedItem?.sessionId === activeSessionId && <button type="button" onClick={undoUnsave}>Undo unsave</button>}</div>
+        {actionNotice && <div className="action-status action-toast no-print"><span role="status" aria-live="polite">{actionNotice}</span>{removedItem?.sessionId === activeSessionId && <button type="button" onClick={undoUnsave}>Undo unsave</button>}<button type="button" className="toast-dismiss" aria-label="Dismiss notification" onClick={() => setActionNotice("")}>×</button></div>}
         <div className="content-wrap">
           {!hasConversation ? (
             <section className="start-panel">
@@ -1648,12 +1648,10 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
                 <SubjectFocusControl value={subjectFocusId} detectedFocus={effectiveSubjectFocus} onChange={changeSubjectFocus} />
               </details>
               <section className="conversation" aria-label="Research results" aria-busy={loading}>
-                {messages.slice(currentRequestIndex).map((message, index) => renderConversationMessage(message, index + currentRequestIndex))}
-                {currentRequestIndex > 0 && <details className="previous-conversation"><summary>Previous searches and replies</summary>{messages.slice(0, currentRequestIndex).map((message, index) => renderConversationMessage(message, index))}</details>}
+                {messages.map((message, index) => renderConversationMessage(message, index))}
                 {loading && messages.at(-1)?.isCorrectionRequest && <p className="refresh-request-status" role="status">Refreshing search terms, database routes, and source leads from the corrected brief…</p>}
                 {loading && <LoadingBubble />}
                 {error && <p className="error-note" role="alert">{error}</p>}
-                <div ref={scrollRef} />
               </section>
             </>
           )}
@@ -1661,8 +1659,8 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
       </main>
 
       {hasConversation && (
-        <details className="followup-panel no-print" open={followupOpen || Boolean(plannerDraft)} onToggle={(event) => setFollowupOpen(event.currentTarget.open)}>
-        <summary>Ask a follow-up</summary>
+        <section className="conversation-composer no-print" aria-label="Continue this research conversation">
+        <div className="composer-caption"><strong>{privateMode ? "Private session" : "Continue your research"}</strong><span>Ask a follow-up or add a new question.</span></div>
         <form
           className="composer-dock no-print"
           onSubmit={(event) => {
@@ -1690,11 +1688,10 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             placeholder="Ask a follow-up or refine your topic"
             rows={1}
           />
-          <button type="submit" disabled={!input.trim() || loading} aria-label="Send follow-up">
-            {Icon.arrowUp}
-          </button>
+          {loading ? <button type="button" className="composer-stop" onClick={cancelRequest} aria-label="Stop search"><span aria-hidden="true">■</span></button> : <button type="submit" disabled={!input.trim()} aria-label="Send follow-up">{Icon.arrowUp}</button>}
         </form>
-        </details>
+        <p className="composer-footnote">{privateMode ? "Not saved on this device · clears on reload" : "Your earlier questions and results stay above"}</p>
+        </section>
       )}
       {clarificationDraft && <SearchClarification draft={clarificationDraft} onCancel={() => setClarificationDraft(null)} onSearch={(topic, spec) => {
         const options = clarificationDraft.options;

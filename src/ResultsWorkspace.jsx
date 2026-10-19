@@ -55,13 +55,13 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
     tabRefs.current[next]?.focus();
   }
   return <header className="result-workspace-header">
-    <form className="result-topic-search" onSubmit={submit}>
+    {onSearch ? <form className="result-topic-search" onSubmit={submit}>
       <label htmlFor={inputId}>Research topic</label>
       <div>
         <textarea rows={2} id={inputId} value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={2000} readOnly={!onSearch} />
         {onSearch && <button type="submit" disabled={busy || !draft.trim()}>{busy ? "Searching…" : "Search"}</button>}
       </div>
-    </form>
+    </form> : <p className="result-topic-caption"><strong>Search scope</strong>{topic}</p>}
     {onSearch && <div className="prompt-improvement">
       <button type="button" className="prompt-improve-toggle" aria-expanded={improving} aria-controls={`${inputId}-improve`} onClick={() => { setImproving(!improving); setPromptNotice(""); }}>Refine this prompt</button>
       {improving && <section id={`${inputId}-improve`} aria-label="Prompt refinement">
