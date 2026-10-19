@@ -93,8 +93,9 @@ function refreshedSourceStatus(discovery) {
 }
 
 const Icon = {
-  sidebarClose: <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16m7-12-4 4 4 4" /></svg>,
-  sidebarOpen: <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16m4-12 4 4-4 4" /></svg>,
+  // One quiet panel glyph for both states; the label and aria-expanded carry the action.
+  sidebarClose: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="4" /><path d="M9.5 4.5v15" /></svg>,
+  sidebarOpen: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="4" /><path d="M9.5 4.5v15" /></svg>,
   plus: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>,
   folder: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h6l2 2h8v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" /></svg>,
   trash: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v5M14 11v5" /></svg>,
@@ -1557,7 +1558,6 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         <nav className="research-toolbar no-print" aria-label="Research actions">
           <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
           <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
-          {privateMode && <button type="button" aria-pressed="true" onClick={() => { cancelRequest(); onPrivacyChange(false); }}>End private session</button>}
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
           <details className="research-export-menu">
             <summary>Export &amp; share</summary>
@@ -1572,11 +1572,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             </div>
           </details>
         </nav>
-        {privateMode ? <aside className="private-session-banner" aria-label="Private session active">
-          <span className="private-session-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v3"/></svg></span>
-          <div><strong>Private session is on</strong><span>Research is not saved in this browser.</span></div>
-          <details><summary>What this means</summary><p>Research clears when you end this session or reload. Searches still go to our service and search providers; private mode is not anonymous browsing. Downloads and earlier saved research remain on this computer.</p></details>
-        </aside> : <p className="research-privacy-status">Research saves in this browser. On a shared computer? <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(true); }}>Start a private session</button>.</p>}
+        {privateMode
+          ? <p className="research-privacy-status is-private-status" title="Research clears when you end this session or reload. Searches still go to the search service and providers; this is not anonymous browsing."><span className="private-indicator" aria-hidden="true" /><strong>Private session</strong> · nothing is saved in this browser. <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(false); }}>End private session</button></p>
+          : <p className="research-privacy-status">Research saves in this browser. On a shared computer? <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(true); }}>Start a private session</button>.</p>}
         {storageError && <div className="storage-warning" role="alert">
           <strong>Your latest changes could not be saved in this browser.</strong>
           <p>Keep this tab open and export My sources before reloading. If stored data could not be read, retrying will replace it with the research currently visible here.</p>
@@ -1654,7 +1652,6 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         {hasConversation && (
           <div className="conversation-composer-area no-print">
           <section className="conversation-composer no-print" aria-label="Continue this research conversation">
-          {privateMode && <div className="composer-caption"><strong>Private session</strong><span>Not saved on this device · clears on reload</span></div>}
           <form
             className="composer-dock no-print"
             onSubmit={(event) => {

@@ -23,7 +23,8 @@ export default function SearchClarification({ draft, onSearch, onCancel }) {
     <div className="clarification-heading"><span>One quick clarification · optional</span><button type="button" aria-label="Close clarification" onClick={onCancel}>×</button></div>
     <h2 id="clarification-title">{draft.question.question}</h2><p>Your original topic stays in the search. Choose a focus, or search as written.</p>
     <fieldset className="clarification-choices"><legend className="sr-only">Choose a focus</legend>{draft.question.choices.map((item) => <label key={item.label}><input type="radio" name="clarification" value={item.label} checked={choice === item.label} onChange={() => setChoice(item.label)} />{item.label}</label>)}</fieldset>
-    <details><summary>Check required criteria and preferences</summary><ScopePriorityControls spec={draft.spec} priorities={priorities} onChange={setPriorities} /></details>
+    {/* Only offer the criteria step when the search has a population, place or method to prioritize. */}
+    {scopePriorityRows(draft.spec).length > 0 && <details className="clarification-criteria"><summary>Required or preferred criteria</summary><ScopePriorityControls spec={draft.spec} priorities={priorities} onChange={setPriorities} /></details>}
     {error && <p role="alert">{error}</p>}<div className="clarification-actions"><button type="submit">Search with these choices</button><button type="button" onClick={() => finish(true)}>Skip · search as written</button></div>
   </form></dialog>;
 }
