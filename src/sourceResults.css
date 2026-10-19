@@ -172,7 +172,6 @@
 
 /* One row of primary actions; secondary tools open together under More. */
 .source-more-toggle { gap: 6px; }
-.source-more-chevron { font-size: .7rem; line-height: 1; }
 .source-more-panel { display: grid; gap: 10px; margin-top: 12px; padding: 12px 14px; border: 1px solid var(--source-line); border-radius: 10px; background: #fbfaf6; }
 .source-trust-more { display: inline; }
 .source-trust-more > summary { display: inline; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; list-style: none; }

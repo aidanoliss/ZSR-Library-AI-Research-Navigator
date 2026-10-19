@@ -46,7 +46,7 @@ export default function SourceExploration({ source, researchSpec = {}, accessSco
   const scholar = `https://scholar.google.com/scholar?q=${encodeURIComponent(source.title || "")}`;
   const retryable = Boolean(error || ["timeout", "rate_limited", "cancelled"].includes(response?.status) || (response?.status === "unavailable" && relationship !== "citing"));
   return <div className="source-exploration">
-    <button type="button" className="source-exploration-toggle" aria-expanded={open} aria-controls={id} onClick={toggle}>Find more like this <span aria-hidden="true">{open ? "−" : "+"}</span></button>
+    <button type="button" className="source-exploration-toggle" aria-expanded={open} aria-controls={id} onClick={toggle}>Find more like this <span className="disclosure-chevron" aria-hidden="true" /></button>
     {open && <section id={id} className="source-exploration-panel" aria-label={`Explore connections to ${source.title}`}>
       <h4 className="source-exploration-heading">Explore this source</h4>
       <div className="source-exploration-options" role="group" aria-label="Connection type">{EXPLORATION_RELATIONSHIPS.map((item) => <button key={item.id} type="button" aria-pressed={relationship === item.id} onClick={() => search(item.id)}>{item.label}</button>)}</div>

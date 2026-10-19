@@ -1,0 +1,60 @@
+/* One expand/collapse marker everywhere: a rounded chevron that points down
+   when closed and flips up when open. Loaded last so it replaces the older
+   border-drawn chevrons and the "+ / −" text markers. */
+:root {
+  --zsr-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+details > summary::after,
+.topic-option-summary::after,
+.topic-terms summary::after,
+.source-results-workspace details > summary::after,
+.disclosure-chevron {
+  content: "";
+  display: inline-block;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  border: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--zsr-chevron) center / 16px 16px no-repeat;
+  mask: var(--zsr-chevron) center / 16px 16px no-repeat;
+  opacity: .55;
+  transform: none;
+  transition: transform 220ms cubic-bezier(.2, .7, .3, 1), opacity 160ms ease;
+}
+
+details > summary::after,
+.source-results-workspace details > summary::after { margin-left: auto; }
+
+details[open] > summary::after,
+.topic-option-card[open] > .topic-option-summary::after,
+.topic-terms[open] > summary::after,
+.source-results-workspace details[open] > summary::after,
+[aria-expanded="true"] > .disclosure-chevron { transform: rotate(180deg); }
+
+details > summary:hover::after,
+details > summary:focus-visible::after,
+:hover > .disclosure-chevron,
+:focus-visible > .disclosure-chevron { opacity: .9; }
+
+/* The source area used "+ / −" text before its labels; the chevron replaces it. */
+.source-results-workspace :is(.source-local-filters, .source-record-details, .source-more-results, .source-recovery-details, .source-reading-guide, .source-evidence-notes) > summary::before { content: none; }
+
+/* Inline text toggles ("Why?", "About AI & evidence") stay plain links. */
+.source-results-workspace :is(.source-trust-more, .source-fit-why) > summary::after,
+:is(.source-trust-more, .source-fit-why) > summary::after { content: none; display: none; }
+
+/* Inline summaries keep the chevron beside their label, not pushed to the edge. */
+.source-local-filters > summary::after,
+.source-more-results > summary::after,
+.source-more-panel details > summary::after { margin-left: 2px; }
+.source-more-panel details > summary { justify-content: flex-start; }
+
+@media (prefers-reduced-motion: reduce) {
+  details > summary::after,
+  .source-results-workspace details > summary::after,
+  .topic-option-summary::after,
+  .topic-terms summary::after,
+  .disclosure-chevron { transition: none; }
+}

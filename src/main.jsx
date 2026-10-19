@@ -15,3 +15,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 );
 
 import "./workspace.css";
+import "./disclosure.css";
