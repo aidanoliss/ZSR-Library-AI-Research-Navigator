@@ -19,6 +19,16 @@ const REQUEST_WORDS = new Set([
   "you", "some", "whether", "any", "there", "their", "theirs", "them",
   "its", "it", "his", "her", "hers", "our", "ours", "your", "yours", "as", "vs",
   "possible", "potential", "possibly", "potentially", "may", "might",
+  "differ", "differs", "differed", "vary", "varies", "varied", "different",
+  "anything", "something", "nothing", "stuff", "really", "actually", "basically",
+]);
+
+// A residual chunk made only of these words carries no searchable topic, e.g.
+// "people" left over from "elderly people". Within a longer phrase they stay.
+const FILLER_ONLY_CHUNKS = new Set([
+  "people", "persons", "individuals", "folks", "things", "thing", "information", "info",
+  "topic", "topics", "research", "sources", "source", "studies", "articles", "papers",
+  "lot", "lots", "kind", "kinds", "sort", "type", "types", "ways", "way", "today", "nowadays",
 ]);
 
 const CANONICAL_CONCEPTS = [
@@ -58,7 +68,13 @@ const CANONICAL_CONCEPTS = [
   { id: "archival-personal-records", preferredTerm: "letters OR diaries", synonyms: [], pattern: /\b(?:letters?\s+(?:and|or|and\/or)\s+diaries|diaries\s+(?:and|or|and\/or)\s+letters?)\b/i },
   { id: "enslaved-people", preferredTerm: '("enslaved people" OR "formerly enslaved people")', synonyms: [], pattern: /\benslaved or formerly enslaved people\b/i },
   { id: "postwar", preferredTerm: "postwar", synonyms: ["post-war", "after World War II"], pattern: /\b(post[- ]?war|after (?:world war (?:ii|2)|wwii))\b/i },
-  { id: "jazz-venues", preferredTerm: "jazz clubs", synonyms: ["jazz venues", "jazz-club culture"], pattern: /\b(jazz clubs?|jazz venues?|jazz[- ]club culture|jazz)\b/i },
+  { id: "jazz-venues", preferredTerm: "jazz clubs", synonyms: ["jazz venues", "jazz-club culture"], pattern: /\b(jazz clubs?|jazz venues?|jazz[- ]club culture)\b/i },
+  // Bare "jazz" is the music itself; it must not silently narrow to venues.
+  { id: "jazz", preferredTerm: "jazz", synonyms: ["jazz music"], pattern: /\bjazz(?! clubs?\b| venues?\b|[- ]club culture\b)\b/i },
+  { id: "bees", preferredTerm: "bees", synonyms: ["honey bees", "honeybees", "bumblebees", "colony collapse"], pattern: /\b(honey ?bees?|bumble ?bees?|bees)\b/i },
+  // Everyday "dying" is a predicate, not a phrase to quote beside its subject.
+  { id: "population-decline", preferredTerm: "decline", synonyms: ["mortality", "die-off*", "dying", "population loss"], pattern: /\b(dying(?: off| out)?|die[- ]offs?|mass mortality)\b/i },
+  { id: "remote-work", preferredTerm: "remote work", synonyms: ["telework", "telecommuting", "working from home"], pattern: /\b(remote work(?:ing)?|telework(?:ing)?|telecommut(?:ing|e)|work(?:ing)? from home)\b/i },
   { id: "urban-context", preferredTerm: "urban", synonyms: ["city", "metropolitan"], pattern: /\b(large cities|major cities|metropolitan areas|urban|city|metropolitan)\b/i },
   { id: "cultural-identity", preferredTerm: "cultural identity", synonyms: ["identity", "culture"], pattern: /\b(cultural identity|urban (?:cultural )?identity|city identity|identity)\b/i },
   { id: "supply-chain", preferredTerm: "supply chain", synonyms: ["supply chains", "sourcing", "value chain"], pattern: /\b(supply[- ]chains?|sourcing|value[- ]chains?)\b/i },
@@ -84,7 +100,9 @@ const CANONICAL_CONCEPTS = [
   { id: "statistics", preferredTerm: "statistics", synonyms: ["prevalence", "rates"], pattern: /\b(statistics?|prevalence|rates?)\b/i },
   { id: "dataset", preferredTerm: "dataset", synonyms: ["data set", "survey data"], pattern: /\b(datasets?|data sets?|survey data)\b/i },
   { id: "brand-positioning", preferredTerm: "brand positioning", synonyms: ["brand strategy", "brand prestige"], pattern: /\b(brand positioning|brand strategy|brand prestige)\b/i },
-  { id: "younger-consumers", preferredTerm: "younger consumers", synonyms: ["Generation Z", "young adults"], pattern: /\b(younger consumers?|generation z|gen z|young adults?)\b/i, facet: "population" },
+  // "Young adults" is a life stage; only consumer wording selects market vocabulary.
+  { id: "younger-consumers", preferredTerm: "younger consumers", synonyms: ["Generation Z", "Gen Z consumers"], pattern: /\b(younger consumers?|(?:generation z|gen z) (?:consumers?|shoppers?|buyers?)|younger (?:shoppers?|buyers?))\b/i, facet: "population" },
+  { id: "young-adults", preferredTerm: "young adults", synonyms: ["emerging adults", "Generation Z"], pattern: /\b(young adults?|emerging adults?|generation z|gen z)\b/i, facet: "population" },
   { id: "company-revenue", preferredTerm: "revenue", synonyms: ["sales", "financial performance"], pattern: /\b(revenue|financial performance)\b/i },
   { id: "company-debt", preferredTerm: "debt", synonyms: ["leverage", "liabilities"], pattern: /\b(debt|leverage|liabilities)\b/i },
   { id: "merger", preferredTerm: "merger", synonyms: ["acquisition", "M&A"], pattern: /\b(merger|acquisition|M&A)\b/i },
@@ -184,7 +202,8 @@ export function inferExplicitModeRequest(text, fallback = DEFAULT_MODE_ID) {
   // setting may be refined only by unmistakable source-type language.
   if (fallback && fallback !== DEFAULT_MODE_ID) return fallback;
   const knownItem = extractKnownItemRequest(text);
-  if (knownItem) return knownItem.kind === "book" ? "books" : "scholarly";
+  if (knownItem?.kind === "book") return "books";
+  if (knownItem?.kind === "article") return "scholarly";
   // Interpret the requested object before considering any topical nouns. In
   // "studies of newspaper coverage", newspaper is the subject, not the format.
   if (/^(?:(?:peer[- ]reviewed|scholarly|academic|scientific|journal|empirical|experimental|primary|original|recent)\s+)*(?:research|studies|study|articles?|papers?)\b/i.test(value) || /^(?:systematic|scoping|literature) reviews?\b/i.test(value)) return "scholarly";
@@ -277,6 +296,63 @@ function extractMethodRequirements(text) {
   return { include: [...new Set(include)], exclude: [...new Set(exclude)], topicText: clean(topicText) };
 }
 
+// Unambiguous exclusion instructions may occur anywhere. Bare "not", "no",
+// "avoid" and "without" are often topical ("students who do not vote", "how to
+// avoid burnout"), so they count only at a clause boundary: ", not X" or "but not X".
+const STRONG_EXCLUSION_CUE = String.raw`excluding|except(?:\s+for)?|other\s+than|apart\s+from|leaving\s+out|(?:(?:i|we)\s+)?(?:do\s+not|don['’]t)\s+(?:want|need|include)(?:\s+(?:anything|sources?|articles?|studies|results?|research|papers?|books?))?(?:\s+(?:about|on|from|involving|related\s+to|that\s+(?:mention|discuss)))?`;
+const BOUNDARY_EXCLUSION_CUE = String.raw`not|no|nothing\s+(?:about|on)|avoid(?:ing)?|ignoring|without`;
+const EXCLUSION_PATTERN = new RegExp(
+  String.raw`(?:(?<boundary>[,;:]\s*(?:(?:but|and)\s+)?|\s(?:but|and)\s+)(?<weak>${BOUNDARY_EXCLUSION_CUE})|(?<lead>\s|^|[,;:]\s*)(?:(?:but|and)\s+)?(?<strong>${STRONG_EXCLUSION_CUE}))\s+(?<object>[^,;.?!()]+)`,
+  "gi"
+);
+// "including but not limited to", "not only", "no more than" are not exclusions.
+const NOT_AN_EXCLUSION = /^(?:only|just|necessarily|limited|always|so|very|too|really|sure|yet|much|many|enough|longer|more|less|fewer|matter|one|clear|exactly|least|later|earlier|older|newer|before|after|than)\b/i;
+const GENERIC_FORMAT_OBJECT = /^(?:anything|sources?|articles?|studies|results?|research|papers?|books?|e-?books?|websites?|web\s?sites?|stuff|things?)$/i;
+
+function cleanExclusionObject(value) {
+  return clean(String(value || "")
+    .replace(/\s+(?:please|thanks|thank you|pls|plz)\s*$/i, "")
+    .replace(/\s+(?:(?:and|but)\s+)?(?:(?:i|we)\s+(?:want|need)|focus(?:ing)?\s+on|only|please)\b.*$/i, "")
+    .replace(/^(?:(?:anything|sources?|articles?|studies|results?|research|papers?)\s+)?(?:(?:that|which)\s+(?:mention|discuss|focus\s+on|are\s+about)\s+|(?:about|on|from|in|within|involving|including|regarding|concerning|related\s+to|focused\s+on|for|of)\s+)*/i, "")
+    .replace(/^(?:the|a|an|any)\s+/i, "")
+    .replace(/["“”]/g, ""));
+}
+
+/**
+ * Separate explicit topic exclusions from the topical request. Excluded ideas
+ * are retained as NOT terms; they must never become required search concepts.
+ * Method exclusions are handled earlier by extractMethodRequirements.
+ */
+export function extractTopicExclusions(text) {
+  const value = String(text || "");
+  const terms = [];
+  const spans = [];
+  for (const match of value.matchAll(EXCLUSION_PATTERN)) {
+    const { weak, strong, object } = match.groups;
+    if (!weak && !strong) continue;
+    const cleaned = cleanExclusionObject(object);
+    if (!cleaned || NOT_AN_EXCLUSION.test(clean(object)) || NOT_AN_EXCLUSION.test(cleaned)) continue;
+    // "without" introduces an excluded topic only when it is not describing a
+    // studied population ("children without siblings" never reaches here).
+    if (/^without$/i.test(weak || "") && !/^[,;:]/.test(match.groups.boundary || "")) continue;
+    const objects = cleaned.split(/\s*(?:,|\/|\bor\b|\bnor\b|\band\b)\s*/i).map(cleanExclusionObject)
+      .filter((term) => term.length >= 2 && term.split(/\s+/).length <= 5 && !REQUEST_WORDS.has(term.toLowerCase()));
+    const leading = match.groups.boundary ?? match.groups.lead ?? "";
+    spans.push({ start: match.index + (/^[,;:]/.test(leading) ? 0 : leading.length), end: match.index + match[0].length });
+    for (const term of objects) if (!GENERIC_FORMAT_OBJECT.test(term)) terms.push(term);
+  }
+  let topicText = value;
+  for (const span of spans.sort((a, b) => b.start - a.start)) topicText = `${topicText.slice(0, span.start)} ${topicText.slice(span.end)}`;
+  return { terms: uniqBy(terms, (term) => term.toLowerCase()).slice(0, 5), topicText: clean(topicText) };
+}
+
+/** The topical request after removing source, method and exclusion instructions. */
+function topicalRequest(query) {
+  const method = extractMethodRequirements(stripSourceRequirementText(query));
+  const exclusions = extractTopicExclusions(method.topicText);
+  return { method, exclusions: exclusions.terms, topicText: exclusions.topicText };
+}
+
 function stripOuterQuotes(value) {
   return clean(value).replace(/^["“”']+|["“”']+$/g, "").trim();
 }
@@ -288,6 +364,47 @@ function plausiblePersonalAuthor(value) {
   if (words.length < 2 || words.length > 8) return "";
   if (/\b(?:about|articles?|books?|copies|edition|sources?|subject|topic)\b/i.test(author)) return "";
   return author;
+}
+
+// Capitalized words that are common in topical "X by Y" phrases but are not
+// personal names ("Sanctions by Western Countries", "Voting by Young People").
+const NON_NAME_WORDS = new Set([
+  "western", "eastern", "northern", "southern", "american", "americans", "european", "europeans", "african", "asian", "global",
+  "countries", "country", "nations", "nation", "states", "state", "government", "governments", "region", "regions", "city", "cities",
+  "people", "women", "men", "children", "students", "teachers", "parents", "schools", "universities", "companies", "firms",
+  "industry", "industries", "media", "police", "courts", "congress", "parliament", "the", "and", "of", "year", "decade", "age",
+  "gender", "race", "income", "class", "type", "country", "law", "policy", "demographics", "generation", "sector",
+]);
+const NAME_PARTICLES = new Set(["de", "du", "da", "del", "della", "der", "van", "von", "la", "le", "bin", "ibn", "al"]);
+
+function looksLikePersonalName(value) {
+  const words = clean(value).replace(/[?.!,;:]+$/, "").split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 5) return false;
+  return words.every((word) => NAME_PARTICLES.has(word.toLowerCase()) || (/^[A-Z][\p{L}'’.-]*$/u.test(word) && !NON_NAME_WORDS.has(word.toLowerCase().replace(/[.]/g, ""))))
+    && words.some((word) => /^[A-Z][\p{L}'’-]{2,}$/u.test(word));
+}
+
+/**
+ * "The Sixth Extinction by Elizabeth Kolbert" names a work even without the
+ * word "book". Require a title-cased title and a personal-name author so that
+ * topical phrases such as "voting by young people" stay topic searches.
+ */
+function bareTitleByAuthor(input) {
+  const match = clean(input).match(/^(?:(?:can|could|would)\s+you\s+(?:find|locate|get)\s+|please\s+find\s+|i(?:'m| am)\s+looking\s+for\s+|do\s+you\s+have\s+|where\s+(?:can|do)\s+i\s+(?:find|get)\s+|find\s+|locate\s+|search\s+for\s+)?(.+?)\s+by\s+(.+)$/i);
+  if (!match) return null;
+  const title = stripOuterQuotes(match[1]);
+  const author = plausiblePersonalAuthor(match[2]);
+  if (!title || !author || !looksLikePersonalName(author)) return null;
+  const words = title.split(/\s+/);
+  if (words.length > 14 || /^(?:effects?|impacts?|role|influence|research|studies|articles?|sources?|does|do|is|are|can)\b/i.test(title)) return null;
+  const significant = words.filter((word) => word.replace(/[^\p{L}]/gu, "").length > 3);
+  const capitalized = significant.filter((word) => /^["“']?[\p{Lu}\d]/u.test(word));
+  const ratio = significant.length ? capitalized.length / significant.length : 1;
+  if (!/^["“']?[\p{Lu}\d]/u.test(words[0]) || ratio < 0.6) return null;
+  // Titles such as "How Democracies Die" begin like questions; accept them only
+  // when every significant word is capitalized, as a typed topic rarely is.
+  if (/^(?:how|why|what|when|where|which|who|whether)\b/i.test(title) && (words.length < 2 || ratio < 1)) return null;
+  return { kind: "book", title, author };
 }
 
 /**
@@ -302,7 +419,7 @@ export function extractKnownItemRequest(query) {
   const sourceMatch = input.match(
     /^(?:(?:can|could|would)\s+you\s+|please\s+|help\s+me\s+|i(?:'m| am)\s+looking\s+for\s+|i\s+(?:need|want)\s+|do\s+you\s+have\s+|find\s+|locate\s+|search\s+for\s+|get\s+|show\s+me\s+)?(?:an?\s+|the\s+)?(book|e-?book|copy|article|paper|title|work)\s+(?:(called|titled|named)\s+)?(.+)$/i
   );
-  if (!sourceMatch) return null;
+  if (!sourceMatch) return bareTitleByAuthor(input);
 
   const kind = /^(?:book|e-?book|copy)$/i.test(sourceMatch[1]) ? "book" : "article";
   const explicitlyNamed = Boolean(sourceMatch[2]);
@@ -390,6 +507,10 @@ function researchTopicBody(query) {
     .replace(/\bdiscriminat(?:e|es|ed|ing)\s+against\b/gi, " and discrimination and ")
     .replace(/\b(?:more|less)\s+(intelligent|reliable|effective|successful)\s+than\b/gi, "$1 and ")
     .replace(/\b(?:is|are|was|were)\s+(?:bad|good|harmful|beneficial)\s+for\b/gi, " and ")
+    // Relationship wording separates two concepts; it is never a search term.
+    .replace(/\b(?:(?:is|are|was|were)\s+)?(?:linked|tied|connected|associated|correlated)\s+(?:to|with)\b/gi, " and ")
+    .replace(/\s+(?:pros and cons|advantages and disadvantages|benefits and (?:drawbacks|risks|harms))\s*$/i, "")
+    .replace(/\b([A-Z][\p{L}-]+(?:\s+[A-Z][\p{L}-]+)*)['’]s\s+(?:use|portrayal|depiction|treatment|representation|view|views|theory|concept|idea|ideas|approach)\s+of\s+/gu, "$1 and ")
     .replace(/\b(?:affect(?:s|ed|ing)?|influenc(?:e|es|ed|ing)|shape(?:s|d|ing)|relates? to|alters?|reduces?|increases?|predicts?|caus(?:e|es|ed|ing)|damag(?:e|es|ed|ing)|harm(?:s|ed|ing)?|improv(?:e|es|ed|ing)|destroy(?:s|ed|ing)?)\b(?!\s+(?:of|from)\b)/gi, (word, offset, text) => /^(?:harm|harms|damage|cause|causes)$/i.test(word) && (!text.slice(0, offset).trim() || /\b(?:the|possible|potential|about|on)\s*$/i.test(text.slice(0, offset))) ? word : " and ")
     .replace(/\b(?:always|never|every|all|naturally|main reason|hide(?:s|d)? the truth)\b/gi, " ")
     .replace(/\s+for\s+(?:this|the)\s+(?:research\s+)?topic\b/gi, " ")
@@ -430,7 +551,8 @@ function genericConcepts(query) {
       .split(/\s+/)
       .filter((word) => (word.length > 2 || /^(?:I|II|III|IV|V|VI|VII|VIII|IX|X)$/.test(word)) && !REQUEST_WORDS.has(word.toLowerCase()))
       .join(" "))
-    .filter(Boolean).map((preferredTerm) => ({ preferredTerm }));
+    .filter((chunk) => chunk && !chunk.split(/\s+/).every((word) => FILLER_ONLY_CHUNKS.has(word.toLowerCase())))
+    .map((preferredTerm) => ({ preferredTerm }));
   return uniqBy([...quoted, ...chunks], (item) => item.preferredTerm.toLowerCase())
     .map(({ preferredTerm, exactPhrase }, index) => ({
       id: `concept-${index + 1}-${preferredTerm.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 36)}`,
@@ -443,9 +565,9 @@ function genericConcepts(query) {
 }
 
 function extractConcepts(query) {
-  const method = extractMethodRequirements(stripSourceRequirementText(query));
-  const date = subjectDateScope(method.topicText);
-  const body = researchTopicBody(date ? method.topicText.replace(date.text, " ") : method.topicText);
+  const { topicText } = topicalRequest(query);
+  const date = subjectDateScope(topicText);
+  const body = researchTopicBody(date ? topicText.replace(date.text, " ") : topicText);
   // US is normalized to the United States facet. Remove that already-retained
   // abbreviation before phrase matching so "large US cities" retains its scale.
   const value = clean(geographyFacet(query) === "United States" ? body.replace(/\bUS\b/g, " ") : body);
@@ -536,7 +658,7 @@ function searchIntentFor(topic, concepts, facets, knownItem = null) {
 /** Comparison intent is a search structure, never a claim about the answer. */
 export function researchComparison(topic, concepts = []) {
   const comparisonTopic = expandComparisonEllipsis(topic);
-  if (!/\b(?:vs\.?|versus|compar(?:e|es|ed|ing|ison)|contrast|differences? between)\b/i.test(comparisonTopic)) return null;
+  if (!/\b(?:vs\.?|versus|compar(?:e|es|ed|ing|ison)|contrast|differences? (?:between|across)|(?:differ|differs|differed|vary|varies|varied)\s+(?:\w+\s+){0,2}(?:between|across|among))\b/i.test(comparisonTopic)) return null;
   const required = concepts.filter((concept) => concept.required !== false);
   if (required.length < 2) return null;
   const positioned = required.map((concept) => {
@@ -581,7 +703,7 @@ export function buildResearchSpec(
     clean(plannerContext),
     inferExplicitModeRequest(topic, modeId || DEFAULT_MODE_ID)
   );
-  const topicalText = extractMethodRequirements(stripSourceRequirementText(topic)).topicText;
+  const { topicText: topicalText, exclusions } = topicalRequest(topic);
   const focus = resolveSubjectFocus(subjectFocusId, topicalText);
   const focusId = focus.selectedId && focus.selectedId !== "auto" ? focus.selectedId : focus.id;
   const disciplines = contextDisciplines(`${topicalText} ${extractMethodRequirements(context).topicText}`, focusId);
@@ -606,13 +728,15 @@ export function buildResearchSpec(
     : extractConcepts(topic);
   const sourceContract = getSourceModeContract(inferredMode);
   const { include, exclude } = extractMethodRequirements(`${topic} ${context}`);
+  // An excluded place or population ("not in Europe") is never a facet.
+  const facetText = `${exclusions.length ? extractTopicExclusions(topic).topicText : topic} ${context}`;
   const facets = {
     // When multiple populations were parsed as concepts, the comparison
     // compiler owns their grouping; a first-population facet would undo OR.
     population: concepts.filter((concept) => CANONICAL_CONCEPTS.some((entry) => entry.id === concept.id && entry.facet === "population")).length > 1
-      ? "" : populationFacet(`${topic} ${context}`),
-    geography: geographyFacet(`${topic} ${context}`),
-    timePeriod: timeFacet(stripSourceRequirementText(`${topic} ${context}`)),
+      ? "" : populationFacet(facetText),
+    geography: geographyFacet(facetText),
+    timePeriod: timeFacet(stripSourceRequirementText(facetText)),
     method: include.join("; "),
     documentType: sourceContract.label,
   };
@@ -625,6 +749,7 @@ export function buildResearchSpec(
     knownItem,
     searchIntent: searchIntentFor(topic, concepts, facets, knownItem),
     methodRequirements: { include, exclude },
+    excludedTerms: knownItem ? [] : exclusions,
     sourceRequirements: extractSourceRequirements(`${topic} ${context}`),
     facets,
     sourceContract: {
@@ -652,6 +777,11 @@ function suppliedDisciplineId(value) {
     return labels.some((label) => label === candidate || label.split(/\s*\/\s*|\s*\+\s*/).includes(candidate));
   });
   return labelMatch?.id || "";
+}
+
+function normalizeExcludedTerms(values) {
+  return uniqBy((Array.isArray(values) ? values : []).map((value) => bounded(typeof value === "string" ? value : value?.term, 80).replace(/["“”()]/g, "").trim())
+    .filter((term) => term.length >= 2 && !/^(?:AND|OR|NOT)$/i.test(term)), (term) => term.toLowerCase()).slice(0, 5);
 }
 
 /**
@@ -727,6 +857,7 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
     knownItem,
     searchIntent: searchIntentFor(topic, concepts.length ? concepts : baseSpec.concepts, facets, knownItem),
     methodRequirements,
+    excludedTerms: knownItem ? [] : Array.isArray(supplied.excludedTerms) ? normalizeExcludedTerms(supplied.excludedTerms) : baseSpec.excludedTerms || [],
     sourceRequirements: normalizeSourceRequirements({
       ...baseSpec.sourceRequirements,
       ...(hasPublicationFacet ? { publicationYearFrom: facetRequirements.publicationYearFrom, publicationYearTo: facetRequirements.publicationYearTo } : {}),
@@ -746,6 +877,79 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
     preferredFacets: Object.fromEntries(["population", "geography", "method"].filter((key) => !facets[key] && typeof supplied.preferredFacets?.[key] === "string" && supplied.preferredFacets[key].trim()).map((key) => [key, bounded(supplied.preferredFacets[key], 120)])),
     ...(supplied.searchExpansion === "full-synonyms" ? { searchExpansion: "full-synonyms" } : {}),
   };
+  return { ...spec, planHash: deterministicHash(spec) };
+}
+
+// Words that, left inside a parsed concept, show the rules did not separate
+// the request's structure from its topic ("nuclear power safer than solar").
+const STRUCTURE_LEFTOVERS = new Set([
+  "than", "safer", "better", "worse", "linked", "regulate", "regulates", "regulating", "pros", "cons", "role",
+  "ways", "older", "newer", "like", "unlike", "cause", "causes", "change", "changed", "changes", "long", "term",
+  "use", "uses", "used", "lead", "leads", "best", "worst", "good", "bad", "should", "will",
+]);
+const COMPARISON_CUE = /\b(?:compar(?:e|es|ed|ing|ison)|versus|vs\.?|differ(?:s|ed|ence|ences)?|contrast|than)\b/i;
+const NON_ENGLISH_HINT = /[ñçãõœß]|[áéíóú].*\b(?:y|el|la|los|las|de|en|et|les|des|und|der|die|das)\b|\b(?:y|el|los|las|et|les|des|und)\b.*\b(?:de|en|la|der|die)\b/i;
+
+/**
+ * Report when the deterministic interpretation is likely to have kept request
+ * wording as search terms or lost structure. Callers may then ask a model for a
+ * structured reading, which must still pass grounding validation.
+ */
+export function interpretationConfidence(spec) {
+  if (!spec || spec.knownItem || spec.correctedByStudent) return { weak: false, reasons: [] };
+  const topic = clean(spec.topic);
+  const parsed = (spec.concepts || []).filter((concept) => concept.source === "parsed" && !concept.exactPhrase);
+  const reasons = [];
+  if (parsed.some((concept) => clean(concept.preferredTerm).split(/\s+/).length >= 4)) reasons.push("long-unparsed-phrase");
+  if (parsed.some((concept) => clean(concept.preferredTerm).toLowerCase().split(/\s+/).some((word) => STRUCTURE_LEFTOVERS.has(word.replace(/['’]s$/, ""))) || /['’]s\b/.test(concept.preferredTerm))) reasons.push("request-wording-in-concept");
+  if (COMPARISON_CUE.test(topic) && !spec.comparison && (spec.concepts || []).length >= 2) reasons.push("comparison-not-structured");
+  if (NON_ENGLISH_HINT.test(topic)) reasons.push("possible-non-english");
+  if (!(spec.concepts || []).length && topic.split(/\s+/).filter((word) => /\p{L}{3,}/u.test(word)).length >= 2) reasons.push("no-concepts");
+  return { weak: reasons.length > 0, reasons };
+}
+
+/**
+ * Apply a server-validated model interpretation to a freshly parsed spec.
+ * Only concepts, comparison sides, exclusions, population and geography may
+ * change; mode, method, date, source contract and safety stay deterministic.
+ */
+export function applyAssistedInterpretation(baseSpec, fragment, { reasons = [], model = "" } = {}) {
+  if (!baseSpec || !fragment || !Array.isArray(fragment.concepts) || !fragment.concepts.length) return baseSpec;
+  const vocabulary = new Map((baseSpec.concepts || []).filter((concept) => concept.source === "controlled-vocabulary").map((concept) => [concept.preferredTerm.toLowerCase(), concept]));
+  const population = bounded(fragment.population, 80);
+  const comparisonTerms = Array.isArray(fragment.comparison) && fragment.comparison.length === 2 ? fragment.comparison.map((term) => bounded(term, 120).toLowerCase()) : [];
+  const concepts = uniqBy(fragment.concepts.map((concept, index) => {
+    const preferredTerm = bounded(concept.preferredTerm, 120);
+    const curated = vocabulary.get(preferredTerm.toLowerCase());
+    if (curated) return curated;
+    const slug = preferredTerm.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 36);
+    return {
+      id: `ai-${index + 1}-${slug}`,
+      preferredTerm,
+      synonyms: [...new Set((concept.synonyms || []).map((synonym) => bounded(synonym, 80)).filter((synonym) => synonym && synonym.toLowerCase() !== preferredTerm.toLowerCase()))].slice(0, 4),
+      required: true,
+      source: "ai-interpreted",
+    };
+  }).filter((concept) => concept.preferredTerm), (concept) => concept.preferredTerm.toLowerCase())
+    // A single target population is a facet, not a concept, unless it is a compared side.
+    .filter((concept) => !population || comparisonTerms.includes(concept.preferredTerm.toLowerCase()) || concept.preferredTerm.toLowerCase() !== population.toLowerCase());
+  if (!concepts.length) return baseSpec;
+  const sides = comparisonTerms.map((term) => concepts.find((concept) => concept.preferredTerm.toLowerCase() === term)).filter(Boolean);
+  const facets = {
+    ...baseSpec.facets,
+    population: sides.length === 2 ? "" : population || baseSpec.facets.population,
+    geography: bounded(fragment.geography, 80) || baseSpec.facets.geography,
+  };
+  const spec = {
+    ...baseSpec,
+    concepts,
+    comparison: sides.length === 2 && sides[0].id !== sides[1].id ? { conceptIds: sides.map((concept) => concept.id), terms: sides.map((concept) => concept.preferredTerm) } : null,
+    excludedTerms: normalizeExcludedTerms([...(baseSpec.excludedTerms || []), ...(fragment.excludedTerms || [])]),
+    facets,
+    searchIntent: searchIntentFor(baseSpec.topic, concepts, facets, null),
+    interpretation: { method: "ai-assisted", reasons: reasons.slice(0, 5), ...(model ? { model: bounded(model, 60) } : {}) },
+  };
+  delete spec.planHash;
   return { ...spec, planHash: deterministicHash(spec) };
 }
 
@@ -788,6 +992,8 @@ export function researchFacetExpressions(spec) {
     expressions.push(...(methods.include || []).map(methodExpression));
     expressions.push(...(methods.exclude || []).map((label) => `NOT ${methodExpression(label)}`));
   } else if (spec?.facets?.method) expressions.push(formatResearchTerm(spec.facets.method));
+  // Excluded topics come last so every positive concept is stated first.
+  expressions.push(...(spec?.knownItem?.title ? [] : spec?.excludedTerms || []).map((term) => `NOT ${formatResearchTerm(term)}`).filter((expression) => expression !== "NOT "));
   return [...new Set(expressions)];
 }
 
@@ -839,11 +1045,16 @@ export function continueResearchSpec(baseSpec, previousSpec, latestText = "", co
   const previous = mergeSuppliedResearchSpec(priorBase, previousSpec);
   const refinement = String(latestText).match(/\b(?:focus(?:ing)? on|narrow(?: it| this| the topic)? to|add(?:ing)?|also include|specifically|what about|how about)\s+(.+)/i)?.[1];
   const refinedConcepts = refinement ? extractConcepts(refinement) : [];
+  // "Now leave out Europe" in a follow-up adds an exclusion to the retained brief.
+  const addedExclusions = extractTopicExclusions(`, ${latestText}`).terms;
+  const excluded = new Set(addedExclusions.map((term) => term.toLowerCase()));
   const spec = {
     ...previous,
     mode: baseSpec.mode,
     sourceContract: baseSpec.sourceContract,
-    concepts: uniqBy([...previous.concepts, ...refinedConcepts], (concept) => concept.preferredTerm.toLowerCase()),
+    concepts: uniqBy([...previous.concepts, ...refinedConcepts], (concept) => concept.preferredTerm.toLowerCase())
+      .filter((concept) => !excluded.has(concept.preferredTerm.toLowerCase())),
+    excludedTerms: normalizeExcludedTerms([...(previous.excludedTerms || []), ...addedExclusions]),
     sourceRequirements: normalizeSourceRequirements({
       ...previous.sourceRequirements,
       ...sourceRequirementUpdates(contextText),

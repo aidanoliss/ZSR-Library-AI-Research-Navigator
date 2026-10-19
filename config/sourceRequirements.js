@@ -7,6 +7,9 @@ const DATE_RANGE_RE = new RegExp(`\\b(?:published\\s+|publication (?:years?|date
 const DATE_BOUND_RE = new RegExp(`\\b(?:published\\s+|publication (?:years?|dates?)\\s*:?\\s*)?(since|after|before|from|until|through)\\s+(${YEAR})\\b`, "i");
 const EXACT_PUBLICATION_RE = new RegExp(`\\b(?:published\\s+in|publication (?:year|date)\\s*:?)\\s+(${YEAR})\\b`, "i");
 const RECENT_RE = /\b(?:published\s+(?:in\s+)?)?(?:the\s+)?(?:last|past|previous)\s+(\d{1,3})\s+years?\b/i;
+// "Nothing older than 2015" and "newer than 2015" are always publication limits.
+const NEWER_THAN_RE = new RegExp(`\\b(?:(?:(?:nothing|none|no(?:thing)?|not(?:hing)?)\\s+(?:(?:published|written)\\s+)?(?:older|earlier)\\s+than)|(?:no\\s+earlier\\s+than)|(?:not\\s+before)|(?:(?<!\\b(?:nothing|none|no)\\s+(?:published\\s+|written\\s+)?)(?:published\\s+)?(?:newer|more\\s+recent|later)\\s+than))\\s+(${YEAR})\\b`, "i");
+const OLDER_THAN_RE = new RegExp(`\\b(?:(?:(?:nothing|none|no(?:thing)?)\\s+(?:(?:published|written)\\s+)?(?:newer|later|more\\s+recent)\\s+than)|(?:no\\s+later\\s+than)|(?:not\\s+after))\\s+(${YEAR})\\b`, "i");
 
 function year(value) {
   const parsed = typeof value === "number" ? value : /^\d{4}$/.test(String(value || "")) ? Number(value) : NaN;
@@ -26,9 +29,9 @@ export function normalizeSourceRequirements(value = {}) {
 
 function dateRequest(text, currentYear) {
   const value = String(text || "");
-  const candidates = [DATE_RANGE_RE, RECENT_RE, DATE_BOUND_RE, EXACT_PUBLICATION_RE].flatMap((pattern, kind) =>
+  const candidates = [DATE_RANGE_RE, RECENT_RE, DATE_BOUND_RE, EXACT_PUBLICATION_RE, NEWER_THAN_RE, OLDER_THAN_RE].flatMap((pattern, kind) =>
     [...value.matchAll(new RegExp(pattern.source, "gi"))].map((match) => ({ kind, match,
-      explicit: /^(?:published|publication)\b/i.test(match[0]) || /\b(?:sources?|articles?|studies|papers?|books?|publications?)\s*$/i.test(value.slice(0, match.index)),
+      explicit: kind >= 4 || /^(?:published|publication)\b/i.test(match[0]) || /\b(?:sources?|articles?|studies|papers?|books?|publications?)\s*$/i.test(value.slice(0, match.index)),
       // A date-only control or follow-up is a publication filter. A date attached
       // to a topic is its subject period unless publication wording says otherwise.
       standalone: !value.replace(match[0], "").replace(/\b(?:only|please|limit|restrict|it|them|to|the|date|range|years?|use)\b/gi, "").replace(/[\s.,:;!?-]/g, ""),
@@ -43,6 +46,8 @@ function dateRequest(text, currentYear) {
   if (kind === 0) return { match: match[0], publicationYearFrom: Number(match[1]), publicationYearTo: Number(match[2]) };
   if (kind === 1) return { match: match[0], publicationYearFrom: currentYear - Number(match[1]) + 1, publicationYearTo: currentYear };
   if (kind === 3) return { match: match[0], publicationYearFrom: Number(match[1]), publicationYearTo: Number(match[1]) };
+  if (kind === 4) return { match: match[0], publicationYearFrom: Number(match[1]), publicationYearTo: null };
+  if (kind === 5) return { match: match[0], publicationYearFrom: null, publicationYearTo: Number(match[1]) };
   const bound = match;
   const before = /^(before|until|through)$/i.test(bound[1]);
   return {

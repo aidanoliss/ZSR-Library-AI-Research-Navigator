@@ -31,7 +31,7 @@ export function appendRequestContextForAi(history, requestContext = {}) {
   const additions = [
     plannerContext ? `Guided planner choices for this request:\n${plannerContext}` : "",
     assignmentContext ? `Assignment brief for this request:\n${assignmentContext}` : "",
-    effectiveSpec ? `Current research interpretation (use this topic and these source requirements):\n${cleanContext(JSON.stringify({ topic: effectiveSpec.topic, mode: effectiveSpec.mode, sourceRequirements: effectiveSpec.sourceRequirements, methodRequirements: effectiveSpec.methodRequirements, facets: effectiveSpec.facets, concepts: effectiveSpec.concepts }))}` : "",
+    effectiveSpec ? `Current research interpretation (use this topic and these source requirements):\n${cleanContext(JSON.stringify({ topic: effectiveSpec.topic, mode: effectiveSpec.mode, sourceRequirements: effectiveSpec.sourceRequirements, methodRequirements: effectiveSpec.methodRequirements, excludedTerms: effectiveSpec.excludedTerms || [], facets: effectiveSpec.facets, concepts: effectiveSpec.concepts }))}` : "",
     effectiveSpec?.searchIntent ? `Search interpretation (original question and actual retrieval focus; a reformulation is a search strategy, not an established conclusion):\n${cleanContext(JSON.stringify({ searchIntent: effectiveSpec.searchIntent }))}` : "",
   ].filter(Boolean);
 

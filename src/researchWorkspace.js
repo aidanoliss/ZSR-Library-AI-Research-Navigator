@@ -233,7 +233,7 @@ function normalizeAssignment(value) {
 }
 
 // Preserve the complete resolved criteria, with a bounded JSON-only snapshot.
-const SPEC_FIELDS = ["topic", "mode", "disciplines", "concepts", "comparison", "knownItem", "searchIntent", "methodRequirements", "sourceRequirements", "facets", "preferredFacets", "sourceContract", "safety", "configVersion", "planHash"];
+const SPEC_FIELDS = ["topic", "mode", "disciplines", "concepts", "comparison", "knownItem", "searchIntent", "methodRequirements", "excludedTerms", "interpretation", "sourceRequirements", "facets", "preferredFacets", "sourceContract", "safety", "configVersion", "planHash"];
 function snapshot(value, depth = 0) {
   if (depth > 5) return undefined;
   if (typeof value === "string") return textValue(value, 4000);

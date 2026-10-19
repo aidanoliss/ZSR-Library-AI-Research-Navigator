@@ -61,6 +61,7 @@ export function normalizeResearchSpec(spec = {}, fallback = {}) {
     mode: cleanText(raw.modeId || raw.mode || raw.sourceMode || fallback.mode),
     disciplines: normalizeTextList(raw.disciplines || raw.discipline || fallback.disciplines),
     concepts,
+    excludedTerms: normalizeTextList(raw.excludedTerms ?? fallback.excludedTerms),
     facets,
     sourceContract: raw.sourceContract || raw.source_contract || fallback.sourceContract || null,
     planHash: cleanText(raw.planHash || raw.plan_hash || fallback.planHash),
@@ -75,6 +76,7 @@ function conceptText(spec) {
 function comparableValue(spec, field) {
   if (field === "concepts") return conceptText(spec);
   if (field === "disciplines") return (spec.disciplines || []).join(", ");
+  if (field === "excludedTerms") return (spec.excludedTerms || []).join(", ");
   if (field in (spec.facets || {})) return cleanText(spec.facets[field]);
   if (field in (spec.sourceRequirements || {})) {
     const value = spec.sourceRequirements[field];
@@ -86,6 +88,7 @@ function comparableValue(spec, field) {
 const DIFF_FIELDS = [
   ["topic", "Topic"],
   ["concepts", "Concepts"],
+  ["excludedTerms", "Excluded topics"],
   ["population", "Population"],
   ["geography", "Geography"],
   ["timePeriod", "Date range"],
@@ -125,6 +128,7 @@ export function buildInterpretationCorrectionPrompt(original, edited) {
     `Original topic: ${baseline.topic || next.topic || "the current research request"}.`,
     fieldLine("Corrected topic", next.topic),
     fieldLine("Required concepts", conceptText(next)),
+    fieldLine("Excluded topics", next.excludedTerms.join(", ")),
     fieldLine("Population", next.facets.population),
     fieldLine("Geography", next.facets.geography),
     fieldLine("Date range", next.facets.timePeriod),

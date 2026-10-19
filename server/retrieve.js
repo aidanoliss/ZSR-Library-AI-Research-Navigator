@@ -4,6 +4,8 @@ import { dirname, join } from "node:path";
 import { DEFAULT_MODE_ID } from "../config/libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID } from "../config/subjectFocus.js";
 import { ZSR_RESOURCE_CONFIG, buildResearchPlan, isZsrNavigationRequest } from "../config/researchAgent.js";
+import { buildResearchSpec } from "../config/researchSpec.js";
+import { assistedResearchSpec } from "./queryInterpretation.js";
 import { canonicalResourceId } from "../config/resourceCapabilities.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -145,7 +147,14 @@ export async function retrieveResearchContext(
   subjectFocusId = DEFAULT_SUBJECT_FOCUS_ID,
   requestContext = {}
 ) {
-  const plan = buildResearchPlan(query, limit, subjectFocusId, modeId, requestContext);
+  let planContext = requestContext;
+  if (!requestContext.researchSpec && !requestContext.previousResearchSpec && !isZsrNavigationRequest(query)) {
+    const requestQuery = String(query || "").trim().replace(/\s+/g, " ");
+    const base = buildResearchSpec(requestQuery, { modeId, subjectFocusId, assignmentContext: requestContext.assignmentContext, plannerContext: requestContext.plannerContext });
+    const assisted = await assistedResearchSpec(requestQuery, base, { signal: requestContext.signal });
+    if (assisted) planContext = { ...requestContext, assistedResearchSpec: assisted };
+  }
+  const plan = buildResearchPlan(query, limit, subjectFocusId, modeId, planContext);
   if (plan.navigationOnly || isCitationUtilityRequest(query)) {
     return {
       plan,

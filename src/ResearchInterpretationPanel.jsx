@@ -162,8 +162,10 @@ export default function ResearchInterpretationPanel({
           {original.facets.timePeriod && <li>Topic period: {original.facets.timePeriod}</li>}
           {original.facets.method && <li>Method: {original.facets.method}</li>}
           {original.facets.population && <li>Population: {original.facets.population}</li>}
+          {original.excludedTerms.length > 0 && <li>Excluding: {original.excludedTerms.join(", ")}</li>}
         </ul>
       </div>
+      {original.interpretation?.method === "ai-assisted" && <p className="source-evidence-limit">AI helped split this request into search concepts. Check them, and edit the brief if anything is missing or wrong.</p>}
       {original.searchIntent?.scopeNotes?.length > 0 && <p className="source-evidence-limit">{original.searchIntent.scopeNotes.join(" ")}</p>}
       <details className="interpretation-editor" open={editorOpen} onToggle={(event) => setEditorOpen(event.currentTarget.open)}>
         <summary>Edit or refine this search</summary>
@@ -226,6 +228,18 @@ export default function ResearchInterpretationPanel({
             <button type="button" onClick={addConcept} disabled={!newConcept.trim()}>Add</button>
           </div>
         </fieldset>
+
+        <label className="interpretation-wide">
+          <span>Exclude topics (NOT)</span>
+          <input
+            type="text"
+            value={draft.excludedTerms.join(", ")}
+            onChange={(event) => setDraft((current) => ({ ...current, excludedTerms: event.target.value.split(/\s*,\s*/).map((term) => term.replace(/\s+/g, " ").trimStart()).filter((term, index, all) => term || index === all.length - 1) }))}
+            placeholder="e.g. tech industry, bebop"
+            aria-describedby={`exclude-help-${panelId}`}
+          />
+          <small id={`exclude-help-${panelId}`}>Separate topics with commas. Excluding a term can also remove useful sources that mention it.</small>
+        </label>
 
         <label>
           <span>Population</span>

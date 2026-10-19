@@ -197,19 +197,48 @@ export function assessSourceRelevance(source, researchSpec) {
   }).map(({ term }) => term))];
   const relationshipCheck = assessment.checks.find((check) => check.id === "population-geography");
   if (relationshipCheck && relationshipCheck.status !== "meets") missingFacets.push("population–geography relationship");
-  const status = topicStatus === "meets" && (missingFacets.length || (relationship && relationship.status !== "comparison-indicated")) ? "partial" : topicStatus;
-  const scopeLabel = missingFacets.length && !missing.length
-    ? category === "direct-comparison" ? "Comparison indicated · scope needs checking" : category === "full-topic-match" ? "Topic match · scope needs checking" : label
-    : label;
+  // A student's exclusion is a hard boundary when the excluded topic is the
+  // record's title or subject; an abstract mention only lowers the lead.
+  const excludedMatches = (researchSpec?.excludedTerms || []).flatMap((term) => {
+    const field = fields.find((item) => ["title", "subjects"].includes(item.field) && termMatches(term, item.words))
+      || fields.find((item) => item.field === "abstract" && termMatches(term, item.words));
+    return field ? [{ term, field: field.field }] : [];
+  });
+  const excludedInTopic = excludedMatches.some((item) => item.field !== "abstract");
+  const baseStatus = topicStatus === "meets" && (missingFacets.length || (relationship && relationship.status !== "comparison-indicated")) ? "partial" : topicStatus;
+  const status = excludedInTopic ? "mismatch" : excludedMatches.length && baseStatus === "meets" ? "partial" : baseStatus;
+  // Metadata keywords in a title alone are weak evidence; say so when there is
+  // no abstract or subject heading to show how the record uses them.
+  const titleOnly = category === "full-topic-match" && evidence.length > 0 && evidence.every((item) => item.field === "title") && !fields.some((item) => item.field !== "title");
+  const scopeLabel = excludedMatches.length ? "Mentions an excluded topic · check fit"
+    : missingFacets.length && !missing.length
+      ? category === "direct-comparison" ? "Comparison indicated · scope needs checking" : category === "full-topic-match" ? "Topic match · scope needs checking" : label
+      : titleOnly ? "Title keywords match · no abstract to check" : label;
   return {
-    status, category, label: scopeLabel, evidence, relationship,
+    status, category, label: scopeLabel, evidence, relationship, excludedMatches,
     matchedConcepts: matched.map((concept) => concept.preferredTerm),
     missingConcepts: missing.map((concept) => concept.preferredTerm),
     missingFacets,
     explanation: required.length
-      ? `Metadata mentions ${matched.map((concept) => concept.preferredTerm).join("; ") || "none of the required concepts"}.${missing.length ? ` Not found in the supplied metadata: ${missing.map((concept) => concept.preferredTerm).join("; ")}.` : ""}${missingFacets.length ? ` Facets not established: ${missingFacets.join("; ")}.` : ""}${relationship ? ` ${relationship.explanation}` : " Read the source to confirm the relationship and findings."}`
+      ? `Metadata mentions ${matched.map((concept) => concept.preferredTerm).join("; ") || "none of the required concepts"}.${missing.length ? ` Not found in the supplied metadata: ${missing.map((concept) => concept.preferredTerm).join("; ")}.` : ""}${missingFacets.length ? ` Facets not established: ${missingFacets.join("; ")}.` : ""}${excludedMatches.length ? ` The ${excludedMatches.map((item) => item.field).join("/")} mentions a topic you excluded: ${excludedMatches.map((item) => item.term).join("; ")}.` : ""}${relationship ? ` ${relationship.explanation}` : " Read the source to confirm the relationship and findings."}`
       : "Keyword metadata match; read the source to confirm its relevance.",
   };
+}
+
+const NON_SCHOLARLY_VENUE = /\b(?:newsletter|magazine|trade (?:publication|journal)|newswire|press release|blog)\b/i;
+
+/**
+ * Small, explainable signals that make a lead easier for a student to judge:
+ * a provider-reported peer-review flag (scholarly mode only), an abstract, and
+ * a scholarly venue type. Absent metadata is neutral, never penalized.
+ */
+function sourceQualityBonus(result, researchSpec) {
+  const scholarly = (researchSpec?.mode || "scholarly") === "scholarly";
+  let bonus = 0;
+  if (scholarly && (result.peerReviewed === true || result.quality?.peerReviewed === true)) bonus += 40;
+  if (String(result.abstractText || result.abstractExcerpt || "").trim().length >= 80) bonus += 25;
+  if (scholarly && NON_SCHOLARLY_VENUE.test(String(result.type || ""))) bonus -= 40;
+  return bonus;
 }
 
 /** Rank the complete deduplicated pool against the original question, independent of query order. */
@@ -229,8 +258,12 @@ export function rankSourceResults(results, researchSpec, limit = 10) {
     // partial matches, established scope beats repeated topical keywords.
     const tier = complete ? 3 : matchExplanation.missingConcepts.length === 0 ? 2 : 1;
     const preferenceBonus = Math.min(15, (sourceAssessment.preferenceChecks || []).filter((check) => check.status === "meets").length * 5);
+    // Evaluability signals break ties among equally matched leads; they never
+    // lift a partial match above a complete one (tiers are 2000 points apart).
+    const qualityBonus = sourceQualityBonus(result, researchSpec);
+    const exclusionPenalty = matchExplanation.excludedMatches?.length ? 1500 : 0;
     const score = researchSpec?.knownItem ? Math.round(coverage * 100 + categoryScore + fieldScore - unverifiedRequirements * 12)
-      : Math.round(tier * 2000 + preferenceBonus + scopeCoverage * 1000 + coverage * 100 + categoryScore + Math.min(80, fieldScore) - unverifiedRequirements * 12);
+      : Math.round(tier * 2000 + preferenceBonus + scopeCoverage * 1000 + coverage * 100 + categoryScore + Math.min(80, fieldScore) + qualityBonus - unverifiedRequirements * 12 - exclusionPenalty);
     return { ...result, sourceAssessment, matchExplanation, metadataRank: { score, coverage, scopeCoverage, requestFit: complete ? "metadata-supported" : "partial-or-unverified", basis: "title-abstract-subject-metadata" }, _position: position };
   }).filter((result) => result.sourceAssessment.status !== "mismatch" && result.matchExplanation.status !== "mismatch");
   return ranked.sort((a, b) => b.metadataRank.score - a.metadataRank.score || a._position - b._position)

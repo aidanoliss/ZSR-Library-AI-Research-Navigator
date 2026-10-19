@@ -2209,7 +2209,11 @@ export function buildResearchPlan(
   requestContext = {}
 ) {
   const requestQuery = cleanQuery(query);
-  const baseResearchSpec = buildResearchSpec(requestQuery, {
+  // A server-validated, model-assisted reading may replace the rule-based parse
+  // for a fresh request only; student corrections and follow-ups never use it.
+  const assisted = !requestContext.researchSpec && !requestContext.previousResearchSpec && requestContext.assistedResearchSpec?.topic === requestQuery
+    ? requestContext.assistedResearchSpec : null;
+  const baseResearchSpec = assisted || buildResearchSpec(requestQuery, {
     modeId,
     subjectFocusId,
     assignmentContext: requestContext.assignmentContext,

@@ -7,6 +7,7 @@
  * neither this module's status helper nor its result objects expose the key.
  */
 import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
+import { withoutNegatedClauses } from "../config/searchQueries.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
 import { assessSourceRelevance, rankSourceResults } from "./sourceRelevance.js";
 import { fetchDiscoveryJson, discoveryAbort, reportDiscoveryOutcome, reportDiscoveryHttpError, reportDiscoveryError } from "./discoveryOutcome.js";
@@ -47,7 +48,7 @@ function cleanText(value, maxLength = 300) {
 }
 
 function cleanQuery(value) {
-  return cleanText(value, MAX_QUERY_LENGTH)
+  return cleanText(withoutNegatedClauses(cleanText(value, 2 * MAX_QUERY_LENGTH)), MAX_QUERY_LENGTH)
     .replace(/\b(?:AND|OR|NOT)\b/gi, " ")
     .replace(/[()"“”*]/g, " ")
     .replace(/\s+/g, " ")

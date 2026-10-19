@@ -11,7 +11,7 @@ import { extractDoiIdentifier } from "../config/sourceIdentifiers.js";
  */
 import { DEFAULT_MODE_ID, LIBRARY_LINKS, getSearchMode } from "../config/libraryLinks.js";
 import { SOURCE_KINDS } from "../config/resourceCapabilities.js";
-import { sourceKeywordFallback } from "../config/searchQueries.js";
+import { sourceKeywordFallback, withoutNegatedClauses } from "../config/searchQueries.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
 import { assessSourceRelevance, hasExactKnownItem, rankSourceResults } from "./sourceRelevance.js";
 import { uniqueSourceResults } from "../src/sourceDedup.js";
@@ -680,7 +680,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID, s
 }
 
 function crossrefQuery(query) {
-  return clean(query)
+  return clean(withoutNegatedClauses(query))
     .replace(/\b(?:AND|OR|NOT)\b/gi, " ")
     .replace(/[()"“”]/g, " ")
     .replace(/\*/g, "")

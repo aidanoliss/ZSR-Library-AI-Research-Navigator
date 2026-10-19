@@ -26,6 +26,37 @@ export function sourceQueryVariants(spec) {
   return [...new Set([...(spec.searchExpansion === "full-synonyms" ? [expanded, canonical] : [canonical, expanded]), ...swaps])].filter(Boolean).slice(0, 5);
 }
 
+/**
+ * Keyword-only providers (Crossref, OpenAlex search) ignore Boolean operators.
+ * Stripping only the word NOT would turn every excluded term into a positive
+ * keyword, so remove each NOT clause with its parenthesized or quoted operand.
+ */
+export function withoutNegatedClauses(query) {
+  const value = String(query || "");
+  let output = "";
+  let index = 0;
+  const pattern = /\bNOT\s+/g;
+  for (let match = pattern.exec(value); match; match = pattern.exec(value)) {
+    output += value.slice(index, match.index);
+    let end = match.index + match[0].length;
+    if (value[end] === "(") {
+      let depth = 0;
+      for (; end < value.length; end += 1) {
+        if (value[end] === "(") depth += 1;
+        else if (value[end] === ")" && --depth === 0) { end += 1; break; }
+      }
+    } else if (/["“]/.test(value[end] || "")) {
+      const close = value.slice(end + 1).search(/["”]/);
+      end = close < 0 ? value.length : end + close + 2;
+    } else {
+      end += (value.slice(end).match(/^[^\s()]+/) || [""])[0].length;
+    }
+    index = end;
+    pattern.lastIndex = end;
+  }
+  return clean(`${output}${value.slice(index)}`.replace(/\bAND\s*$/i, "").replace(/\bAND\s+(?=AND\b)/gi, "").replace(/\(\s*\)/g, " "));
+}
+
 /** A final retrieval fallback, used only after the normal queries yield no matches. */
 export function sourceKeywordFallback(spec) {
   if (!spec || spec.knownItem) return "";
