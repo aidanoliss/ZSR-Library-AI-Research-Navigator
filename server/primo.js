@@ -513,7 +513,11 @@ export function normalizePrimoDocs(
         ? `${recordHost}/discovery/fulldisplay?docid=${encodeURIComponent(recordid)}&context=${context}&vid=${encodeURIComponent(vid)}&tab=${encodeURIComponent(tab)}&search_scope=${encodeURIComponent(scope)}`
         : `${recordHost}/discovery/search?query=any,contains,${encodeURIComponent(q)}&vid=${encodeURIComponent(vid)}&tab=${encodeURIComponent(tab)}&search_scope=${encodeURIComponent(scope)}`
       : "");
-    const isbn = clean(firstValue(addata.isbn || d.isbn)).replace(/[^0-9Xx]/g, "");
+    // Print and ebook editions carry different ISBNs; cover services often
+    // know only one of them, so keep every ISBN the record supplies.
+    const isbns = [...new Set([...values(addata.isbn, 8), ...values(addata.eisbn, 4), ...values(d.isbn, 4)].map((value) => clean(value).replace(/[^0-9Xx]/g, "").toUpperCase()).filter((value) => /^(?:\d{9}[\dX]|\d{13})$/.test(value)))].slice(0, 6);
+    const isbn = isbns[0] || clean(firstValue(addata.isbn || d.isbn)).replace(/[^0-9Xx]/g, "");
+    const oclc = values(addata.oclcid, 2).map((value) => clean(value).replace(/\D/g, "")).find((value) => value.length >= 5) || "";
     const cover = thumbnailFromDoc(d, recordHost) || (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false` : null);
     const doi = doiIdentifier(addata.doi || disp.identifier || d.doi);
     const pmid = pmidIdentifier(addata.pmid || addata.pubmedid || addata.pubmed || disp.identifier || d.pmid);
@@ -537,6 +541,8 @@ export function normalizePrimoDocs(
       doi,
       pmid,
       isbn,
+      ...(isbns.length > 1 ? { isbns } : {}),
+      ...(oclc ? { oclc } : {}),
       issn,
       containerTitle,
       publisher,

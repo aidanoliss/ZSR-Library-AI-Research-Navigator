@@ -413,7 +413,8 @@ function bareTitleByAuthor(input) {
  * or explicitly named titles are also accepted after a singular item type.
  */
 export function extractKnownItemRequest(query) {
-  const input = clean(stripSourceRequirementText(query)).replace(/[?.!,;]+$/, "").trim();
+  // "New topic: Find the book …" from the follow-up box is still a known item.
+  const input = clean(stripSourceRequirementText(query)).replace(/^(?:new|different|unrelated)\s+(?:research\s+)?topic\s*[:,-]?\s*/i, "").replace(/[?.!,;]+$/, "").trim();
   if (!input) return null;
 
   const sourceMatch = input.match(

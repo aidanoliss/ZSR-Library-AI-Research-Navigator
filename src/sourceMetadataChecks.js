@@ -150,6 +150,16 @@ export function sourceFormatDetailCheck(source, contract) {
 const COLLEGE = /\b(?:undergraduates?|(?:college|university) students?)\b/;
 const SCHOOL = /\b(?:(?:high|secondary|primary|elementary|middle) school (?:students?|pupils?)|schoolchildren|secondary (?:students?|pupils?)|k ?12(?: (?:students?|pupils?|education))?)\b/;
 
+// Everyday names for the same studied group, matched as whole words.
+const POPULATION_SYNONYMS = {
+  adolescent: "\\b(?:adolescen(?:ts?|ce)|teen(?:s|agers?|aged)?|youths?|young people)\\b",
+  child: "\\b(?:child(?:ren|hood)?|kids|pediatric|paediatric)\\b",
+  "older adults": "\\b(?:older adults?|elderly|older people|seniors|aging population)\\b",
+  "young adults": "\\b(?:young adults?|emerging adults?)\\b",
+};
+// Works about the people around a group (its parents, teachers or carers).
+const PROXY_POPULATION = /\b(?:parents?|mothers?|fathers?|teachers?|caregivers?|carers?|educators?|families|clinicians?|nurses?|coaches)\b/;
+
 export function sourcePopulationCheck(source, population) {
   if (!clean(population)) return null;
   const requested = normalized(population).replace(/\*/g, "");
@@ -165,11 +175,20 @@ export function sourcePopulationCheck(source, population) {
   const collegeSample = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${COLLEGE.source}`).test(sentence));
   const schoolSample = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${SCHOOL.source}`).test(sentence));
   const requestedPattern = /^first year\b/.test(requested) ? `\\bfirst year ${COLLEGE.test(requested) ? COLLEGE.source : "students?\\b"}` : /\bundergraduates?\b/.test(requested) ? "\\bundergraduates?\\b" : COLLEGE.test(requested) ? COLLEGE.source : SCHOOL.test(requested) ? SCHOOL.source
-    : `\\b${requested.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?\\b`;
+    : POPULATION_SYNONYMS[requested] || `\\b${requested.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?\\b`;
   const populationModifiers = "(?:(?:\\d+|first year|final year|male|female|(?:non )?[a-z]+(?: [a-z]+)? major)\\s+)*";
   // Participants must be the population itself, not its teachers or caregivers.
   // A mixed sample stays available, but its applicability needs checking.
-  const match = sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${requestedPattern}`).test(sentence)
+  // A title can state a broad group's scope ("adolescent sleep patterns",
+  // "sleep among teens"). Student levels stay study-description-only, since a
+  // title rarely settles first-year vs undergraduate vs college. A listed
+  // keyword ("…: Canada, undergraduates and trials") or a work about the
+  // people around a group (parents, teachers) never counts.
+  const titleText = normalized(source.title).replace(/[’']/g, "'");
+  const studentLevel = /^first year\b/.test(requested) || /\bundergraduates?\b/.test(requested) || COLLEGE.test(requested) || SCHOOL.test(requested);
+  const scopedInTitle = new RegExp(`\\b(?:among|in|of|for|with|by|on|across)\\s+(?:[a-z]+\\s+)?(?:${requestedPattern})|(?:${requestedPattern})(?:'s?|s')?\\s+(?!and\\b|or\\b|&)[a-z]`).test(titleText);
+  const titleMatch = !studentLevel && scopedInTitle && !PROXY_POPULATION.test(titleText) && !/\b(?:protocol|proposal)\b/.test(titleText);
+  const match = titleMatch || sentencesForStudy.some((sentence) => new RegExp(`${samplePrefix}${requestedPattern}`).test(sentence)
     || new RegExp(`^(?:this|our|the present|the current) study (?:examines?|investigates?|assesses?|explores?|studies|studied)\\b.{0,240}\\b(?:among|in)\\s+${populationModifiers}${requestedPattern}`).test(sentence)
     || new RegExp(`^(?:this|our|the present|the current) study focuses on\\s+${populationModifiers}${requestedPattern}`).test(sentence)
     || new RegExp(`^(?:in depth )?qualitative interviews (?:were|have been) conducted (?:with|among)\\s+${populationModifiers}${requestedPattern}`).test(sentence));
@@ -179,7 +198,7 @@ export function sourcePopulationCheck(source, population) {
     && !/\b(?:transition|college|university|undergraduates?|teachers?|educators?|protocol)\b/.test(title);
   const conflict = COLLEGE.test(requested) && explicitSchoolTitle || COLLEGE.test(requested) && schoolSample && !college || SCHOOL.test(requested) && collegeSample && !school;
   return { id: "population", label: "Study population", status: match ? "meets" : conflict ? "mismatch" : "unverified",
-    detail: match ? `The provider's study description names the requested population (${population}). Verify the sample and applicability in the source.`
+    detail: match ? `The provider's ${titleMatch ? "title" : "study description"} names the requested population (${population}). Verify the sample and applicability in the source.`
       : conflict ? `The provider's study description identifies ${school || explicitSchoolTitle ? "school pupils" : "college students"}, which does not match the requested population (${population}).`
       : `The available metadata does not establish the requested population (${population}); check the study's sample or scope.` };
 }

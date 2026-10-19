@@ -66,12 +66,18 @@ function validIsbn(value) {
 export function sourceImageCandidates(source = {}) {
   const supplied = safeSourceImageUrl(source.cover);
   const candidates = supplied ? [{ url: supplied, label: "Source image", description: "Provider image; it may show the containing publication. Confirm the edition in the source record." }] : [];
-  const values = Array.isArray(source.isbn) ? source.isbn : String(source.isbn || "").split(/[;,]/);
-  const isbn = values.map(validIsbn).find(Boolean);
-  if (isbn) {
-    const url = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
-    if (!candidates.some((candidate) => candidate.url === url)) candidates.push({ url, label: "Book cover", description: "Cover from Open Library, matched by ISBN. For chapters, this is the containing book." });
-    else Object.assign(candidates.find((candidate) => candidate.url === url), { label: "Book cover", description: "Cover from Open Library, matched by ISBN. For chapters, this is the containing book." });
+  const add = (url, label, description) => {
+    const existing = candidates.find((candidate) => candidate.url === url);
+    if (existing) Object.assign(existing, { label, description });
+    else candidates.push({ url, label, description });
+  };
+  // Try every edition's ISBN, then the OCLC number: a cover service often has
+  // only the print or only the ebook edition.
+  const raw = [source.isbn, ...(Array.isArray(source.isbns) ? source.isbns : [])].flatMap((value) => Array.isArray(value) ? value : String(value || "").split(/[;,]/));
+  for (const isbn of [...new Set(raw.map(validIsbn).filter(Boolean))].slice(0, 3)) {
+    add(`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`, "Book cover", "Cover from Open Library, matched by ISBN. For chapters, this is the containing book.");
   }
-  return candidates;
+  const oclc = String(source.oclc || "").replace(/\D/g, "");
+  if (oclc.length >= 5) add(`https://covers.openlibrary.org/b/oclc/${oclc}-M.jpg?default=false`, "Book cover", "Cover from Open Library, matched by OCLC number. Confirm the edition in the source record.");
+  return candidates.slice(0, 4);
 }

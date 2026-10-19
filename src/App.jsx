@@ -1557,7 +1557,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         <nav className="research-toolbar no-print" aria-label="Research actions">
           <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
           <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
-          <button type="button" aria-pressed={privateMode} onClick={() => { cancelRequest(); onPrivacyChange(!privateMode); }}>{privateMode ? "End private session" : "Start private session"}</button>
+          {privateMode && <button type="button" aria-pressed="true" onClick={() => { cancelRequest(); onPrivacyChange(false); }}>End private session</button>}
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
           <details className="research-export-menu">
             <summary>Export &amp; share</summary>
@@ -1589,12 +1589,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             <section className="start-panel">
               <div className="start-intro">
                 <h2>What are you researching?</h2>
-                <p>Start with a topic or research question. No setup is required; you can change the source type later.</p>
-                <ol className="start-steps" aria-label="How this works">
-                  <li><strong>1</strong><span>Enter your topic</span></li>
-                  <li><strong>2</strong><span>Check and edit the search</span></li>
-                  <li><strong>3</strong><span>Open and verify sources</span></li>
-                </ol>
+                <p>Type a topic or question. You can refine the search after the first results.</p>
               </div>
               <form
                 className="topic-card"
@@ -1619,10 +1614,10 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
                     value={input}
                     onChange={handleInputChange}
                     onKeyDown={handleTextareaKeyDown}
-                    placeholder="e.g. Renewable energy policy in the EU..."
+                    placeholder="e.g. EU renewable energy policy"
                     rows={1}
                   />
-                  <button type="submit" disabled={!input.trim() || loading} aria-label="Send topic">Start research {Icon.arrowRight}</button>
+                  <button type="submit" disabled={!input.trim() || loading} aria-label="Start research"><span className="start-label">Start research</span> {Icon.arrowRight}</button>
                 </div>
                 <div className="try-prompts" aria-label="Quick start prompts">
                   <span>Try an example:</span>
@@ -1656,43 +1651,44 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             </>
           )}
         </div>
+        {hasConversation && (
+          <div className="conversation-composer-area no-print">
+          <section className="conversation-composer no-print" aria-label="Continue this research conversation">
+          {privateMode && <div className="composer-caption"><strong>Private session</strong><span>Not saved on this device · clears on reload</span></div>}
+          <form
+            className="composer-dock no-print"
+            onSubmit={(event) => {
+              event.preventDefault();
+              send();
+            }}
+          >
+            <PlannerModal
+              open={Boolean(plannerDraft)}
+              topic={plannerDraft?.topic || ""}
+              modeLabel={getSearchMode(mode).label}
+              providedQuestions={plannerDraft?.questions || []}
+              docked
+              onClose={closePlanner}
+              onComplete={completePlanner}
+            />
+            <label className="sr-only" htmlFor="followup-input">Ask a follow-up or refine your topic</label>
+
+            <textarea
+              id="followup-input"
+              ref={inputRef}
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleTextareaKeyDown}
+              placeholder="Follow up or ask something new"
+              rows={1}
+            />
+            {loading ? <button type="button" className="composer-stop" onClick={cancelRequest} aria-label="Stop search"><span aria-hidden="true">■</span></button> : <button type="submit" disabled={!input.trim()} aria-label="Send follow-up">{Icon.arrowUp}</button>}
+          </form>
+          </section>
+          </div>
+        )}
       </main>
 
-      {hasConversation && (
-        <section className="conversation-composer no-print" aria-label="Continue this research conversation">
-        <div className="composer-caption"><strong>{privateMode ? "Private session" : "Continue your research"}</strong><span>Ask a follow-up or add a new question.</span></div>
-        <form
-          className="composer-dock no-print"
-          onSubmit={(event) => {
-            event.preventDefault();
-            send();
-          }}
-        >
-          <PlannerModal
-            open={Boolean(plannerDraft)}
-            topic={plannerDraft?.topic || ""}
-            modeLabel={getSearchMode(mode).label}
-            providedQuestions={plannerDraft?.questions || []}
-            docked
-            onClose={closePlanner}
-            onComplete={completePlanner}
-          />
-          <label className="sr-only" htmlFor="followup-input">Ask a follow-up or refine your topic</label>
-
-          <textarea
-            id="followup-input"
-            ref={inputRef}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleTextareaKeyDown}
-            placeholder="Ask a follow-up or refine your topic"
-            rows={1}
-          />
-          {loading ? <button type="button" className="composer-stop" onClick={cancelRequest} aria-label="Stop search"><span aria-hidden="true">■</span></button> : <button type="submit" disabled={!input.trim()} aria-label="Send follow-up">{Icon.arrowUp}</button>}
-        </form>
-        <p className="composer-footnote">{privateMode ? "Not saved on this device · clears on reload" : "Your earlier questions and results stay above"}</p>
-        </section>
-      )}
       {clarificationDraft && <SearchClarification draft={clarificationDraft} onCancel={() => setClarificationDraft(null)} onSearch={(topic, spec) => {
         const options = clarificationDraft.options;
         setClarificationDraft(null);

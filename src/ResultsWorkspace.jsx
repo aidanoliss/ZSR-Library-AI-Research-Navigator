@@ -29,19 +29,16 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
   const tabRefs = useRef({});
   useEffect(() => setDraft(topic || ""), [topic]);
   const requirements = researchSpec?.sourceRequirements || {};
-  function submit(event) {
-    event.preventDefault();
-    if (!draft.trim() || !onSearch || busy) return;
+  // The question is already shown in the conversation; revisions run from here
+  // without a second copy of the topic box.
+  function runSearch(text, changes) {
+    if (!text.trim() || !onSearch || busy) return;
     let next;
-    try { next = reviseSearchTopic(draft, researchSpec, mode); }
+    try { next = reviseSearchTopic(text, researchSpec, mode); }
     catch (cause) { setError(cause.message); return; }
     setError("");
     onViewChange("results");
-    onSearch(`Search for sources on: ${draft.trim()}`, {
-      mode: next.mode,
-      researchSpec: next,
-      changes: [{ label: "Topic", after: draft.trim() }],
-    });
+    onSearch(`Search for sources on: ${text.trim()}`, { mode: next.mode, researchSpec: next, changes });
   }
   function moveTab(event, current) {
     const index = RESULT_VIEWS.findIndex((item) => item.id === current);
@@ -55,35 +52,6 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
     tabRefs.current[next]?.focus();
   }
   return <header className="result-workspace-header">
-    {onSearch ? <form className="result-topic-search" onSubmit={submit}>
-      <label htmlFor={inputId}>Research topic</label>
-      <div>
-        <textarea rows={2} id={inputId} value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={2000} readOnly={!onSearch} />
-        {onSearch && <button type="submit" disabled={busy || !draft.trim()}>{busy ? "Searching…" : "Search"}</button>}
-      </div>
-    </form> : <p className="result-topic-caption"><strong>Search scope</strong>{topic}</p>}
-    {onSearch && <div className="prompt-improvement">
-      <button type="button" className="prompt-improve-toggle" aria-expanded={improving} aria-controls={`${inputId}-improve`} onClick={() => { setImproving(!improving); setPromptNotice(""); }}>Refine this prompt</button>
-      {improving && <section id={`${inputId}-improve`} aria-label="Prompt refinement">
-        <strong>Make the scope clearer</strong>
-        <p>Keep your topic and add only details you need. Leave fields blank for a broader search. Ask what the evidence shows, rather than asking it to prove a conclusion.</p>
-        <div className="prompt-scope-fields">{[
-          ["population", "Who or what?", "e.g. undergraduate students"],
-          ["geography", "Where?", "e.g. United States"],
-          ["method", "Study method", "e.g. systematic reviews"],
-          ["comparison", "Compare with", "e.g. in-person teaching"],
-        ].map(([key, label, hint]) => <label key={key}>{label}<input value={scope[key]} maxLength={160} placeholder={hint} onChange={(event) => setScope({ ...scope, [key]: event.target.value })} /></label>)}</div>
-        <label className="prompt-preview-label">Prompt preview<textarea readOnly rows={4} value={improveResearchPrompt(draft, scope)} /></label>
-        <p>Existing assignment requirements stay in place. These are your words, not an AI-generated answer.</p>
-        <button type="button" disabled={busy || !draft.trim() || improveResearchPrompt(draft, scope).length > 2000} onClick={() => { setDraft(improveResearchPrompt(draft, scope)); setScope({ population: "", geography: "", method: "", comparison: "" }); setImproving(false); setPromptNotice("Prompt updated. Review it above, then choose Search to run it."); }}>Use this prompt</button>
-        {improveResearchPrompt(draft, scope).length > 2000 && <p role="alert">Shorten the topic or scope to 2,000 characters before applying.</p>}
-      </section>}
-      {promptNotice && <p role="status">{promptNotice}</p>}
-    </div>}
-    {onSearch && scopePriorityRows(researchSpec).length > 0 && <details className="scope-priority-editor"><summary>Required criteria & preferences</summary><ScopePriorityControls spec={researchSpec} priorities={priorities} onChange={setPriorities} /><button type="button" className="scope-apply" disabled={busy || !Object.keys(priorities).length} onClick={() => {
-      const next = applyScopePriorities(researchSpec, priorities);
-      onViewChange("results"); onSearch(`Search for sources on: ${next.topic}`, { researchSpec: next, mode: next.mode, changes: [{ label: "Scope priorities", after: "Updated required criteria and preferences" }] });
-    }}>Apply & search</button></details>}
     {Object.keys(researchSpec?.preferredFacets || {}).length > 0 && <p className="scope-preference-tags">{Object.entries(researchSpec.preferredFacets).map(([key, value]) => <span key={key}>Preferred {key}: {value}</span>)}</p>}
     {error && <p className="error-note" role="alert">{error}</p>}
     <div className="result-active-requirements" aria-label="Requirements kept for this search">
@@ -92,8 +60,30 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
       {researchSpec?.facets?.timePeriod && <span>Topic period: {researchSpec.facets.timePeriod}</span>}
       {researchSpec?.facets?.method && <span>Method: {researchSpec.facets.method}</span>}
       {requirements.peerReviewed && <span>Peer review required</span>}
-      <button type="button" onClick={() => { onViewChange("strategy"); onEditRequirements?.(); }}>Edit requirements</button>
+      <button type="button" onClick={() => { onViewChange("strategy"); onEditRequirements?.(); }}>Edit search</button>
+      {onSearch && <button type="button" className="prompt-improve-toggle" aria-expanded={improving} aria-controls={`${inputId}-improve`} onClick={() => { setImproving(!improving); setPromptNotice(""); }}>Refine prompt</button>}
     </div>
+    {onSearch && improving && <div className="prompt-improvement">
+      {improving && <section id={`${inputId}-improve`} aria-label="Prompt refinement">
+        <strong>Make the scope clearer</strong>
+        <p>Add only the details you need. Leave a field blank to keep the search broad.</p>
+        <div className="prompt-scope-fields">{[
+          ["population", "Who or what?", "e.g. undergraduate students"],
+          ["geography", "Where?", "e.g. United States"],
+          ["method", "Study method", "e.g. systematic reviews"],
+          ["comparison", "Compare with", "e.g. in-person teaching"],
+        ].map(([key, label, hint]) => <label key={key}>{label}<input value={scope[key]} maxLength={160} placeholder={hint} onChange={(event) => setScope({ ...scope, [key]: event.target.value })} /></label>)}</div>
+        <label className="prompt-preview-label">Prompt preview<textarea readOnly rows={4} value={improveResearchPrompt(draft, scope)} /></label>
+        <p>Your other requirements stay in place.</p>
+        <button type="button" disabled={busy || !draft.trim() || improveResearchPrompt(draft, scope).length > 2000} onClick={() => { const improved = improveResearchPrompt(draft, scope); setScope({ population: "", geography: "", method: "", comparison: "" }); setImproving(false); runSearch(improved, [{ label: "Topic", after: improved }]); }}>Search with this prompt</button>
+        {improveResearchPrompt(draft, scope).length > 2000 && <p role="alert">Shorten the topic or scope to 2,000 characters before applying.</p>}
+      </section>}
+      {promptNotice && <p role="status">{promptNotice}</p>}
+    </div>}
+    {onSearch && scopePriorityRows(researchSpec).length > 0 && <details className="scope-priority-editor"><summary>Required criteria & preferences</summary><ScopePriorityControls spec={researchSpec} priorities={priorities} onChange={setPriorities} /><button type="button" className="scope-apply" disabled={busy || !Object.keys(priorities).length} onClick={() => {
+      const next = applyScopePriorities(researchSpec, priorities);
+      onViewChange("results"); onSearch(`Search for sources on: ${next.topic}`, { researchSpec: next, mode: next.mode, changes: [{ label: "Scope priorities", after: "Updated required criteria and preferences" }] });
+    }}>Apply & search</button></details>}
     <nav className="result-view-tabs" role="tablist" aria-label="Research results views">
       {RESULT_VIEWS.map((item) => <button key={item.id} type="button" role="tab" id={`${id}-tab-${item.id}`} aria-selected={view === item.id} aria-controls={`${id}-panel-${item.id}`} tabIndex={view === item.id ? 0 : -1} ref={(node) => { tabRefs.current[item.id] = node; }} onClick={() => onViewChange(item.id)} onKeyDown={(event) => moveTab(event, item.id)}>{item.label}{item.id === "saved" && savedCount > 0 && <span>{savedCount}</span>}</button>)}
     </nav>

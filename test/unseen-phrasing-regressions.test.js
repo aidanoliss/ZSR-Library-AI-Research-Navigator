@@ -117,6 +117,7 @@ test("'Title by Author' requests are known items only when the author is a perso
     assert.equal(spec.knownItem?.author, author, prompt);
     assert.equal(spec.mode, "books");
   }
+  assert.equal(buildResearchSpec("new topic: Find the book Beloved by Toni Morrison").knownItem?.title, "Beloved");
   for (const prompt of ["Effects of Sanctions by Western Countries", "voting by young people", "Climate Change by Country", "How does trade affect wages by country"]) {
     assert.equal(buildResearchSpec(prompt).knownItem, null, prompt);
   }

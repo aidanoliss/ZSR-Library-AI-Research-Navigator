@@ -25,27 +25,25 @@ export default function ResultDiscoveryOptions({ id, spec, plan, onTrackSearch }
   function databaseCard(resource, index) {
     const query = plan.navigationOnly ? "" : compileResourceQuery(resource, spec, index) || options[0]?.query;
     const url = fillTemplate(resource.accessUrl || resource.url, query || "");
-    const az = /az\.php/.test(url);
     return <li key={resource.id || resource.name} className="result-database-card">
       <div className="result-database-title"><a href={url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ query, tool: resource.name, url })}>{resource.name} <span aria-hidden="true">↗</span></a>{resource.subjectArea && <span>{resource.subjectArea}</span>}</div>
       <p><strong>Useful for:</strong> {resource.bestFor || resource.description || resource.whyFits}</p>
-      <p className="result-database-access"><strong>{plan.navigationOnly ? "Next step:" : "How to search:"}</strong> {plan.navigationOnly ? resource.nextStep || "Open this ZSR resource and follow its instructions." : az ? "Open its ZSR A–Z entry, follow the database link, then paste a query. Sign in with WFU if prompted." : "Open this resource and paste a query into its search box. Follow any access or sign-in instructions there."}</p>
-      {query && <details className="result-database-query"><summary>Suggested query & filters</summary><code>{query}</code><CopyQuery query={query} label={`Copy query for ${resource.name}`} />{resource.filters?.length > 0 && <p><strong>Apply in the database:</strong> {resource.filters.join(" · ")}</p>}</details>}
+      {plan.navigationOnly && <p className="result-database-access"><strong>Next step:</strong> {resource.nextStep || "Open this ZSR resource and follow its instructions."}</p>}
+      {query && <details className="result-database-query"><summary>Search string for this database</summary><code>{query}</code><CopyQuery query={query} label={`Copy query for ${resource.name}`} />{resource.filters?.length > 0 && <p><strong>Apply in the database:</strong> {resource.filters.join(" · ")}</p>}</details>}
     </li>;
   }
   return <div className="result-discovery-options">
     {options.length > 0 && <section id={`${id}-terms`} className="result-search-options" tabIndex={-1} aria-label="Search terms to try">
       <div className="result-section-heading"><h3>Search terms to try</h3><a href="https://guides.zsr.wfu.edu/c.php?g=1072064&p=7805742" target="_blank" rel="noopener noreferrer">ZSR search guide ↗</a></div>
-      <p>Copy a Boolean search into one of the databases below. <strong>AND</strong> combines ideas; <strong>OR</strong> includes alternatives; <strong>NOT</strong> excludes terms.</p>
-      <p className="result-query-count"><strong>{options.length} distinct {options.length === 1 ? "search" : "searches"}</strong> · Start focused, then try alternatives if you need more.</p>
+      <p>Paste this into a database below. <strong>AND</strong> joins ideas, <strong>OR</strong> adds alternatives, <strong>NOT</strong> leaves a topic out.</p>
       {vocabulary.length > 0 && <details className="result-vocabulary"><summary>Explore synonyms &amp; related terms</summary><p>Suggestions from your brief and Navigator’s vocabulary list. <strong>These are not verified database subject headings or exact equivalents.</strong> Keep only terms that fit your question. An asterisk (*) searches word endings in databases that support it.</p><dl>{vocabulary.map(({ term, alternatives }) => <div key={term}><dt>{term}</dt><dd>{alternatives.join(" · ")}</dd></div>)}</dl></details>}
-      <ul className="result-query-options">{options.slice(0, 4).map(queryCard)}</ul>
-      {options.length > 4 && <details className="result-more-queries"><summary>More search options ({options.length - 4})</summary><ul className="result-query-options">{options.slice(4).map((option, index) => queryCard(option, index + 4))}</ul></details>}
-      <p className="result-query-limit-note"><strong>Keep your requirements:</strong> {filters.length ? `${filters.join(" · ")}. ` : ""}Apply source type, date, and peer-review filters in the database when required. NOT may also remove useful studies that mention an excluded term.</p>
+      <ul className="result-query-options">{options.slice(0, 1).map(queryCard)}</ul>
+      {options.length > 1 && <details className="result-more-queries"><summary>More ways to search ({options.length - 1})</summary><ul className="result-query-options">{options.slice(1).map((option, index) => queryCard(option, index + 1))}</ul></details>}
+      {filters.length > 0 && <p className="result-query-limit-note"><strong>Also set in the database:</strong> {filters.join(" · ")}.</p>}
     </section>}
     {resources.length > 0 && <section id={`${id}-databases`} className="result-databases" tabIndex={-1} aria-label="Recommended databases">
-      <div className="result-section-heading"><h3>{plan.navigationOnly ? "Recommended ZSR resources" : "Recommended databases"}</h3><span>Curated starting points</span></div>
-      <p>{plan.navigationOnly ? "Choose the ZSR resource that matches your task." : <>Find more literature in a recommended database. <strong>Each link opens a place to search</strong>; access may require a WFU sign-in.</>}</p>
+      <div className="result-section-heading"><h3>{plan.navigationOnly ? "Recommended ZSR resources" : "Recommended databases"}</h3></div>
+      <p>{plan.navigationOnly ? "Choose the ZSR resource that matches your task." : "Open a database, sign in with WFU if asked, and paste a search string."}</p>
       <ul className="result-database-list">{resources.slice(0, 2).map(databaseCard)}</ul>
       {resources.length > 2 && <details className="result-more-databases"><summary>More places to search ({resources.length - 2})</summary><ul className="result-database-list">{resources.slice(2).map((resource, index) => databaseCard(resource, index + 2))}</ul></details>}
     </section>}

@@ -32,3 +32,22 @@
 .source-feedback-review li > strong, .source-feedback-review li > span, .source-feedback-review li > small { display: block; margin-bottom: 5px; }
 .source-feedback-review li > strong { font-size: .86rem; }
 .source-feedback-review li > span, .source-feedback-review li > small { font-size: .8rem; }
+
+/* Compact fit line: shown only when a checked requirement needs attention. */
+.source-fit-compact { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 10px 0 0; font: 400 .78rem/1.45 system-ui, sans-serif; color: #514b3c; }
+.source-fit-compact-label { font-weight: 650; color: #3f3a2e; }
+.source-fit-compact.mismatch .source-fit-compact-label { color: #8b2525; }
+.source-fit-chip { padding: 2px 8px; border-radius: 999px; background: #f3efe3; border: 1px solid #e3dcc8; }
+.source-fit-chip.mismatch { background: #fbeae5; border-color: #e6bdb2; color: #7a2b1d; }
+.source-fit-chip.preference { background: transparent; }
+.source-fit-why { flex-basis: auto; }
+.source-fit-why > summary { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.source-fit-why > summary::-webkit-details-marker { display: none; }
+.source-fit-why > summary::before, .source-fit-why > summary::after { content: none !important; }
+.source-fit-why[open] { flex-basis: 100%; }
+.source-fit-why > div { margin-top: 8px; padding: 12px 14px; border: 1px solid #e3dfd4; border-radius: 10px; background: #faf9f6; }
+.source-fit-why dl { display: grid; gap: 8px; margin: 0 0 8px; }
+.source-fit-why dt { font-weight: 650; }
+.source-fit-why dd { margin: 2px 0 0; }
+.source-fit-why .source-fit-status { display: inline; }
+.source-fit-why p { margin: 6px 0; }

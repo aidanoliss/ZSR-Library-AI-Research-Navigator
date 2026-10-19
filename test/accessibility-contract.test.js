@@ -45,7 +45,8 @@ test("research workspace uses labeled dialog and tab semantics", async () => {
 test("composer controls and asynchronous errors have accessible names and announcements", async () => {
   const app = await src("src/App.jsx");
 
-  assert.match(app, /aria-label="Send topic"/);
+  // The accessible name matches the visible label (WCAG 2.5.3 label in name).
+  assert.match(app, /aria-label="Start research"/);
   assert.match(app, /aria-label="Send follow-up"/);
   assert.match(app, /role="alert"/);
   assert.match(app, /role="status"\s+aria-live="polite"/);
