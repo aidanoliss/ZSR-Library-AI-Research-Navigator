@@ -1,5 +1,7 @@
 import { SourceFeedbackProvider } from "./SourceFeedback.jsx";
 import { buildResearchSpec } from "../config/researchSpec.js";
+import { followupIntent } from "./followupIntent.js";
+import SearchTermsAnswer from "./SearchTermsAnswer.jsx";
 import SearchClarification from "./SearchClarification.jsx";
 import { searchClarification } from "./searchClarification.js";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1158,6 +1160,18 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
       if (question) { setClarificationDraft({ content, question, spec, options, assignmentContext: context }); return; }
     }
 
+    // "More search terms" is help with the current search, not a new search:
+    // answer it directly instead of re-running retrieval and redrawing results.
+    if (!options.researchSpec && !options.replay && latestResearchSpec && followupIntent(content) === "more-search-terms") {
+      const termsSessionId = activeSessionId || crypto.randomUUID();
+      const termsMessages = [...messages, { role: "user", content }, { role: "assistant", kind: "search-terms", content: "Suggested more search terms for the current topic.", searchTermsSpec: latestResearchSpec, createdAt: Date.now() }];
+      setMessages(termsMessages);
+      setInput("");
+      setError("");
+      saveSession(termsMessages, mode, requestResponseStyle, termsSessionId);
+      return;
+    }
+
     const searchMetricId = crypto.randomUUID();
     const startedAt = new Date().toISOString();
     studyRef.current.record("search_started", { searchId: searchMetricId, accessScope: requestAccessScope });
@@ -1430,6 +1444,10 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   }
 
   function renderConversationMessage(message, index) {
+    if (message.role === "assistant" && message.kind === "search-terms") {
+      return <SearchTermsAnswer key={`terms-${index}`} researchSpec={message.searchTermsSpec} isLatest={index === messages.length - 1} busy={loading}
+        onSearch={(spec) => send(`Search with expanded terms: ${spec.topic}`, { researchSpec: spec, skipPlanner: true, skipClarification: true })} />;
+    }
     if (message.role === "user") {
       return <div className="conversation-request" ref={index === latestUserIndex ? scrollRef : null} key={`${message.role}-${index}`}><div className="bubble user"><span>You</span><p>{message.displayContent || message.content}</p>{message.assignmentContext && <RequestMetaSummary message={{ assignmentContext: message.assignmentContext }} />}<PlannerContextSummary context={message.plannerContext} /></div></div>;
     }
