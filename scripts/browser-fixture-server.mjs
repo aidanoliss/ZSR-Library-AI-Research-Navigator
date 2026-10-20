@@ -1,4 +1,5 @@
-/** Local UI fixtures only. Does not import providers, dotenv, or production servers. */
+/** Local UI fixtures with production validators and a mocked chat provider.
+ * Never loads dotenv or contacts external services. */
 import http from "node:http";
 import { readFile, realpath } from "node:fs/promises";
 import { extname, resolve, sep } from "node:path";
@@ -6,9 +7,12 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildResearchPlan } from "../config/researchAgent.js";
 import { parseChatRequest } from "../server/chatRequest.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
+import { signResearchChatSources } from "../server/researchChatEvidence.js";
+import { researchChatReply } from "../server/researchChat.js";
 
 const PROJECT_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const FIXTURE_TIME = "2026-09-15T12:00:00.000Z";
+const CHAT_FIXTURE_OPTIONS = { signingKey: "synthetic-browser-fixture-only", now: Date.parse(FIXTURE_TIME) };
 const BODY_LIMIT = 131072;
 const TAG_RE = /\[fixture:(delay|error|empty|timeout|rate-limit|stream-retry|editions)\]/gi;
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".woff2": "font/woff2" };
@@ -106,7 +110,7 @@ export function buildFixturePayload(body, origin = "http://127.0.0.1:3004") {
     },
     matchedResources: plan.recommendations,
     searchTools: [],
-    liveResults,
+    liveResults: signResearchChatSources(liveResults, CHAT_FIXTURE_OPTIONS),
     sourceDiscovery: { accessScope: parsed.accessScope, lanes: { library: lane("library"), openAccess: lane("open-access") } },
     researchSpec: { ...plan.researchSpec, planHash: plan.planHash, configVersion: plan.configVersion },
     researchPlan: plan,
@@ -151,6 +155,17 @@ export function createFixtureServer({ distDir = resolve(PROJECT_ROOT, "dist"), d
       const path = decodeURIComponent(new URL(req.url, origin).pathname);
       if (req.method === "GET" && path === "/api/health") return json(res, 200, { ok: true, fixture: true, providerRequests: false, persistence: false, releaseId: "synthetic-browser-fixture-v1" });
       if (req.method === "GET" && path === "/api/discovery/status") return json(res, 200, { fixture: true, lanes: { library: { configured: true }, openAccess: { configured: true } } });
+      if (req.method === "POST" && path === "/api/research-chat") {
+        const body = await bodyJson(req);
+        const reply = await researchChatReply(body, { ...CHAT_FIXTURE_OPTIONS, apiKey: "synthetic-only-no-network", fetchImpl: async (_url, init) => {
+          const request = JSON.parse(JSON.parse(init.body).contents[0].parts[0].text);
+          const source = request.source_evidence[0];
+          const quote = source?.abstract_excerpt.length <= 600 ? source.abstract_excerpt : "";
+          const blocks = quote && !String(body.question).includes("[fixture:unsupported]") ? [{ text: "This synthetic passage is available for testing the source discussion interface. It reports no real research findings.", source_id: source.source_id, quote, evidence_scope: "abstract" }] : [];
+          return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify({ insufficient_evidence: !blocks.length, blocks }) }] } }] }) };
+        } });
+        return json(res, 200, { ...reply, fixture: true });
+      }
       if (req.method === "POST" && ["/api/chat", "/api/chat/stream"].includes(path)) {
         const body = await bodyJson(req);
         const controls = fixtureControls(body);
@@ -233,6 +248,10 @@ async function selfTest() {
     assert.equal((await post("/api/chat", { messages: [] })).status, 400);
     assert.equal((await fetch(`${base}/.env`)).status, 404);
     assert.equal((await fetch(`${base}/__fixtures__/source/current-article`)).status, 200);
+    const sourceChat = await (await post("/api/research-chat", { question: "Discuss this synthetic source.", sourceTokens: [payload.liveResults[0].researchChatToken] })).json();
+    assert.equal(sourceChat.status, "answered");
+    assert.match(sourceChat.blocks[0].text, /synthetic/);
+    assert.equal((await post("/api/research-chat", { question: "Discuss it.", sourceTokens: ["forged"] })).status, 400);
   } finally { server.closeAllConnections(); await new Promise((done) => server.close(done)); }
   process.stdout.write("Synthetic fixture self-test passed: deterministic planner/metadata, streaming, errors, timeout state, cancellation, and validation. No provider calls.\n");
 }

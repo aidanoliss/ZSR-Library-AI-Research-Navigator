@@ -1,5 +1,7 @@
 import { searchTermsSpec, suggestSearchTerms } from "./searchTermSuggestions.js";
 import { exploreSources } from "./sourceExploration.js";
+import { researchChatReply } from "./researchChat.js";
+import { signResearchChatSources } from "./researchChatEvidence.js";
 import { parseSourceExplorationRequest } from "./sourceExplorationRequest.js";
 import { getDiscoveryReadiness } from "./discoveryReadiness.js";
 import "dotenv/config";
@@ -411,8 +413,20 @@ app.post("/api/explore-sources", async (req, res) => {
   const controller = new AbortController();
   const abort = () => { if (!res.writableEnded) controller.abort(); };
   req.once("aborted", abort); res.once("close", abort);
-  try { res.json(await exploreSources(parsed, { signal: controller.signal })); }
+  try { const response = await exploreSources(parsed, { signal: controller.signal }); res.json({ ...response, results: signResearchChatSources(response.results || []) }); }
   catch { if (!res.headersSent) res.status(503).json({ error: "Citation exploration could not complete. Please try again." }); }
+  finally { req.off("aborted", abort); res.off("close", abort); release(); }
+});
+
+app.post("/api/research-chat", async (req, res) => {
+  if (gate(req, res, "chat")) return;
+  const release = acquireChatSlot(clientKey(req));
+  if (!release) { res.setHeader("Retry-After", "2"); return res.status(429).json({ error: "The research service is busy. Please try again shortly." }); }
+  const controller = new AbortController();
+  const abort = () => { if (!res.writableEnded) controller.abort(); };
+  req.once("aborted", abort); res.once("close", abort);
+  try { res.json(await researchChatReply(req.body, { signal: controller.signal })); }
+  catch (error) { if (!res.headersSent && !res.destroyed) res.status([400, 409, 413, 503].includes(error.status) ? error.status : 503).json({ error: error.status ? error.message : "Research chat could not complete. Try again.", code: error.code || "RESEARCH_CHAT_UNAVAILABLE" }); }
   finally { req.off("aborted", abort); res.off("close", abort); release(); }
 });
 
@@ -480,7 +494,7 @@ app.post("/api/chat", async (req, res) => {
     const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec) });
     primoPromise = (lookupCatalog
       ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
-      : Promise.resolve([])).then((results) => prepareSourceEvidence(results).sources);
+      : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
     const liveResults = await primoPromise;
     const rawReply = await generateChatResponse(aiHistory, resources, effectiveMode, responseStyle, subjectFocusId, { signal: providerAbort.signal, liveResults });
 
@@ -604,7 +618,7 @@ app.post("/api/chat/stream", async (req, res) => {
     const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec) });
     primoPromise = (lookupCatalog
       ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
-      : Promise.resolve([])).then((results) => prepareSourceEvidence(results).sources);
+      : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
     const liveResults = await primoPromise;
     const initial = validateReply({ evidence_notes: [] }, resources, liveResults).reply;
     write({

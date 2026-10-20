@@ -2,6 +2,7 @@ import EvidenceNotebook from "./EvidenceNotebook.jsx";
 import { ScopePriorityControls } from "./SearchClarification.jsx";
 import { applyScopePriorities, scopePriorityRows } from "./searchClarification.js";
 import { ResearchPrivacyContext } from "./researchPrivacy.js";
+import { ResearchChatContext } from "./researchChatContext.js";
 import SourceIdentityNotice from "./SourceIdentityNotice.jsx";
 import { useContext, useEffect, useId, useRef, useState } from "react";
 import { reviseSearchTopic, improveResearchPrompt } from "./resultSearch.js";
@@ -92,6 +93,7 @@ export function ResultWorkspaceHeader({ id, view, onViewChange, onEditRequiremen
 
 export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove, onUpdate, removedItem, onUndoRemove, renderExtra }) {
   const privateMode = useContext(ResearchPrivacyContext);
+  const discussSources = useContext(ResearchChatContext);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [exportNotice, setExportNotice] = useState("");
@@ -100,6 +102,7 @@ export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove
   return <section className="saved-results-view" aria-label="Saved sources">
     <div className="saved-results-heading"><h3>Saved sources <span>{sources.length}</span></h3>
       <div>{onManage && <button type="button" onClick={onManage}>Compare & review</button>}
+      {discussSources && visible.some((item) => item.sourceRecord?.researchChatToken) && <button type="button" onClick={() => discussSources(visible.map((item) => item.sourceRecord || item).filter((source) => source.researchChatToken).slice(0, 6))}>Discuss saved sources</button>}
       {sources.length > 0 && <button type="button" disabled={!visible.length} onClick={() => {
         try { setExportNotice(downloadRis(visible.map(sourceForResearchItem), { filename: "saved-sources" }) ? "Citation download started. Check the metadata before citing." : "No citations could be downloaded."); }
         catch { setExportNotice("Citation download failed. Try again."); }
@@ -121,6 +124,7 @@ export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove
           <div className="saved-source-title"><div><span className="saved-source-type">{sourceTypeLabel(sourceTypeKey(source))}</span>
           {item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={() => onSourceEvent?.("source_opened", { sourceId: item.url || item.id })}>{item.title}</a> : <strong>{item.title}</strong>}</div>
           {onRemove && <button type="button" onClick={() => onRemove(item)} aria-label={`Unsave ${item.title}`}>Unsave</button>}</div>
+          {discussSources && source.researchChatToken && <button type="button" onClick={() => discussSources([source])}>Discuss this source</button>}
           <p>{[source.author, sourcePublicationYear(source), source.edition, source.containerTitle].filter(Boolean).join(" · ") || "Open the record to check citation details."}</p>
           <SourceIdentityNotice source={source} />
           {onUpdate && <label className="saved-source-status">Status<select value={item.status} onChange={(event) => onUpdate(item, { status: event.target.value })}>{RESEARCH_ITEM_STATUSES.map((value) => <option key={value.id} value={value.id}>{value.label}</option>)}</select></label>}

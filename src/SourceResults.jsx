@@ -1,4 +1,5 @@
-import { useId, useState } from "react";
+import { useContext, useId, useState } from "react";
+import { ResearchChatContext } from "./researchChatContext.js";
 import { buildAccessLinks, extractDoi, extractPmid, fillTemplate, LIBRARY_LINKS } from "../config/libraryLinks.js";
 import { researchSpecQuery } from "../config/researchSpec.js";
 import { sourceRequirementFilters } from "../config/sourceRequirements.js";
@@ -56,6 +57,7 @@ function safeSourceUrl(url) {
 }
 
 function SourceRow({ feedback, feedbackRequest, explorationAccessScope, result: groupedResult, selectedEdition, onEditionChange, researchSpec, onSaveResearchItem, onRemoveResearchItem, onTrackSearch, savedResearchItemKeys, onSourceEvent, studyEnabled = false, evidenceNotes = [], savedItems = [], onSaveSourceNotes }) {
+  const discussSources = useContext(ResearchChatContext);
   const editions = [groupedResult, ...(groupedResult.relatedEditions || [])];
   const editionId = (record) => record?.doi || record?.url || record?.id || record?.title;
   const editionIndex = Math.max(0, editions.findIndex((record) => editionId(record) === editionId(selectedEdition)));
@@ -115,6 +117,7 @@ function SourceRow({ feedback, feedbackRequest, explorationAccessScope, result: 
       {sourceUrl && <a className="source-open-button" href={sourceUrl} target="_blank" rel="noopener noreferrer" onClick={openSource} aria-label={`Open ${result.title || "source"}`}>Open {Icons.external}</a>}
       {onSaveResearchItem && <button type="button" className={`source-action-button ${saved ? "is-saved" : ""}`} disabled={saved && !onRemoveResearchItem} onClick={() => { if (saved) onRemoveResearchItem?.(savedItem); else { onSaveResearchItem(savedItem); onSourceEvent?.("source_saved", { sourceId }); } }} aria-label={`${saved ? "Unsave" : "Save"} ${result.title || "source"}`}>{saved ? Icons.check : Icons.save}{saved ? "Unsave" : "Save"}</button>}
       <button type="button" className="source-action-button" onClick={() => { if (downloadRis([result], { filename: result.title || "research-source" })) onSourceEvent?.("exported", { sourceId }); }} aria-label={`Download RIS citation for ${result.title || "this source"}`} title="Download citation (.ris)">Cite</button>
+      {discussSources && <button type="button" className="source-action-button" disabled={!result.researchChatToken} title={!result.researchChatToken ? "Run this search again to make its source evidence available to chat." : "Discuss only this source’s available metadata and abstract."} onClick={() => discussSources([result])}>Discuss this source</button>}
       <button type="button" className="source-action-button source-more-toggle" aria-expanded={moreOpen} aria-controls={moreId} onClick={() => setMoreOpen((open) => !open)}>{moreOpen ? "Less" : "More"}<span aria-hidden="true" className="disclosure-chevron" /></button>
     </div>
     {studyEnabled && <button type="button" className="source-study-useful" disabled={markedUseful} onClick={() => { setMarkedUseful(true); onSourceEvent?.("source_marked_useful", { sourceId }); }}>{markedUseful ? "Marked useful" : "Useful for my question"}</button>}

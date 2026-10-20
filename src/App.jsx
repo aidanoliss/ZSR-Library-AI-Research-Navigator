@@ -1,4 +1,7 @@
 import { SourceFeedbackProvider } from "./SourceFeedback.jsx";
+import ResearchChat from "./ResearchChat.jsx";
+import { chatSourceKey, mergeChatSources, normalizeResearchChatSession } from "./researchChat.js";
+import { ResearchChatContext } from "./researchChatContext.js";
 import { buildResearchSpec } from "../config/researchSpec.js";
 import { followupIntent } from "./followupIntent.js";
 import SearchTermsAnswer from "./SearchTermsAnswer.jsx";
@@ -797,6 +800,13 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(() => window.matchMedia("(min-width: 861px)").matches);
   const [input, setInput] = useState(() => privateMode ? "" : readStoredText(STORAGE_KEY, initialTopicFromUrl()));
   const [messages, setMessages] = useState([]);
+  const [workspaceView, setWorkspaceView] = useState("search");
+  const [researchChat, setResearchChat] = useState(() => normalizeResearchChatSession());
+  const researchChatRef = useRef(researchChat);
+  researchChatRef.current = researchChat;
+  const [chatSources, setChatSources] = useState([]);
+  const chatSourcesRef = useRef(chatSources);
+  chatSourcesRef.current = chatSources;
   const [mode, setMode] = useState(DEFAULT_MODE_ID);
   const [responseStyle, setResponseStyle] = useState(DEFAULT_RESPONSE_STYLE_ID);
   const [subjectFocusId, setSubjectFocusId] = useState(DEFAULT_SUBJECT_FOCUS_ID);
@@ -902,6 +912,8 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
+    setResearchChat(normalizeResearchChatSession(session.researchChat));
+    setChatSources(mergeChatSources(session.chatSources || []).slice(0, 24));
   }, []);
 
   // Scroll only when a new question is asked — not while "Thinking" animates or
@@ -931,6 +943,31 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     () => [...messages].reverse().find((message) => message.role === "assistant" && message.researchSpec)?.researchSpec || null,
     [messages]
   );
+  const availableChatSources = useMemo(() => mergeChatSources(
+    [...messages].reverse().flatMap((message) => message.liveResults || []),
+    chatSources,
+    researchWorkspace.trail.filter(isSavedSource).map((item) => item.sourceRecord || item),
+  ), [messages, chatSources, researchWorkspace.trail]);
+
+  function changeResearchChat(next) {
+    const normalized = normalizeResearchChatSession(next);
+    researchChatRef.current = normalized;
+    setResearchChat(normalized);
+    if (activeSessionId) setSessions((current) => current.map((session) => session.id === activeSessionId
+      ? { ...session, researchChat: normalized, chatSources: chatSourcesRef.current, updatedAt: Date.now() } : session));
+  }
+
+  function openSourceChat(sources) {
+    const selected = mergeChatSources(sources || []).slice(0, 6);
+    if (!selected.length) { setActionNotice("Run this search again to make its source evidence available to Research chat."); return; }
+    const attached = mergeChatSources(selected, chatSourcesRef.current).slice(0, 24);
+    chatSourcesRef.current = attached;
+    setChatSources(attached);
+    changeResearchChat({ ...researchChatRef.current, selectedSourceKeys: selected.map(chatSourceKey) });
+    setResearchWorkspaceOpen(false);
+    setWorkspaceView("chat");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
 
   const latestReleaseId = useMemo(
     () => [...messages].reverse().find((message) => message.role === "assistant" && message.releaseId)?.releaseId || "",
@@ -976,6 +1013,8 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         accessScope: getAccessScope(nextAccessScope).id,
         researchWorkspace: normalizeResearchWorkspace(nextResearchWorkspace),
         messages: nextMessages,
+        researchChat: researchChatRef.current,
+        chatSources: chatSourcesRef.current,
         pinned: Boolean(existing?.pinned),
         createdAt: existing?.createdAt || Date.now(),
         updatedAt: Date.now(),
@@ -1103,6 +1142,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setActiveFolderId(folderId);
     setActiveSessionId("");
     setMessages([]);
+    setResearchChat(normalizeResearchChatSession());
+    setChatSources([]);
+    setWorkspaceView("search");
     setInput("");
     setSubjectFocusId(DEFAULT_SUBJECT_FOCUS_ID);
     setAccessScope(DEFAULT_ACCESS_SCOPE_ID);
@@ -1125,6 +1167,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setResearchWorkspace(normalizeResearchWorkspace(session.researchWorkspace));
     setActiveFolderId(session.folderId || DEFAULT_FOLDER_ID);
     setMessages(session.messages || []);
+    setResearchChat(normalizeResearchChatSession(session.researchChat));
+    setChatSources(mergeChatSources(session.chatSources || []).slice(0, 24));
+    setWorkspaceView("search");
     setInput("");
     setError("");
   }
@@ -1135,6 +1180,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setActiveFolderId(targetFolderId);
     setActiveSessionId("");
     setMessages([]);
+    setResearchChat(normalizeResearchChatSession());
+    setChatSources([]);
+    setWorkspaceView("search");
     setInput("");
     setMode(DEFAULT_MODE_ID);
     setResponseStyle(DEFAULT_RESPONSE_STYLE_ID);
@@ -1590,7 +1638,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   }
 
   return (
-    <div className={`zsr-app ${hasConversation ? "has-conversation" : ""} ${privateMode ? "is-private" : ""} ${sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed"}`}>
+    <ResearchChatContext.Provider value={openSourceChat}><div className={`zsr-app ${hasConversation || workspaceView === "chat" ? "has-conversation" : ""} ${privateMode ? "is-private" : ""} ${sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed"}`}>
       <SessionSidebar
         expanded={sidebarExpanded}
         onExpandedChange={setSidebarExpanded}
@@ -1635,6 +1683,10 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             </div>
           </details>
         </nav>
+        <nav className="research-view-switch no-print" aria-label="Research workspace">
+          <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
+          <button id="research-chat-button" type="button" aria-pressed={workspaceView === "chat"} aria-controls="research-chat-view" onClick={() => setWorkspaceView("chat")}>Research chat <span>AI</span></button>
+        </nav>
         {privateMode
           ? <p className="research-privacy-status is-private-status" title="Research clears when you end this session or reload. Searches still go to the search service and providers; this is not anonymous browsing."><span className="private-indicator" aria-hidden="true" /><strong>Private session</strong> · nothing is saved in this browser. <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(false); }}>End private session</button></p>
           : <p className="research-privacy-status">Research saves in this browser. On a shared computer? <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(true); }}>Start a private session</button>.</p>}
@@ -1645,7 +1697,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           <button type="button" onClick={() => { allowStorageRetry(); setStorageRetry((value) => value + 1); }}>Retry saving</button>
         </div>}
         {actionNotice && <div className="action-status action-toast no-print"><span role="status" aria-live="polite">{actionNotice}</span>{removedItem?.sessionId === activeSessionId && <button type="button" onClick={undoUnsave}>Undo unsave</button>}<button type="button" className="toast-dismiss" aria-label="Dismiss notification" onClick={() => setActionNotice("")}>×</button></div>}
-        <div className="content-wrap">
+        <div className="content-wrap" id="research-search-view" data-workspace-panel hidden={workspaceView !== "search"} aria-labelledby="research-search-button">
           {!hasConversation ? (
             <section className="start-panel">
               <div className="start-intro">
@@ -1712,7 +1764,15 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
             </>
           )}
         </div>
-        {hasConversation && (
+        {workspaceView === "chat" && <div className="content-wrap" id="research-chat-view" aria-labelledby="research-chat-button"><ResearchChat
+          key={`${privateMode ? "private" : "saved"}-${activeSessionId || "new"}`}
+          sessionKey={activeSessionId || "new"}
+          session={researchChat} onSessionChange={changeResearchChat} sources={availableChatSources}
+          topic={latestResearchSpec?.topic || handoffPayload.topic || input}
+          assignmentContext={assignmentContext(researchWorkspace.assignment)} privateMode={privateMode}
+          onSearch={(prompt) => { setWorkspaceView("search"); if (String(prompt || "").trim()) setInput(String(prompt).slice(0, 2000)); setActionNotice("Review your question in Search, then start the search."); requestAnimationFrame(() => inputRef.current?.focus()); }}
+        /></div>}
+        {hasConversation && workspaceView === "search" && (
           <div className="conversation-composer-area no-print">
           <section className="conversation-composer no-print" aria-label="Continue this research conversation">
           <form
@@ -1775,6 +1835,6 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           setHandoffOpen(true);
         }}
       />
-    </div>
+    </div></ResearchChatContext.Provider>
   );
 }

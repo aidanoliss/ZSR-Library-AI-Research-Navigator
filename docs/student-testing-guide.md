@@ -12,3 +12,16 @@
 7. Open What this search covered. Identify which providers completed a lookup, which failed or were not searched, and which databases are recommendations only.
 
 Test once in a private session on a shared computer. Reloading ends that session's in-memory research; downloaded exports remain on disk. Automated tests and these task completions do not establish source relevance accuracy, full-text grounding, or comprehensive literature coverage.
+
+
+### Research chat pilot tasks (October 2026)
+
+1. Search for a topic, choose **Discuss this source**, and confirm only the intended record is attached.
+2. Ask what the abstract reports. Check the interpretation against the visible supporting quotation and the original source. Record any changed population, geography, method, negation, uncertainty, date, or number.
+3. Attach a second source and ask for a comparison. Check that the assistant keeps the studies and their limitations separate.
+4. Remove a source and ask a follow-up. It must use only the currently attached evidence. Ask an unrelated factual question and record whether it declines.
+5. Ask for an entire article's findings. The assistant should explain that it has only abstract excerpts. A metadata-only record must not produce a finding from its title alone.
+6. Switch Search/Research chat and reload a normal session; confirm the conversation remains. Repeat privately and confirm that reload clears private content.
+7. Use **Use this question in Search** and review the question before submitting a new search.
+
+Signed-source and quote checks are software controls, not an accuracy score. Human review must separately rate source relevance, citation identity, interpretation support, and usefulness of the coaching.

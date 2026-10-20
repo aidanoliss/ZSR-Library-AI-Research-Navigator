@@ -185,6 +185,10 @@ export function sourceIdentityNotes(source, { imported = false } = {}) {
 export function normalizeSourceRecord(value) {
   if (!plainObject(value)) return {};
   const record = {};
+  // A signed, expiring public-evidence envelope; the server validates it again.
+  if (typeof value.researchChatToken === "string" && value.researchChatToken.length <= 16000) record.researchChatToken = value.researchChatToken;
+  if (["abstract", "metadata"].includes(value.researchChatScope)) record.researchChatScope = value.researchChatScope;
+  if (typeof value.evidenceId === "string") record.evidenceId = textValue(value.evidenceId, 120);
   for (const key of RECORD_TEXT_FIELDS) if (value[key] !== undefined) record[key] = textValue(value[key]);
   for (const key of ["url", "cover"]) if (value[key] !== undefined) record[key] = safeUrl(value[key]);
   for (const key of ["year", "publicationYear"]) {

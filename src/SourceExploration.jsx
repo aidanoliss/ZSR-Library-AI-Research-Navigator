@@ -1,10 +1,12 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useContext, useEffect, useId, useRef, useState } from "react";
+import { ResearchChatContext } from "./researchChatContext.js";
 import { researchItemKey } from "./researchWorkspace.js";
 import { sourceAuthors, sourceJournal } from "./sourceResultView.js";
 import { EXPLORATION_RELATIONSHIPS, explorationExcerpt, explorationStatus, requestSourceExploration, sourceExplorationSeed } from "./sourceExploration.js";
 import "./sourceExploration.css";
 
 export default function SourceExploration({ source, researchSpec = {}, accessScope = "both", onSaveResearchItem, onRemoveResearchItem, savedResearchItemKeys, onTrackSearch, requestExploration = requestSourceExploration }) {
+  const discussSources = useContext(ResearchChatContext);
   const id = useId();
   const [open, setOpen] = useState(false);
   const [relationship, setRelationship] = useState("similar");
@@ -67,7 +69,7 @@ export default function SourceExploration({ source, researchSpec = {}, accessSco
           {!excerpt && <p className="source-exploration-no-abstract">No abstract supplied. Open the source to learn more.</p>}
           {result.sourceAssessment?.checks?.some((check) => check.status !== "meets") && <details><summary>Requirements to verify</summary><ul>{result.sourceAssessment.checks.filter((check) => check.status !== "meets").map((check) => <li key={check.id}><strong>{check.label}:</strong> {check.detail}</li>)}</ul></details>}
           <div className="source-exploration-actions">{url && <a href={url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ kind: "opened-resource", query: result.title, tool: "Related source", url })}>Open source <span aria-hidden="true">↗</span></a>}
-          {onSaveResearchItem && <button type="button" className="source-action-button" disabled={saved && !onRemoveResearchItem} onClick={() => saved ? onRemoveResearchItem?.(item) : onSaveResearchItem(item)} aria-label={`${saved ? "Unsave" : "Save"} ${result.title}`}>{saved ? "Unsave" : "Save source"}</button>}</div>
+          {onSaveResearchItem && <button type="button" className="source-action-button" disabled={saved && !onRemoveResearchItem} onClick={() => saved ? onRemoveResearchItem?.(item) : onSaveResearchItem(item)} aria-label={`${saved ? "Unsave" : "Save"} ${result.title}`}>{saved ? "Unsave" : "Save source"}</button>}{discussSources && result.researchChatToken && <button type="button" className="source-action-button" onClick={() => discussSources([result])}>Discuss this source</button>}</div>
         </li>;
       })}</ul>}
       {!busy && results.length > shown && <button type="button" className="source-action-button" onClick={() => setShown(results.length)}>Show {results.length - shown} more sources</button>}

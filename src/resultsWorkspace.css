@@ -226,3 +226,20 @@
 .conversation-composer .composer-queued span { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
 .conversation-composer .composer-queued button { flex: 0 0 auto; min-height: 32px; padding: 4px 10px; border: 1px solid #d9c79c; border-radius: 8px; background: #fffaf0; color: #4a3d1c; font: 600 .76rem/1.2 system-ui, sans-serif; cursor: pointer; }
 .loading-bubble .loading-concepts, .loading-bubble .loading-slow { display: block; margin-top: 4px; color: #6a6455; font: 400 .82rem/1.45 system-ui, sans-serif; }
+
+/* Two tools share one topic, source collection and privacy boundary. */
+.research-view-switch { display: flex; gap: 4px; width: fit-content; margin: 12px 32px 16px; padding: 5px; border: 1px solid #d9dcd8; border-radius: 12px; background: #f0f2ee; font-family: system-ui, sans-serif; }
+.research-view-switch > button { display: inline-flex; gap: 8px; align-items: center; justify-content: center; min-height: 42px; min-width: 120px; padding: 9px 18px; border: 0; border-radius: 8px; background: transparent; color: #515a52; font: 600 .88rem/1.4 system-ui, sans-serif; cursor: pointer; }
+.research-view-switch > button[aria-pressed="true"] { background: #171b18; color: #fff; box-shadow: 0 2px 5px #17221b16; }
+.research-view-switch > button > span { font-size: .64rem; border: 1px solid currentColor; border-radius: 5px; padding: 1px 4px; opacity: .8; }
+.research-view-switch > button:focus-visible { outline: 3px solid #226bd0; outline-offset: 3px; }
+[data-workspace-panel][hidden] { display: none !important; }
+@media (max-width: 860px) { .research-view-switch { margin: 12px 16px; } .research-view-switch > button { min-width: 108px; padding-inline: 13px; } }
+@media print { .research-view-switch { display: none; } }
+@media (max-width: 860px) {
+  .zsr-app:not(.has-conversation) .zsr-hero { order: 0; }
+  .zsr-app:not(.has-conversation) .research-view-switch { order: 1; }
+  .zsr-app:not(.has-conversation) .research-privacy-status { order: 2; }
+  .zsr-app:not(.has-conversation) .content-wrap { order: 3; }
+  .zsr-app:not(.has-conversation) .research-toolbar { order: 4; }
+}

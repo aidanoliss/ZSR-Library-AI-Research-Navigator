@@ -1,4 +1,6 @@
 import { exploreSources } from "./sourceExploration.js";
+import { researchChatReply } from "./researchChat.js";
+import { signResearchChatSources } from "./researchChatEvidence.js";
 import { parseSourceExplorationRequest } from "./sourceExplorationRequest.js";
 import { getDiscoveryReadiness } from "./discoveryReadiness.js";
 import "dotenv/config";
@@ -431,7 +433,7 @@ async function handleChat(req, res, stream = false) {
     }
     primoPromise = (lookupCatalog
       ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
-      : Promise.resolve([])).then((results) => prepareSourceEvidence(results).sources);
+      : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
     // Evidence must be available before generation; the model never sees client-supplied source text.
     const liveResults = await primoPromise;
 
@@ -652,7 +654,20 @@ export async function handleApi(req, res, path) {
     const controller = new AbortController();
     const abort = () => { if (!res.writableEnded) controller.abort(); };
     req.once("aborted", abort); res.once("close", abort);
-    try { return sendJson(res, 200, await exploreSources(parsed, { signal: controller.signal })); }
+    try { const response = await exploreSources(parsed, { signal: controller.signal }); return sendJson(res, 200, { ...response, results: signResearchChatSources(response.results || []) }); }
+    finally { req.off("aborted", abort); res.off("close", abort); release(); }
+  }
+  if (req.method === "POST" && path === "/api/research-chat") {
+    const blocked = gate(req, "chat");
+    if (blocked) { res.setHeader("Retry-After", String(blocked.retryAfter)); return sendJson(res, blocked.status, blocked.payload); }
+    const body = await readJsonBody(req);
+    const release = acquireChatSlot(clientKey(req));
+    if (!release) { res.setHeader("Retry-After", "2"); return sendJson(res, 429, { error: "The research service is busy. Please try again shortly." }); }
+    const controller = new AbortController();
+    const abort = () => { if (!res.writableEnded) controller.abort(); };
+    req.once("aborted", abort); res.once("close", abort);
+    try { return sendJson(res, 200, await researchChatReply(body, { signal: controller.signal })); }
+    catch (error) { if (!res.writableEnded && !res.destroyed) return sendJson(res, [400, 409, 413, 503].includes(error.status) ? error.status : 503, { error: error.status ? error.message : "Research chat could not complete. Try again.", code: error.code || "RESEARCH_CHAT_UNAVAILABLE" }); }
     finally { req.off("aborted", abort); res.off("close", abort); release(); }
   }
   if (req.method === "POST" && path === "/api/search-terms") {
