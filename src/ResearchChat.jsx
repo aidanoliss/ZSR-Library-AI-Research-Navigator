@@ -48,7 +48,7 @@ export default function ResearchChat({ session = {}, onSessionChange, sources = 
   useEffect(() => {
     return () => { operation.current?.abort(); operation.current = null; };
   }, [sessionKey]);
-  useEffect(() => { if (!busy) lastReplyRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [normalized.messages.length, busy]);
+  useEffect(() => { if (!busy && normalized.messages.length) lastReplyRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [normalized.messages.length, busy]);
   function toggleSource(source) {
     const key = chatSourceKey(source);
     const availableKeys = new Set(available.map(chatSourceKey));
