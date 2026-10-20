@@ -1,6 +1,11 @@
 const text = (value, limit = 2000) => typeof value === "string" ? value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "").trim().slice(0, limit) : "";
 export const CHAT_SOURCE_LIMIT = 6;
 export const CHAT_TURN_LIMIT = 24;
+
+export function proposedChatSearchQuestion(block = {}) {
+  const proposal = text(block?.text, 2000).match(/^Question to explore:\s*([\s\S]+)/i)?.[1]?.trim();
+  return proposal && !/(?:https?:\/\/|www\.|<[^>]*>)/i.test(proposal) ? proposal : "";
+}
 export function chatSourceHasAbstract(source = {}) { return source?.researchChatScope === "abstract"; }
 
 export function safeChatSourceUrl(value) {

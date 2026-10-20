@@ -69,3 +69,10 @@ test('HTTP errors preserve a clear re-search route and provider replies are norm
   assert.equal(reply.status, 'insufficient_evidence');
   assert.equal(reply.message, 'No usable abstracts.');
 });
+
+test('only an explicit source-grounded question proposal becomes a new search prompt', async () => {
+  const { proposedChatSearchQuestion } = await import('../src/researchChat.js');
+  assert.equal(proposedChatSearchQuestion({ text: 'Question to explore: How do sanctions affect trade?' }), 'How do sanctions affect trade?');
+  assert.equal(proposedChatSearchQuestion({ text: 'The source discusses sanctions.' }), '');
+  assert.equal(proposedChatSearchQuestion({ text: 'Question to explore: https://example.org/unreviewed' }), '');
+});

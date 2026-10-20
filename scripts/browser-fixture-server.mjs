@@ -161,7 +161,7 @@ export function createFixtureServer({ distDir = resolve(PROJECT_ROOT, "dist"), d
           const request = JSON.parse(JSON.parse(init.body).contents[0].parts[0].text);
           const source = request.source_evidence[0];
           const quote = source?.abstract_excerpt.length <= 600 ? source.abstract_excerpt : "";
-          const blocks = quote && !String(body.question).includes("[fixture:unsupported]") ? [{ text: "This synthetic passage is available for testing the source discussion interface. It reports no real research findings.", source_id: source.source_id, quote, evidence_scope: "abstract" }] : [];
+          const blocks = quote && !String(body.question).includes("[fixture:unsupported]") ? [{ text: /narrow/i.test(body.question) ? `Question to explore: What questions remain about ${request.task_context_not_evidence.topic}?` : "This synthetic passage is available for testing the source discussion interface. It reports no real research findings.", source_id: source.source_id, quote, evidence_scope: "abstract" }] : [];
           return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify({ insufficient_evidence: !blocks.length, blocks }) }] } }] }) };
         } });
         return json(res, 200, { ...reply, fixture: true });

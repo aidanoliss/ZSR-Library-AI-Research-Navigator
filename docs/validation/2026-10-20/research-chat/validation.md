@@ -10,11 +10,13 @@ These controls do not prove semantic entailment. An authentic source and a match
 
 ## Checks
 
-- 559 automated tests passed, including 24 focused chat/client/saved-evidence integration cases. Strict planner baseline: 56/56 cases and 1,232/1,232 assertions. Resource audit, fixture self-test, and production build passed. Existing large-bundle advisory remains.
+- 560 automated tests passed, including 25 focused chat/client/saved-evidence integration cases. Strict planner baseline: 56/56 cases and 1,232/1,232 assertions. Resource audit, fixture self-test, and production build passed. Existing large-bundle advisory remains.
 - Production HTTP route: empty selection returns `insufficient_evidence`; a forged source token and invalid question return HTTP 400.
 - Synthetic browser: Discuss this source selects the record; complete supporting passage is visible; view switching and normal-session reload preserve chat; private-session reload clears it. The fixture uses an in-process mock provider and no network AI call.
 - Mobile browser: 390px viewport, 390px document width, composer within the viewport (16px left/right gutters).
 - Real provider/Gemini browser: Navigator retrieved Russia-sanctions trade records. A selected record, “Friendly fire: the trade impact of the Russia sanctions and counter-sanctions,” supported a cited interpretation of the abstract's explanation for declining Western exports. The supporting quotation was visible. An instruction to ignore attached sources and report today's local weather produced an explicit insufficient-evidence response.
 - Earlier live output included a count from a different abstract sentence outside its displayed quote. Numeric quotation checks were added and covered by regression before release. A further live reply after these checks returned a supported explanation with the correct passage.
+
+Source-grounded question proposals offer **Use this question in Search**, which fills the proposed question for review; insufficient-evidence replies route back to the underlying research topic.
 
 These are functional observations, not a measured general hallucination, misgrounding, or relevance-accuracy rate. Full-text access, external browsing in chat, and arbitrary source uploads are not present. Public source records alone do not make the system a librarian-approved service.
