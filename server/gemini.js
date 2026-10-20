@@ -401,6 +401,11 @@ function requireApiKey() {
   return apiKey;
 }
 
+function thinkingBudget() {
+  const value = Number.parseInt(process.env.GEMINI_THINKING_BUDGET ?? "0", 10);
+  return Number.isFinite(value) && value >= 0 ? Math.min(value, 8192) : 0;
+}
+
 /** Shared request body for both the buffered and streaming calls. */
 export function buildRequestBody(
   history,
@@ -435,6 +440,10 @@ export function buildRequestBody(
       temperature: 0.5,
       responseMimeType: "application/json",
       responseSchema: RESPONSE_SCHEMA,
+      // The reply is validated down to extractive passages and routing fields;
+      // extended "thinking" added 10-20 s per search without visible benefit.
+      // GEMINI_THINKING_BUDGET can raise it again for evaluation.
+      thinkingConfig: { thinkingBudget: thinkingBudget() },
     },
   };
 }

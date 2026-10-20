@@ -184,11 +184,20 @@ function initialTopicFromUrl() {
   return params.get("topic") || INITIAL_TOPIC;
 }
 
-function LoadingBubble() {
+function LoadingBubble({ progress }) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    const started = Date.now();
+    const timer = setInterval(() => setElapsed(Math.floor((Date.now() - started) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const concepts = [...(progress?.concepts || []), progress?.population].filter(Boolean);
+  const searching = progress?.stage === "searching";
   return (
     <div className="bubble assistant loading-bubble" role="status" aria-live="polite">
-      <span className="typing-text">Preparing your result<span className="typing-dots" aria-hidden="true">...</span></span>
-      <span className="loading-rotate" aria-hidden="true">Checking available source metadata</span>
+      <span className="typing-text">{searching ? "Searching the ZSR catalog" : "Reading your question"}<span className="typing-dots" aria-hidden="true">...</span></span>
+      {searching && concepts.length > 0 && <span className="loading-concepts">For: {concepts.join(" · ")}</span>}
+      {elapsed >= 8 && <span className="loading-slow">Still working. The library catalog can be slow; results appear as soon as they arrive.</span>}
     </div>
   );
 }
@@ -810,6 +819,17 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   const [plannerDraft, setPlannerDraft] = useState(null);
   const [clarificationDraft, setClarificationDraft] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [searchProgress, setSearchProgress] = useState(null);
+  // A follow-up typed during a search runs as soon as results are on screen.
+  const [queuedFollowup, setQueuedFollowup] = useState(null);
+  const queuedRef = useRef(null);
+  useEffect(() => { queuedRef.current = queuedFollowup; }, [queuedFollowup]);
+  useEffect(() => {
+    if (loading || !queuedFollowup) return;
+    const next = queuedFollowup;
+    setQueuedFollowup(null);
+    send(next.content, next.options);
+  }, [loading, queuedFollowup]);
   const studyRef = useRef(null);
   if (!studyRef.current) {
     let storage;
@@ -1147,7 +1167,11 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     const requestAccessScope = options.searchConfig?.accessScope || accessScope;
     const requestSubjectFocusId = options.searchConfig?.subjectFocusId || subjectFocusId;
     const requestResponseStyle = options.searchConfig?.responseStyle || responseStyle;
-    if (!content || loading) return;
+    if (!content) return;
+    if (loading) {
+      if (!options.replay && !options.researchSpec) { setQueuedFollowup({ content, options }); setInput(""); }
+      return;
+    }
     if (!options.skipPlanner && requestResponseStyle === "plan") {
       setPlannerDraft({ topic: content, questions: options.questions || [] });
       return;
@@ -1178,7 +1202,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setActionNotice("");
     const requestMode = options.modeOverride || options.mode || inferExplicitModeRequest(content, mode);
     const controller = new AbortController();
+    let finishedEarly = false;
     controller.signal.addEventListener("abort", () => {
+      if (finishedEarly) return;
       studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: "cancelled" });
       recordRun(lastSourcePayload || {}, "cancelled");
       const cancelledMessages = currentRunMessages.map((message) => message.searchMetricId === searchMetricId
@@ -1187,6 +1213,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
       saveSession(cancelledMessages, requestMode, requestResponseStyle, sessionId, requestSubjectFocusId, workspaceRef.current, requestAccessScope);
     }, { once: true });
     requestRef.current = controller;
+    setSearchProgress(null);
     if (requestMode !== mode) setMode(requestMode);
     if (options.replay) {
       setAccessScope(requestAccessScope);
@@ -1240,6 +1267,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         searchMetricId,
         guidancePending,
         guidanceUnavailable: Boolean(finalPayload.guidanceUnavailable),
+        ...(finalPayload.guidanceSkipped ? { guidanceSkipped: true } : {}),
         role: "assistant",
         content: finalPayload.reply?.message || "",
         reply: finalPayload.reply,
@@ -1298,8 +1326,25 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
       };
       const finalPayload = await requestChatReply(requestPayload, {
         signal: controller.signal,
+        onStatus: (event) => {
+          if (!controller.signal.aborted && requestRef.current === controller) setSearchProgress(event);
+        },
         onSources: (payload) => {
-          if (!controller.signal.aborted && requestRef.current === controller) { lastSourcePayload = payload; presentPayload(payload, true); }
+          if (controller.signal.aborted || requestRef.current !== controller) return;
+          lastSourcePayload = payload;
+          if (queuedRef.current) {
+            // Results are what the student needs; skip the optional passage step
+            // so the waiting follow-up can run now.
+            finishedEarly = true;
+            studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: (payload.liveResults || []).length, status: searchRunStatus(payload) });
+            recordRun(payload, searchRunStatus(payload));
+            presentPayload({ ...payload, guidanceSkipped: true });
+            requestRef.current = null;
+            controller.abort();
+            setLoading(false);
+            return;
+          }
+          presentPayload(payload, true);
         },
       });
       if (controller.signal.aborted || requestRef.current !== controller) return;
@@ -1496,7 +1541,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
                   }
                   return <div key={`${message.role}-${index}`} ref={message.isCorrectionResult && index === messages.length - 1 ? updatedResultRef : null} className={message.isCorrectionResult ? "updated-search-result" : ""}>
                     {loading && message.guidancePending && <p className="source-guidance-status" role="status"><strong>Search results are ready.</strong> Checking optional abstract passages. You can open and save sources now.</p>}
-                    {message.guidanceUnavailable && <p className="source-guidance-status" role="status">Source results were preserved. Optional abstract selection could not finish.</p>}
+                    {message.guidanceUnavailable && !message.guidanceSkipped && <p className="source-guidance-status" role="status">Source results were preserved. Optional abstract selection could not finish.</p>}
                     {message.isCorrectionResult && <div className="correction-result-status" role="status">
                       <strong>{message.correctionFailed ? "Search refresh could not complete" : "Search updated"}</strong>
                       <span>{message.correctionFailed
@@ -1661,7 +1706,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
               <section className="conversation" aria-label="Research results" aria-busy={loading}>
                 {messages.map((message, index) => renderConversationMessage(message, index))}
                 {loading && messages.at(-1)?.isCorrectionRequest && <p className="refresh-request-status" role="status">Refreshing search terms, database routes, and source leads from the corrected brief…</p>}
-                {loading && <LoadingBubble />}
+                {loading && messages.at(-1)?.role === "user" && <LoadingBubble progress={searchProgress} />}
                 {error && <p className="error-note" role="alert">{error}</p>}
               </section>
             </>
@@ -1686,7 +1731,8 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
               onClose={closePlanner}
               onComplete={completePlanner}
             />
-            <label className="sr-only" htmlFor="followup-input">Ask a follow-up or refine your topic</label>
+            {queuedFollowup && <div className="composer-queued" role="status"><span>Next: “{queuedFollowup.content.slice(0, 90)}{queuedFollowup.content.length > 90 ? "…" : ""}”. Runs when these results appear.</span><button type="button" onClick={() => setQueuedFollowup(null)}>Cancel</button></div>}
+          <label className="sr-only" htmlFor="followup-input">Ask a follow-up or refine your topic</label>
 
             <textarea
               id="followup-input"
@@ -1697,7 +1743,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
               placeholder="Follow up or ask something new"
               rows={1}
             />
-            {loading ? <button type="button" className="composer-stop" onClick={cancelRequest} aria-label="Stop search"><span aria-hidden="true">■</span></button> : <button type="submit" disabled={!input.trim()} aria-label="Send follow-up">{Icon.arrowUp}</button>}
+            {loading && !input.trim() ? <button type="button" className="composer-stop" onClick={() => { setQueuedFollowup(null); cancelRequest(); }} aria-label="Stop search"><span aria-hidden="true">■</span></button> : <button type="submit" disabled={!input.trim()} aria-label={loading ? "Queue follow-up" : "Send follow-up"}>{Icon.arrowUp}</button>}
           </form>
           </section>
           </div>

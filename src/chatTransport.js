@@ -39,7 +39,7 @@ function parseEvent(line) {
   }
 }
 
-async function requestStream(payload, fetchImpl, onDelta, signal, onSources) {
+async function requestStream(payload, fetchImpl, onDelta, signal, onSources, onStatus) {
   let response;
   try {
     response = await fetchImpl("/api/chat/stream", requestOptions(payload, signal));
@@ -62,6 +62,7 @@ async function requestStream(payload, fetchImpl, onDelta, signal, onSources) {
     if (!line.trim()) return;
     const event = parseEvent(line);
     if (event.type === "delta") onDelta?.(event.message || "");
+    if (event.type === "status") onStatus?.(event);
     if (event.type === "done") finalPayload = event;
     if (event.type === "sources" && event.reply && Array.isArray(event.liveResults)) {
       sourcePayload = event;
@@ -122,7 +123,7 @@ export async function requestChatReply(payload, options = {}) {
   }
 
   try {
-    return await requestStream(payload, fetchImpl, options.onDelta, options.signal, options.onSources);
+    return await requestStream(payload, fetchImpl, options.onDelta, options.signal, options.onSources, options.onStatus);
   } catch (err) {
     if (options.signal?.aborted) throw new DOMException("Request cancelled", "AbortError");
     if (!(err instanceof ChatRequestError) || !err.retryable) throw err;

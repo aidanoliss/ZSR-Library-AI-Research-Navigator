@@ -57,6 +57,7 @@ const CANONICAL_CONCEPTS = [
   { id: "law-regulation", preferredTerm: "law", synonyms: ["legal", "regulation", "statute", "legislation"], pattern: /\b(law|legal|regulation|statute|legislation)\b/i },
   { id: "biodiversity", preferredTerm: "biodiversity", synonyms: ["biological diversity", "species diversity"], pattern: /\b(biodiversity|biological diversity|species diversity)\b/i },
   { id: "pollinators", preferredTerm: "pollinator*", synonyms: ["native bees", "pollination"], pattern: /\b(pollinators?|pollination|native bees?)\b/i },
+  { id: "urban-heat-island", preferredTerm: "urban heat island*", synonyms: ["heat island effect", "urban heat"], pattern: /\b(urban heat islands?|heat island effects?|heat islands?)\b/i },
   { id: "extreme-heat", preferredTerm: "extreme heat", synonyms: ["heat wave*", "heat stress", "urban heat"], pattern: /\b(extreme heat|heat waves?|heat stress|urban heat)\b/i },
   { id: "climate-change", preferredTerm: "climate change", synonyms: ["global warming", "climate variability"], pattern: /\b(climate change|global warming|climate variability)\b/i },
   { id: "climate-migration", preferredTerm: "climate migration", synonyms: ["climate displacement", "environmental migration"], pattern: /\b(climate migration|climate displacement|environmental migration)\b/i },
@@ -584,8 +585,14 @@ function extractConcepts(query) {
     }))
   ).filter((span) => !quotedSpans.some((quoted) => span.start < quoted.end && span.end > quoted.start))]
     .sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+  // A vocabulary match inside a longer one is dropped only when the longer
+  // concept's own terms already carry those words ("urban heat" inside "urban
+  // heat islands"). "Urban" inside "urban identity" stays: cultural identity's
+  // terms do not include it.
+  const covers = (outer, inner) => [outer.concept.preferredTerm, ...(outer.concept.synonyms || [])]
+    .some((term) => String(term).toLowerCase().replace(/\*/g, "").includes(inner.matchedText.toLowerCase()));
   const spans = matches.filter((span) => !matches.some((other) => other !== span &&
-    ((other.concept.facet === "population" && span.concept.facet === "population") || (other.concept.id === "ai-writing-assistants" && span.concept.id === "artificial-intelligence")) &&
+    (covers(other, span) || (other.concept.facet === "population" && span.concept.facet === "population") || (other.concept.id === "ai-writing-assistants" && span.concept.id === "artificial-intelligence")) &&
     other.start <= span.start && other.end >= span.end && other.end - other.start > span.end - span.start));
   const multiplePopulations = new Set(spans.filter((span) => span.concept.facet === "population").map((span) => span.concept.id)).size > 1;
   const concepts = [];

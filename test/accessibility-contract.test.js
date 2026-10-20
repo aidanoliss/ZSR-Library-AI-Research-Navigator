@@ -47,7 +47,8 @@ test("composer controls and asynchronous errors have accessible names and announ
 
   // The accessible name matches the visible label (WCAG 2.5.3 label in name).
   assert.match(app, /aria-label="Start research"/);
-  assert.match(app, /aria-label="Send follow-up"/);
+  // While a search runs the same button queues the follow-up, and says so.
+  assert.match(app, /aria-label=\{loading \? "Queue follow-up" : "Send follow-up"\}/);
   assert.match(app, /role="alert"/);
   assert.match(app, /role="status"\s+aria-live="polite"/);
 });

@@ -220,3 +220,9 @@
 .zsr-app .research-toolbar > button:first-child:hover { background: var(--control-hover); border-color: var(--control-hover); }
 .research-toolbar > button:focus-visible, .research-toolbar > a:focus-visible, .research-export-menu > summary:focus-visible { outline: 2px solid #b08a2e; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .research-toolbar > button, .research-toolbar > a, .research-export-menu > summary { transition: none; } }
+
+/* Queued follow-up: shown inside the composer while a search finishes. */
+.conversation-composer .composer-queued { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 12px; border-radius: 10px; background: #f6eedb; color: #4a3d1c; font: 500 .8rem/1.4 system-ui, sans-serif; }
+.conversation-composer .composer-queued span { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.conversation-composer .composer-queued button { flex: 0 0 auto; min-height: 32px; padding: 4px 10px; border: 1px solid #d9c79c; border-radius: 8px; background: #fffaf0; color: #4a3d1c; font: 600 .76rem/1.2 system-ui, sans-serif; cursor: pointer; }
+.loading-bubble .loading-concepts, .loading-bubble .loading-slow { display: block; margin-top: 4px; color: #6a6455; font: 400 .82rem/1.45 system-ui, sans-serif; }

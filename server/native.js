@@ -424,6 +424,11 @@ async function handleChat(req, res, stream = false) {
     resources = researchContext.resources;
     const effectiveMode = plan?.modeId || mode;
     const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec) });
+    // Tell the client what is being searched while the catalog responds.
+    if (stream && lookupCatalog) {
+      sendNdjsonHead(res);
+      writeNdjson(res, { type: "status", stage: "searching", concepts: (plan?.researchSpec?.concepts || []).slice(0, 6).map((concept) => String(concept.preferredTerm || "").replace(/\*$/, "")), population: String(plan?.researchSpec?.facets?.population || "").replace(/\*$/, "") });
+    }
     primoPromise = (lookupCatalog
       ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
       : Promise.resolve([])).then((results) => prepareSourceEvidence(results).sources);

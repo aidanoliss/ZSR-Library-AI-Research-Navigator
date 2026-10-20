@@ -608,6 +608,23 @@ export function normalizePrimoDocs(
   return researchSpec?.concepts?.length ? rankSourceResults(candidates, researchSpec, limit) : candidates.slice(0, limit);
 }
 
+const PRIMO_CACHE_TTL_MS = Number(process.env.PRIMO_CACHE_TTL_MS) || 10 * 60_000;
+const PRIMO_CACHE_LIMIT = 150;
+const primoCache = new Map();
+// Entries remember the fetch implementation that produced them, so a swapped
+// fetch (tests, instrumentation) never reads another implementation's data.
+function primoCacheGet(url) {
+  const entry = primoCache.get(url);
+  if (!entry || entry.fetchRef !== globalThis.fetch) return null;
+  if (entry.expiresAt < Date.now()) { primoCache.delete(url); return null; }
+  return entry.value;
+}
+function primoCacheSet(url, value) {
+  primoCache.set(url, { value, fetchRef: globalThis.fetch, expiresAt: Date.now() + PRIMO_CACHE_TTL_MS });
+  if (primoCache.size > PRIMO_CACHE_LIMIT) primoCache.delete(primoCache.keys().next().value);
+}
+export function clearPrimoCache() { primoCache.clear(); }
+
 export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID, suppliedOptions = {}) {
   const options = { ...suppliedOptions, discoveryQuery: clean(query) };
   const mode = getSearchMode(modeId);
@@ -652,7 +669,10 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID, s
 
   const request = discoveryAbort(options, options.timeoutMs || 6000);
   try {
-    const { response: res, data } = await fetchDiscoveryJson(url, {
+    // Identical catalog requests within a few minutes (reruns, expanded-term
+    // searches, follow-ups) reuse the provider response instead of re-fetching.
+    const cached = primoCacheGet(url);
+    const { response: res, data } = cached || await fetchDiscoveryJson(url, {
       headers: { Accept: "application/json" },
       signal: request.signal,
     }, { ...options, signal: request.signal, timeoutMs: options.timeoutMs || 6000, onRetry: (retry) => reportDiscoveryOutcome(options, "Primo public", "retrying", retry) });
@@ -660,6 +680,7 @@ export async function searchPrimo(query, limit = 10, modeId = DEFAULT_MODE_ID, s
       reportDiscoveryHttpError(options, "Primo public", res.status);
       return [];
     }
+    if (!cached && Array.isArray(data?.docs || data?.results)) primoCacheSet(url, { response: { ok: true, status: 200 }, data });
     const records = data?.docs || data?.results;
     if (!Array.isArray(records)) {
       reportDiscoveryOutcome(options, "Primo public", "error", { errorCode: "INVALID_PROVIDER_RESPONSE" });
@@ -816,6 +837,23 @@ export async function searchCrossref(query, limit = 10, modeId = DEFAULT_MODE_ID
   }
 }
 
+const VARIANT_GRACE_MS = Number(process.env.PRIMO_VARIANT_GRACE_MS) || 1200;
+
+/**
+ * Resolve the first promise, then wait for the rest only as long as
+ * graceFor(firstResult) allows. Late results are dropped, not awaited.
+ */
+export async function settleWithGrace(promises, graceFor) {
+  const results = promises.map(() => null);
+  const tracked = promises.map((promise, index) => Promise.resolve(promise).then((value) => { results[index] = value; }, () => { results[index] = []; }));
+  if (!tracked.length) return [];
+  await tracked[0];
+  const grace = graceFor(results[0] || []);
+  const all = Promise.all(tracked);
+  await (Number.isFinite(grace) ? Promise.race([all, new Promise((resolve) => setTimeout(resolve, Math.max(0, grace)))]) : all);
+  return results.map((value) => value || []);
+}
+
 function mergeSourceResults(groups, limit, researchSpec) {
   return rankSourceResults(groups.flatMap((group) => group || []), researchSpec, limit);
 }
@@ -832,7 +870,9 @@ export async function searchSourceCandidates(queries, limit = 10, modeId = DEFAU
     options.onOutcome?.(outcome);
   } });
   // Always compare alternatives: the first query's five records are not necessarily the best five.
-  const zsrGroups = await Promise.all(queryList.slice(0, 3).map((query) => searchPrimo(query, candidateLimit, modeId, attemptOptions())));
+  // But when the main query already filled the list, a slow variant (often a
+  // timeout and retry) should not hold every result back; wait briefly only.
+  const zsrGroups = await settleWithGrace(queryList.slice(0, 3).map((query) => searchPrimo(query, candidateLimit, modeId, attemptOptions())), (first) => first.length >= limit ? VARIANT_GRACE_MS : Infinity);
   const spec = options.researchSpec || { mode: modeId };
   const zsrResults = mergeSourceResults(zsrGroups, candidateLimit, spec);
   if (options.signal?.aborted) return zsrResults.slice(0, limit);

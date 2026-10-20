@@ -238,3 +238,20 @@ test("assisted interpretation is off unless enabled, and provider failures fall 
   assert.equal(await assistInterpretation(confident.topic, confident, { env, fetchImpl: async () => { throw new Error("must not be called"); } }), null);
   clearInterpretationCache();
 });
+
+test("an overlapping shorter vocabulary match is dropped only when the longer concept covers it", () => {
+  assert.equal(researchSpecQuery(buildResearchSpec("urban heat islands and public health")), '"urban heat islands" AND "public health"');
+  assert.match(researchSpecQuery(buildResearchSpec("large cities and urban identity")), /\burban\b/, "urban stays when the longer concept (cultural identity) does not carry it");
+});
+
+test("slow catalog variants do not hold back a full first result set", async () => {
+  const { settleWithGrace } = await import("../server/primo.js");
+  const never = new Promise(() => {});
+  const started = Date.now();
+  const full = await settleWithGrace([Promise.resolve(Array(10).fill("r")), never], (first) => first.length >= 10 ? 50 : Infinity);
+  assert.equal(full[0].length, 10);
+  assert.deepEqual(full[1], []);
+  assert.ok(Date.now() - started < 1000);
+  const waits = await settleWithGrace([Promise.resolve(["a"]), new Promise((resolve) => setTimeout(() => resolve(["b"]), 30))], (first) => first.length >= 10 ? 0 : Infinity);
+  assert.deepEqual(waits, [["a"], ["b"]], "a thin first result waits for the variants");
+});
