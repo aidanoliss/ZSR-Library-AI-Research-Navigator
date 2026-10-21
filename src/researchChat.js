@@ -1,3 +1,5 @@
+import { withNavigatorAttribution } from "../config/navigatorAttribution.js";
+
 const text = (value, limit = 2000) => typeof value === "string" ? value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "").trim().slice(0, limit) : "";
 export const CHAT_SOURCE_LIMIT = 6;
 export const CHAT_TURN_LIMIT = 24;
@@ -13,6 +15,13 @@ export function safeChatSourceUrl(value) {
     const url = new URL(value);
     return url.protocol === "https:" && !url.username && !url.password ? url.toString() : "";
   } catch { return ""; }
+}
+
+export function safeChatSupportUrl(value) {
+  const url = safeChatSourceUrl(value);
+  if (!url) return "";
+  const host = new URL(url).hostname.toLowerCase();
+  return host === "zsr.wfu.edu" || host.endsWith(".zsr.wfu.edu") || host === "wfu.primo.exlibrisgroup.com" ? url : "";
 }
 
 export function chatSourceKey(source = {}) {
@@ -52,7 +61,7 @@ export function normalizeResearchChatReply(value = {}) {
     if (!source || block?.scope !== "abstract" || !quote || !interpretation) return [];
     return [{ text: interpretation, sourceId, quote, scope: "abstract", source }];
   });
-  const mode = value.mode === "planning" ? "planning" : "evidence";
+  const mode = ["planning", "scope"].includes(value.mode) ? value.mode : "evidence";
   const guidance = mode === "planning" ? (Array.isArray(value.guidance) ? value.guidance : []).slice(0, 8).flatMap((section) => {
     const title = text(section?.title, 120), content = text(section?.text, 1800);
     return title && content ? [{ title, text: content }] : [];
@@ -60,13 +69,46 @@ export function normalizeResearchChatReply(value = {}) {
   const prompts = (items, limit) => [...new Set((Array.isArray(items) ? items : []).map((item) => text(item, 2000)).filter((item) => item && !/(?:https?:\/\/|www\.|<[^>]*>)/i.test(item)))].slice(0, limit);
   return {
     mode, guidance,
+    reason: ["assignment-writing", "unrelated", "library-info", "clarify", "prompt-override"].includes(value.reason) ? value.reason : "",
+    supportLinks: (Array.isArray(value.supportLinks) ? value.supportLinks : []).slice(0, 4).flatMap((link) => {
+      const label = text(link?.label, 120), url = safeChatSupportUrl(link?.url);
+      return label && url ? [{ label, url }] : [];
+    }),
     suggestions: prompts(value.suggestions, 4),
     searchQuestions: prompts(value.searchQuestions, 3),
-    status: ["answered", "insufficient_evidence", "unavailable"].includes(value.status) ? value.status : "insufficient_evidence",
+    status: ["answered", "insufficient_evidence", "unavailable", "redirected"].includes(value.status) ? value.status : "insufficient_evidence",
     message: text(value.message, 2000),
-    blocks, sources,
+    blocks: mode === "scope" ? [] : blocks, sources,
     notice: text(value.notice, 2000),
   };
+}
+
+function chatReplyLines(reply) {
+  const r = normalizeResearchChatReply(reply);
+  const lines = [r.mode === "planning" ? "Planning guidance — not research findings" : r.mode === "scope" ? "Navigator scope guidance" : "Research discussion — check the supporting evidence", "", r.message, ""];
+  for (const part of r.guidance) lines.push(part.title, part.text, "");
+  for (const block of r.blocks) {
+    lines.push("AI interpretation — abstract only", block.text, `Source: ${block.source.title}`, ...(block.source.url ? [block.source.url] : []), "Supporting passage from the abstract:", block.quote, "");
+  }
+  for (const link of r.supportLinks) lines.push(`${link.label}: ${link.url}`, "");
+  if (r.notice) lines.push(r.notice, "");
+  if (r.searchQuestions.length) lines.push("Search drafts to review:", ...r.searchQuestions.map((query) => `- ${query}`), "");
+  return lines;
+}
+
+export function researchChatReplyToText(reply) {
+  return withNavigatorAttribution(chatReplyLines(reply).join("\n"));
+}
+
+export function researchChatToMarkdown(session, topic = "") {
+  const normalized = normalizeResearchChatSession(session);
+  const lines = ["# Navigator Research chat", ""];
+  if (text(topic)) lines.push(`Research topic: ${text(topic)}`, "");
+  for (const message of normalized.messages) {
+    if (message.role === "user") lines.push("## You asked", "", message.content, "");
+    else lines.push("## Navigator", "", ...chatReplyLines(message.reply));
+  }
+  return withNavigatorAttribution(lines.join("\n"));
 }
 
 export function normalizeResearchChatSession(value = {}) {

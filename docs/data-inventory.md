@@ -79,3 +79,8 @@ Quotation and numeric checks reject unsupported identities, modified passages, i
 ### Planning and evidence chat (October 21 update)
 
 Research chat sends a submitted question, bounded prior messages, enabled assignment context, and selected signed source envelopes to the application server. Common planning tasks are answered there with procedural templates and do not call Gemini. Evidence discussions send the bounded question/context and usable selected abstracts to Gemini. A later evidence discussion can include earlier planning messages in its bounded context. No-source planning does not require a source token; forged records still fail verification. Valid expired records are omitted only for procedural planning and require refreshing for evidence discussions. Normal/private browser retention is unchanged.
+
+
+### Visible provenance and scope checks (October 21)
+
+Explicit chat-copy and chat/research-plan export actions append a visible attribution footer outside original source quotations. No hidden watermark, student identity, or copy interception is added. Scope rules use the submitted request and bounded existing user-message context on the application server; no additional classifier provider, telemetry, or detector storage is introduced. A later evidence call may still include earlier submitted messages within existing context limits. Private-session behavior is unchanged, and downloaded exports remain on disk.

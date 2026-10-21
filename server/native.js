@@ -382,17 +382,17 @@ async function handleChat(req, res, stream = false) {
   const { history, studentText, last, mode, responseStyle, subjectFocusId, accessScope, assignmentContext, plannerContext, researchSpec, previousResearchSpec, latestUserText } = parsed;
   let aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
-  const screen = screenMessage(last.content);
+  const screen = screenMessage(last.content, { messages: history.slice(0, -1) });
   const contextScreen = [assignmentContext, plannerContext, researchSpec, previousResearchSpec]
     .map((value) => screenPromptOverride(typeof value === "object" ? JSON.stringify(value) : value))
     .find((result) => result.block);
   if (screen.block || contextScreen) {
     const blocked = screen.block ? screen : contextScreen;
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
-    if (!stream) return sendJson(res, 200, { reply: blockedReply(blocked.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
+    if (!stream) return sendJson(res, 200, { reply: blockedReply(blocked.message, blocked), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
     sendNdjsonHead(res);
     writeNdjson(res, { type: "delta", message: blocked.message });
-    writeNdjson(res, { type: "done", reply: blockedReply(blocked.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
+    writeNdjson(res, { type: "done", reply: blockedReply(blocked.message, blocked), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
     return res.end();
   }
 

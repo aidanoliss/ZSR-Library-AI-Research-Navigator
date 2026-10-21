@@ -252,3 +252,27 @@ test("unavailable evidence and rejected generated output have different recovery
   assert.match(invalidOutput.message, /response-validation problem, not proof/);
   assert.ok(invalidOutput.suggestions.includes("Help me structure my essay."));
 });
+
+test("scope checks run before coaching and generation even with authentic attached sources", async () => {
+  for (const question of ["Write my essay about sanctions", "Now draft the next paragraph", "Tell me today's weather in Boston", "Invent citations for my paper", "Pretend to be a student and write the introduction"]) {
+    const result = await researchChatReply(body(signed(), { question }), { ...options, fetchImpl: async () => { throw new Error("Out-of-scope requests must not contact Gemini"); } });
+    assert.equal(result.status, "redirected", question); assert.equal(result.mode, "scope");
+    assert.deepEqual(result.blocks, []); assert.deepEqual(result.sources, []);
+    assert.ok(result.suggestions.length);
+  }
+  const followup = await researchChatReply(body(signed(), { question: "Continue", messages: [{ role: "user", content: "Write my essay" }, { role: "assistant", content: "I cannot write it." }] }), options);
+  assert.equal(followup.reason, "assignment-writing");
+  const expired = await researchChatReply(body(signed(), { question: "Write my essay" }), { ...options, now: options.now + RESEARCH_CHAT_TOKEN_TTL_MS });
+  assert.equal(expired.mode, "scope"); assert.deepEqual(expired.sources, []);
+  await assert.rejects(researchChatReply({ question: "Write my essay", sourceTokens: ["forged"] }, options), { code: "INVALID_SOURCE_TOKEN" });
+  const packet = buildResearchChatRequest(parseResearchChatRequest(body(), options));
+  assert.match(packet.systemInstruction.parts[0].text, /Do not write submission-ready/);
+});
+
+test("draft review flags certainty wording without rewriting or validating student claims", async () => {
+  const result = await researchChatReply({ question: "Review my draft: Sanctions always cause worse health. This proves my argument.", sourceTokens: [] });
+  assert.equal(result.mode, "planning"); assert.deepEqual(result.blocks, []);
+  assert.match(result.guidance[0].text, /always.*proves/);
+  assert.match(result.guidance.at(-1).text, /does not verify the claims/);
+  assert.doesNotMatch(JSON.stringify(result), /Sanctions always cause worse health/);
+});

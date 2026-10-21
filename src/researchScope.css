@@ -1,0 +1,7 @@
+.navigator-scope-response { padding: 24px; border: 1px solid #ded9cd; border-radius: 14px; background: #fffefa; line-height: 1.7; }
+.navigator-scope-response > strong { font-size: 1rem; }
+.navigator-scope-response p { margin: 10px 0 16px; }
+.navigator-scope-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.navigator-scope-actions button { min-height: 44px; padding: 10px 14px; border: 1px solid #d2c9b8; border-radius: 9px; background: white; color: #252525; font: 500 .85rem/1.5 system-ui,sans-serif; cursor: pointer; text-align: left; }
+.navigator-scope-response .navigator-scope-attribution { margin: 20px 0 0; padding-top: 12px; border-top: 1px solid #e5dfd2; color: #625d51; font-size: .75rem; }
+.navigator-scope-actions button:focus-visible { outline: 3px solid #2167b3; outline-offset: 3px; }

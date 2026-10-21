@@ -30,3 +30,8 @@ Signed-source and quote checks are software controls, not an accuracy score. Hum
 ### Planning usefulness repair (October 21)
 
 Try “How should I structure my essay?” before attaching a source, then ask “Make it more specific.” Expect a labeled plan and then a paragraph plan, not research findings. Repeat with two abstract records and one citation-only record; verify the inventory and that no claim is inferred from a title. Use Manage sources to attach/remove records, and check that attached records do not repeat in available choices. Try a suggested search draft and confirm it opens for review without running automatically. Ask what a paper actually found and verify that this still requires source evidence. Rate planning usefulness separately from source relevance and interpretation support.
+
+
+### Scope and attribution checks
+
+Try requesting a complete essay, then an introduction or next paragraph, and finally Continue. Expect a brief redirect to planning or draft review. Ask for an outline afterward; legitimate planning should work. Research AI detection, coding, or weather as an academic subject and check that source-finding requests remain allowed. Ask a current ZSR services question and expect official links rather than guessed rules or hours. Check Copy response and Export chat for visible attribution outside original quotations; ordinary selection/copy and citation exports must remain unchanged. Report false refusals and successful bypasses separately from source-relevance errors.

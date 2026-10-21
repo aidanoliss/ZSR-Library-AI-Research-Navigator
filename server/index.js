@@ -451,14 +451,14 @@ app.post("/api/chat", async (req, res) => {
   let aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
-  const screen = screenMessage(last.content);
+  const screen = screenMessage(last.content, { messages: history.slice(0, -1) });
   const contextScreen = [assignmentContext, plannerContext, researchSpec, previousResearchSpec]
     .map((value) => screenPromptOverride(typeof value === "object" ? JSON.stringify(value) : value))
     .find((result) => result.block);
   if (screen.block || contextScreen) {
     const blocked = screen.block ? screen : contextScreen;
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
-    return res.json({ reply: blockedReply(blocked.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
+    return res.json({ reply: blockedReply(blocked.message, blocked), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) });
   }
 
   const releaseChatSlot = acquireChatSlot(clientKey(req));
@@ -562,7 +562,7 @@ app.post("/api/chat/stream", async (req, res) => {
   let aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext });
 
   // Relevance / abuse screen — redirect clear-cut cases without a model call.
-  const screen = screenMessage(last.content);
+  const screen = screenMessage(last.content, { messages: history.slice(0, -1) });
   const contextScreen = [assignmentContext, plannerContext, researchSpec, previousResearchSpec]
     .map((value) => screenPromptOverride(typeof value === "object" ? JSON.stringify(value) : value))
     .find((result) => result.block);
@@ -571,7 +571,7 @@ app.post("/api/chat/stream", async (req, res) => {
     logQuery({ topic: last.content.trim(), matchedIds: [], blocked: true });
     res.setHeader("Content-Type", "application/x-ndjson");
     res.write(JSON.stringify({ type: "delta", message: blocked.message }) + "\n");
-    res.write(JSON.stringify({ type: "done", reply: blockedReply(blocked.message), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) }) + "\n");
+    res.write(JSON.stringify({ type: "done", reply: blockedReply(blocked.message, blocked), matchedResources: [], sourceDiscovery: sourceDiscoveryStatus(accessScope, []), ...responsePlanContext(null) }) + "\n");
     return res.end();
   }
 

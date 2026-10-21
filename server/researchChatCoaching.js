@@ -10,6 +10,7 @@ const followup = /^(?:yes[,!. ]*|please[,!. ]*)?(?:make (?:it|that|this) (?:more
 export function researchCoachingIntent(question, messages = []) {
   const q = clean(question, 2000);
   if (/\b(?:ignore|bypass|override)\b.{0,50}\b(?:rules|instructions|sources|checks)\b/i.test(q)) return "";
+  if (/\b(?:review|critique|feedback on|check)\b.{0,50}\b(?:my (?:draft|paragraph|introduction|writing)|this draft|draft I wrote)\b/i.test(q)) return "draft-review";
   if (/\b(?:what|how|which)\s+(?:does|did|is|was|are|were)\b.{0,70}\b(?:this|that|the|attached)\s+(?:paper|article|study|source|author|abstract)\b/i.test(q)
     || /\b(?:summarize|report|quote|explain)\b.{0,60}\b(?:findings|results|authors?'? (?:thesis|argument)|paper's (?:structure|thesis))\b/i.test(q)) return "";
   // Explicit coaching takes priority over words such as "compare" and "study".
@@ -80,7 +81,13 @@ export function researchCoachingReply(request) {
     ? `In [population/place and period], the evidence suggests [qualified relationship] between [exposure] and [defined outcome], with [supported similarity or difference] between ${c.comparison.join(" and ")}; [important limitation] restricts that conclusion.`
     : "For [population/place and period], [exposure or issue] is associated with [outcome or interpretation], subject to [counterevidence or limitation].";
   let message, guidance, suggestions;
-  if (intent === "brief-outline") {
+  if (intent === "draft-review") {
+    const draft = request.question.match(/:\s*([\s\S]+)/)?.[1]?.trim() || "";
+    const terms = [...new Set(draft.match(/\b(?:proves?|always|never|causes?|guarantees?)\b/gi) || [])];
+    message = draft ? "Here are checks for your draft, without replacing your prose or treating its claims as established facts." : "Paste a short paragraph you wrote after “Review my draft:” and say what you want feedback on. I can help check argument structure and wording; factual verification needs source evidence.";
+    guidance = draft ? [section("Check the strength of the wording", terms.length ? `Your draft uses: ${terms.join(", ")}. Check each against the study design and exact evidence. These words are not automatically wrong, but may claim more certainty or causality than your sources support.` : "Check whether the strength of each claim matches the evidence. Distinguish association, causation, the authors' interpretation, and your own inference."), section("Make the reasoning traceable", "Identify the paragraph's main point, the cited passage supporting it, your explanation, and a limitation or counterexample. Mark any unsupported assertion for research rather than filling it with an invented citation."), section("Keep ownership and verify facts", "Revise the paragraph in your own words. This checklist does not verify the claims in your draft. Use attached source evidence or the original text to check population, place, period, method, and result.")] : [];
+    suggestions = ["Help me make an evidence table and paragraph plan.", "How should I evaluate these sources?"];
+  } else if (intent === "brief-outline") {
     message = "Here is the shorter version. Treat it as a plan to fill with evidence.";
     guidance = [section("Opening", `${topicLine}State your focused question, scope, and tentative thesis.`), section("Body", `${compareLine} Organize by outcome or theme: point → cited evidence → explanation → limitation. Include counterevidence.`), section("Conclusion", "Give a qualified answer and the main unresolved limitation. Do not turn a title, an AI suggestion, or an abstract alone into a stronger finding.")];
     suggestions = ["Make the essay outline more specific with a paragraph plan.", "Help me draft a cautious working thesis."];

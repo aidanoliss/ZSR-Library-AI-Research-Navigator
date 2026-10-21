@@ -25,6 +25,8 @@ import { isSavedSource, researchItemKey } from "./researchWorkspace.js";
 import LiveResultsSection from "./SourceResults.jsx";
 import ResultDiscoveryOptions from "./ResultDiscoveryOptions.jsx";
 import { ResultWorkspaceHeader, SavedSourcesView } from "./ResultsWorkspace.jsx";
+import { NAVIGATOR_ATTRIBUTION, NAVIGATOR_PROTOTYPE_NOTICE } from "../config/navigatorAttribution.js";
+import "./researchScope.css";
 
 /* Monochrome inline icon per resource type — restrained, academic. */
 const TypeIcon = {
@@ -1122,6 +1124,13 @@ export default function AssistantMessage({
   const [selectedRefinements, setSelectedRefinements] = useState([]);
 
   if (!reply) return null;
+  if (reply.scope_redirect) return <section className="bubble assistant navigator-scope-response" aria-label="Navigator research scope">
+    <strong>{reply.scope_reason === "library-info" ? "Use official ZSR information" : "Research support"}</strong>
+    <p>{reply.message}</p>
+    {!!reply.supportLinks?.length && <ul>{reply.supportLinks.filter((link) => { try { const url = new URL(link.url); return url.protocol === "https:" && !url.username && !url.password && ["zsr.wfu.edu", "guides.zsr.wfu.edu", "wfu.primo.exlibrisgroup.com"].includes(url.hostname); } catch { return false; } }).slice(0, 4).map((link) => <li key={link.url}><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a></li>)}</ul>}
+    {onFollowup && <div className="navigator-scope-actions">{(reply.suggested_followups || []).slice(0, 3).map((prompt) => <button key={prompt} type="button" onClick={() => onFollowup(prompt)}>{prompt}</button>)}</div>}
+    <p className="navigator-scope-attribution">{NAVIGATOR_ATTRIBUTION}<br />{NAVIGATOR_PROTOTYPE_NOTICE}</p>
+  </section>;
   // Keep only substantive follow-ups and render them as action prompts, not vague yes/no questions.
   const followups = (reply.suggested_followups ?? [])
     .map(normalizeSuggestedFollowup)

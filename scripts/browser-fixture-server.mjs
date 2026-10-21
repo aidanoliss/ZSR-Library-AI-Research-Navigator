@@ -9,6 +9,7 @@ import { parseChatRequest } from "../server/chatRequest.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
 import { signResearchChatSources } from "../server/researchChatEvidence.js";
 import { researchChatReply } from "../server/researchChat.js";
+import { screenMessage, blockedReply } from "../server/screen.js";
 
 const PROJECT_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const FIXTURE_TIME = "2026-09-15T12:00:00.000Z";
@@ -75,6 +76,8 @@ function fixtureSources(plan, origin, scope) {
 export function buildFixturePayload(body, origin = "http://127.0.0.1:3004") {
   const parsed = parseChatRequest(cleanedRequest(body));
   if (parsed.error) throw Object.assign(new Error(parsed.error), { status: 400 });
+  const scope = screenMessage(parsed.last.content, { messages: parsed.history.slice(0, -1) });
+  if (scope.block) return { reply: blockedReply(scope.message, scope), liveResults: [], matchedResources: [], searchTools: [], sourceDiscovery: { lanes: {} }, fixture: true };
   const plan = buildResearchPlan(parsed.studentText, 5, parsed.subjectFocusId, parsed.mode, {
     assignmentContext: parsed.assignmentContext,
     plannerContext: parsed.plannerContext,

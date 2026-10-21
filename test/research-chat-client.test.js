@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chatSourceHasAbstract, chatSourceKey, mergeChatSources, normalizeResearchChatReply, normalizeResearchChatSession, researchChatPayload, requestResearchChat, safeChatSourceUrl } from '../src/researchChat.js';
+import { chatSourceHasAbstract, chatSourceKey, mergeChatSources, normalizeResearchChatReply, normalizeResearchChatSession, researchChatPayload, requestResearchChat, researchChatReplyToText, researchChatToMarkdown, safeChatSourceUrl } from '../src/researchChat.js';
+import { NAVIGATOR_ATTRIBUTION, NAVIGATOR_PROTOTYPE_NOTICE } from '../config/navigatorAttribution.js';
+import { conversationToMarkdown } from '../src/exportPlan.js';
 
 const source = (id, extra = {}) => ({ evidenceId: id, title: `Source ${id}`, url: `https://example.org/${id}`, researchChatToken: `signed-${id}`, abstractText: 'The provider supplied an abstract excerpt for the selected source.', ...extra });
 
@@ -99,4 +101,37 @@ test('planning sections and suggested actions remain bounded', () => {
   assert.equal(reply.guidance[0].text.length, 1800);
   assert.equal(reply.suggestions.length, 4);
   assert.equal(reply.searchQuestions.length, 3);
+});
+
+test('scope redirects persist without being relabeled as evidence failures or accepting external support links', () => {
+  const reply = normalizeResearchChatReply({ mode: 'scope', status: 'redirected', reason: 'library-info', message: 'Check the official hours page.', supportLinks: [{ label: 'ZSR hours', url: 'https://zsr.wfu.edu/hours/' }, { label: 'External', url: 'https://attacker.example/' }, { label: 'Credentials', url: 'https://secret@zsr.wfu.edu/' }, { label: 'Insecure', url: 'http://zsr.wfu.edu/' }], sources: [{ id: 'known', title: 'Known', url: 'https://example.org/' }], blocks: [{ sourceId: 'known', text: 'No evidence should be shown', quote: 'An alleged passage.', scope: 'abstract' }] });
+  assert.equal(reply.mode, 'scope'); assert.equal(reply.status, 'redirected'); assert.equal(reply.reason, 'library-info');
+  assert.deepEqual(reply.blocks, []);
+  assert.deepEqual(reply.supportLinks, [{ label: 'ZSR hours', url: 'https://zsr.wfu.edu/hours/' }]);
+  assert.deepEqual(normalizeResearchChatSession({ messages: [{ role: 'assistant', reply }] }).messages[0].reply, reply);
+});
+
+test('response copy and chat export preserve quotes and source identities with a separate visible footer', () => {
+  const quote = 'Results did not establish causation: the estimate was 7.4%, with uncertainty.';
+  const reply = { status: 'answered', mode: 'evidence', message: 'Check the passage.', sources: [{ id: 'one', title: 'A real record title', url: 'https://example.org/study', scope: 'abstract' }], blocks: [{ sourceId: 'one', text: 'A scoped interpretation.', quote, scope: 'abstract' }] };
+  const copied = researchChatReplyToText(reply);
+  assert.ok(copied.includes(`Supporting passage from the abstract:\n${quote}\n`));
+  assert.ok(copied.includes('Source: A real record title\nhttps://example.org/study'));
+  assert.ok(copied.indexOf(NAVIGATOR_ATTRIBUTION) > copied.indexOf(quote) + quote.length);
+  assert.ok(copied.endsWith(`${NAVIGATOR_PROTOTYPE_NOTICE}\n`));
+  const exported = researchChatToMarkdown({ messages: [{ role: 'user', content: 'What is supported?' }, { role: 'assistant', reply }] }, 'Research topic');
+  assert.match(exported, /What is supported/); assert.ok(exported.includes(quote));
+  assert.equal(exported.split(NAVIGATOR_ATTRIBUTION).length - 1, 1);
+  assert.doesNotMatch(exported, /[\u200b\u200c\u200d\u2060\ufeff]/);
+});
+
+test('planning copies and research-plan exports include provenance without changing source records', () => {
+  const planning = researchChatReplyToText({ mode: 'planning', status: 'answered', guidance: [{ title: 'Opening', text: 'Define the question.' }], blocks: [] });
+  assert.match(planning, /Planning guidance — not research findings/);
+  assert.match(planning, /Opening\nDefine the question/); assert.ok(planning.includes(NAVIGATOR_ATTRIBUTION));
+  const source = { title: 'Exact source title', doi: '10.1234/source', url: 'https://example.org/source' };
+  const before = JSON.stringify(source);
+  const plan = conversationToMarkdown([{ role: 'assistant', reply: { message: 'Plan your research.' }, liveResults: [source] }]);
+  assert.ok(plan.includes(NAVIGATOR_ATTRIBUTION)); assert.ok(plan.includes('10.1234/source'));
+  assert.equal(JSON.stringify(source), before);
 });

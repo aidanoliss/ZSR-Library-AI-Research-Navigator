@@ -148,6 +148,32 @@ test("proxy-aware client keys ignore X-Forwarded-For until bounded trust is expl
   assert.equal(trustProxyHops("999"), 5);
 });
 
+test("both servers enforce scope before providers on Search, streaming Search, and Research chat", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error("Scope redirects must not fetch a provider"); };
+  try {
+    for (const serverKind of ["native", "express"]) for (const path of ["/api/chat", "/api/chat/stream", "/api/research-chat"]) for (const question of ["Write my essay on sanctions", "Now write the next paragraph", "Continue", "Tell me a joke", "What time does ZSR close today?"]) {
+      resetRateLimits();
+      const prior = question === "Continue" ? [{ role: "user", content: "Write my essay on sanctions" }, { role: "assistant", content: "I can help plan it instead." }] : [];
+      const body = path === "/api/research-chat" ? { question, sourceTokens: [], messages: prior } : { messages: [...prior, { role: "user", content: question }] };
+      let response;
+      if (serverKind === "native") response = await request(path, { method: "POST", body: JSON.stringify(body) });
+      else {
+        const req = new MockRequest({ method: "POST" }); req.body = body;
+        response = new MockResponse(req);
+        response.status = (code) => { response.statusCode = code; return response; };
+        response.json = (payload) => { response.end(JSON.stringify(payload)); return response; };
+        const route = app._router.stack.find((layer) => layer.route?.path === path && layer.route.methods.post);
+        await route.route.stack[0].handle(req, response);
+      }
+      assert.equal(response.statusCode, 200, `${serverKind}/${path}/${question}`);
+      const payload = path.endsWith("/stream") ? response.text().trim().split("\n").map(JSON.parse).find((event) => event.type === "done") : JSON.parse(response.text());
+      if (path === "/api/research-chat") { assert.equal(payload.mode, "scope"); assert.deepEqual(payload.blocks, []); }
+      else { assert.equal(payload.reply.scope_redirect, true); assert.deepEqual(payload.matchedResources, []); }
+    }
+  } finally { globalThis.fetch = originalFetch; resetRateLimits(); }
+});
+
 test("admin authorization requires a configured, exact Bearer token", () => {
   const requestWith = (authorization) => ({ headers: { authorization } });
   assert.equal(isAdminAuthorized(requestWith("Bearer test-admin-token"), "test-admin-token"), true);
