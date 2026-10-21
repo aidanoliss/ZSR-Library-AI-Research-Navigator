@@ -2,6 +2,7 @@ import { evidencePassageContext } from "../config/evidencePassages.js";
 import { normalizeEvidenceText } from "./sourceEvidence.js";
 import { createCircuitBreaker, providerHttpError, ProviderError, runProviderOperation } from "./providerResilience.js";
 import { RESEARCH_CHAT_LIMITS, publicChatSource, verifyResearchChatToken } from "./researchChatEvidence.js";
+import { researchCoachingIntent, researchCoachingReply } from "./researchChatCoaching.js";
 
 const circuit = createCircuitBreaker();
 const plain = (value) => normalizeEvidenceText(value);
@@ -22,9 +23,6 @@ export function parseResearchChatRequest(body, options = {}) {
   if (typeof body.question !== "string" || !body.question.trim() || body.question.length > RESEARCH_CHAT_LIMITS.question) throw invalid("Enter a question of up to 2,000 characters.");
   const tokens = body.sourceTokens ?? [];
   if (!Array.isArray(tokens) || tokens.length > RESEARCH_CHAT_LIMITS.sources) throw invalid("Select up to six Navigator sources for this conversation.");
-  const records = tokens.map((token) => verifyResearchChatToken(token, options));
-  const seen = new Set();
-  const sources = records.filter((source) => !seen.has(source.id) && seen.add(source.id));
   const history = body.messages ?? [];
   if (!Array.isArray(history) || history.length > RESEARCH_CHAT_LIMITS.history) throw invalid("The conversation context is too long. Send the latest ten messages only.");
   let total = 0;
@@ -37,7 +35,20 @@ export function parseResearchChatRequest(body, options = {}) {
   for (const [field, limit] of [["topic", RESEARCH_CHAT_LIMITS.topic], ["assignmentContext", RESEARCH_CHAT_LIMITS.assignment]]) {
     if (body[field] !== undefined && (typeof body[field] !== "string" || body[field].length > limit)) throw invalid(`${field === "topic" ? "The research topic" : "The assignment brief"} is too long.`);
   }
-  return { question: plain(body.question), sources, messages, topic: plain(body.topic || ""), assignmentContext: plain(body.assignmentContext || "") };
+  const planning = researchCoachingIntent(plain(body.question), messages);
+  let expiredSources = 0;
+  const records = tokens.flatMap((token) => {
+    try { return [verifyResearchChatToken(token, options)]; }
+    catch (error) {
+      // A valid but expired attachment need not block source-independent advice.
+      // Its metadata and abstract are not used or returned in that response.
+      if (planning && error.code === "SOURCE_EXPIRED") { expiredSources++; return []; }
+      throw error;
+    }
+  });
+  const seen = new Set();
+  const sources = records.filter((source) => !seen.has(source.id) && seen.add(source.id));
+  return { question: plain(body.question), sources, messages, expiredSources, topic: plain(body.topic || ""), assignmentContext: plain(body.assignmentContext || "") };
 }
 
 export function buildResearchChatRequest(request) {
@@ -92,9 +103,12 @@ export function validateResearchChatReply(reply, sources = []) {
  * quotation verification still cannot establish semantic support for AI prose. */
 export async function researchChatReply(body, options = {}) {
   const request = parseResearchChatRequest(body, options);
+  if (options.signal?.aborted) throw invalid("Research chat was cancelled.", "RESEARCH_CHAT_CANCELLED", 499);
   const sources = request.sources.map(publicChatSource);
-  const answer = (status, message, blocks = []) => ({ status, message, blocks, suggestions: blocks.length ? SUGGESTIONS : [], sources, notice: NOTICE });
-  if (!sources.length) return answer("insufficient_evidence", "Search in Navigator first, then select the sources you want to discuss. Research chat can only use sources Navigator has provided.");
+  const coaching = researchCoachingReply(request);
+  if (coaching) return { ...coaching, sources };
+  const answer = (status, message, blocks = []) => ({ mode: "evidence", status, message, blocks, suggestions: blocks.length ? SUGGESTIONS : ["Help me structure my essay.", "Help improve my search."], sources, notice: NOTICE });
+  if (!sources.length) return answer("insufficient_evidence", "No Navigator sources are attached, so I cannot establish research findings yet. Search in Navigator first, then attach sources to discuss their evidence. I can still help plan an essay, narrow a question, or build a search without sources.");
   if (!request.sources.some((source) => source.abstract)) return answer("insufficient_evidence", request.sources.some((source) => source.identityWarning)
     ? "The attached records have no usable abstract evidence, and a source identity needs checking. Open the original records and resolve the warning before discussing findings."
     : "These Navigator records contain citation details but no usable abstract passages. I can identify the records, but cannot explain their findings from titles alone. Open the sources or search for records with abstracts.");
@@ -125,5 +139,7 @@ export async function researchChatReply(body, options = {}) {
   }
   const blocks = validateResearchChatReply(raw, request.sources);
   return blocks.length ? answer("answered", "Here is an interpretation to check against the attached abstract evidence.", blocks)
-    : answer("insufficient_evidence", "The attached excerpts did not provide an answer that passed the source and quotation checks. I cannot establish this from the evidence available here. Try a narrower question, attach another Navigator source, or search for more evidence.");
+    : answer("insufficient_evidence", raw?.insufficient_evidence === true
+      ? "The attached abstracts do not establish an answer to this question. That does not mean the full articles lack an answer. Ask about a specific attached passage, add a source with relevant abstract evidence, or broaden the search. I can also help plan your argument without inventing findings."
+      : "I could not display a supported answer because the generated source references or quotations did not pass the checks. This is a response-validation problem, not proof that your sources are irrelevant. Try asking about one attached source, or use essay planning while you inspect the original text.");
 }

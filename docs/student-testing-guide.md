@@ -25,3 +25,8 @@ Test once in a private session on a shared computer. Reloading ends that session
 7. Use **Use this question in Search** and review the question before submitting a new search.
 
 Signed-source and quote checks are software controls, not an accuracy score. Human review must separately rate source relevance, citation identity, interpretation support, and usefulness of the coaching.
+
+
+### Planning usefulness repair (October 21)
+
+Try “How should I structure my essay?” before attaching a source, then ask “Make it more specific.” Expect a labeled plan and then a paragraph plan, not research findings. Repeat with two abstract records and one citation-only record; verify the inventory and that no claim is inferred from a title. Use Manage sources to attach/remove records, and check that attached records do not repeat in available choices. Try a suggested search draft and confirm it opens for review without running automatically. Ask what a paper actually found and verify that this still requires source evidence. Rate planning usefulness separately from source relevance and interpretation support.

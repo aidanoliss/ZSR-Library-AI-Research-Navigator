@@ -52,7 +52,16 @@ export function normalizeResearchChatReply(value = {}) {
     if (!source || block?.scope !== "abstract" || !quote || !interpretation) return [];
     return [{ text: interpretation, sourceId, quote, scope: "abstract", source }];
   });
+  const mode = value.mode === "planning" ? "planning" : "evidence";
+  const guidance = mode === "planning" ? (Array.isArray(value.guidance) ? value.guidance : []).slice(0, 8).flatMap((section) => {
+    const title = text(section?.title, 120), content = text(section?.text, 1800);
+    return title && content ? [{ title, text: content }] : [];
+  }) : [];
+  const prompts = (items, limit) => [...new Set((Array.isArray(items) ? items : []).map((item) => text(item, 2000)).filter((item) => item && !/(?:https?:\/\/|www\.|<[^>]*>)/i.test(item)))].slice(0, limit);
   return {
+    mode, guidance,
+    suggestions: prompts(value.suggestions, 4),
+    searchQuestions: prompts(value.searchQuestions, 3),
     status: ["answered", "insufficient_evidence", "unavailable"].includes(value.status) ? value.status : "insufficient_evidence",
     message: text(value.message, 2000),
     blocks, sources,
@@ -75,10 +84,9 @@ export function researchChatPayload({ question, session, sources, topic = "", as
   const selected = new Set(normalized.selectedSourceKeys);
   const chosen = mergeChatSources(sources).filter((source) => selected.has(chatSourceKey(source))).slice(0, CHAT_SOURCE_LIMIT);
   const content = text(question);
-  if (!content) throw new Error("Enter a question to discuss your sources.");
-  if (!chosen.length) throw new Error("Attach at least one Navigator source before sending a question.");
+  if (!content) throw new Error("Enter a question about research or ask for planning help.");
   let contextRemaining = 12000;
-  const history = normalized.messages.slice(-10).map((message) => ({ role: message.role, content: message.role === "user" ? message.content : [message.reply.message, ...message.reply.blocks.map((block) => block.text)].filter(Boolean).join("\n").slice(0, 2000) })).reverse().flatMap((message) => {
+  const history = normalized.messages.slice(-10).map((message) => ({ role: message.role, content: message.role === "user" ? message.content : [message.reply.message, ...message.reply.guidance.map((section) => `${section.title}: ${section.text}`), ...message.reply.blocks.map((block) => block.text)].filter(Boolean).join("\n").slice(0, 2000) })).reverse().flatMap((message) => {
     if (!message.content || message.content.length > contextRemaining) return [];
     contextRemaining -= message.content.length;
     return [message];

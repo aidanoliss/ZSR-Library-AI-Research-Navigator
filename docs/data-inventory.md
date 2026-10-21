@@ -74,3 +74,8 @@ Research chat sends the latest question, up to ten bounded prior chat messages, 
 Drafts, source selections, attached public records, and cited replies persist with the browser's research session. Private sessions keep them in memory and clear on reload or mode exit. Signed envelopes contain public bibliographic/abstract data, not credentials; they may survive in saved-source JSON and expire after 24 hours. Keys use `RESEARCH_CHAT_SIGNING_KEY` when configured, otherwise a context-separated derivation of the existing Gemini key, otherwise a process-local random key. Records must be retrieved again after expiry or an incompatible signing-key change. No full text is acquired.
 
 Quotation and numeric checks reject unsupported identities, modified passages, incomplete sentence context, and numbers absent from the displayed quote. They do not prove that an AI interpretation follows from the quote; semantic misgrounding remains possible and is labeled in the interface.
+
+
+### Planning and evidence chat (October 21 update)
+
+Research chat sends a submitted question, bounded prior messages, enabled assignment context, and selected signed source envelopes to the application server. Common planning tasks are answered there with procedural templates and do not call Gemini. Evidence discussions send the bounded question/context and usable selected abstracts to Gemini. A later evidence discussion can include earlier planning messages in its bounded context. No-source planning does not require a source token; forged records still fail verification. Valid expired records are omitted only for procedural planning and require refreshing for evidence discussions. Normal/private browser retention is unchanged.

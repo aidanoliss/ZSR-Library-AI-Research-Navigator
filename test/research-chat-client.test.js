@@ -25,7 +25,7 @@ test('chat payload transmits selected server tokens without abstracts, notes, or
   assert.equal(payload.question, 'What do these records establish?');
   assert.equal(payload.messages.length, 1);
   assert.doesNotMatch(JSON.stringify(payload), /Private notebook|provider supplied|signed-two|private/);
-  assert.throws(() => researchChatPayload({ question: 'What?', session: { selectedSourceKeys: ['unknown'] }, sources }), /Attach at least one/);
+  assert.deepEqual(researchChatPayload({ question: 'Help plan my essay', session: { selectedSourceKeys: ['unknown'] }, sources }).sourceTokens, []);
   assert.throws(() => researchChatPayload({ question: ' ', session: { selectedSourceKeys: ['one'] }, sources }), /Enter a question/);
   assert.equal(researchChatPayload({ question: 'What?', session: { selectedSourceKeys: ['one'], includeAssignment: false }, sources, assignmentContext: 'Student chose to omit this brief.' }).assignmentContext, '');
 });
@@ -75,4 +75,28 @@ test('only an explicit source-grounded question proposal becomes a new search pr
   assert.equal(proposedChatSearchQuestion({ text: 'Question to explore: How do sanctions affect trade?' }), 'How do sanctions affect trade?');
   assert.equal(proposedChatSearchQuestion({ text: 'The source discusses sanctions.' }), '');
   assert.equal(proposedChatSearchQuestion({ text: 'Question to explore: https://example.org/unreviewed' }), '');
+});
+
+
+test('planning advice and reviewed search actions persist separately from evidence', () => {
+  const reply = normalizeResearchChatReply({ mode: 'planning', status: 'answered', message: 'Here is a plan.', guidance: [{ title: 'Introduction', text: 'Frame an open research question.' }, null, { title: '', text: 'ignored' }], suggestions: ['Help narrow this question', 'Help narrow this question', 'https://untrusted.example'], searchQuestions: ['Sanctions civilian well-being', '<script>bad</script>'], blocks: [] });
+  assert.equal(reply.mode, 'planning');
+  assert.deepEqual(reply.guidance, [{ title: 'Introduction', text: 'Frame an open research question.' }]);
+  assert.deepEqual(reply.suggestions, ['Help narrow this question']);
+  assert.deepEqual(reply.searchQuestions, ['Sanctions civilian well-being']);
+  const saved = normalizeResearchChatSession({ messages: [{ role: 'assistant', reply }] });
+  assert.deepEqual(saved.messages[0].reply, reply);
+  const payload = researchChatPayload({ question: 'Expand the introduction', session: saved, sources: [] });
+  assert.deepEqual(payload.sourceTokens, []);
+  assert.match(payload.messages[0].content, /Introduction: Frame an open research question/);
+  assert.deepEqual(normalizeResearchChatReply({ mode: 'evidence', guidance: [{ title: 'Unchecked', text: 'A purported fact' }] }).guidance, []);
+});
+
+test('planning sections and suggested actions remain bounded', () => {
+  const reply = normalizeResearchChatReply({ mode: 'planning', guidance: Array.from({ length: 12 }, () => ({ title: 'h'.repeat(200), text: 'p'.repeat(2200) })), suggestions: Array.from({ length: 10 }, (_, i) => `Prompt ${i}`), searchQuestions: Array.from({ length: 10 }, (_, i) => `Search ${i}`) });
+  assert.equal(reply.guidance.length, 8);
+  assert.equal(reply.guidance[0].title.length, 120);
+  assert.equal(reply.guidance[0].text.length, 1800);
+  assert.equal(reply.suggestions.length, 4);
+  assert.equal(reply.searchQuestions.length, 3);
 });
