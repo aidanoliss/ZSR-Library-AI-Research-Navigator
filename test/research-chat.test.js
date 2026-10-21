@@ -202,6 +202,9 @@ test("a conversational follow-up expands the preceding outline into a paragraph 
   assert.doesNotMatch(JSON.stringify(result), /outcome is proven/);
   const shorter = await researchChatReply({ question: "Make it shorter", topic: "Urban tree canopy and summer temperatures", messages: [{ role: "user", content: "How should I structure my essay?" }], sourceTokens: [] });
   assert.equal(shorter.guidance.length, 3); assert.match(shorter.message, /shorter/);
+  const shortSearch = await researchChatReply({ question: "Make it shorter", topic: "Urban tree canopy and summer temperatures", messages: [{ role: "user", content: "Help improve my search." }], sourceTokens: [] });
+  assert.equal(shortSearch.guidance.length, 3); assert.match(shortSearch.message, /shorter/);
+  assert.ok(shortSearch.guidance.map((part) => part.text).join(" ").length < 700);
 });
 
 test("research planning understands varied requests while source findings retain the evidence path", () => {
