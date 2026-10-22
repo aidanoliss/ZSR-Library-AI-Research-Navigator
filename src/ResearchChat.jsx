@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { CHAT_SOURCE_LIMIT, chatSourceHasAbstract, chatSourceKey, mergeChatSources, normalizeResearchChatSession, proposedChatSearchQuestion, requestResearchChat, researchChatPayload, researchChatReplyToText, researchChatToMarkdown, safeChatSourceUrl } from "./researchChat.js";
+import { CHAT_SOURCE_LIMIT, chatSourceHasAbstract, chatSourceKey, mergeChatSources, normalizeResearchChatSession, proposedChatSearchQuestion, requestResearchChat, researchChatPayload, researchChatReplyToText, safeChatSourceUrl } from "./researchChat.js";
 import { NAVIGATOR_ATTRIBUTION, NAVIGATOR_PROTOTYPE_NOTICE } from "../config/navigatorAttribution.js";
-import { downloadText } from "./exportPlan.js";
 import "./researchChat.css";
 
 const STARTERS = [
@@ -18,7 +17,7 @@ function Reply({ reply, onSearch, onPrompt, topic, replyRef }) {
       if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(researchChatReplyToText(reply));
       setCopyState("Response copied with its source details and attribution.");
-    } catch { setCopyState("Could not copy. Select the text or use Export chat instead."); }
+    } catch { setCopyState("Could not copy. Select the response text and copy it manually."); }
   }
   return <div className="research-chat-reply" ref={replyRef}>
     {reply.mode === "planning" && <span className="research-chat-basis is-planning">Planning guidance · not research findings</span>}
@@ -53,7 +52,6 @@ export default function ResearchChat({ session = {}, onSessionChange, sources = 
   const [sourceFilter, setSourceFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [exportState, setExportState] = useState("");
   const available = mergeChatSources(sources);
   const selected = available.filter((source) => normalized.selectedSourceKeys.includes(chatSourceKey(source)));
   const abstractCount = selected.filter(chatSourceHasAbstract).length;
@@ -71,10 +69,6 @@ export default function ResearchChat({ session = {}, onSessionChange, sources = 
     update({ draft: prompt });
     setError("");
     inputRef.current?.focus();
-  }
-  function exportChat() {
-    try { downloadText("navigator-research-chat.md", researchChatToMarkdown(sessionRef.current, topic)); setExportState("Chat export started. The file includes your questions, responses, source passages, and visible attribution."); }
-    catch { setExportState("Could not export this chat. Try copying individual responses."); }
   }
   function toggleSource(source) {
     const key = chatSourceKey(source);
@@ -111,7 +105,7 @@ export default function ResearchChat({ session = {}, onSessionChange, sources = 
     }
   }
   return <section className="research-chat-view" aria-labelledby="research-chat-heading">
-    <header className="research-chat-heading"><span className="research-chat-eyebrow">Think through your research</span><div className="research-chat-title-row"><h2 id="research-chat-heading">Research chat</h2><button type="button" className="research-chat-export no-print" onClick={exportChat} disabled={!normalized.messages.length}>Export chat</button></div><p><strong>Plan your essay, refine a question, or build a search.</strong> No sources needed for planning. Claims about research findings use only the Navigator abstracts you attach.</p><p className="research-chat-transmission">Source discussions send your question and attached excerpts to Gemini. Avoid personal or sensitive information.</p><p className="research-chat-prototype">{NAVIGATOR_PROTOTYPE_NOTICE}</p>{exportState && <p className="research-chat-export-status" role="status">{exportState}</p>}</header>
+    <header className="research-chat-heading"><span className="research-chat-eyebrow">Think through your research</span><h2 id="research-chat-heading">Research chat</h2><p><strong>Plan your essay, refine a question, or build a search.</strong> No sources needed for planning. Claims about research findings use only the Navigator abstracts you attach.</p><p className="research-chat-transmission">Source discussions send your question and attached excerpts to Gemini. Avoid personal or sensitive information.</p><p className="research-chat-prototype">{NAVIGATOR_PROTOTYPE_NOTICE}</p></header>
     <div className="research-chat-context">
       <div className="research-chat-context-heading"><div><strong>{selected.length ? `${selected.length} ${selected.length === 1 ? "source" : "sources"} attached` : "Sources are optional for planning"}</strong><p className="research-chat-context-summary">{selected.length ? `${abstractCount} with abstracts${selected.length > abstractCount ? ` · ${selected.length - abstractCount} with citation details only` : ""}` : "Attach sources when you want to discuss findings."}</p></div><button type="button" aria-expanded={selecting} aria-controls="research-chat-source-picker" onClick={() => setSelecting(!selecting)}>{selecting ? "Done" : selected.length ? "Manage sources" : "Attach sources"}</button></div>
       {selected.length > 0 && abstractCount === 0 && <p className="research-chat-attach-help"><strong>No abstract evidence is attached.</strong> We can plan your work, but cannot explain these sources’ findings from their titles.</p>}
