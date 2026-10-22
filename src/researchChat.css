@@ -79,6 +79,18 @@
 .research-chat-starters button { min-height: 60px; }
 .research-chat-reply { overflow-wrap: anywhere; }
 .research-chat-reply > .is-planning { margin-bottom: 12px; color: #5e4c29; background: #f6f0e4; }
+.research-chat-reply > .is-coaching { margin-bottom: 12px; color: #354c3c; background: #edf4ed; }
+.research-chat-coaching { display: grid; gap: 16px; margin: 16px 0; }
+.research-chat-coaching p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.research-chat-coaching .research-chat-coach-question { padding: 15px 17px; border-left: 3px solid #a2916d; border-radius: 0 8px 8px 0; background: #faf7ef; color: #37372e; font-weight: 550; }
+.research-chat-guide-note { display: block; margin-bottom: 6px; color: #65715f; font-size: .73rem; }
+.research-chat-guide-references { margin: 18px 0; padding-top: 12px; border-top: 1px solid #e5e8df; color: #566151; font-size: .81rem; }
+.research-chat-guide-references summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
+.research-chat-guide-references summary span { font-weight: 450; }
+.research-chat-guide-references p { margin: 6px 0 10px; font-size: .76rem; line-height: 1.6; }
+.research-chat-guide-references ul { padding-left: 20px; margin: 0; }
+.research-chat-guide-references li + li { margin-top: 7px; }
+.research-chat-guide-references a { overflow-wrap: anywhere; }
 .research-chat-guidance { display: grid; gap: 21px; margin: 18px 0; }
 .research-chat-guidance section { padding-left: 15px; border-left: 2px solid #d8c9a7; }
 .research-chat-guidance h3 { margin: 0 0 6px; font: 650 .94rem/1.5 system-ui, sans-serif; color: #252a26; }

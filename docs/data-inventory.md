@@ -84,3 +84,10 @@ Research chat sends a submitted question, bounded prior messages, enabled assign
 ### Visible provenance and scope checks (October 21)
 
 Explicit chat-copy and chat/research-plan export actions append a visible attribution footer outside original source quotations. No hidden watermark, student identity, or copy interception is added. Scope rules use the submitted request and bounded existing user-message context on the application server; no additional classifier provider, telemetry, or detector storage is introduced. A later evidence call may still include earlier submitted messages within existing context limits. Private-session behavior is unchanged, and downloaded exports remain on disk.
+
+
+### Source-free research coaching (2026-10-21)
+
+Research chat can now provide procedural coaching without attachments. Its Gemini request contains the current question, up to ten bounded prior messages (12,000 characters total), topic, and the assignment brief only when enabled. It also includes seven developer-curated summaries of official ZSR research guides. The coaching request does not automatically include selected source metadata/abstracts, signed envelopes, saved notebooks, or unselected sources. Prior messages remain untrusted context and can contain text the student supplied; this is disclosed before sending. Questions about attached study findings retain the authenticated abstract-only route described above.
+
+The guide snapshot is versioned in `config/researchCoachKnowledge.js`; it is neither a live website lookup nor librarian approval. Guide definitions are rendered from server-curated summaries, while generated procedural suggestions remain fallible. Provider failure or rejected output is labeled as a planning fallback. Chat-only sessions now save and reopen using the same normal/private browser storage rules. No new analytics, server history store, user profile, or chat-export control was added.

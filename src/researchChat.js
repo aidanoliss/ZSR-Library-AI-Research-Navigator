@@ -61,14 +61,29 @@ export function normalizeResearchChatReply(value = {}) {
     if (!source || block?.scope !== "abstract" || !quote || !interpretation) return [];
     return [{ text: interpretation, sourceId, quote, scope: "abstract", source }];
   });
-  const mode = ["planning", "scope"].includes(value.mode) ? value.mode : "evidence";
+  const mode = ["planning", "coaching", "scope"].includes(value.mode) ? value.mode : "evidence";
   const guidance = mode === "planning" ? (Array.isArray(value.guidance) ? value.guidance : []).slice(0, 8).flatMap((section) => {
     const title = text(section?.title, 120), content = text(section?.text, 1800);
     return title && content ? [{ title, text: content }] : [];
   }) : [];
   const prompts = (items, limit) => [...new Set((Array.isArray(items) ? items : []).map((item) => text(item, 2000)).filter((item) => item && !/(?:https?:\/\/|www\.|<[^>]*>)/i.test(item)))].slice(0, limit);
+  const guideReferences = [], guideIds = new Set();
+  if (mode === "coaching") for (const guide of Array.isArray(value.guideReferences) ? value.guideReferences : []) {
+    const id = text(guide?.id, 100), title = text(guide?.title, 200), url = safeChatSupportUrl(guide?.url);
+    if (!id || !title || !url || guideIds.has(id)) continue;
+    guideIds.add(id);
+    guideReferences.push({ id, title, url, summary: text(guide?.summary, 800) });
+    if (guideReferences.length === 5) break;
+  }
+  const coaching = mode === "coaching" ? (Array.isArray(value.coaching) ? value.coaching : []).slice(0, 5).flatMap((part) => {
+    const kind = part?.kind, content = text(part?.text, 1200);
+    const references = [...new Set((Array.isArray(part?.guideIds) ? part.guideIds : []).map((id) => text(id, 100)).filter((id) => guideIds.has(id)))].slice(0, 3);
+    if (!["advice", "question", "explanation"].includes(kind) || !content || (kind === "explanation" && !references.length)) return [];
+    return [{ kind, text: content, guideIds: references }];
+  }) : [];
   return {
-    mode, guidance,
+    mode, guidance, coaching, guideReferences,
+    coachingOrigin: ["coaching", "planning"].includes(mode) && ["gemini", "fallback"].includes(value.coachingOrigin) ? value.coachingOrigin : "",
     reason: ["assignment-writing", "unrelated", "library-info", "clarify", "prompt-override"].includes(value.reason) ? value.reason : "",
     supportLinks: (Array.isArray(value.supportLinks) ? value.supportLinks : []).slice(0, 4).flatMap((link) => {
       const label = text(link?.label, 120), url = safeChatSupportUrl(link?.url);
@@ -78,19 +93,21 @@ export function normalizeResearchChatReply(value = {}) {
     searchQuestions: prompts(value.searchQuestions, 3),
     status: ["answered", "insufficient_evidence", "unavailable", "redirected"].includes(value.status) ? value.status : "insufficient_evidence",
     message: text(value.message, 2000),
-    blocks: mode === "scope" ? [] : blocks, sources,
+    blocks: ["scope", "coaching"].includes(mode) ? [] : blocks, sources,
     notice: text(value.notice, 2000),
   };
 }
 
 function chatReplyLines(reply) {
   const r = normalizeResearchChatReply(reply);
-  const lines = [r.mode === "planning" ? "Planning guidance — not research findings" : r.mode === "scope" ? "Navigator scope guidance" : "Research discussion — check the supporting evidence", "", r.message, ""];
+  const lines = [r.mode === "coaching" ? `${r.coachingOrigin === "fallback" ? "Research planning starter" : "AI research coaching"} — guidance, not study findings` : r.mode === "planning" ? "Planning guidance — not research findings" : r.mode === "scope" ? "Navigator scope guidance" : "Research discussion — check the supporting evidence", "", r.message, ""];
+  for (const part of r.coaching) lines.push(...(part.kind === "explanation" ? ["Navigator research guide note (paraphrased guidance):"] : []), part.text, "");
   for (const part of r.guidance) lines.push(part.title, part.text, "");
   for (const block of r.blocks) {
     lines.push("AI interpretation — abstract only", block.text, `Source: ${block.source.title}`, ...(block.source.url ? [block.source.url] : []), "Supporting passage from the abstract:", block.quote, "");
   }
   for (const link of r.supportLinks) lines.push(`${link.label}: ${link.url}`, "");
+  if (r.guideReferences.length) lines.push("Research guides supplied for coaching (not evidence of topic findings):", ...r.guideReferences.map((guide) => `${guide.title}: ${guide.url}`), "");
   if (r.notice) lines.push(r.notice, "");
   if (r.searchQuestions.length) lines.push("Search drafts to review:", ...r.searchQuestions.map((query) => `- ${query}`), "");
   return lines;
@@ -128,7 +145,7 @@ export function researchChatPayload({ question, session, sources, topic = "", as
   const content = text(question);
   if (!content) throw new Error("Enter a question about research or ask for planning help.");
   let contextRemaining = 12000;
-  const history = normalized.messages.slice(-10).map((message) => ({ role: message.role, content: message.role === "user" ? message.content : [message.reply.message, ...message.reply.guidance.map((section) => `${section.title}: ${section.text}`), ...message.reply.blocks.map((block) => block.text)].filter(Boolean).join("\n").slice(0, 2000) })).reverse().flatMap((message) => {
+  const history = normalized.messages.slice(-10).map((message) => ({ role: message.role, content: message.role === "user" ? message.content : [message.reply.message, ...message.reply.coaching.map((part) => part.text), ...message.reply.guidance.map((section) => `${section.title}: ${section.text}`), ...message.reply.blocks.map((block) => block.text)].filter(Boolean).join("\n").slice(0, 2000) })).reverse().flatMap((message) => {
     if (!message.content || message.content.length > contextRemaining) return [];
     contextRemaining -= message.content.length;
     return [message];

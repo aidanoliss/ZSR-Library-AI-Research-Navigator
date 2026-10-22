@@ -2,9 +2,10 @@ import { evidencePassageContext } from "../config/evidencePassages.js";
 import { normalizeEvidenceText } from "./sourceEvidence.js";
 import { createCircuitBreaker, providerHttpError, ProviderError, runProviderOperation } from "./providerResilience.js";
 import { RESEARCH_CHAT_LIMITS, publicChatSource, verifyResearchChatToken } from "./researchChatEvidence.js";
-import { researchCoachingIntent, researchCoachingReply } from "./researchChatCoaching.js";
+import { researchCoachingIntent } from "./researchChatCoaching.js";
 import { screenPromptOverride } from "./screen.js";
 import { researchScopeDecision, researchScopeReply } from "./researchScope.js";
+import { shouldResearchCoach, researchCoachReply } from "./researchCoach.js";
 
 const circuit = createCircuitBreaker();
 const plain = (value) => normalizeEvidenceText(value);
@@ -38,7 +39,7 @@ export function parseResearchChatRequest(body, options = {}) {
     if (body[field] !== undefined && (typeof body[field] !== "string" || body[field].length > limit)) throw invalid(`${field === "topic" ? "The research topic" : "The assignment brief"} is too long.`);
   }
   const planning = researchCoachingIntent(plain(body.question), messages);
-  const sourceIndependent = planning || screenPromptOverride(body.question).block || researchScopeDecision(body.question, { messages }).block;
+  const sourceIndependent = planning || shouldResearchCoach({ question: plain(body.question), messages }, { hasSources: tokens.length > 0 }) || screenPromptOverride(body.question).block || researchScopeDecision(body.question, { messages }).block;
   let expiredSources = 0;
   const records = tokens.flatMap((token) => {
     try { return [verifyResearchChatToken(token, options)]; }
@@ -112,8 +113,7 @@ export async function researchChatReply(body, options = {}) {
   const scope = override.block ? override : researchScopeDecision(request.question, { messages: request.messages });
   if (scope.block) return researchScopeReply(scope);
   const sources = request.sources.map(publicChatSource);
-  const coaching = researchCoachingReply(request);
-  if (coaching) return { ...coaching, sources };
+  if (shouldResearchCoach(request)) return { ...await researchCoachReply(request, options), sources: [] };
   const answer = (status, message, blocks = []) => ({ mode: "evidence", status, message, blocks, suggestions: blocks.length ? SUGGESTIONS : ["Help me structure my essay.", "Help improve my search."], sources, notice: NOTICE });
   if (!sources.length) return answer("insufficient_evidence", "No Navigator sources are attached, so I cannot establish research findings yet. Search in Navigator first, then attach sources to discuss their evidence. I can still help plan an essay, narrow a question, or build a search without sources.");
   if (!request.sources.some((source) => source.abstract)) return answer("insufficient_evidence", request.sources.some((source) => source.identityWarning)

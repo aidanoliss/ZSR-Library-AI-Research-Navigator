@@ -162,6 +162,7 @@ export function createFixtureServer({ distDir = resolve(PROJECT_ROOT, "dist"), d
         const body = await bodyJson(req);
         const reply = await researchChatReply(body, { ...CHAT_FIXTURE_OPTIONS, apiKey: "synthetic-only-no-network", fetchImpl: async (_url, init) => {
           const request = JSON.parse(JSON.parse(init.body).contents[0].parts[0].text);
+          if (request.reference_guides) return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify({ coaching: [{ kind: "advice", text: "Choose one outcome and a place to focus your research question. This is a synthetic interface test, not research findings.", guide_ids: ["topic-refinement"] }, { kind: "question", text: "Which outcome would you like to investigate?", guide_ids: [] }], suggestions: ["Help me plan a library search."], search_questions: ["Economic sanctions and civilian health"] }) }] } }] }) };
           const source = request.source_evidence[0];
           const quote = source?.abstract_excerpt.length <= 600 ? source.abstract_excerpt : "";
           const blocks = quote && !String(body.question).includes("[fixture:unsupported]") ? [{ text: /narrow/i.test(body.question) ? `Question to explore: What questions remain about ${request.task_context_not_evidence.topic}?` : "This synthetic passage is available for testing the source discussion interface. It reports no real research findings.", source_id: source.source_id, quote, evidence_scope: "abstract" }] : [];
@@ -254,6 +255,9 @@ async function selfTest() {
     const sourceChat = await (await post("/api/research-chat", { question: "Discuss this synthetic source.", sourceTokens: [payload.liveResults[0].researchChatToken] })).json();
     assert.equal(sourceChat.status, "answered");
     assert.match(sourceChat.blocks[0].text, /synthetic/);
+    const coach = await (await post("/api/research-chat", { question: "I am interested in sanctions but unsure where to start.", sourceTokens: [] })).json();
+    assert.equal(coach.mode, "coaching"); assert.equal(coach.coachingOrigin, "gemini");
+    assert.equal(coach.guideReferences[0].id, "topic-refinement"); assert.deepEqual(coach.blocks, []);
     assert.equal((await post("/api/research-chat", { question: "Discuss it.", sourceTokens: ["forged"] })).status, 400);
   } finally { server.closeAllConnections(); await new Promise((done) => server.close(done)); }
   process.stdout.write("Synthetic fixture self-test passed: deterministic planner/metadata, streaming, errors, timeout state, cancellation, and validation. No provider calls.\n");

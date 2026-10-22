@@ -914,6 +914,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setMessages(session.messages || []);
     setResearchChat(normalizeResearchChatSession(session.researchChat));
     setChatSources(mergeChatSources(session.chatSources || []).slice(0, 24));
+    if (!(session.messages || []).length && session.researchChat?.messages?.length) setWorkspaceView("chat");
   }, []);
 
   // Scroll only when a new question is asked — not while "Thinking" animates or
@@ -955,6 +956,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setResearchChat(normalized);
     if (activeSessionId) setSessions((current) => current.map((session) => session.id === activeSessionId
       ? { ...session, researchChat: normalized, chatSources: chatSourcesRef.current, updatedAt: Date.now() } : session));
+    else if (normalized.messages.length) saveSession(messages);
   }
 
   function openSourceChat(sources) {
@@ -1001,7 +1003,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     if (!activeSessionId || activeSessionId !== id) setActiveSessionId(id);
     setSessions((current) => {
       const existing = current.find((s) => s.id === id);
-      const title = nextMessages.find((m) => m.role === "user")?.content?.slice(0, 64) || existing?.title || "New research topic";
+      const title = nextMessages.find((m) => m.role === "user")?.content?.slice(0, 64) || researchChatRef.current.messages.find((m) => m.role === "user")?.content?.slice(0, 64) || existing?.title || "New research topic";
       const folderId = existing?.folderId || activeFolderId || DEFAULT_FOLDER_ID;
       const session = {
         id,
@@ -1169,7 +1171,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     setMessages(session.messages || []);
     setResearchChat(normalizeResearchChatSession(session.researchChat));
     setChatSources(mergeChatSources(session.chatSources || []).slice(0, 24));
-    setWorkspaceView("search");
+    setWorkspaceView(!(session.messages || []).length && session.researchChat?.messages?.length ? "chat" : "search");
     setInput("");
     setError("");
   }

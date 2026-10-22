@@ -135,3 +135,47 @@ test('planning copies and research-plan exports include provenance without chang
   assert.ok(plan.includes(NAVIGATOR_ATTRIBUTION)); assert.ok(plan.includes('10.1234/source'));
   assert.equal(JSON.stringify(source), before);
 });
+
+test('conversational coaching persists, enters bounded history, and copies guidance separately from study evidence', () => {
+  const reply = normalizeResearchChatReply({ mode: 'coaching', status: 'answered', coachingOrigin: 'gemini', message: 'We can narrow this together.', coaching: [
+    { kind: 'advice', text: 'Choose one civilian outcome to investigate.', guideIds: ['questions'] },
+    { kind: 'question', text: 'What outcome interests you most?', guideIds: [] },
+    { kind: 'explanation', text: 'A focused question identifies what evidence to seek.', guideIds: ['questions'] },
+  ], guideReferences: [{ id: 'questions', title: 'Developing a research question', url: 'https://guides.zsr.wfu.edu/research', summary: 'Research question guidance.' }], sources: [{ id: 'paper', title: 'A source record' }], blocks: [{ scope: 'abstract', sourceId: 'paper', quote: 'A source quote.', text: 'A study finding should not render as coaching.' }], suggestions: ['Tell me more about possible outcomes.'], searchQuestions: ['sanctions civilian health'] });
+  assert.equal(reply.mode, 'coaching'); assert.equal(reply.coachingOrigin, 'gemini');
+  assert.equal(reply.coaching.length, 3); assert.deepEqual(reply.blocks, []);
+  const saved = normalizeResearchChatSession({ messages: [{ role: 'user', content: 'I want to research sanctions.' }, { role: 'assistant', reply }] });
+  assert.deepEqual(saved.messages.at(-1).reply, reply);
+  const payload = researchChatPayload({ question: 'Public health', session: saved, sources: [] });
+  assert.deepEqual(payload.sourceTokens, []);
+  assert.match(payload.messages.at(-1).content, /What outcome interests you most/);
+  const copied = researchChatReplyToText(reply);
+  assert.match(copied, /AI research coaching — guidance, not study findings/);
+  assert.match(copied, /Research guides supplied for coaching \(not evidence of topic findings\)/);
+  assert.match(copied, /https:\/\/guides.zsr.wfu.edu\/research/);
+  assert.doesNotMatch(copied, /A study finding should not render/);
+  assert.ok(copied.includes(NAVIGATOR_ATTRIBUTION));
+});
+
+test('coaching references and blocks reject unsafe, unknown and unbounded data', () => {
+  const guides = Array.from({ length: 8 }, (_, i) => ({ id: `guide-${i}`, title: `Guide ${i}`, url: `https://guides.zsr.wfu.edu/guide-${i}`, summary: 's'.repeat(1000) }));
+  const reply = normalizeResearchChatReply({ mode: 'coaching', coachingOrigin: 'untrusted', guideReferences: [{ id: 'external', title: 'External', url: 'https://attacker.example/' }, ...guides], coaching: [
+    { kind: 'explanation', text: 'Unknown explanation', guideIds: ['external', 'unknown'] },
+    { kind: 'claim', text: 'Unknown kind', guideIds: ['guide-0'] },
+    { kind: 'advice', text: 'p'.repeat(1600), guideIds: ['guide-0', 'guide-0', 'unknown', 'guide-1', 'guide-2', 'guide-3'] },
+    { kind: 'question', text: 'What will you investigate?', guideIds: [] },
+    { kind: 'explanation', text: 'A guide-based explanation', guideIds: ['guide-1'] },
+    { kind: 'advice', text: 'Beyond the block limit', guideIds: [] },
+  ] });
+  assert.equal(reply.guideReferences.length, 5);
+  assert.equal(reply.guideReferences[0].summary.length, 800);
+  assert.equal(reply.coachingOrigin, '');
+  assert.equal(reply.coaching.length, 3);
+  assert.equal(reply.coaching[0].text.length, 1200);
+  assert.deepEqual(reply.coaching[0].guideIds, ['guide-0', 'guide-1', 'guide-2']);
+  assert.doesNotMatch(JSON.stringify(reply), /Unknown explanation|Unknown kind|Beyond the block limit|attacker/);
+  const evidence = normalizeResearchChatReply({ mode: 'evidence', coaching: [{ kind: 'advice', text: 'Should not render' }], guideReferences: guides });
+  assert.deepEqual(evidence.coaching, []); assert.deepEqual(evidence.guideReferences, []);
+  assert.match(researchChatReplyToText({ mode: 'coaching', coachingOrigin: 'fallback', coaching: [{ kind: 'advice', text: 'A basic next step.' }] }), /Research planning starter/);
+  assert.equal(normalizeResearchChatReply({ mode: 'planning', coachingOrigin: 'fallback' }).coachingOrigin, 'fallback');
+});

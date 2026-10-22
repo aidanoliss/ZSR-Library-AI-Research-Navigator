@@ -204,3 +204,6 @@ test/                    Focused validation, screening, and research-agent tests
 ```
 
 Some older experimental files may still exist in the working tree, but they are not part of the ZSR demo path.
+
+
+Research chat also works before sources are attached: it uses the latest bounded conversation and enabled assignment brief to help narrow a question, plan a search, or approach scholarly reading. Selected official ZSR research-guide summaries support method guidance. These are developer-curated paraphrases, not ZSR approval or live policy verification. Specific study findings still require authenticated Navigator abstracts. Generated coaching can be mistaken; guide links and quotation checks do not establish semantic correctness. See `docs/validation/2026-10-21/conversational-coach/knowledge-sources.md` for the reference snapshot and review limitations.

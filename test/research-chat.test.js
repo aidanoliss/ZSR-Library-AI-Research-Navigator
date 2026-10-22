@@ -87,7 +87,7 @@ test("request limits reject oversized questions, token lists, history, and conte
 
 test("no selection or metadata-only sources abstain without contacting Gemini", async () => {
   const forbidden = async () => { throw new Error("Provider must not be called"); };
-  const none = await researchChatReply({ question: "Help with research", sourceTokens: [] }, { ...options, fetchImpl: forbidden });
+  const none = await researchChatReply({ question: "What can we conclude?", sourceTokens: [] }, { ...options, fetchImpl: forbidden });
   assert.equal(none.status, "insufficient_evidence"); assert.match(none.message, /Search in Navigator first/);
   const missing = await researchChatReply(body(signed({ ...sample, abstractText: "" })), { ...options, fetchImpl: forbidden });
   assert.equal(missing.status, "insufficient_evidence"); assert.match(missing.message, /cannot explain their findings from titles alone/);
@@ -188,7 +188,7 @@ test("the reported three-source essay request produces planning and an accurate 
     signed({ ...sample, title: "The impact of economic sanctions on health and human rights in Haiti, 1991-1994", doi: "10.1234/haiti" }),
   ];
   const result = await researchChatReply({ question: "How should I structure my essay?", topic: "Sanctions and their impact on authoritarian regimes vs democracies — civilian well-being", sourceTokens: sources.map((source) => source.researchChatToken) }, { ...options, apiKey: "" });
-  assert.equal(result.mode, "planning"); assert.equal(result.sources.length, 3);
+  assert.equal(result.mode, "planning"); assert.equal(result.sources.length, 0);
   assert.match(result.guidance.at(-1).text, /2 attached records with abstract evidence and 1 with citation details only/);
   assert.match(result.guidance.at(-1).text, /Re-examining/);
   assert.deepEqual(result.blocks, []);
