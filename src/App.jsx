@@ -1668,6 +1668,13 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           </div>
         </header>
 
+        <nav className="research-mode-bar no-print" aria-label="Research workspace">
+          <div className="research-view-switch">
+            <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
+            <button id="research-chat-button" type="button" aria-pressed={workspaceView === "chat"} aria-controls="research-chat-view" onClick={() => setWorkspaceView("chat")}>Research chat <span>AI</span></button>
+          </div>
+        </nav>
+
         <nav className="research-toolbar no-print" aria-label="Research actions">
           <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
           <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
@@ -1684,10 +1691,6 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
               <LocalStudyPanel enabled={studyEnabled} onToggle={(enabled) => { enabled ? studyRef.current.start() : studyRef.current.stop(); setStudyEnabled(enabled); setActionNotice(enabled ? "Local review recording is on. Run a search, then mark a checked source useful." : "Local review recording stopped."); }} onExport={() => downloadText("zsr-usability-session.json", studyRef.current.exportJson())} onClear={() => { studyRef.current.clear(); setStudyEnabled(false); setActionNotice("Local review session cleared."); }} />
             </div>
           </details>
-        </nav>
-        <nav className="research-view-switch no-print" aria-label="Research workspace">
-          <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
-          <button id="research-chat-button" type="button" aria-pressed={workspaceView === "chat"} aria-controls="research-chat-view" onClick={() => setWorkspaceView("chat")}>Research chat <span>AI</span></button>
         </nav>
         {privateMode
           ? <p className="research-privacy-status is-private-status" title="Research clears when you end this session or reload. Searches still go to the search service and providers; this is not anonymous browsing."><span className="private-indicator" aria-hidden="true" /><strong>Private session</strong> · nothing is saved in this browser. <button type="button" onClick={() => { cancelRequest(); onPrivacyChange(false); }}>End private session</button></p>

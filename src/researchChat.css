@@ -1,76 +1,76 @@
-.research-chat-view { width: 100%; margin: 24px 0 0; padding-bottom: 205px; font-family: system-ui, sans-serif; color: #202724; }
+.research-chat-view { width: 100%; margin: 24px 0 0; padding-bottom: 205px; font-family: system-ui, sans-serif; color: #29251f; }
 .research-chat-heading { max-width: 760px; margin-bottom: 24px; }
-.research-chat-eyebrow { color: #58675f; font-size: .73rem; font-weight: 650; }
+.research-chat-eyebrow { color: #625b50; font-size: .73rem; font-weight: 650; }
 .research-chat-heading h2 { margin: 7px 0 10px; font-size: clamp(1.65rem, 3vw, 2.15rem); letter-spacing: -.03em; }
-.research-chat-heading p { margin: 0; color: #535e57; font-size: .95rem; line-height: 1.7; }
-.research-chat-context { padding: 20px; border: 1px solid #d8dfd9; border-radius: 15px; background: #f7f9f6; }
+.research-chat-heading p { margin: 0; color: #625b50; font-size: .95rem; line-height: 1.7; }
+.research-chat-context { padding: 20px; border: 1px solid #ded5c3; border-radius: 15px; background: #f7f2e6; }
 .research-chat-context-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .research-chat-context-heading strong { font-size: .9rem; }
-.research-chat-context-heading strong span { color: #65716a; margin-left: 6px; font-weight: 450; }
-.research-chat-context button, .research-chat-empty button, .research-chat-search-next { min-height: 40px; border: 1px solid #cbd4cd; border-radius: 9px; padding: 9px 13px; background: #fff; color: #25372c; cursor: pointer; font: 600 .79rem/1.4 system-ui, sans-serif; }
-.research-chat-context button:hover, .research-chat-starters button:hover { background: #eef3ed; }
-.research-chat-attach-help { margin: 12px 0 0; font-size: .82rem; line-height: 1.65; color: #546057; }
+.research-chat-context-heading strong span { color: #625b50; margin-left: 6px; font-weight: 450; }
+.research-chat-context button, .research-chat-empty button, .research-chat-search-next { min-height: 40px; border: 1px solid #ded5c3; border-radius: 9px; padding: 9px 13px; background: #fff; color: #29251f; cursor: pointer; font: 600 .79rem/1.4 system-ui, sans-serif; }
+.research-chat-context button:hover, .research-chat-starters button:hover { background: #f7f2e6; }
+.research-chat-attach-help { margin: 12px 0 0; font-size: .82rem; line-height: 1.65; color: #625b50; }
 .research-chat-chips { display: flex; flex-wrap: wrap; gap: 9px; list-style: none; padding: 0; margin: 15px 0 0; }
-.research-chat-chips li { display: flex; align-items: center; gap: 10px; max-width: 100%; border: 1px solid #c7d5cb; border-radius: 11px; background: #fff; padding: 10px 10px 10px 13px; }
+.research-chat-chips li { display: flex; align-items: center; gap: 10px; max-width: 100%; border: 1px solid #ded5c3; border-radius: 11px; background: #fff; padding: 10px 10px 10px 13px; }
 .research-chat-chips li > div { min-width: 0; }
-.research-chat-chips li span { display: block; max-width: 430px; color: #263e30; font-size: .79rem; line-height: 1.5; overflow-wrap: anywhere; }
-.research-chat-chips small, .research-chat-source-picker small { display: block; color: #616f65; font-size: .69rem; margin-top: 4px; line-height: 1.5; }
-.research-chat-chips li button { flex-shrink: 0; padding: 0; width: 34px; min-height: 34px; border: 0; background: #f1f5ef; font-size: 1.2rem; }
-.research-chat-source-picker { margin-top: 18px; padding-top: 16px; border-top: 1px solid #dbe2dc; }
+.research-chat-chips li span { display: block; max-width: 430px; color: #29251f; font-size: .79rem; line-height: 1.5; overflow-wrap: anywhere; }
+.research-chat-chips small, .research-chat-source-picker small { display: block; color: #625b50; font-size: .69rem; margin-top: 4px; line-height: 1.5; }
+.research-chat-chips li button { flex-shrink: 0; padding: 0; width: 34px; min-height: 34px; border: 0; background: #f7f2e6; font-size: 1.2rem; }
+.research-chat-source-picker { margin-top: 18px; padding-top: 16px; border-top: 1px solid #ded5c3; }
 .research-chat-source-picker > label { display: grid; gap: 7px; font-size: .8rem; font-weight: 600; }
-.research-chat-source-picker input[type=search] { width: 100%; min-height: 43px; padding: 10px 12px; border: 1px solid #bfcac1; border-radius: 8px; background: white; font: 400 .9rem system-ui, sans-serif; }
+.research-chat-source-picker input[type=search] { width: 100%; min-height: 43px; padding: 10px 12px; border: 1px solid #ded5c3; border-radius: 8px; background: white; font: 400 .9rem system-ui, sans-serif; }
 .research-chat-source-picker ul { padding: 0; margin: 12px 0; list-style: none; max-height: 310px; overflow-y: auto; }
-.research-chat-source-picker li + li { border-top: 1px solid #e3e8e3; }
+.research-chat-source-picker li + li { border-top: 1px solid #ded5c3; }
 .research-chat-source-picker li label { display: flex; align-items: start; gap: 11px; padding: 12px 4px; font-size: .83rem; line-height: 1.5; cursor: pointer; }
-.research-chat-source-picker input[type=checkbox] { margin-top: 3px; width: 18px; height: 18px; accent-color: #244d38; flex-shrink: 0; }
-.research-chat-topic { margin: 16px 0 0; font-size: .78rem; color: #5e685f; line-height: 1.6; overflow-wrap: anywhere; }
+.research-chat-source-picker input[type=checkbox] { margin-top: 3px; width: 18px; height: 18px; accent-color: #806326; flex-shrink: 0; }
+.research-chat-topic { margin: 16px 0 0; font-size: .78rem; color: #625b50; line-height: 1.6; overflow-wrap: anywhere; }
 .research-chat-welcome { padding-top: 28px; }
 .research-chat-welcome h3 { font-size: 1rem; margin: 0 0 13px; }
 .research-chat-starters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.research-chat-starters button { display: flex; justify-content: space-between; align-items: center; gap: 15px; text-align: left; min-height: 73px; padding: 17px; border: 1px solid #d9dfd7; border-radius: 12px; background: #fff; color: #263b2d; font: 600 .86rem/1.5 system-ui, sans-serif; cursor: pointer; }
-.research-chat-starters button span { color: #758477; font-size: 1.1rem; }
-.research-chat-empty { margin-top: 20px; padding: 22px; border: 1px dashed #c3cfc4; border-radius: 12px; font-size: .9rem; line-height: 1.6; }
-.research-chat-empty p { margin: 7px 0 14px; color: #58665c; font-size: .84rem; }
+.research-chat-starters button { display: flex; justify-content: space-between; align-items: center; gap: 15px; text-align: left; min-height: 73px; padding: 17px; border: 1px solid #ded5c3; border-radius: 12px; background: #fff; color: #29251f; font: 600 .86rem/1.5 system-ui, sans-serif; cursor: pointer; }
+.research-chat-starters button span { color: #806326; font-size: 1.1rem; }
+.research-chat-empty { margin-top: 20px; padding: 22px; border: 1px dashed #ded5c3; border-radius: 12px; font-size: .9rem; line-height: 1.6; }
+.research-chat-empty p { margin: 7px 0 14px; color: #625b50; font-size: .84rem; }
 .research-chat-messages { display: grid; gap: 22px; padding-top: 24px; }
-.research-chat-user { width: fit-content; max-width: 90%; margin-left: auto; padding: 17px 21px; border: 1px solid #d7ded7; border-radius: 17px 17px 4px 17px; background: #eef2ec; }
-.research-chat-user > span { display: block; color: #59685d; font-size: .73rem; font-weight: 600; }
+.research-chat-user { width: fit-content; max-width: 90%; margin-left: auto; padding: 17px 21px; border: 1px solid #ded5c3; border-radius: 17px 17px 4px 17px; background: #f7f2e6; }
+.research-chat-user > span { display: block; color: #625b50; font-size: .73rem; font-weight: 600; }
 .research-chat-user p { margin: 6px 0 0; font-size: .94rem; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
-.research-chat-reply { padding: 22px; border: 1px solid #dde2db; border-radius: 14px; background: #fff; font-size: .94rem; line-height: 1.75; }
+.research-chat-reply { padding: 22px; border: 1px solid #ded5c3; border-radius: 14px; background: #fff; font-size: .94rem; line-height: 1.75; }
 .research-chat-reply > p { margin: 0 0 16px; white-space: pre-wrap; }
 .research-chat-reply > p:last-child { margin-bottom: 0; }
-.research-chat-evidence + .research-chat-evidence { margin-top: 23px; padding-top: 22px; border-top: 1px solid #e4e8e2; }
-.research-chat-basis { display: inline-block; padding: 4px 8px; border-radius: 5px; background: #f1f5ee; color: #4b644e; font: 600 .69rem/1.5 system-ui, sans-serif; }
+.research-chat-evidence + .research-chat-evidence { margin-top: 23px; padding-top: 22px; border-top: 1px solid #ded5c3; }
+.research-chat-basis { display: inline-block; padding: 4px 8px; border-radius: 5px; background: #f7f2e6; color: #29251f; font: 600 .69rem/1.5 system-ui, sans-serif; }
 .research-chat-evidence > p { margin: 10px 0; white-space: pre-wrap; }
 .research-chat-evidence > a { display: inline-block; font-size: .83rem; font-weight: 600; overflow-wrap: anywhere; }
-.research-chat-quote { margin-top: 12px; padding: 15px 17px; border-left: 3px solid #8aab90; border-radius: 0 8px 8px 0; background: #f7f9f5; }
-.research-chat-quote strong { font-size: .73rem; color: #526357; }
-.research-chat-quote blockquote { margin: 7px 0 0; color: #424f45; font-size: .86rem; line-height: 1.75; }
-.research-chat-reply > .research-chat-notice { margin-top: 18px; color: #677066; font-size: .75rem; line-height: 1.65; }
+.research-chat-quote { margin-top: 12px; padding: 15px 17px; border-left: 3px solid #806326; border-radius: 0 8px 8px 0; background: #f7f2e6; }
+.research-chat-quote strong { font-size: .73rem; color: #625b50; }
+.research-chat-quote blockquote { margin: 7px 0 0; color: #625b50; font-size: .86rem; line-height: 1.75; }
+.research-chat-reply > .research-chat-notice { margin-top: 18px; color: #625b50; font-size: .75rem; line-height: 1.65; }
 .research-chat-search-next { margin-top: 15px; }
-.research-chat-thinking { padding: 18px; color: #56685a; font-size: .85rem; }
+.research-chat-thinking { padding: 18px; color: #625b50; font-size: .85rem; }
 .conversation-composer.research-chat-composer { position: fixed; z-index: 25; bottom: max(12px, env(safe-area-inset-bottom)); left: calc(var(--sidebar-width, 248px) + 32px); right: 32px; width: auto; max-width: 1100px; margin-inline: auto; padding: 12px; }
 .research-chat-composer textarea { min-height: 65px; }
 .research-chat-error { margin: 8px 3px 0; color: #9b2e24; font-size: .79rem; line-height: 1.5; }
 .research-chat-view button:focus-visible, .research-chat-view input:focus-visible, .research-chat-view textarea:focus-visible { outline: 3px solid #2167b3; outline-offset: 3px; }
 @media (max-width: 860px) { .research-chat-view { width: 100%; margin-top: 22px; } .research-chat-starters { grid-template-columns: 1fr; } .research-chat-context, .research-chat-reply { padding: 17px; } .research-chat-starters button { min-height: 55px; padding: 14px; } .research-chat-user { max-width: 96%; } .conversation-composer.research-chat-composer { left: 16px; right: 16px; padding: 10px; } }
 @media print { .research-chat-composer, .research-chat-starters, .research-chat-source-picker, .research-chat-context-heading button { display: none; } .research-chat-view { padding-bottom: 0; width: 100%; } }
-.research-chat-brief { margin-top: 15px; padding-top: 10px; border-top: 1px solid #dbe2dc; font-size: .79rem; line-height: 1.6; }
+.research-chat-brief { margin-top: 15px; padding-top: 10px; border-top: 1px solid #ded5c3; font-size: .79rem; line-height: 1.6; }
 .research-chat-brief summary { padding: 7px 0; cursor: pointer; font-weight: 600; }
 .research-chat-brief label { display: flex; align-items: start; gap: 9px; margin-top: 10px; }
-.research-chat-brief input { width: 17px; height: 17px; accent-color: #244d38; }
-.research-chat-brief p { max-height: 180px; overflow-y: auto; white-space: pre-wrap; color: #5b685e; }
-.research-chat-brief small { color: #68746a; }
-.research-chat-heading > .research-chat-transmission { margin-top: 10px; font-size: .76rem; color: #657069; }
+.research-chat-brief input { width: 17px; height: 17px; accent-color: #806326; }
+.research-chat-brief p { max-height: 180px; overflow-y: auto; white-space: pre-wrap; color: #625b50; }
+.research-chat-brief small { color: #625b50; }
+.research-chat-heading > .research-chat-transmission { margin-top: 10px; font-size: .76rem; color: #625b50; }
 
 /* Keep evidence management secondary to the conversation. */
 .research-chat-context { padding: 15px 18px; }
-.research-chat-context-summary { margin: 5px 0 0; color: #626a63; font-size: .77rem; line-height: 1.5; }
+.research-chat-context-summary { margin: 5px 0 0; color: #625b50; font-size: .77rem; line-height: 1.5; }
 .research-chat-context-heading > div { flex: 1 1 220px; min-width: 0; }
 .research-chat-context-heading > button { flex-shrink: 0; }
 .research-chat-selected { margin-bottom: 20px; }
 .research-chat-selected > strong { font-size: .78rem; }
 .research-chat-source-picker .research-chat-chips { display: grid; gap: 8px; margin: 10px 0 0; }
-.research-chat-source-picker .research-chat-chips li { justify-content: space-between; border: 1px solid #d8dfd9; padding: 11px 12px; }
+.research-chat-source-picker .research-chat-chips li { justify-content: space-between; border: 1px solid #ded5c3; padding: 11px 12px; }
 .research-chat-source-picker .research-chat-chips li span { max-width: none; }
 .research-chat-source-picker .research-chat-available { overscroll-behavior: contain; scrollbar-gutter: stable; padding-right: 7px; }
 .research-chat-source-picker li label > span { min-width: 0; overflow-wrap: anywhere; }
@@ -79,12 +79,12 @@
 .research-chat-starters button { min-height: 60px; }
 .research-chat-reply { overflow-wrap: anywhere; }
 .research-chat-reply > .is-planning { margin-bottom: 12px; color: #5e4c29; background: #f6f0e4; }
-.research-chat-reply > .is-coaching { margin-bottom: 12px; color: #354c3c; background: #edf4ed; }
+.research-chat-reply > .is-coaching { margin-bottom: 12px; color: #29251f; background: #f7f2e6; }
 .research-chat-coaching { display: grid; gap: 16px; margin: 16px 0; }
 .research-chat-coaching p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .research-chat-coaching .research-chat-coach-question { padding: 15px 17px; border-left: 3px solid #a2916d; border-radius: 0 8px 8px 0; background: #faf7ef; color: #37372e; font-weight: 550; }
-.research-chat-guide-note { display: block; margin-bottom: 6px; color: #65715f; font-size: .73rem; }
-.research-chat-guide-references { margin: 18px 0; padding-top: 12px; border-top: 1px solid #e5e8df; color: #566151; font-size: .81rem; }
+.research-chat-guide-note { display: block; margin-bottom: 6px; color: #625b50; font-size: .73rem; }
+.research-chat-guide-references { margin: 18px 0; padding-top: 12px; border-top: 1px solid #ded5c3; color: #625b50; font-size: .81rem; }
 .research-chat-guide-references summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
 .research-chat-guide-references summary span { font-weight: 450; }
 .research-chat-guide-references p { margin: 6px 0 10px; font-size: .76rem; line-height: 1.6; }
@@ -93,14 +93,14 @@
 .research-chat-guide-references a { overflow-wrap: anywhere; }
 .research-chat-guidance { display: grid; gap: 21px; margin: 18px 0; }
 .research-chat-guidance section { padding-left: 15px; border-left: 2px solid #d8c9a7; }
-.research-chat-guidance h3 { margin: 0 0 6px; font: 650 .94rem/1.5 system-ui, sans-serif; color: #252a26; }
-.research-chat-guidance p { margin: 0; color: #4b534c; font-size: .9rem; line-height: 1.75; white-space: pre-wrap; }
-.research-chat-next { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e7e9e4; }
-.research-chat-next > strong { font-size: .76rem; color: #586259; }
+.research-chat-guidance h3 { margin: 0 0 6px; font: 650 .94rem/1.5 system-ui, sans-serif; color: #29251f; }
+.research-chat-guidance p { margin: 0; color: #625b50; font-size: .9rem; line-height: 1.75; white-space: pre-wrap; }
+.research-chat-next { margin-top: 20px; padding-top: 16px; border-top: 1px solid #ded5c3; }
+.research-chat-next > strong { font-size: .76rem; color: #625b50; }
 .research-chat-next > div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.research-chat-next button { display: flex; align-items: center; justify-content: space-between; gap: 13px; min-height: 42px; padding: 10px 13px; border: 1px solid #d2d9d0; border-radius: 9px; background: #f9faf7; color: #28372a; text-align: left; font: 500 .8rem/1.5 system-ui, sans-serif; cursor: pointer; }
-.research-chat-next button:hover { border-color: #93a18e; background: #eff3ec; }
-.research-chat-next button > span { flex-shrink: 0; color: #5d715d; }
+.research-chat-next button { display: flex; align-items: center; justify-content: space-between; gap: 13px; min-height: 42px; padding: 10px 13px; border: 1px solid #ded5c3; border-radius: 9px; background: #f7f2e6; color: #29251f; text-align: left; font: 500 .8rem/1.5 system-ui, sans-serif; cursor: pointer; }
+.research-chat-next button:hover { border-color: #806326; background: #f7f2e6; }
+.research-chat-next button > span { flex-shrink: 0; color: #29251f; }
 .research-chat-searches > div { display: grid; }
 .research-chat-searches button > span { font-size: .72rem; }
 .research-view-switch { gap: 7px; }
@@ -114,12 +114,12 @@
   .research-chat-searches button > span { width: 100%; }
   .research-chat-context-heading > div { flex-basis: 165px; }
 }
-.research-chat-response-footer button { border: 1px solid #cbd4cd; border-radius: 8px; padding: 9px 13px; min-height: 40px; background: #fff; color: #25372c; font: 600 .78rem/1.4 system-ui, sans-serif; cursor: pointer; }
-.research-chat-response-footer button:hover { background: #eef3ed; }
-.research-chat-heading > .research-chat-prototype { margin-top: 10px; color: #626a63; font-size: .76rem; line-height: 1.6; }
-.research-chat-response-footer { margin-top: 20px; padding-top: 14px; border-top: 1px solid #e3e7df; display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; }
-.research-chat-response-footer > p { flex: 1 1 300px; margin: 0; color: #60695f; font-size: .73rem; line-height: 1.65; }
-.research-chat-copy-status { flex-basis: 100%; color: #435a48; font-size: .76rem; line-height: 1.6; }
+.research-chat-response-footer button { border: 1px solid #ded5c3; border-radius: 8px; padding: 9px 13px; min-height: 40px; background: #fff; color: #29251f; font: 600 .78rem/1.4 system-ui, sans-serif; cursor: pointer; }
+.research-chat-response-footer button:hover { background: #f7f2e6; }
+.research-chat-heading > .research-chat-prototype { margin-top: 10px; color: #625b50; font-size: .76rem; line-height: 1.6; }
+.research-chat-response-footer { margin-top: 20px; padding-top: 14px; border-top: 1px solid #ded5c3; display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; }
+.research-chat-response-footer > p { flex: 1 1 300px; margin: 0; color: #625b50; font-size: .73rem; line-height: 1.65; }
+.research-chat-copy-status { flex-basis: 100%; color: #625b50; font-size: .76rem; line-height: 1.6; }
 .research-chat-support-links { margin: 12px 0 18px; padding-left: 20px; }
 .research-chat-support-links li + li { margin-top: 7px; }
 .research-chat-support-links a { overflow-wrap: anywhere; font-weight: 600; }

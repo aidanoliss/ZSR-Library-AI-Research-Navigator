@@ -1,0 +1,5 @@
+# Persistent workspace switch and shared palette
+
+Moved the single Search / Research chat control above secondary research actions into a slim sticky navigation bar. The selected mode uses black/white; the switch surface and AI badge use cream and old gold. Research chat decorative green surfaces, borders and text were replaced with the same neutral/gold palette. Semantic error styling and the existing private-session indicator are unchanged. No mode, search, provider, chat-history, or storage behavior was changed.
+
+Checks: clean release `qa:release` passed 599 tests, resource audit, 56 strict planner cases / 1,232 assertions, fixture HTTP self-test, and production build (existing bundle advisory). Browser fixture checks confirmed exactly one mode bar, pressed state/color contrast, a draft preserved after Search → chat, and sticky position at top 0 after scrolling. At 390×844 both controls remained 44px tall, the bar measured 390px, and the page had no horizontal overflow. Temporary viewport override was reset. No AI provider calls were needed for the visual check.
