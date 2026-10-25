@@ -51,15 +51,16 @@ function updateFeedbackQueueFromMemory(stored, memory) {
   return memory.reduce((items, item) => items.some(storedItem => storedItem.id === item.id) ? items : updateFeedbackQueue(items, item), stored);
 }
 
-export default function SourceFeedback({ source, request, researchSpec, feedback }) {
+export default function SourceFeedback({ source, request, researchSpec, feedback, embedded = false }) {
   const id = useId();
   const key = createSourceFeedback({ source, request, researchSpec, reason: "useful" })?.id;
   const existing = feedback.queue.find(entry => entry.id === key);
   const [reason, setReason] = useState(existing?.reason || "");
   const [note, setNote] = useState(existing?.note || "");
   const [message, setMessage] = useState("");
-  return <details className="source-feedback">
-    <summary>Give source feedback{existing ? " · saved" : ""}</summary>
+  const Wrapper = embedded ? "div" : "details";
+  return <Wrapper className="source-feedback">
+    {!embedded && <summary>Give source feedback{existing ? " · saved" : ""}</summary>}
     <form onSubmit={event => { event.preventDefault(); const entry = createSourceFeedback({ source, request, researchSpec, reason, note }); if (entry) { feedback.save(entry); setMessage(feedback.privateMode ? "Feedback kept for this private session." : "Feedback saved in this browser."); } }}>
       <p>Optional. Record whether this source helps your question. {feedback.privateMode ? "Kept in memory only during this private session." : "Saved in this browser."} Nothing is sent to a server. Export from the feedback review area to share it yourself.</p>
       <label htmlFor={`${id}-reason`}>Your assessment<select id={`${id}-reason`} required value={reason} onChange={event => { setReason(event.target.value); setMessage(""); }}><option value="">Choose a reason</option>{SOURCE_FEEDBACK_REASONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -67,7 +68,7 @@ export default function SourceFeedback({ source, request, researchSpec, feedback
       <div className="source-feedback-actions"><button type="submit" disabled={!reason}>{existing ? "Update feedback" : "Save feedback"}</button>{existing && <button type="button" onClick={() => { feedback.remove(existing.id); setReason(""); setNote(""); setMessage("Feedback removed."); }}>Remove feedback</button>}</div>
       {message && <p role="status">{message}</p>}
     </form>
-  </details>;
+  </Wrapper>;
 }
 
 export function SourceFeedbackQueue({ feedback }) {

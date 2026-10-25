@@ -3,7 +3,7 @@ import { useContext, useEffect, useId, useState } from "react";
 import { fillTemplate, LIBRARY_LINKS } from "../config/libraryLinks.js";
 import { describeSourceRole, readingSteps } from "./sourceLearning.js";
 
-export default function SourceReadingGuide({ source, savedItem, savedEntry, onSaveSourceNotes, onTrackSearch }) {
+export default function SourceReadingGuide({ source, savedItem, savedEntry, onSaveSourceNotes, onTrackSearch, embedded = false }) {
   const privateMode = useContext(ResearchPrivacyContext);
   const id = useId();
   const [notes, setNotes] = useState(savedEntry?.notes || "");
@@ -11,8 +11,9 @@ export default function SourceReadingGuide({ source, savedItem, savedEntry, onSa
   useEffect(() => { setNotes(savedEntry?.notes || ""); }, [savedEntry?.notes]);
   const role = describeSourceRole(source);
   const scholarUrl = fillTemplate(LIBRARY_LINKS.googleScholarSearch, `"${source.title || ""}"`);
-  return <details className="source-reading-guide">
-    <summary>Read &amp; evaluate <span>Make your own judgment</span></summary>
+  const Wrapper = embedded ? "div" : "details";
+  return <Wrapper className="source-reading-guide">
+    {!embedded && <summary>Read &amp; evaluate <span>Make your own judgment</span></summary>}
     <div className="source-reading-body">
       <p><strong>{role.label}.</strong> {role.basis}</p>
       <ol>{readingSteps(source).map((step) => <li key={step}>{step}</li>)}</ol>
@@ -25,5 +26,5 @@ export default function SourceReadingGuide({ source, savedItem, savedEntry, onSa
         <small>{privateMode ? "Notes stay in memory for this private session; they are not included in AI requests." : "Your notes are saved locally; they are not included in AI requests."}</small>
       </form>}
     </div>
-  </details>;
+  </Wrapper>;
 }

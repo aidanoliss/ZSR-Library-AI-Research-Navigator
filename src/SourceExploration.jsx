@@ -5,10 +5,10 @@ import { sourceAuthors, sourceJournal } from "./sourceResultView.js";
 import { EXPLORATION_RELATIONSHIPS, explorationExcerpt, explorationStatus, requestSourceExploration, sourceExplorationSeed } from "./sourceExploration.js";
 import "./sourceExploration.css";
 
-export default function SourceExploration({ source, researchSpec = {}, accessScope = "both", onSaveResearchItem, onRemoveResearchItem, savedResearchItemKeys, onTrackSearch, requestExploration = requestSourceExploration }) {
+export default function SourceExploration({ source, researchSpec = {}, accessScope = "both", onSaveResearchItem, onRemoveResearchItem, savedResearchItemKeys, onTrackSearch, requestExploration = requestSourceExploration, embedded = false }) {
   const discussSources = useContext(ResearchChatContext);
   const id = useId();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(embedded);
   const [relationship, setRelationship] = useState("similar");
   const [response, setResponse] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -18,9 +18,9 @@ export default function SourceExploration({ source, researchSpec = {}, accessSco
   const context = JSON.stringify({ seed: sourceExplorationSeed(source), researchSpec, accessScope });
   useEffect(() => {
     controller.current?.abort(); controller.current = null;
-    setResponse(null); setError(""); setBusy(false); setShown(5); setOpen(false);
+    setResponse(null); setError(""); setBusy(false); setShown(5); setOpen(embedded);
     return () => { controller.current?.abort(); controller.current = null; };
-  }, [context]);
+  }, [context, embedded]);
   const search = async (kind) => {
     controller.current?.abort();
     const operation = new AbortController(); controller.current = operation;
@@ -48,9 +48,10 @@ export default function SourceExploration({ source, researchSpec = {}, accessSco
   const scholar = `https://scholar.google.com/scholar?q=${encodeURIComponent(source.title || "")}`;
   const retryable = Boolean(error || ["timeout", "rate_limited", "cancelled"].includes(response?.status) || (response?.status === "unavailable" && relationship !== "citing"));
   return <div className="source-exploration">
-    <button type="button" className="source-exploration-toggle" aria-expanded={open} aria-controls={id} onClick={toggle}>Find more like this <span className="disclosure-chevron" aria-hidden="true" /></button>
+    {!embedded && <button type="button" className="source-exploration-toggle" aria-expanded={open} aria-controls={id} onClick={toggle}>Find more like this <span className="disclosure-chevron" aria-hidden="true" /></button>}
     {open && <section id={id} className="source-exploration-panel" aria-label={`Explore connections to ${source.title}`}>
-      <h4 className="source-exploration-heading">Explore this source</h4>
+      {!embedded && <h4 className="source-exploration-heading">Explore this source</h4>}
+      {embedded && !response && !busy && !error && <p>Choose a connection below to look up related works. A connection does not establish agreement or support for your claim.</p>}
       <div className="source-exploration-options" role="group" aria-label="Connection type">{EXPLORATION_RELATIONSHIPS.map((item) => <button key={item.id} type="button" aria-pressed={relationship === item.id} onClick={() => search(item.id)}>{item.label}</button>)}</div>
       <p className="source-exploration-description">{choices.help} Your search requirements still apply.</p>
       <div role="status" aria-live="polite" className="source-exploration-status">{busy ? "Finding sources…" : error || <><strong>{status.title}</strong>{status.detail && <p>{status.detail}</p>}</>}</div>

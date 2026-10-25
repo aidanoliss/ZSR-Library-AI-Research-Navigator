@@ -207,3 +207,6 @@ Some older experimental files may still exist in the working tree, but they are 
 
 
 Research chat also works before sources are attached: it uses the latest bounded conversation and enabled assignment brief to help narrow a question, plan a search, or approach scholarly reading. Selected official ZSR research-guide summaries support method guidance. These are developer-curated paraphrases, not ZSR approval or live policy verification. Specific study findings still require authenticated Navigator abstracts. Generated coaching can be mistaken; guide links and quotation checks do not establish semantic correctness. See `docs/validation/2026-10-21/conversational-coach/knowledge-sources.md` for the reference snapshot and review limitations.
+
+
+Citation controls offer RIS (`.ris`) and BibTeX (`.bib`) for individual records, the filtered results in a source group, and filtered saved sources. Exports use supplied metadata, retain known identity/retraction notes, and leave missing fields empty; check original records before citing. Result-card **Source tools** opens a responsive side panel with separate Details, Read & note, Related sources, and Feedback sections. Escape and the close button return to the result card. No hover interaction is required.

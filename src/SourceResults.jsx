@@ -6,7 +6,8 @@ import { sourceRequirementFilters } from "../config/sourceRequirements.js";
 import { buildSearchRecovery } from "../config/searchRecovery.js";
 import { assessSourceRequirements, sourcePublicationYear } from "./sourceAssessment.js";
 import { researchItemKey } from "./researchWorkspace.js";
-import { downloadRis } from "./ris.js";
+import CitationExport from "./CitationExport.jsx";
+import SourceDetailsDialog from "./SourceDetailsDialog.jsx";
 import { filterSourceResults, paginateSourceLanes, shortSourceExcerpt, sourceAuthors, sourceJournal, sourceResultLanes, sourceTypeKey, sourceTypeLabel, sourceTypeOptions } from "./sourceResultView.js";
 import SourceReadingGuide from "./SourceReadingGuide.jsx";
 import SourceFitSummary from "./SourceFitSummary.jsx";
@@ -63,7 +64,6 @@ function SourceRow({ feedback, feedbackRequest, explorationAccessScope, result: 
   const editionIndex = Math.max(0, editions.findIndex((record) => editionId(record) === editionId(selectedEdition)));
   const result = editions[editionIndex] || groupedResult;
   const [markedUseful, setMarkedUseful] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const moreId = useId();
   const isOpenAccess = result.accessScope === "open-access";
   const ids = sourceIds(result);
@@ -106,26 +106,20 @@ function SourceRow({ feedback, feedbackRequest, explorationAccessScope, result: 
     <h4 className="source-result-title">{sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" onClick={openSource}>{result.title || "Untitled source"}</a> : result.title || "Untitled source"}</h4>
     <p className="source-result-meta">{metadata}</p></div></div>
     {excerpt ? <p className="source-result-excerpt"><strong className="source-excerpt-label">Abstract</strong>{excerpt}</p> : <p className="source-no-abstract">No abstract available. Open the source to judge fit.</p>}
-    {groundedNotes.length > 0 && <details className="source-evidence-notes"><summary>AI-selected evidence passage <span>Abstract only</span></summary><div>
-      <p className="source-evidence-limit"><strong>AI selected this passage from the provider abstract.</strong> Selection does not establish relevance or support for your claim; check the context in the full text. No full text was retrieved.</p>
-      {groundedNotes.map((note, index) => <div className="source-evidence-note" key={index}><blockquote><span>Provider abstract passage</span>{note.quote}</blockquote><p><strong>Surrounding abstract context:</strong> {evidencePassageContext(result.evidenceExcerpt, note.quote)}</p></div>)}
-    </div></details>}
     {result.fulfillment && <p className="source-book-location"><strong>{result.fulfillment.statusLabel || "Check availability"}</strong>{result.fulfillment.location && <span>{result.fulfillment.location}</span>}{result.fulfillment.callNumber && <span>Call number: {result.fulfillment.callNumber}</span>}</p>}
     <SourceFitSummary assessment={assessment} />
-    {result.identityCheck?.status === "title-difference" && <p className="source-check-summary"><strong>Citation details need checking.</strong> This title differs from the DOI registry. See Details before citing.</p>}
+    {result.identityCheck?.status === "title-difference" && <p className="source-check-summary"><strong>Citation details need checking.</strong> This title differs from the DOI registry. Open Source tools → Details before citing.</p>}
     <div className="source-row-actions">
       {sourceUrl && <a className="source-open-button" href={sourceUrl} target="_blank" rel="noopener noreferrer" onClick={openSource} aria-label={`Open ${result.title || "source"}`}>Open {Icons.external}</a>}
       {onSaveResearchItem && <button type="button" className={`source-action-button ${saved ? "is-saved" : ""}`} disabled={saved && !onRemoveResearchItem} onClick={() => { if (saved) onRemoveResearchItem?.(savedItem); else { onSaveResearchItem(savedItem); onSourceEvent?.("source_saved", { sourceId }); } }} aria-label={`${saved ? "Unsave" : "Save"} ${result.title || "source"}`}>{saved ? Icons.check : Icons.save}{saved ? "Unsave" : "Save"}</button>}
-      <button type="button" className="source-action-button" onClick={() => { if (downloadRis([result], { filename: result.title || "research-source" })) onSourceEvent?.("exported", { sourceId }); }} aria-label={`Download RIS citation for ${result.title || "this source"}`} title="Download citation (.ris)">Cite</button>
+      <CitationExport sources={[result]} filename={result.title || "research-source"} description={`Cite ${result.title || "this source"}`} onExport={() => onSourceEvent?.("exported", { sourceId })} />
       {discussSources && <button type="button" className="source-action-button" disabled={!result.researchChatToken} title={!result.researchChatToken ? "Run this search again to make its source evidence available to chat." : "Discuss only this source’s available metadata and abstract."} onClick={() => discussSources([result])}>Discuss this source</button>}
-      <button type="button" className="source-action-button source-more-toggle" aria-expanded={moreOpen} aria-controls={moreId} onClick={() => setMoreOpen((open) => !open)}>{moreOpen ? "Less" : "More"}<span aria-hidden="true" className="disclosure-chevron" /></button>
-    </div>
-    {studyEnabled && <button type="button" className="source-study-useful" disabled={markedUseful} onClick={() => { setMarkedUseful(true); onSourceEvent?.("source_marked_useful", { sourceId }); }}>{markedUseful ? "Marked useful" : "Useful for my question"}</button>}
-    {moreOpen && <div className="source-more-panel" id={moreId}>
-      <SourceExploration key={`explore-${sourceId}`} source={result} researchSpec={researchSpec} accessScope={explorationAccessScope || "all"} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} savedResearchItemKeys={savedResearchItemKeys} onTrackSearch={onTrackSearch} />
-      <SourceFeedback key={`feedback-${sourceId}`} source={result} request={feedbackRequest} researchSpec={researchSpec} feedback={feedback} />
-      <SourceReadingGuide key={sourceId} source={result} savedItem={savedItem} savedEntry={savedEntry} onSaveSourceNotes={onSaveSourceNotes} onTrackSearch={onTrackSearch} />
-      <details className="source-record-details"><summary>Details <span>Metadata, requirements & access</span></summary><div className="source-record-details-body">
+      <SourceDetailsDialog id={moreId} title={result.title} metadata={metadata}>{{
+        details: <div className="source-record-details-body">
+    {groundedNotes.length > 0 && <section className="source-evidence-notes"><strong>AI-selected evidence passage · abstract only</strong><div>
+      <p className="source-evidence-limit"><strong>AI selected this passage from the provider abstract.</strong> Selection does not establish relevance or support for your claim; check the context in the full text. No full text was retrieved.</p>
+      {groundedNotes.map((note, index) => <div className="source-evidence-note" key={index}><blockquote><span>Provider abstract passage</span>{note.quote}</blockquote><p><strong>Surrounding abstract context:</strong> {evidencePassageContext(result.evidenceExcerpt, note.quote)}</p></div>)}
+    </div></section>}
         <dl className="source-metadata-list">
           <div><dt>Source role</dt><dd>{role.basis}</dd></div>
           <div><dt>Provider</dt><dd>{(result.metadataSources || []).length ? result.metadataSources.join("; ") : result.sourceProvider || "Not recorded"}</dd></div>
@@ -143,11 +137,17 @@ function SourceRow({ feedback, feedbackRequest, explorationAccessScope, result: 
         {(result.abstractText || result.abstractExcerpt) && <div className="source-full-abstract"><strong>Provider-supplied abstract{!result.abstractText || result.abstractTruncated ? " excerpt" : ""}</strong><p>{result.abstractText || result.abstractExcerpt}</p><small>{result.abstractSource || result.sourceProvider || "Provider metadata"} · not AI-generated. No full article text was retrieved.</small></div>}
         {(isOpenAccess || result.openAccess || result.accessLinks?.some((link) => link.accessScope === "open-access")) && <p>OpenAlex reports an open-access location{result.openAccess?.version ? ` (${result.openAccess.version})` : ""}.{result.openAccess?.license ? ` Reported license: ${result.openAccess.license}.` : " No reuse license was supplied."} Confirm access, version, and reuse terms in the linked record.</p>}
         {!isOpenAccess && <p>Metadata does not confirm Wake Forest access. Check availability through ZSR.</p>}
-        <p>Cite downloads provider metadata as an RIS file for Zotero and other citation managers. Verify missing fields and formatting with the <a href={LIBRARY_LINKS.zsrCitationGuide} target="_blank" rel="noopener noreferrer">ZSR citation guide</a>.</p>
+        <p>Cite offers RIS for citation managers and BibTeX for LaTeX. Both export supplied provider metadata. Verify missing fields and formatting with the <a href={LIBRARY_LINKS.zsrCitationGuide} target="_blank" rel="noopener noreferrer">ZSR citation guide</a>.</p>
         {result.fulfillment && <p>Availability can change. Confirm the location in ZSR before visiting or requesting.</p>}
         {links.length > 0 && <div className="source-secondary-links" aria-label="Additional access options">{links.map((link) => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" onClick={() => onTrackSearch?.({ kind: "opened-resource", query: result.title, tool: link.label, url: link.url })}>{link.label}{Icons.external}</a>)}</div>}
-      </div></details>
-    </div>}
+
+        </div>,
+        reading: <SourceReadingGuide embedded key={sourceId} source={result} savedItem={savedItem} savedEntry={savedEntry} onSaveSourceNotes={onSaveSourceNotes} onTrackSearch={onTrackSearch} />,
+        explore: <SourceExploration embedded key={`explore-${sourceId}`} source={result} researchSpec={researchSpec} accessScope={explorationAccessScope || "all"} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} savedResearchItemKeys={savedResearchItemKeys} onTrackSearch={onTrackSearch} />,
+        feedback: <SourceFeedback embedded key={`feedback-${sourceId}`} source={result} request={feedbackRequest} researchSpec={researchSpec} feedback={feedback} />,
+      }}</SourceDetailsDialog>
+    </div>
+    {studyEnabled && <button type="button" className="source-study-useful" disabled={markedUseful} onClick={() => { setMarkedUseful(true); onSourceEvent?.("source_marked_useful", { sourceId }); }}>{markedUseful ? "Marked useful" : "Useful for my question"}</button>}
   </li>;
 }
 
@@ -235,10 +235,10 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
       const more = lane.moreResults;
       const outcome = sourceLaneOutcome(lane.status);
       const failed = RETRY_OUTCOMES.has(outcome);
-      if (!lane.results.length && lane.mergedResultCount > 0) return <section className="source-merged-access-note" key={lane.id} aria-label="Open-access matches"><strong>Open-access links included</strong><p>{lane.mergedResultCount} open-access {lane.mergedResultCount === 1 ? "match is" : "matches are"} already included in Library sources. Open Details on those records for access options.{localFiltersApplied ? " Local filters may hide some records." : ""}</p>{OUTCOME_MESSAGES[outcome] && failed && <p>{OUTCOME_MESSAGES[outcome]}</p>}</section>;
+      if (!lane.results.length && lane.mergedResultCount > 0) return <section className="source-merged-access-note" key={lane.id} aria-label="Open-access matches"><strong>Open-access links included</strong><p>{lane.mergedResultCount} open-access {lane.mergedResultCount === 1 ? "match is" : "matches are"} already included in Library sources. Open Source tools on those records for access options.{localFiltersApplied ? " Local filters may hide some records." : ""}</p>{OUTCOME_MESSAGES[outcome] && failed && <p>{OUTCOME_MESSAGES[outcome]}</p>}</section>;
       if (!lane.results.length) return <section className="source-merged-access-note" key={lane.id} aria-label={lane.label}><strong>{lane.label}: {failed ? "search incomplete" : "no additional sources"}</strong><p>{OUTCOME_MESSAGES[outcome] || "No results were reported for this collection."}</p>{failed && onRerunInterpretation && <button type="button" className="source-action-button" disabled={retryPending} onClick={() => retry({ kind: "retry", query: directQuery, researchSpec })}>{retryPending ? "Searching…" : "Retry source search"}</button>}</section>;
       return <section className={`source-result-lane ${lane.id}-lane`} key={lane.id} aria-label={lane.label}>
-        <div className="source-lane-heading"><div><h3>{lane.label}</h3><span>{lane.id === "open-access" ? "Reported as free to read; check the version and license." : "Check access when you open a source."}</span></div>{visible.length > 0 && <button type="button" className="source-export-button" onClick={() => { const exported = visible.map(exportRecord); if (downloadRis(exported, { filename: `${lane.id}-source-leads` })) exported.forEach((result) => onSourceEvent?.("exported", { sourceId: result.doi || result.url || researchItemKey(result) })); }}>Export citations</button>}</div>
+        <div className="source-lane-heading"><div><h3>{lane.label}</h3><span>{lane.id === "open-access" ? "Reported as free to read; check the version and license." : "Check access when you open a source."}</span></div>{visible.length > 0 && <CitationExport sources={visible.map(exportRecord)} filename={`${lane.id}-source-leads`} label="Export citations" description={`Export ${lane.label} citations`} onExport={(exported) => exported.forEach((result) => onSourceEvent?.("exported", { sourceId: result.doi || result.url || researchItemKey(result) }))} />}</div>
         {OUTCOME_MESSAGES[outcome] && <p className="source-provider-status" role="status">{OUTCOME_MESSAGES[outcome]}</p>}
         {!visible.length ? <div className="source-empty-state" role="status"><p><strong>No leads match these display filters.</strong> The original search returned {lane.results.length} {lane.results.length === 1 ? "lead" : "leads"} in this group.</p><button type="button" onClick={resetFilters}>Clear filters</button></div> : <>
           {first.length > 0 && <ul className="source-result-list">{first.map((result, index) => <SourceRow explorationAccessScope={sourceDiscovery?.accessScope} feedback={feedback} feedbackRequest={researchSpec.originalRequest || researchSpec.topic || directQuery} key={result.doi || result.url || result.id || `${result.title}-${index}`} result={result} selectedEdition={exportRecord(result)} onEditionChange={selectEdition} researchSpec={researchSpec} onSaveResearchItem={onSaveResearchItem} onRemoveResearchItem={onRemoveResearchItem} onTrackSearch={onTrackSearch} savedResearchItemKeys={savedResearchItemKeys} onSourceEvent={onSourceEvent} studyEnabled={studyEnabled} evidenceNotes={evidenceNotes} savedItems={savedItems} onSaveSourceNotes={onSaveSourceNotes} />)}</ul>}

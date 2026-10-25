@@ -7,9 +7,9 @@ import SourceIdentityNotice from "./SourceIdentityNotice.jsx";
 import { useContext, useEffect, useId, useRef, useState } from "react";
 import { reviseSearchTopic, improveResearchPrompt } from "./resultSearch.js";
 import { getSearchMode } from "../config/libraryLinks.js";
-import { filterSavedSources, isSavedSource, RESEARCH_ITEM_STATUSES, sourceForResearchItem } from "./researchWorkspace.js";
+import { filterSavedSources, isSavedSource, RESEARCH_ITEM_STATUSES, researchItemKey, sourceForResearchItem } from "./researchWorkspace.js";
 import { sourcePublicationYear } from "./sourceAssessment.js";
-import { downloadRis } from "./ris.js";
+import CitationExport from "./CitationExport.jsx";
 import { sourceTypeLabel, sourceTypeKey } from "./sourceResultView.js";
 
 export const RESULT_VIEWS = [
@@ -96,21 +96,16 @@ export function SavedSourcesView({ items = [], onManage, onSourceEvent, onRemove
   const discussSources = useContext(ResearchChatContext);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
-  const [exportNotice, setExportNotice] = useState("");
   const sources = items.filter(isSavedSource);
   const visible = filterSavedSources(items, query, status);
   return <section className="saved-results-view" aria-label="Saved sources">
     <div className="saved-results-heading"><h3>Saved sources <span>{sources.length}</span></h3>
       <div>{onManage && <button type="button" onClick={onManage}>Compare & review</button>}
       {discussSources && visible.some((item) => item.sourceRecord?.researchChatToken) && <button type="button" onClick={() => discussSources(visible.map((item) => item.sourceRecord || item).filter((source) => source.researchChatToken).slice(0, 6))}>Discuss saved sources</button>}
-      {sources.length > 0 && <button type="button" disabled={!visible.length} onClick={() => {
-        try { setExportNotice(downloadRis(visible.map(sourceForResearchItem), { filename: "saved-sources" }) ? "Citation download started. Check the metadata before citing." : "No citations could be downloaded."); }
-        catch { setExportNotice("Citation download failed. Try again."); }
-      }}>Export {visible.length} {visible.length === 1 ? "citation" : "citations"}</button>}</div>
+      {visible.length > 0 && <CitationExport sources={visible.map(sourceForResearchItem)} filename="saved-sources" label={`Export ${visible.length} ${visible.length === 1 ? "citation" : "citations"}`} description="Export saved source citations" onExport={(exported) => exported.forEach((result) => onSourceEvent?.("exported", { sourceId: result.doi || result.url || researchItemKey(result) }))} />}</div>
     </div>
     <p className="saved-collection-help">{privateMode ? "Private shortlist. Export a backup before ending this session or reloading." : "Your shortlist for this research topic. Saved in this browser; export a backup from Review to keep your notes."}</p>
     {removedItem && <div className="saved-undo" role="status"><span>Unsaved “{removedItem.title}”.</span><button type="button" onClick={onUndoRemove}>Undo unsave</button></div>}
-    {exportNotice && <p role="status">{exportNotice}</p>}
     {sources.length > 0 && <div className="saved-collection-filters">
       <label>Find a saved source<input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Title, author or your notes" /></label>
       <label>Status<select value={status} onChange={(event) => setStatus(event.target.value)}><option value="all">All saved sources</option>{RESEARCH_ITEM_STATUSES.map((value) => <option key={value.id} value={value.id}>{value.label}</option>)}</select></label>

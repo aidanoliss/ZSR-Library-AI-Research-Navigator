@@ -1,0 +1,22 @@
+.source-tools-dialog { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(660px,100vw); max-width: 100vw; height: 100dvh; max-height: 100dvh; box-sizing: border-box; border: 0; border-left: 1px solid #d9d5cb; background: #fffefa; color: #171717; padding: 0; font: 400 .9rem/1.6 system-ui,sans-serif; box-shadow: -12px 0 50px #0002; }
+.source-tools-dialog[open] { display: flex; flex-direction: column; gap: 0; }
+.source-tools-dialog::backdrop { background: #10101055; }
+.source-tools-dialog > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 25px 26px 18px; }
+.source-tools-eyebrow { font-size: .72rem; font-weight: 650; color: #64645f; }
+.source-tools-dialog h2 { margin: 6px 0; font: 650 1.15rem/1.45 system-ui,sans-serif; overflow-wrap: anywhere; }
+.source-tools-dialog header p { margin: 0; color: #62625d; font-size: .78rem; }
+.source-tools-dialog .source-tools-close { flex: 0 0 44px; min-width: 44px; height: 44px; padding: 0; border: 1px solid #d4d4ce; border-radius: 10px; background: #fff; font: 400 1.6rem/1 system-ui,sans-serif; color: #171717; }
+.source-tools-dialog > nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 26px 18px; border-bottom: 1px solid #e2dfd5; }
+.source-tools-dialog > nav button { min-height: 44px; padding: 9px 12px; border: 1px solid #d7d7d1; border-radius: 8px; background: #fff; color: #171717; font: 550 .78rem/1.45 system-ui,sans-serif; }
+.source-tools-dialog > nav button[aria-pressed="true"] { background: #111; color: #fff; border-color: #111; }
+.source-tools-dialog :is(button,a,summary):focus-visible { outline: 3px solid #2463a4; outline-offset: 3px; }
+.source-tools-content { overflow-y: auto; overscroll-behavior: contain; min-height: 0; padding: 22px 26px; }
+.source-tools-panel > h3 { margin: 0 0 14px; font: 650 1rem/1.4 system-ui,sans-serif; }
+.source-tools-panel[hidden] { display: none; }
+.source-tools-dialog .source-record-details-body { padding-top: 0; }
+.source-tools-dialog .source-reading-body { padding: 0; background: transparent; }
+.source-tools-dialog .source-feedback { margin: 0; padding: 0; border: 0; }
+.source-tools-dialog .source-feedback form { border: 0; padding: 0; }
+.source-tools-dialog .source-exploration-panel { padding: 0; border: 0; background: transparent; }
+.source-tools-dialog > footer { padding: 14px 26px; border-top: 1px solid #e2dfd5; color: #64645f; font-size: .72rem; line-height: 1.5; }
+@media(max-width:600px) { .source-tools-dialog > header { padding: 20px 18px 16px; } .source-tools-dialog > nav { padding: 0 18px 14px; } .source-tools-content { padding: 20px 18px; } .source-tools-dialog > footer { padding: 12px 18px; } }

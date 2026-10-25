@@ -66,7 +66,7 @@ function firstValue(...values) {
 function authorName(author) {
   if (!author || typeof author !== "object") return cleanValue(author);
 
-  const direct = firstValue(author.name, author.displayName, author.author);
+  const direct = firstValue(author.literal, author.name, author.displayName, author.author);
   if (direct) return direct;
 
   const family = firstValue(author.family, author.familyName, author.lastName);
@@ -177,7 +177,7 @@ export function normalizeSourceLead(lead = {}) {
   if (serialNumbers.length) fields.SN = serialNumbers;
   if (pmid) fields.AN = pmid;
   if (url) fields.UR = url;
-  const notes = [provider ? `Metadata provider: ${provider}` : "", ...sourceIdentityNotes(lead), ...evidenceEntryNotes(lead.evidenceEntries)].filter(Boolean);
+  const notes = [provider ? `Metadata provider: ${provider}` : "", ...sourceIdentityNotes(lead), ...(lead.is_retracted === true || lead.retracted === true ? ["Provider flags this source as retracted. Check the publisher notice before using it."] : []), ...evidenceEntryNotes(lead.evidenceEntries)].filter(Boolean);
   if (lead.exploration) notes.push(`Connection reported by ${cleanValue(lead.exploration.provider) || "provider"}: ${explorationRelationshipLabel(lead.exploration.relationship)}; seed: ${cleanValue(lead.exploration.seedId) || "not recorded"}; observed: ${cleanValue(lead.exploration.retrievedAt) || "not recorded"}. A connection does not establish agreement or claim support.`);
   if (notes.length) fields.N1 = notes.length === 1 ? notes[0] : notes;
 

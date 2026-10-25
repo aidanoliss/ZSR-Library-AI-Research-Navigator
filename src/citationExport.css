@@ -1,0 +1,15 @@
+.citation-export { position: relative; display: inline-flex; flex-wrap: wrap; align-items: center; font-family: system-ui, sans-serif; }
+.citation-export > details > summary { display: inline-flex; align-items: center; gap: 10px; box-sizing: border-box; min-height: 44px; padding: 9px 13px; border: 1px solid #d6d1c6; border-radius: 8px; background: #fffefa; color: #171717; font: 600 .8rem/1.4 system-ui,sans-serif; cursor: pointer; list-style: none; }
+.citation-export > details > summary::-webkit-details-marker { display: none; }
+.citation-export > details > summary::before, .citation-export > details > summary::after { content: none !important; }
+.citation-export :is(summary,button):focus-visible { outline: 3px solid #2463a4; outline-offset: 3px; }
+.citation-export-options { position: fixed; z-index: 12; width: min(285px,75vw); padding: 14px; box-sizing: border-box; border: 1px solid #d6d1c6; border-radius: 12px; background: #fff; box-shadow: 0 12px 36px #0002; font-size: .8rem; line-height: 1.5; }
+.citation-export-options > strong { display: block; margin-bottom: 8px; }
+.citation-export .citation-export-options button { display: grid; gap: 2px; width: 100%; min-height: 48px; padding: 10px; border: 0; border-radius: 7px; background: transparent; color: #171717; text-align: left; font: 650 .83rem/1.5 system-ui,sans-serif; }
+.citation-export-options button:hover { background: #f3f3ef; }
+.citation-export-options small { color: #60605a; font-weight: 400; font-size: .74rem; }
+.citation-export-options p { margin: 8px 0 0; color: #60605a; font-size: .72rem; }
+.citation-export-status { display: block; width: 100%; max-width: 40ch; padding-top: 5px; font: 400 .72rem/1.5 system-ui,sans-serif; color: #465647; }
+
+/* Citation menus must be able to extend below a short results group. */
+.source-result-lane:has(.citation-export > details[open]) { overflow: visible; }
