@@ -1668,17 +1668,14 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           </div>
         </header>
 
-        <nav className="research-mode-bar no-print" aria-label="Research workspace">
-          <div className="research-view-switch">
-            <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
-            <button id="research-chat-button" type="button" aria-pressed={workspaceView === "chat"} aria-controls="research-chat-view" onClick={() => setWorkspaceView("chat")}>Research chat <span>AI</span></button>
-          </div>
-        </nav>
-
-        <nav className="research-toolbar no-print" aria-label="Research actions">
+        <nav className="research-toolbar research-workspace-toolbar no-print" aria-label="Research actions">
           <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
           <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
+          <div className="research-view-switch" role="group" aria-label="Research workspace">
+            <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
+            <button id="research-chat-button" type="button" aria-pressed={workspaceView === "chat"} aria-controls="research-chat-view" onClick={() => setWorkspaceView("chat")}>Research chat <span>AI</span></button>
+          </div>
           <details className="research-export-menu">
             <summary>Export &amp; share</summary>
             <div>

@@ -1,0 +1,5 @@
+# Combined workspace toolbar
+
+Moved the single Search / Research chat switch into the action toolbar between Ask a librarian and Export & share. The combined toolbar stays sticky. Below 1280px the switch takes its own full-width row above the secondary actions; its touch targets remain 44px tall. This retains the cream/black/gold styling and removes the separate desktop mode row. No search/chat state or provider behavior changed.
+
+Clean release `qa:release` passed: 599 tests; resource audit; 56 strict planner cases and 1,232 assertions; HTTP fixtures; production build. Existing bundle-size advisory remains. Browser fixture checks: at 1280px all controls fit in one 75px-high toolbar, in the requested horizontal order, with no horizontal overflow. At 1024px the mode row spans the toolbar; at 390px it measures 358px, buttons are 44px tall, and the page has no horizontal overflow. After scrolling on desktop, toolbar top was 0; Export & share still opens. Temporary viewport override was reset. No AI provider calls were needed.
