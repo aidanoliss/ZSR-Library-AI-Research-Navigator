@@ -24,6 +24,7 @@ import { researchSpecQuery } from "../config/researchSpec.js";
 import { isSavedSource, researchItemKey } from "./researchWorkspace.js";
 import LiveResultsSection from "./SourceResults.jsx";
 import ResultDiscoveryOptions from "./ResultDiscoveryOptions.jsx";
+import ResearchPeople from "./ResearchPeople.jsx";
 import { ResultWorkspaceHeader, SavedSourcesView } from "./ResultsWorkspace.jsx";
 import { NAVIGATOR_ATTRIBUTION, NAVIGATOR_PROTOTYPE_NOTICE } from "../config/navigatorAttribution.js";
 import "./researchScope.css";
@@ -1432,6 +1433,7 @@ export default function AssistantMessage({
           {showCatalogResults ? <div id={`${sectionId}-sources`} tabIndex={-1}>{sourceSection}</div> : <div className="result-plan-empty"><p>Start with the search terms and recommended databases below, or find source leads directly.</p>{isLatest && <button type="button" onClick={() => onFollowup(`Find source leads for ${topic}`)}>Find sources</button>}</div>}
           <SearchCoverage discovery={sourceDiscovery} plan={agentPlan} onRetry={isLatest && onRerunInterpretation ? () => onRerunInterpretation(`Search for sources on: ${effectiveSpec.topic}`, { researchSpec: effectiveSpec, mode: effectiveSpec.mode, changes: [{ label: "Coverage", after: "Retry provider searches" }] }) : null} onShowDatabases={() => document.getElementById(`${sectionId}-databases`)?.focus()} />
           <ResultDiscoveryOptions id={sectionId} spec={effectiveSpec} plan={agentPlan} onTrackSearch={onTrackSearch} />
+          {isLatest && <ResearchPeople researchSpec={effectiveSpec} />}
         </div>
         <div id={`${sectionId}-panel-saved`} className="result-view-panel" role="tabpanel" aria-labelledby={`${sectionId}-tab-saved`} hidden={resultView !== "saved"} tabIndex={0}>
           <SavedSourcesView items={savedItems} onRemove={onRemoveResearchItem} onUpdate={onUpdateResearchItem} removedItem={removedItem} onUndoRemove={onUndoRemove} onManage={onOpenSavedSources} onSourceEvent={onSourceEvent} />
