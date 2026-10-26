@@ -1670,7 +1670,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
 
         <nav className="research-toolbar research-workspace-toolbar no-print" aria-label="Research actions">
           <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
-          <button type="button" onClick={() => openWorkspace("brief")}>Assignment requirements</button>
+          <button type="button" onClick={() => openWorkspace("brief")} title="Set assignment requirements">Assignment brief</button>
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
           <div className="research-view-switch" role="group" aria-label="Research workspace">
             <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
