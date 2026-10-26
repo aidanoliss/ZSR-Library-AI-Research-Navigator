@@ -425,7 +425,7 @@ async function handleChat(req, res, stream = false) {
     aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext, researchSpec: plan?.researchSpec });
     resources = researchContext.resources;
     const effectiveMode = plan?.modeId || mode;
-    const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec) });
+    const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec), plannerContext, previousResearchSpec });
     // Tell the client what is being searched while the catalog responds.
     if (stream && lookupCatalog) {
       sendNdjsonHead(res);

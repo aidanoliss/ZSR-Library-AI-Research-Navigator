@@ -17,8 +17,8 @@ export default function SourceEmptyState({ excludedCount = 0, lanes, recovery, d
     {state.requested.length > 1 && <ul className="source-search-outcomes">{state.requested.map((lane) => <li key={lane.label}><strong>{lane.label}</strong><span>{lane.message}</span></li>)}</ul>}
     <div className="source-recovery-plan">
       <strong className="source-next-step">Try next</strong>
-      {recovery?.kind === "manual" && recovery.explanation && <p>{recovery.explanation}</p>}
-      {state.retryable && onRetry && <div><button type="button" className="source-recovery-button" disabled={pending} onClick={() => onRetry({ kind: "retry", query: directQuery, researchSpec, changes: ["Retry the same search; no requirements change."] })}>{pending ? "Searching…" : "Retry source search"}</button><p className="source-action-hint">Keeps your topic and requirements unchanged.</p></div>}
+      {!state.retryable && recovery?.kind === "manual" && recovery.explanation && <p>{recovery.explanation}</p>}
+      {state.retryable && onRetry && <div><button type="button" className="source-recovery-button" disabled={pending} onClick={() => onRetry({ kind: "retry", query: directQuery, researchSpec, changes: ["Retry the same search; no requirements change."] })}>{pending ? "Searching…" : state.requested.every(lane => lane.outcome === "not_requested") ? "Search for sources" : "Retry source search"}</button><p className="source-action-hint">Keeps your topic and requirements unchanged.</p></div>}
       {!state.retryable && recovery?.kind === "broaden" && onRetry && <div><p>{recovery.explanation}</p><button type="button" className="source-recovery-button" disabled={pending} onClick={() => onRetry(recovery)}>{pending ? "Searching…" : recovery.buttonLabel || "Search with more synonyms"}</button><p className="source-action-hint">Your required concepts and assignment filters stay in place.</p></div>}
       <div className="source-empty-actions">
         {onShowStrategy && <button type="button" className={!state.retryable && recovery?.kind !== "broaden" ? "source-recovery-button" : ""} disabled={pending} onClick={onShowStrategy}>Try different search terms</button>}

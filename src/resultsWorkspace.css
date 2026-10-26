@@ -295,3 +295,9 @@
   .result-view-panel > [id$="-sources"], .result-search-options, .result-databases, .source-result-row, .research-chat-reply { scroll-margin-top: 180px; }
 }
 @media print { .research-workspace-toolbar { display: none; } }
+
+/* Planner filters are one choice per question; scope choices need real detail. */
+.planner-check input[type="radio"] { width: 20px; height: 20px; margin: 0; accent-color: #806326; justify-self: center; }
+.planner-detail-field { display: grid; gap: 7px; margin-top: 8px; font: 500 .77rem/1.5 system-ui,sans-serif; }
+.planner-detail-field input { width: 100%; min-height: 44px; box-sizing: border-box; padding: 10px 12px; border: 1px solid #d7cbb3; border-radius: 8px; background: #fffdf8; font: 400 .83rem/1.5 system-ui,sans-serif; }
+.planner-detail-field input:focus-visible { outline: 2px solid #806326; outline-offset: 2px; }

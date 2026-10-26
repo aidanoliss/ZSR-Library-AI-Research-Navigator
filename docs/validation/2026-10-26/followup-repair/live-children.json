@@ -1,0 +1,206 @@
+{
+  "httpStatus": 200,
+  "elapsedMs": 15939,
+  "eventTypes": [
+    "status",
+    "sources",
+    "done"
+  ],
+  "spec": {
+    "topic": "do vaccines cause autism",
+    "mode": "scholarly",
+    "disciplines": [
+      "interdisciplinary"
+    ],
+    "concepts": [
+      {
+        "id": "vaccination",
+        "preferredTerm": "vaccines",
+        "synonyms": [
+          "vaccin*",
+          "immunization"
+        ],
+        "required": true,
+        "source": "student-corrected"
+      },
+      {
+        "id": "autism",
+        "preferredTerm": "autism",
+        "synonyms": [
+          "autism spectrum disorder",
+          "ASD"
+        ],
+        "required": true,
+        "source": "student-corrected"
+      }
+    ],
+    "comparison": null,
+    "knownItem": null,
+    "searchIntent": {
+      "originalQuestion": "do vaccines cause autism",
+      "neutralQuestion": "What does research show about vaccines and autism among children?",
+      "reformulated": true,
+      "explanation": "The search tests the relationship without treating the proposed conclusion as established. Findings need to be assessed on their evidence.",
+      "requestedFocus": "",
+      "scopeNotes": []
+    },
+    "methodRequirements": {
+      "include": [],
+      "exclude": []
+    },
+    "excludedTerms": [],
+    "sourceRequirements": {
+      "publicationYearFrom": 2022,
+      "publicationYearTo": 2026,
+      "peerReviewed": true,
+      "requestedSourceCount": null
+    },
+    "facets": {
+      "population": "child*",
+      "geography": "",
+      "timePeriod": "",
+      "method": "",
+      "documentType": "Scholarly articles"
+    },
+    "sourceContract": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ],
+      "excludedKinds": [
+        "news",
+        "market-report"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": true,
+      "flags": [
+        "causal-claim"
+      ],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "configVersion": "2026-08-10.2",
+    "correctedByStudent": false,
+    "preferredFacets": {},
+    "planHash": "rp-48c5e5dd"
+  },
+  "sourceDiscovery": {
+    "accessScope": "library",
+    "completedAt": "2026-10-26T16:43:17.129Z",
+    "identity": null,
+    "recovery": null,
+    "lanes": {
+      "library": {
+        "requested": true,
+        "resultCount": 10,
+        "outcome": "partial",
+        "status": "partial",
+        "errorCode": "TIMEOUT",
+        "attempts": [
+          {
+            "provider": "Primo public",
+            "status": "retrying",
+            "query": "vaccines AND autism AND child*",
+            "attempt": 1,
+            "reason": "TIMEOUT"
+          },
+          {
+            "provider": "Primo public",
+            "status": "retrying",
+            "query": "(vaccines OR vaccin* OR immunization) AND (autism OR \"autism spectrum disorder\" OR ASD) AND child*",
+            "attempt": 1,
+            "reason": "TIMEOUT"
+          },
+          {
+            "provider": "Primo public",
+            "status": "retrying",
+            "query": "vaccin* AND autism AND child*",
+            "attempt": 1,
+            "reason": "TIMEOUT"
+          },
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "(vaccines OR vaccin* OR immunization) AND (autism OR \"autism spectrum disorder\" OR ASD) AND child*",
+            "retrievedCount": 80,
+            "resultCount": 19
+          },
+          {
+            "provider": "Primo public",
+            "status": "timeout",
+            "query": "vaccines AND autism AND child*",
+            "errorCode": "TIMEOUT"
+          },
+          {
+            "provider": "Primo public",
+            "status": "timeout",
+            "query": "vaccin* AND autism AND child*",
+            "errorCode": "TIMEOUT"
+          }
+        ]
+      },
+      "openAccess": {
+        "requested": false,
+        "resultCount": 0,
+        "separateResultCount": 0,
+        "mergedResultCount": 0,
+        "provider": "OpenAlex",
+        "enabled": false,
+        "configured": false,
+        "reason": "missing-api-key",
+        "retrievesFullText": false,
+        "outcome": "not_requested",
+        "status": "not_requested",
+        "errorCode": null,
+        "attempts": []
+      }
+    }
+  },
+  "results": [
+    {
+      "title": "Safety of measles and pertussis-containing vaccines in children with autism spectrum disorders",
+      "doi": "10.1016/j.vaccine.2022.03.031"
+    },
+    {
+      "title": "Retrospective Analysis of Dog Bite Injuries in Children with Autism Spectrum Disorder",
+      "doi": "10.1007/s10803-024-06510-3"
+    },
+    {
+      "title": "Evaluating COVID-19 vaccination intentions and vaccine hesitancy among parents of children with autism spectrum disorder",
+      "doi": "10.1038/s41598-023-34191-y"
+    },
+    {
+      "title": "Self-reported vaccine hesitancy and refusal among parents of children with autism spectrum disorder and other developmental delays: a cross-sectional study",
+      "doi": "10.1007/s00431-026-07179-9"
+    },
+    {
+      "title": "Vaccine refusal risk factors among parents of children with autism spectrum disorders",
+      "doi": "10.24953/turkjped.2022.291"
+    },
+    {
+      "title": "The Relationship Between the Use of Complementary and Alternative Therapies in Children with Autism Spectrum Disorder and Quality of Life, Hopelessness, Depression, and Vaccine Refusal in Their Caregivers in Turkey",
+      "doi": "10.4274/tjcamh.galenos.2021.29494"
+    },
+    {
+      "title": "Vaccine Hesitancy in the Autism Spectrum Disorder Context: Parental Vaccine Decision-Making and Coping with Stress Strategies",
+      "doi": "10.1007/s10803-024-06508-x"
+    },
+    {
+      "title": "Evaluation of Suspected Adverse Reactions to COVID-19 Vaccines in Patients with Autism Spectrum Disorder: Analysis of VAERS Database",
+      "doi": ""
+    },
+    {
+      "title": "Vaccine Hesitancy in Autism Spectrum Disorder: A Systematic Review With Meta-Analyses",
+      "doi": "10.1007/s10803-026-07456-4"
+    },
+    {
+      "title": "Parent intentions to vaccinate children with autism spectrum disorder against COVID-19",
+      "doi": "10.1016/j.pedn.2021.11.019"
+    }
+  ]
+}

@@ -24,3 +24,15 @@ test("an edited search brief always requests fresh source discovery", () => {
   assert.equal(shouldLookupCatalog("Apply the corrected population", "answer", 3), false);
   assert.equal(shouldLookupCatalog("Apply the corrected population", "answer", 3, { correctedResearchSpec: true }), true);
 });
+
+test("guided planning and explore mode search a substantive question without a source keyword", () => {
+  for (const style of ['plan','answer']) assert.equal(shouldLookupCatalog('do vaccines cause autism', style, 1), true);
+  assert.equal(shouldLookupCatalog('urban tree canopy and neighborhood temperatures','plan',1),true);
+  assert.equal(shouldLookupCatalog('Help narrow this research question','plan',2),false);
+  assert.equal(shouldLookupCatalog('Help me cite this in APA','answer',2),false);
+});
+
+test("guided choices and scoped refinements request discovery across response styles", () => {
+  assert.equal(shouldLookupCatalog('do vaccines cause autism','plan',1,{plannerContext:'Publication date: Last 5 years'}),true);
+  for (const text of ['What about children?','systematic reviews only','recent peer reviewed only','any stronger studies','change time range']) assert.equal(shouldLookupCatalog(text,'plan',2,{previousResearchSpec:{topic:'vaccines and autism'}}),true,text);
+});

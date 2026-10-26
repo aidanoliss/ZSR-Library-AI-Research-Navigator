@@ -1,0 +1,194 @@
+{
+  "httpStatus": 200,
+  "elapsedMs": 11974,
+  "eventTypes": [
+    "status",
+    "sources",
+    "done"
+  ],
+  "spec": {
+    "topic": "do vaccines cause autism",
+    "mode": "scholarly",
+    "disciplines": [
+      "interdisciplinary"
+    ],
+    "concepts": [
+      {
+        "id": "vaccination",
+        "preferredTerm": "vaccines",
+        "synonyms": [
+          "vaccin*",
+          "immunization"
+        ],
+        "required": true,
+        "source": "student-corrected"
+      },
+      {
+        "id": "autism",
+        "preferredTerm": "autism",
+        "synonyms": [
+          "autism spectrum disorder",
+          "ASD"
+        ],
+        "required": true,
+        "source": "student-corrected"
+      }
+    ],
+    "comparison": null,
+    "knownItem": null,
+    "searchIntent": {
+      "originalQuestion": "do vaccines cause autism",
+      "neutralQuestion": "What does research show about vaccines and autism among children?",
+      "reformulated": true,
+      "explanation": "The search tests the relationship without treating the proposed conclusion as established. Findings need to be assessed on their evidence.",
+      "requestedFocus": "",
+      "scopeNotes": []
+    },
+    "methodRequirements": {
+      "include": [],
+      "exclude": []
+    },
+    "excludedTerms": [],
+    "sourceRequirements": {
+      "publicationYearFrom": 2023,
+      "publicationYearTo": null,
+      "peerReviewed": true,
+      "requestedSourceCount": null
+    },
+    "facets": {
+      "population": "child*",
+      "geography": "",
+      "timePeriod": "",
+      "method": "",
+      "documentType": "Scholarly articles"
+    },
+    "sourceContract": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ],
+      "excludedKinds": [
+        "news",
+        "market-report"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": true,
+      "flags": [
+        "causal-claim"
+      ],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "configVersion": "2026-08-10.2",
+    "correctedByStudent": false,
+    "preferredFacets": {},
+    "planHash": "rp-3f22226b"
+  },
+  "sourceDiscovery": {
+    "accessScope": "library",
+    "completedAt": "2026-10-26T16:43:29.107Z",
+    "identity": null,
+    "recovery": null,
+    "lanes": {
+      "library": {
+        "requested": true,
+        "resultCount": 10,
+        "outcome": "success",
+        "status": "success",
+        "errorCode": null,
+        "attempts": [
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "(vaccines OR vaccin* OR immunization) AND (autism OR \"autism spectrum disorder\" OR ASD) AND child*",
+            "retrievedCount": 80,
+            "resultCount": 11
+          },
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "vaccin* AND autism AND child*",
+            "retrievedCount": 80,
+            "resultCount": 20
+          },
+          {
+            "provider": "Primo public",
+            "status": "retrying",
+            "query": "vaccines AND autism AND child*",
+            "attempt": 1,
+            "reason": "TIMEOUT"
+          },
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "query": "vaccines AND autism AND child*",
+            "retrievedCount": 80,
+            "resultCount": 18
+          }
+        ]
+      },
+      "openAccess": {
+        "requested": false,
+        "resultCount": 0,
+        "separateResultCount": 0,
+        "mergedResultCount": 0,
+        "provider": "OpenAlex",
+        "enabled": false,
+        "configured": false,
+        "reason": "missing-api-key",
+        "retrievesFullText": false,
+        "outcome": "not_requested",
+        "status": "not_requested",
+        "errorCode": null,
+        "attempts": []
+      }
+    }
+  },
+  "results": [
+    {
+      "title": "Trends in Selective Childhood Measles-Mumps-Rubella (MMR) Vaccine Nonreceipt Surrounding the MMR-Autism Controversy: National Immunization Survey Analyses, 1996–2019",
+      "doi": "10.1007/s10900-026-01598-3"
+    },
+    {
+      "title": "The Role and Safety of Aluminum Adjuvants in Childhood Vaccines",
+      "doi": "10.1542/peds.2025-074874"
+    },
+    {
+      "title": "Retrospective Analysis of Dog Bite Injuries in Children with Autism Spectrum Disorder",
+      "doi": "10.1007/s10803-024-06510-3"
+    },
+    {
+      "title": "Association Between First MMR Vaccination Before Age 2 Years and Childhood Autism in a U.S. EHR Cohort of 2.5 Million Children",
+      "doi": "10.1097/INF.0000000000005349"
+    },
+    {
+      "title": "Childhood Vaccine Hesitancy",
+      "doi": "10.1056/NEJMc2608837"
+    },
+    {
+      "title": "Aluminum-Adsorbed Vaccines and Chronic Diseases in Childhood: A Nationwide Cohort Study",
+      "doi": "10.7326/ANNALS-25-00997"
+    },
+    {
+      "title": "Childhood Vaccine Hesitancy",
+      "doi": "10.1056/NEJMcp2516616"
+    },
+    {
+      "title": "Vaccination under sedation in children with needle phobia or behavioural difficulties: A retrospective study",
+      "doi": "10.1016/j.vaccine.2026.128352"
+    },
+    {
+      "title": "8335 Exploring parental refusal of childhood vaccinations",
+      "doi": "10.1136/archdischild-2025-rcpch.487"
+    },
+    {
+      "title": "Medical outcomes of children with neurodevelopmental disorders after SARS-CoV-2 vaccination: A six-month follow-up study",
+      "doi": "10.1016/j.vaccine.2023.05.067"
+    }
+  ]
+}

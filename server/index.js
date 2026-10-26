@@ -491,7 +491,7 @@ app.post("/api/chat", async (req, res) => {
     resources = researchContext.resources;
     const effectiveMode = plan?.modeId || mode;
     // Retrieve evidence before asking the model to interpret any source.
-    const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec) });
+    const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec), plannerContext, previousResearchSpec });
     primoPromise = (lookupCatalog
       ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
       : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
@@ -615,7 +615,7 @@ app.post("/api/chat/stream", async (req, res) => {
 
   try {
     const effectiveMode = plan?.modeId || mode;
-    const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec) });
+    const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec), plannerContext, previousResearchSpec });
     primoPromise = (lookupCatalog
       ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
       : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));

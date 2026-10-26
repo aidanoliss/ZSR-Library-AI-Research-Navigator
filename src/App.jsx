@@ -1,3 +1,5 @@
+import { guidedPlannerQuestions, plannerDetailPrompt, plannerAnswerLine, researchSpecForFollowup } from "./guidedPlanner.js";
+import { unconfirmedSourceDiscovery } from "./sourceSearchStatus.js";
 import { SourceFeedbackProvider } from "./SourceFeedback.jsx";
 import ResearchChat from "./ResearchChat.jsx";
 import { chatSourceKey, mergeChatSources, normalizeResearchChatSession } from "./researchChat.js";
@@ -622,39 +624,10 @@ function buildHandoffPayload(messages, input, mode, responseStyle, subjectFocusI
   };
 }
 
-function plannerQuestionsFor(topic, modeLabel, providedQuestions = []) {
-  const normalized = (providedQuestions || [])
-    .filter((item) => item?.question && Array.isArray(item.options) && item.options.length)
-    .slice(0, 3)
-    .map((item) => ({
-      question: item.question,
-      why: item.why || "",
-      options: item.options.slice(0, 5),
-    }));
-  if (normalized.length) return normalized;
-
-  return [
-    {
-      question: "What time period should the search prioritize?",
-      why: "Date limits change which databases, filters, and keywords are useful.",
-      options: ["Last 5 years", "Last 10 years", "Any time period", "Historical context"],
-    },
-    {
-      question: "What source types should ZSR scan first?",
-      why: "The best route changes depending on whether you need articles, books, news, data, or primary sources.",
-      options: ["Peer-reviewed articles", "Books/background", "News/current events", "Data/statistics", "Primary sources"],
-    },
-    {
-      question: "How would you like to narrow your topic?",
-      why: "Choosing a lens keeps the research question from becoming too broad.",
-      options: ["A particular place", "A particular population", "Compare two approaches", "Historical change", "Not sure yet"],
-    },
-  ];
-}
 
 function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = false, onClose, onComplete }) {
   const questions = useMemo(
-    () => plannerQuestionsFor(topic, modeLabel, providedQuestions),
+    () => guidedPlannerQuestions(providedQuestions),
     [topic, modeLabel, providedQuestions]
   );
   const [answers, setAnswers] = useState({});
@@ -682,30 +655,25 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
 
   const currentIndex = Math.min(step, Math.max(questions.length - 1, 0));
   const currentQuestion = questions[currentIndex];
-  const currentOptions = (currentQuestion?.options || []).slice(0, 3);
+  const currentOptions = currentQuestion?.options || [];
   const selected = answers[currentIndex] || [];
   const customValue = customAnswers[currentIndex] || "";
   const totalSteps = questions.length;
+  const detailPrompt = plannerDetailPrompt(selected);
+  const detailRequired = Boolean(detailPrompt && !customValue.trim());
 
   function choose(index, option) {
-    setAnswers((current) => {
-      const existing = current[index] || [];
-      const next = existing.includes(option)
-        ? existing.filter((item) => item !== option)
-        : [...existing, option];
-      return { ...current, [index]: next };
-    });
+    setAnswers(current => ({ ...current, [index]: [option] }));
+    setCustomAnswers(current => ({ ...current, [index]: "" }));
   }
 
   function updateCustom(index, value) {
-    setCustomAnswers((current) => ({ ...current, [index]: value }));
+    setCustomAnswers(current => ({ ...current, [index]: value }));
+    if (!plannerDetailPrompt(answers[index] || [])) setAnswers(current => ({ ...current, [index]: [] }));
   }
 
   function answerLine(question, index) {
-    const picked = answers[index] || [];
-    const custom = String(customAnswers[index] || "").trim();
-    const values = [...picked, custom].filter(Boolean);
-    return values.length ? `${question.question}: ${values.join("; ")}` : "";
+    return plannerAnswerLine(question, answers[index], customAnswers[index]);
   }
 
   function finish() {
@@ -716,6 +684,7 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
   }
 
   function nextStep() {
+    if (detailRequired) return;
     if (currentIndex < totalSteps - 1) {
       setStep((current) => Math.min(current + 1, totalSteps - 1));
       return;
@@ -743,29 +712,13 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
         <legend className="sr-only">{currentQuestion?.question}</legend>
         {currentOptions.map((option) => (
           <label key={option} className={`planner-check ${selected.includes(option) ? "selected" : ""}`}>
-            <input
-              type="checkbox"
-              checked={selected.includes(option)}
-              onChange={() => choose(currentIndex, option)}
-            />
+            <input type="radio" name={`planner-${currentIndex}`} checked={selected.includes(option)} onChange={() => choose(currentIndex, option)} />
             <span>{option}</span>
           </label>
         ))}
-        <label className={`planner-check planner-custom ${customValue.trim() ? "selected" : ""}`}>
-          <input
-            type="checkbox"
-            checked={Boolean(customValue.trim())}
-            onChange={() => {
-              if (customValue.trim()) updateCustom(currentIndex, "");
-            }}
-            aria-label="Use typed option"
-          />
-          <input
-            type="text"
-            value={customValue}
-            onChange={(event) => updateCustom(currentIndex, event.target.value)}
-            placeholder="Something else..."
-          />
+        <label className="planner-detail-field">
+          <span>{detailPrompt || "Or enter your own answer"}{detailPrompt && " (required for this choice)"}</span>
+          <input type="text" maxLength={300} value={customValue} onChange={event => updateCustom(currentIndex, event.target.value)} placeholder={detailPrompt ? "Enter the actual groups, population, or place" : "Optional custom answer"} />
         </label>
       </fieldset>
       <div className="planner-actions">
@@ -777,11 +730,11 @@ function PlannerModal({ open, topic, modeLabel, providedQuestions, docked = fals
         >
           Back
         </button>
-        <button type="button" className="planner-next" onClick={nextStep} aria-label={currentIndex < totalSteps - 1 ? "Next planning question" : "Use these answers"}>
+        <button type="button" className="planner-next" disabled={detailRequired} onClick={nextStep} aria-label={currentIndex < totalSteps - 1 ? "Next planning question" : "Use these answers"}>
           {currentIndex < totalSteps - 1 ? "Next" : "Use"}
           {Icon.arrowRight}
         </button>
-        <button type="button" className="secondary planner-skip" onClick={() => onComplete("")}>Skip and send</button>
+        <button type="button" className="secondary planner-skip" onClick={() => onComplete("")}>Skip planner and search</button>
       </div>
     </section>
   );
@@ -1222,7 +1175,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
       if (!options.replay && !options.researchSpec) { setQueuedFollowup({ content, options }); setInput(""); }
       return;
     }
-    if (!options.skipPlanner && requestResponseStyle === "plan") {
+    if (!options.skipPlanner && requestResponseStyle === "plan" && !hasConversation) {
       setPlannerDraft({ topic: content, questions: options.questions || [] });
       return;
     }
@@ -1246,6 +1199,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
       return;
     }
 
+    const requestPreviousSpec = options.previousResearchSpec || researchSpecForFollowup(latestResearchSpec, messages);
     const searchMetricId = crypto.randomUUID();
     const startedAt = new Date().toISOString();
     studyRef.current.record("search_started", { searchId: searchMetricId, accessScope: requestAccessScope });
@@ -1365,7 +1319,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         subjectFocusId: requestSubjectFocusId,
         assignmentContext: requestAssignmentContext,
         plannerContext: options.plannerContext || "",
-        ...(!options.replay && (options.previousResearchSpec || latestResearchSpec) ? { previousResearchSpec: options.previousResearchSpec || latestResearchSpec } : {}),
+        ...(!options.replay && requestPreviousSpec ? { previousResearchSpec: requestPreviousSpec } : {}),
         ...(options.researchSpec ? { researchSpec: options.researchSpec } : {}),
         messages: (options.replay ? [userMessage] : nextMessages).map((m) => ({
           role: m.role,
@@ -1415,7 +1369,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           assignmentContext: requestAssignmentContext,
           plannerContext: options.plannerContext || "",
           researchSpec: options.researchSpec,
-          previousResearchSpec: options.replay ? null : options.previousResearchSpec || latestResearchSpec,
+          previousResearchSpec: options.replay ? null : requestPreviousSpec,
           latestUserText: content,
           hasPriorTopic: !options.replay && messages.some((message) => message.role === "user"),
         })
@@ -1438,6 +1392,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           matched: deterministicFallbackPlan.recommendations || [],
           searchTools: FALLBACK_SEARCH_TOOLS,
           liveResults: [],
+          sourceDiscovery: unconfirmedSourceDiscovery(requestAccessScope),
           researchSpec: {
             ...deterministicFallbackPlan.researchSpec,
             planHash: deterministicFallbackPlan.planHash,

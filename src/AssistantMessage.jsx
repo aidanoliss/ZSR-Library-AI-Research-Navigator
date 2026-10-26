@@ -1114,7 +1114,7 @@ export default function AssistantMessage({
   studyEnabled = false,
 }) {
   const sectionId = useId().replace(/:/g, "");
-  const [resultView, setResultView] = useState(responseStyle === "plan" ? "strategy" : "results");
+  const [resultView, setResultView] = useState("results");
   const [editorRequest, setEditorRequest] = useState(0);
   const [recoveryEditor, setRecoveryEditor] = useState(false);
   const [copied, setCopied] = useState(null); // index of copied term, or "all"

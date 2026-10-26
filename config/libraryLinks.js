@@ -197,7 +197,7 @@ export const RESPONSE_STYLES = [
     id: "plan",
     label: "Guided plan",
     shortLabel: "Plan",
-    description: "Ask narrowing questions first, then turn the answers into a focused ZSR research plan.",
+    description: "Set publication dates, source type, and scope, then search for source leads. Follow-ups refine the same search.",
   },
   {
     id: "sources",

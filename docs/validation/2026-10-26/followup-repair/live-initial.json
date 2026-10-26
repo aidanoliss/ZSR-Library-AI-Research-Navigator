@@ -1,0 +1,237 @@
+{
+  "httpStatus": 200,
+  "elapsedMs": 15971,
+  "eventTypes": [
+    "status",
+    "sources",
+    "done"
+  ],
+  "spec": {
+    "topic": "do vaccines cause autism",
+    "mode": "scholarly",
+    "disciplines": [
+      "interdisciplinary"
+    ],
+    "concepts": [
+      {
+        "id": "vaccination",
+        "preferredTerm": "vaccines",
+        "synonyms": [
+          "vaccin*",
+          "immunization"
+        ],
+        "required": true,
+        "source": "controlled-vocabulary"
+      },
+      {
+        "id": "autism",
+        "preferredTerm": "autism",
+        "synonyms": [
+          "autism spectrum disorder",
+          "ASD"
+        ],
+        "required": true,
+        "source": "controlled-vocabulary"
+      }
+    ],
+    "comparison": null,
+    "knownItem": null,
+    "searchIntent": {
+      "originalQuestion": "do vaccines cause autism",
+      "neutralQuestion": "What does research show about vaccines and autism?",
+      "reformulated": true,
+      "explanation": "The search tests the relationship without treating the proposed conclusion as established. Findings need to be assessed on their evidence.",
+      "requestedFocus": "",
+      "scopeNotes": []
+    },
+    "methodRequirements": {
+      "include": [],
+      "exclude": []
+    },
+    "excludedTerms": [],
+    "sourceRequirements": {
+      "publicationYearFrom": 2022,
+      "publicationYearTo": 2026,
+      "peerReviewed": true,
+      "requestedSourceCount": null
+    },
+    "facets": {
+      "population": "",
+      "geography": "",
+      "timePeriod": "",
+      "method": "",
+      "documentType": "Scholarly articles"
+    },
+    "sourceContract": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ],
+      "excludedKinds": [
+        "news",
+        "market-report"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": true,
+      "flags": [
+        "causal-claim"
+      ],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "configVersion": "2026-08-10.2",
+    "planHash": "rp-3bff5ead"
+  },
+  "lanes": {
+    "library": {
+      "requested": true,
+      "resultCount": 10,
+      "outcome": "partial",
+      "status": "partial",
+      "errorCode": "TIMEOUT",
+      "attempts": [
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "vaccin* AND autism",
+          "retrievedCount": 80,
+          "resultCount": 20
+        },
+        {
+          "provider": "Primo public",
+          "status": "retrying",
+          "query": "vaccines AND autism",
+          "attempt": 1,
+          "reason": "TIMEOUT"
+        },
+        {
+          "provider": "Primo public",
+          "status": "retrying",
+          "query": "(vaccines OR vaccin* OR immunization) AND (autism OR \"autism spectrum disorder\" OR ASD)",
+          "attempt": 1,
+          "reason": "TIMEOUT"
+        },
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "(vaccines OR vaccin* OR immunization) AND (autism OR \"autism spectrum disorder\" OR ASD)",
+          "retrievedCount": 80,
+          "resultCount": 20
+        },
+        {
+          "provider": "Primo public",
+          "status": "timeout",
+          "query": "vaccines AND autism",
+          "errorCode": "TIMEOUT"
+        }
+      ]
+    },
+    "openAccess": {
+      "requested": false,
+      "resultCount": 0,
+      "separateResultCount": 0,
+      "mergedResultCount": 0,
+      "provider": "OpenAlex",
+      "enabled": false,
+      "configured": false,
+      "reason": "missing-api-key",
+      "retrievesFullText": false,
+      "outcome": "not_requested",
+      "status": "not_requested",
+      "errorCode": null,
+      "attempts": []
+    }
+  },
+  "leads": [
+    {
+      "title": "Evaluation of Suspected Adverse Reactions to COVID-19 Vaccines in Patients with Autism Spectrum Disorder: Analysis of VAERS Database",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2718403257&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "",
+      "year": "2022-10-01",
+      "abstractAvailable": true,
+      "assessment": "meets"
+    },
+    {
+      "title": "Vaccine Hesitancy in Autism Spectrum Disorder: A Systematic Review With Meta-Analyses",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1007_s10803_026_07456_4&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1007/s10803-026-07456-4",
+      "year": "2026-07-29",
+      "abstractAvailable": true,
+      "assessment": "meets",
+      "identity": "title-matched"
+    },
+    {
+      "title": "Vaccine Hesitancy in the Autism Spectrum Disorder Context: Parental Vaccine Decision-Making and Coping with Stress Strategies",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_3090637622&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1007/s10803-024-06508-x",
+      "year": "2025-11-01",
+      "abstractAvailable": true,
+      "assessment": "meets",
+      "identity": "title-matched"
+    },
+    {
+      "title": "Evaluating COVID-19 vaccination intentions and vaccine hesitancy among parents of children with autism spectrum disorder",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_springer_journals_10_1038_s41598_023_34191_y&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1038/s41598-023-34191-y",
+      "year": "2023-05-05",
+      "abstractAvailable": true,
+      "assessment": "meets",
+      "identity": "title-matched"
+    },
+    {
+      "title": "Self-reported vaccine hesitancy and refusal among parents of children with autism spectrum disorder and other developmental delays: a cross-sectional study",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_springer_journals_10_1007_s00431_026_07179_9&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1007/s00431-026-07179-9",
+      "year": "2026-06-19",
+      "abstractAvailable": true,
+      "assessment": "meets",
+      "identity": "title-matched"
+    },
+    {
+      "title": "Safety of measles and pertussis-containing vaccines in children with autism spectrum disorders",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1016_j_vaccine_2022_03_031&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1016/j.vaccine.2022.03.031",
+      "year": "2022-04-20",
+      "abstractAvailable": true,
+      "assessment": "meets"
+    },
+    {
+      "title": "Vaccine refusal risk factors among parents of children with autism spectrum disorders",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_24953_turkjped_2022_291&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.24953/turkjped.2022.291",
+      "year": "2023-03-01",
+      "abstractAvailable": true,
+      "assessment": "meets"
+    },
+    {
+      "title": "Vaccines work… and do not cause autism",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_gale_infotracmisc_A839382602&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1371/journal.pbio.3003143",
+      "year": "2025-04-18",
+      "abstractAvailable": true,
+      "assessment": "meets"
+    },
+    {
+      "title": "Structure and synthesis of a vaccine and diagnostic target for Enterocloster bolteae, an autism-associated gut pathogen – Part II",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_2834215954&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1016/j.carres.2023.108805",
+      "year": "2023-04",
+      "abstractAvailable": true,
+      "assessment": "meets"
+    },
+    {
+      "title": "WHO Analysis Finds No Causal Link Between Vaccines and Autism",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1001_jama_2025_23013&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "doi": "10.1001/jama.2025.23013",
+      "year": "2026-02-03",
+      "abstractAvailable": true,
+      "assessment": "meets"
+    }
+  ],
+  "replyStatus": "completed"
+}

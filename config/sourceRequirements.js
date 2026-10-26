@@ -6,6 +6,8 @@ const YEAR = "(?:18|19|20|21)\\d{2}";
 const DATE_RANGE_RE = new RegExp(`\\b(?:published\\s+|publication (?:years?|dates?)\\s*:?\\s*)?(?:between\\s+|from\\s+)?(${YEAR})\\s*(?:[-–]|to|through|and)\\s*(${YEAR})\\b`, "i");
 const DATE_BOUND_RE = new RegExp(`\\b(?:published\\s+|publication (?:years?|dates?)\\s*:?\\s*)?(since|after|before|from|until|through)\\s+(${YEAR})\\b`, "i");
 const EXACT_PUBLICATION_RE = new RegExp(`\\b(?:published\\s+in|publication (?:year|date)\\s*:?)\\s+(${YEAR})\\b`, "i");
+const CLEAR_PEER_REVIEW_RE = /\b(?:peer[- ]review(?:ed)?\s+(?:is\s+)?not required|(?:remove|drop|clear|relax)\s+(?:the\s+)?peer[- ]review(?:ed)?(?:\s+(?:requirement|filter|limit))?|(?:no|without)\s+peer[- ]review\s+(?:requirement|filter))\b/i;
+const CLEAR_DATE_RE = /\b(?:any (?:publication )?(?:year|date)s?|any time period|all (?:publication )?years?|no (?:publication )?date (?:limit|restriction)s?)\b/i;
 const RECENT_RE = /\b(?:published\s+(?:in\s+)?)?(?:the\s+)?(?:last|past|previous)\s+(\d{1,3})\s+years?\b/i;
 // "Nothing older than 2015" and "newer than 2015" are always publication limits.
 const NEWER_THAN_RE = new RegExp(`\\b(?:(?:(?:nothing|none|no(?:thing)?|not(?:hing)?)\\s+(?:(?:published|written)\\s+)?(?:older|earlier)\\s+than)|(?:no\\s+earlier\\s+than)|(?:not\\s+before)|(?:(?<!\\b(?:nothing|none|no)\\s+(?:published\\s+|written\\s+)?)(?:published\\s+)?(?:newer|more\\s+recent|later)\\s+than))\\s+(${YEAR})\\b`, "i");
@@ -34,7 +36,7 @@ function dateRequest(text, currentYear) {
       explicit: kind >= 4 || /^(?:published|publication)\b/i.test(match[0]) || /\b(?:sources?|articles?|studies|papers?|books?|publications?)\s*$/i.test(value.slice(0, match.index)),
       // A date-only control or follow-up is a publication filter. A date attached
       // to a topic is its subject period unless publication wording says otherwise.
-      standalone: !value.replace(match[0], "").replace(/\b(?:only|please|limit|restrict|it|them|to|the|date|range|years?|use)\b/gi, "").replace(/[\s.,:;!?-]/g, ""),
+      standalone: !value.replace(match[0], "").replace(/\b(?:only|please|limit|restrict|it|them|to|the|date|range|years?|use|onwards|onward|and later|or later)\b/gi, "").replace(/[\s.,:;!?-]/g, ""),
     }))
   );
   // A quoted title or phrase is literal content, not a publication filter.
@@ -74,22 +76,28 @@ export function extractSourceRequirements(text, { currentYear = new Date().getFu
   const count = value.match(SOURCE_COUNT_RE)?.[1]?.toLowerCase();
   return normalizeSourceRequirements({
     ...dateRequest(value, currentYear),
-    peerReviewed: /\bpeer[- ]reviewed\b/i.test(value) && !/\b(?:not|no|without)\s+(?:necessarily\s+)?peer[- ]reviewed\b/i.test(value),
+    peerReviewed: /\bpeer[- ]reviewed\b/i.test(value) && !/\b(?:not|no|without)\s+(?:necessarily\s+)?peer[- ]reviewed\b/i.test(value) && !CLEAR_PEER_REVIEW_RE.test(value),
     requestedSourceCount: NUMBER_WORDS[count] || Number(count),
   });
 }
 
-export function sourceRequirementUpdates(text, { currentYear = new Date().getFullYear() } = {}) {
+export function sourceRequirementUpdates(text, { currentYear = new Date().getFullYear(), replaceDateBounds = false } = {}) {
   const value = String(text || "");
   const parsed = extractSourceRequirements(value, { currentYear });
   const updates = {};
-  if (parsed.publicationYearFrom !== null) updates.publicationYearFrom = parsed.publicationYearFrom;
-  if (parsed.publicationYearTo !== null) updates.publicationYearTo = parsed.publicationYearTo;
-  if (/\b(?:any (?:publication )?(?:year|date)|no date (?:limit|restriction))s?\b/i.test(value)) {
+  const requestedDate = dateRequest(value, currentYear);
+  if (requestedDate) {
+    // Conversational replacement may clear an obsolete opposite bound. Form
+    // patches keep their established partial-update behavior by default.
+    if (replaceDateBounds || parsed.publicationYearFrom !== null) updates.publicationYearFrom = parsed.publicationYearFrom;
+    if (replaceDateBounds || parsed.publicationYearTo !== null) updates.publicationYearTo = parsed.publicationYearTo;
+  }
+  if (CLEAR_DATE_RE.test(value)) {
     updates.publicationYearFrom = null;
     updates.publicationYearTo = null;
   }
   if (/\bpeer[- ]reviewed\b/i.test(value)) updates.peerReviewed = parsed.peerReviewed;
+  if (CLEAR_PEER_REVIEW_RE.test(value)) updates.peerReviewed = false;
   if (parsed.requestedSourceCount !== null) updates.requestedSourceCount = parsed.requestedSourceCount;
   return updates;
 }
@@ -99,6 +107,9 @@ export function stripSourceRequirementText(text) {
   const date = dateRequest(value, new Date().getFullYear());
   if (date) value = value.replace(date.match, " ");
   return value
+    .replace(CLEAR_DATE_RE, " ")
+    .replace(CLEAR_PEER_REVIEW_RE, " ")
+    .replace(/\b(?:not|no|without)\s+(?:necessarily\s+)?peer[- ]reviewed(?:\s+(?:sources?|articles?|studies|papers?))?\b/gi, " ")
     .replace(SOURCE_COUNT_RE, " ")
     .replace(/\b(?:peer[- ]reviewed|scholarly|academic)\s+(?:journal\s+)?(?:sources?|articles?|studies|papers?|references?)\b/gi, " ")
     .replace(/\bpeer[- ]reviewed\b/gi, " ")

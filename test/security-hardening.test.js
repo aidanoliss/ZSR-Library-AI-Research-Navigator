@@ -380,3 +380,29 @@ test("feedback and handoff write routes enforce independent endpoint limits", as
     resetRateLimits();
   }
 });
+
+test("the reported guided question executes source discovery on native and Express, streamed and buffered", async () => {
+  const originalFetch = globalThis.fetch;
+  const calls = [];
+  globalThis.fetch = async (url) => { calls.push(String(url)); return { ok:true, json:async()=>({docs:[],message:{items:[]}}) }; };
+  try {
+    for (const serverKind of ['native','express']) for (const path of ['/api/chat','/api/chat/stream']) {
+      calls.length=0;resetRateLimits();
+      const body={mode:'scholarly',responseStyle:'plan',plannerContext:'What time period should the search prioritize?: Last 5 years\nWhat source types should ZSR scan first?: Peer-reviewed articles\nHow would you like to narrow your topic?: Compare two approaches',messages:[{role:'user',content:'do vaccines cause autism'}]};
+      let res;
+      if(serverKind==='native')res=await request(path,{method:'POST',body:JSON.stringify(body)});
+      else {
+        const req=new MockRequest({method:'POST'});req.body=body;res=new MockResponse(req);
+        res.status=code=>{res.statusCode=code;return res;};res.json=value=>{res.end(JSON.stringify(value));return res;};
+        const route=app._router.stack.find(layer=>layer.route?.path===path&&layer.route.methods.post);await route.route.stack[0].handle(req,res);
+      }
+      const payload=path.endsWith('/stream')?res.text().trim().split('\n').map(JSON.parse).find(event=>event.type==='done'):JSON.parse(res.text());
+      assert.equal(res.statusCode,200,`${serverKind}${path}`);
+      assert.ok(calls.length>0,'must contact a discovery provider before returning');
+      assert.ok(payload.sourceDiscovery.lanes.library.attempts.length>0,'must record actual lookup attempts');
+      assert.equal(payload.researchSpec.sourceRequirements.publicationYearFrom,new Date().getFullYear()-4);
+      assert.equal(payload.researchSpec.facets.timePeriod,'');
+      assert.equal(payload.researchSpec.comparison,null,'a generic planner choice cannot invent comparison groups');
+    }
+  } finally {globalThis.fetch=originalFetch;resetRateLimits();}
+});

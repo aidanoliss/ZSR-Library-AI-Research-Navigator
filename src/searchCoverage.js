@@ -1,7 +1,7 @@
 import { resultDatabaseRecommendations } from './resultDiscovery.js';
 const complete = new Set(['success', 'empty']);
-const failed = new Set(['error', 'timeout', 'rate_limited', 'cancelled', 'unavailable', 'partial']);
-const statusLabels = { success: 'Search completed', empty: 'Search completed · no eligible records', error: 'Provider error', timeout: 'Timed out', rate_limited: 'Rate limited', cancelled: 'Cancelled', unavailable: 'Unavailable', partial: 'Incomplete', disabled: 'Not configured / disabled', unsupported: 'Unsupported search', not_requested: 'Not searched', unknown: 'Execution not recorded' };
+const failed = new Set(['error', 'timeout', 'rate_limited', 'cancelled', 'unavailable', 'partial', 'not_confirmed']);
+const statusLabels = { success: 'Search completed', empty: 'Search completed · no eligible records', error: 'Provider error', timeout: 'Timed out', rate_limited: 'Rate limited', cancelled: 'Cancelled', unavailable: 'Unavailable', partial: 'Incomplete', disabled: 'Not configured / disabled', unsupported: 'Unsupported search', not_requested: 'Not searched', not_confirmed: 'Search completion not confirmed', unknown: 'Execution not recorded' };
 export function searchCoverage(discovery, plan = {}) {
   const searched = [], unavailable = [], notSearched = [];
   for (const [laneId, lane] of Object.entries(discovery?.lanes || {})) {

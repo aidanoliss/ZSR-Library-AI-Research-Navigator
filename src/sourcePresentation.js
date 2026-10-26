@@ -1,5 +1,7 @@
 /** Explain a search outcome without turning a provider failure into a literature claim. */
 export const SOURCE_OUTCOME_MESSAGES = {
+  not_confirmed: "The connection ended before Navigator could confirm a completed source search. Retry the same search.",
+  not_requested: "No source search was run for this response. Start a source search to check the available records.",
   partial: "Some providers could not finish. Another attempt may find more sources.",
   disabled: "Search is not enabled for this collection here.",
   unconfigured: "Search is not connected for this collection here.",
@@ -14,7 +16,7 @@ export const SOURCE_OUTCOME_MESSAGES = {
   empty: "No leads passed the current topic and assignment checks.",
 };
 
-export const RETRY_SOURCE_OUTCOMES = new Set(["partial", "rate_limited", "timeout", "error", "unavailable", "cancelled"]);
+export const RETRY_SOURCE_OUTCOMES = new Set(["partial", "rate_limited", "timeout", "error", "unavailable", "cancelled", "not_confirmed", "not_requested"]);
 
 export function sourceLaneOutcome(status = {}) {
   // Older saved sessions used reason rather than outcome for configuration failures.
@@ -32,11 +34,12 @@ export function emptySourcePresentation(lanes = []) {
         : SOURCE_OUTCOME_MESSAGES[outcome] || "No completed search was reported for this collection.";
     return { label: lane.label, outcome, message };
   });
+  const notSearched = requested.length > 0 && requested.every(lane => lane.outcome === "not_requested");
   const completed = requested.some((lane) => ["empty", "success", "partial"].includes(lane.outcome));
   const retryable = requested.some((lane) => RETRY_SOURCE_OUTCOMES.has(lane.outcome));
   return {
-    title: completed ? "No matching sources yet" : retryable ? "Source search couldn’t finish" : "Source search isn’t available here",
-    explanation: completed
+    title: notSearched ? "Sources haven’t been searched yet" : completed ? "No matching sources yet" : retryable ? "Source search couldn’t finish" : "Source search isn’t available here",
+    explanation: notSearched ? "This response prepared research guidance without running source discovery. Run the source search before interpreting this as no results." : completed
       ? "We don’t have sources to show for this search. Try different terms or continue in another search tool."
       : retryable ? "A search service did not respond successfully. Your topic may be fine; retry before changing it."
         : "The selected collection cannot be searched here right now. You can still search directly using the links below.",

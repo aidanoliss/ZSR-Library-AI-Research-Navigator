@@ -1,3 +1,4 @@
+import { normalizePlannerContext } from "./plannerContext.js";
 import { DEFAULT_MODE_ID } from "./libraryLinks.js";
 import { DEFAULT_SUBJECT_FOCUS_ID, SUBJECT_FOCUSES, resolveSubjectFocus } from "./subjectFocus.js";
 import { RESOURCE_CONFIG_VERSION, SOURCE_MODE_CONTRACTS, getSourceModeContract } from "./resourceCapabilities.js";
@@ -234,7 +235,16 @@ function populationFacet(text) {
   const firstYear = text.match(/\bfirst[- ]year (?:college |university |undergraduate )?students?\b/i)?.[0];
   if (firstYear) return firstYear.replace(/first year/i, "first-year").toLowerCase();
   if (/\bundergraduates?\b/i.test(text)) return "undergraduates";
-  return CANONICAL_CONCEPTS.find((concept) => concept.facet === "population" && concept.pattern.test(text))?.preferredTerm || (/\bwomen\b/i.test(text) ? "women" : "");
+  return CANONICAL_CONCEPTS.find((concept) => concept.facet === "population" && concept.pattern.test(text))?.preferredTerm || (/\badults?\b/i.test(text) ? "adults" : /\bwomen\b/i.test(text) ? "women" : "");
+}
+
+/** Compact replies to scope prompts are safe only when the entire reply is a
+ * recognized population or place. Longer standalone subjects still reset. */
+export function compactScopeRefinement(text) {
+  const value = clean(text).replace(/[?.!]+$/, "").replace(/^(?:only\s+)?(?:in|among)\s+/i, "");
+  const population = /^(?:children|child|pediatric|adolescents?|teenagers?|teens?|youth|young people|undergraduates?|college students?|university students?|first[- ]year (?:college |university |undergraduate )?students?|older adults?|elderly|aging population|adults?|women)$/i.test(value) ? populationFacet(value) : "";
+  const geography = geographyFacet(value);
+  return { population, geography: geography && (normalizedFacetKey(geography) === normalizedFacetKey(value) || /^(?:US|U\.S\.|UK)$/i.test(value)) ? geography : "" };
 }
 
 function timeFacet(text) {
@@ -271,7 +281,7 @@ const METHOD_PATTERNS = [
   ["survey", /\bsurveys?\b(?!\s+data)/gi, ["survey*"]],
 ];
 
-function extractMethodRequirements(text) {
+export function extractMethodRequirements(text) {
   const value = String(text || "");
   const matches = METHOD_PATTERNS.flatMap(([label, pattern]) => [...value.matchAll(new RegExp(pattern.source, "gi"))].map((match) => ({ label, match })))
     // A method can itself be the research subject, rather than a source filter.
@@ -693,6 +703,30 @@ export function researchComparison(topic, concepts = []) {
   return { conceptIds: [left.id, right.id], terms: [left.preferredTerm, right.preferredTerm] };
 }
 
+function plannerResearchScope(context) {
+  const fields = {};
+  for (const line of String(context || "").split(/\r?\n/)) {
+    const match = line.match(/^(Population|Geography|Comparison|Study period|Research scope):\s*(.+)$/i);
+    if (match) fields[match[1].toLowerCase()] = bounded(match[2], 300);
+  }
+  return fields;
+}
+
+function requirementsWithPlanner(topic, assignmentContext, plannerContext) {
+  const initial = extractSourceRequirements(`${topic} ${assignmentContext}`);
+  // Each planner answer is a distinct control. Joining labels to the question
+  // destroys date-only semantics and can turn menu text into topical scope.
+  return normalizeSourceRequirements(String(plannerContext || "").split(/\r?\n/)
+    .reduce((requirements, line) => ({ ...requirements, ...sourceRequirementUpdates(line, { replaceDateBounds: true }) }), initial));
+}
+
+function retainedComparison(value, concepts) {
+  if (!value || !Array.isArray(value.conceptIds) || value.conceptIds.length !== 2) return null;
+  const sides = value.conceptIds.map((id) => concepts.find((concept) => concept.id === id));
+  if (sides.some((side) => !side) || sides[0].id === sides[1].id) return null;
+  return { conceptIds: sides.map((side) => side.id), terms: sides.map((side) => side.preferredTerm) };
+}
+
 export function buildResearchSpec(
   query,
   {
@@ -703,12 +737,14 @@ export function buildResearchSpec(
   } = {}
 ) {
   const topic = clean(query);
-  const context = clean(`${plannerContext} ${assignmentContext}`);
+  const normalizedPlanner = normalizePlannerContext(plannerContext);
+  const scope = plannerResearchScope(normalizedPlanner);
+  const context = clean(`${normalizedPlanner} ${assignmentContext}`);
   // The explicit source-mode control is authoritative. Only an answer from the
   // guided planner may refine it; assignment-template defaults such as
   // "background sources" must not silently change a student's selected mode.
   const inferredMode = contextMode(
-    clean(plannerContext),
+    clean(normalizedPlanner),
     inferExplicitModeRequest(topic, modeId || DEFAULT_MODE_ID)
   );
   const { topicText: topicalText, exclusions } = topicalRequest(topic);
@@ -716,7 +752,7 @@ export function buildResearchSpec(
   const focusId = focus.selectedId && focus.selectedId !== "auto" ? focus.selectedId : focus.id;
   const disciplines = contextDisciplines(`${topicalText} ${extractMethodRequirements(context).topicText}`, focusId);
   const knownItem = extractKnownItemRequest(topic);
-  const concepts = knownItem
+  let concepts = knownItem
     ? [
         {
           id: "known-item-title",
@@ -734,6 +770,11 @@ export function buildResearchSpec(
         }] : []),
       ]
     : extractConcepts(topic);
+  if (!knownItem) concepts = uniqBy([
+    ...concepts,
+    ...extractConcepts(scope["research scope"] || ""),
+    ...extractConcepts(scope.comparison || ""),
+  ], (concept) => concept.preferredTerm.toLowerCase());
   const sourceContract = getSourceModeContract(inferredMode);
   const { include, exclude } = extractMethodRequirements(`${topic} ${context}`);
   // An excluded place or population ("not in Europe") is never a facet.
@@ -741,10 +782,10 @@ export function buildResearchSpec(
   const facets = {
     // When multiple populations were parsed as concepts, the comparison
     // compiler owns their grouping; a first-population facet would undo OR.
-    population: concepts.filter((concept) => CANONICAL_CONCEPTS.some((entry) => entry.id === concept.id && entry.facet === "population")).length > 1
-      ? "" : populationFacet(facetText),
-    geography: geographyFacet(facetText),
-    timePeriod: timeFacet(stripSourceRequirementText(facetText)),
+    population: scope.population || (concepts.filter((concept) => CANONICAL_CONCEPTS.some((entry) => entry.id === concept.id && entry.facet === "population")).length > 1
+      ? "" : populationFacet(facetText)),
+    geography: scope.geography || geographyFacet(facetText),
+    timePeriod: scope["study period"] || timeFacet(stripSourceRequirementText(facetText)),
     method: include.join("; "),
     documentType: sourceContract.label,
   };
@@ -753,12 +794,12 @@ export function buildResearchSpec(
     mode: inferredMode,
     disciplines: disciplines.length ? disciplines : [focusId || "interdisciplinary"],
     concepts,
-    comparison: researchComparison(topic, concepts),
+    comparison: scope.comparison ? researchComparison(`Compare ${scope.comparison}`, concepts) : researchComparison(topic, concepts),
     knownItem,
     searchIntent: searchIntentFor(topic, concepts, facets, knownItem),
     methodRequirements: { include, exclude },
     excludedTerms: knownItem ? [] : exclusions,
-    sourceRequirements: extractSourceRequirements(`${topic} ${context}`),
+    sourceRequirements: requirementsWithPlanner(topic, assignmentContext, normalizedPlanner),
     facets,
     sourceContract: {
       id: sourceContract.id,
@@ -861,7 +902,7 @@ export function mergeSuppliedResearchSpec(baseSpec, supplied) {
     mode,
     disciplines: disciplines.length ? disciplines : baseSpec.disciplines,
     concepts: concepts.length ? concepts : baseSpec.concepts,
-    comparison: researchComparison(topic, concepts.length ? concepts : baseSpec.concepts),
+    comparison: retainedComparison(supplied.comparison, concepts.length ? concepts : baseSpec.concepts) || researchComparison(topic, concepts.length ? concepts : baseSpec.concepts),
     knownItem,
     searchIntent: searchIntentFor(topic, concepts.length ? concepts : baseSpec.concepts, facets, knownItem),
     methodRequirements,
@@ -1046,30 +1087,83 @@ export function researchSpecFromRequest(query, request = {}) {
   });
 }
 
-/** A dependent turn retains the reviewed interpretation until it changes a field. */
+function latestRefinementText(value) {
+  return String(value || "").trim()
+    .replace(/^(?:(?:no|yes|okay|ok|actually|instead)[,:;]\s*)+/i, "")
+    .replace(/^(?:(?:can|could|would) you\s+|please\s+|help me\s+)/i, "");
+}
+
+function normalizedFacetKey(value) {
+  return clean(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/** A dependent turn retains the reviewed interpretation and updates only fields
+ * the student actually states. The original topic never becomes command text. */
 export function continueResearchSpec(baseSpec, previousSpec, latestText = "", contextText = "") {
   if (!previousSpec || typeof previousSpec !== "object" || Array.isArray(previousSpec)) return baseSpec;
   const priorBase = buildResearchSpec(previousSpec.topic || baseSpec.topic, { modeId: baseSpec.mode });
   const previous = mergeSuppliedResearchSpec(priorBase, previousSpec);
-  const refinement = String(latestText).match(/\b(?:focus(?:ing)? on|narrow(?: it| this| the topic)? to|add(?:ing)?|also include|specifically|what about|how about)\s+(.+)/i)?.[1];
-  const refinedConcepts = refinement ? extractConcepts(refinement) : [];
-  // "Now leave out Europe" in a follow-up adds an exclusion to the retained brief.
-  const addedExclusions = extractTopicExclusions(`, ${latestText}`).terms;
+  const latest = latestRefinementText(latestText);
+  const normalizedContext = normalizePlannerContext(contextText);
+  const contextScope = { ...plannerResearchScope(normalizedContext), ...plannerResearchScope(latest) };
+  const compactScope = compactScopeRefinement(latest);
+  const explicitField = latest.match(/^(?:change|set|switch|update|limit|restrict|narrow|focus)(?:\s+(?:the|my|this))?\s+(population|geography|location|country|region|study period|historical period|method|study design|comparison)\s+(?:to|as|on)\s+(.+)/i);
+  const feedbackCorrection = latest.match(/^(?:these|the)\s+(?:sources?|results?|studies)\b.+?\bbut\s+(?:I|we)\s+(?:need|want)\s+(.+)/i)?.[1];
+  const refinement = explicitField?.[2] || feedbackCorrection || latest.match(/^(?:focus(?:ing)?(?: it| this| the topic)? on|narrow(?: it| this| the topic)? to|add(?:ing)?|also include|specifically(?: at)?|what about|how about|use)\s+(.+)/i)?.[1] || "";
+  const comparisonCandidate = contextScope.comparison ? `Compare ${contextScope.comparison}` : /^(?:compare|contrast)\b/i.test(latest) ? latest : explicitField?.[1].toLowerCase() === "comparison" ? `Compare ${refinement}` : "";
+  const comparisonText = comparisonCandidate && researchComparison(comparisonCandidate, extractConcepts(comparisonCandidate)) ? comparisonCandidate : "";
+  const positiveRefinement = refinement.replace(/\s+instead of\s+.+$/i, "");
+  const isolated = buildResearchSpec(positiveRefinement || latest, { modeId: baseSpec.mode });
+  const field = explicitField?.[1].toLowerCase();
+  const requestedPopulation = contextScope.population || compactScope.population || (field === "population" ? bounded(positiveRefinement, 120) : positiveRefinement ? isolated.facets.population : "");
+  const requestedGeography = contextScope.geography || compactScope.geography || (["geography", "location", "country", "region"].includes(field) ? bounded(positiveRefinement, 120) : positiveRefinement ? isolated.facets.geography : "");
+  const requestedPeriod = contextScope["study period"] || (["study period", "historical period"].includes(field) ? bounded(positiveRefinement, 120) : positiveRefinement ? isolated.facets.timePeriod : "");
+  const methods = extractMethodRequirements(latest);
+  const oldMethods = previous.methodRequirements || { include: [], exclude: [] };
+  const clearMethods = /\b(?:any (?:study )?(?:design|method)|no (?:study )?(?:design|method) (?:requirement|filter)|remove (?:the )?(?:study )?(?:design|method) (?:requirement|filter))\b/i.test(latest);
+  const include = clearMethods ? [] : methods.include.length ? methods.include : oldMethods.include.filter((method) => !methods.exclude.includes(method));
+  const exclude = clearMethods ? [] : [...new Set([...oldMethods.exclude.filter((method) => !methods.include.includes(method)), ...methods.exclude])];
+  const exclusionText = stripSourceRequirementText(latest)
+    .replace(/\b(?:no (?:study )?(?:design|method) (?:requirement|filter)|remove (?:the )?(?:study )?(?:design|method) (?:requirement|filter))\b/gi, " ")
+    .replace(/\b(?:no (?:population|geographic(?:al)?) (?:limit|restriction)|remove (?:the )?(?:population|geography|location|country) (?:limit|restriction))\b/gi, " ");
+  const addedExclusions = extractTopicExclusions(`, ${exclusionText}`).terms;
   const excluded = new Set(addedExclusions.map((term) => term.toLowerCase()));
+  const facets = {
+    ...previous.facets,
+    ...(requestedPopulation ? { population: requestedPopulation } : {}),
+    ...(requestedGeography ? { geography: requestedGeography } : {}),
+    ...(requestedPeriod ? { timePeriod: requestedPeriod } : {}),
+    method: include.join("; "),
+    documentType: baseSpec.sourceContract.label,
+  };
+  for (const [name, pattern] of [["population", /\b(?:any population|no population (?:limit|restriction)|remove (?:the )?population (?:limit|restriction))\b/i], ["geography", /\b(?:any (?:country|place|geography)|no geographic(?:al)? (?:limit|restriction)|remove (?:the )?(?:geography|location|country) (?:limit|restriction))\b/i]]) {
+    if (pattern.test(latest)) facets[name] = "";
+  }
+  const populationChanged = facets.population !== previous.facets.population;
+  const geographyChanged = facets.geography !== previous.facets.geography;
+  const oldFacetConcept = (concept) => (populationChanged && (CANONICAL_CONCEPTS.some((entry) => entry.id === concept.id && entry.facet === "population") || normalizedFacetKey(concept.preferredTerm) === normalizedFacetKey(previous.facets.population)))
+    || (geographyChanged && normalizedFacetKey(concept.preferredTerm) === normalizedFacetKey(previous.facets.geography));
+  const additions = [...(refinement && !explicitField ? extractConcepts(refinement.replace(/\s+instead of\s+.+$/i, "")) : []), ...extractConcepts(contextScope["research scope"] || ""), ...extractConcepts(comparisonText)];
+  const concepts = uniqBy([...previous.concepts.filter((concept) => !oldFacetConcept(concept)), ...additions], (concept) => concept.preferredTerm.toLowerCase())
+    .filter((concept) => !excluded.has(concept.preferredTerm.toLowerCase()));
+  const comparison = comparisonText ? researchComparison(comparisonText, concepts) : retainedComparison(previous.comparison, concepts);
   const spec = {
     ...previous,
     mode: baseSpec.mode,
     sourceContract: baseSpec.sourceContract,
-    concepts: uniqBy([...previous.concepts, ...refinedConcepts], (concept) => concept.preferredTerm.toLowerCase())
-      .filter((concept) => !excluded.has(concept.preferredTerm.toLowerCase())),
+    concepts,
+    comparison,
+    facets,
+    methodRequirements: { include, exclude },
     excludedTerms: normalizeExcludedTerms([...(previous.excludedTerms || []), ...addedExclusions]),
     sourceRequirements: normalizeSourceRequirements({
       ...previous.sourceRequirements,
-      ...sourceRequirementUpdates(contextText),
-      ...sourceRequirementUpdates(latestText),
+      ...String(normalizedContext).split(/\r?\n/).reduce((updates, line) => ({ ...updates, ...sourceRequirementUpdates(line) }), {}),
+      ...sourceRequirementUpdates(latest, { replaceDateBounds: true }),
     }),
     correctedByStudent: Boolean(previousSpec.correctedByStudent),
   };
+  spec.searchIntent = searchIntentFor(spec.topic, concepts, facets, spec.knownItem);
   delete spec.planHash;
   return { ...spec, planHash: deterministicHash(spec) };
 }
