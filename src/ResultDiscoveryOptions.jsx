@@ -37,8 +37,8 @@ export default function ResultDiscoveryOptions({ id, spec, plan, onTrackSearch }
       <div className="result-section-heading"><h3>Search terms to try</h3><a href="https://guides.zsr.wfu.edu/c.php?g=1072064&p=7805742" target="_blank" rel="noopener noreferrer">ZSR search guide ↗</a></div>
       <p>Paste this into a database below. <strong>AND</strong> joins ideas, <strong>OR</strong> adds alternatives, <strong>NOT</strong> leaves a topic out.</p>
       {vocabulary.length > 0 && <details className="result-vocabulary"><summary>Explore synonyms &amp; related terms</summary><p>Suggestions from your brief and Navigator’s vocabulary list. <strong>These are not verified database subject headings or exact equivalents.</strong> Keep only terms that fit your question. An asterisk (*) searches word endings in databases that support it.</p><dl>{vocabulary.map(({ term, alternatives }) => <div key={term}><dt>{term}</dt><dd>{alternatives.join(" · ")}</dd></div>)}</dl></details>}
-      <ul className="result-query-options">{options.slice(0, 1).map(queryCard)}</ul>
-      {options.length > 1 && <details className="result-more-queries"><summary>More ways to search ({options.length - 1})</summary><ul className="result-query-options">{options.slice(1).map((option, index) => queryCard(option, index + 1))}</ul></details>}
+      <ul className="result-query-options">{options.slice(0, 2).map(queryCard)}</ul>
+      {options.length > 2 && <details className="result-more-queries"><summary>More ways to search ({options.length - 2})</summary><ul className="result-query-options">{options.slice(2).map((option, index) => queryCard(option, index + 2))}</ul></details>}
       {filters.length > 0 && <p className="result-query-limit-note"><strong>Also set in the database:</strong> {filters.join(" · ")}.</p>}
     </section>}
     {resources.length > 0 && <section id={`${id}-databases`} className="result-databases" tabIndex={-1} aria-label="Recommended databases">
