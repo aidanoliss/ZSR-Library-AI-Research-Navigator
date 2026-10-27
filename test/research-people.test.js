@@ -2,15 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {buildResearchSpec} from '../config/researchSpec.js';
-import {recommendResearchPeople, WFU_FACULTY_PILOT, validFacultyPilotRecord, researchPeopleMatchText} from '../config/researchPeople.js';
+import {recommendResearchPeople, WFU_FACULTY_PILOT, validFacultyPilotRecord, researchPeopleMatchText, facultyContactAction} from '../config/researchPeople.js';
 import {WFU_LIBRARIAN_DIRECTORY} from '../config/librarianDirectory.js';
-const asOf=new Date('2026-10-26T12:00:00Z');
+const asOf=new Date('2026-10-27T12:00:00Z');
 const recommend=(topic,options={})=>recommendResearchPeople(buildResearchSpec(topic),{asOf,...options});
 
 test('curated faculty pilot has official evidence, review dates, and no availability or approval claims',()=>{
- assert.equal(WFU_FACULTY_PILOT.length,4);
+ assert.equal(WFU_FACULTY_PILOT.length,5);
  assert.ok(WFU_FACULTY_PILOT.every(record=>validFacultyPilotRecord(record,{asOf})));
- assert.ok(WFU_FACULTY_PILOT.every(record=>!record.email&&!record.available&&!record.approved));
+ assert.ok(WFU_FACULTY_PILOT.every(record=>record.email.endsWith('@wfu.edu')&&!record.available&&!record.approved));
  for(const record of WFU_FACULTY_PILOT) assert.equal(record.sourceUrl,record.profileUrl);
 });
 
@@ -20,7 +20,7 @@ test('specific topic matches are tied to the verified research description',()=>
 });
 
 test('shared discipline or a neighboring topic never invents a specialization',()=>{
- for(const topic of ['do vaccines cause autism','economic sanctions and their effectiveness','sanctions imposed on Russia','urban tree canopy and neighborhood heat','psychology','biology','politics','Japanese ceramics','supply chain optimization']) assert.deepEqual(recommend(topic).faculty,[],topic);
+ for(const topic of ['do vaccines cause autism','urban tree canopy and neighborhood heat','psychology','biology','politics','Japanese ceramics','supply chain optimization']) assert.deepEqual(recommend(topic).faculty,[],topic);
 });
 
 test('exclusions and optional concepts do not become faculty matching evidence',()=>{
@@ -42,7 +42,7 @@ test('another institution receives no Wake faculty, librarian, or directory fall
 
 test('expired, future, retired, unreviewed, and unsafe profile records are not routable',()=>{
  const original=WFU_FACULTY_PILOT.find(p=>p.id==='adam-lenton');
- const invalid=[{nextReviewDate:'2026-10-25'},{lastCheckedDate:'2026-10-27'},{nextReviewDate:'2030-01-01'},{status:'retired'},{reviewStatus:'pending-review'},{profileUrl:'javascript:alert(1)'},{profileUrl:'https://wfu.edu.evil.example/person'},{sourceUrl:'https://evil.example/wfu.edu'},{profileUrl:'https://user:pass@politics.wfu.edu/person'},{sourceUrl:'https://politics.wfu.edu/profile?redirect=https://evil.example'},{lastCheckedDate:'2026-02-31'},{matchGroups:[['.*']]}];
+ const invalid=[{nextReviewDate:'2026-10-25'},{lastCheckedDate:'2026-10-28'},{nextReviewDate:'2030-01-01'},{status:'retired'},{reviewStatus:'pending-review'},{profileUrl:'javascript:alert(1)'},{profileUrl:'https://wfu.edu.evil.example/person'},{sourceUrl:'https://evil.example/wfu.edu'},{profileUrl:'https://user:pass@politics.wfu.edu/person'},{sourceUrl:'https://politics.wfu.edu/profile?redirect=https://evil.example'},{lastCheckedDate:'2026-02-31'},{matchGroups:[['.*']]}];
  for(const patch of invalid){const record={...original,...patch};assert.equal(validFacultyPilotRecord(record,{asOf}),false,JSON.stringify(patch));assert.deepEqual(recommend('Russian nationalism',{facultyRecords:[record]}).faculty,[]);}
 });
 
@@ -74,4 +74,28 @@ test('a valid public profile cannot carry an untrusted consultation destination'
  const librarianDirectory=WFU_LIBRARIAN_DIRECTORY.map(record=>record.kind==='person'?{...record,appointmentUrl:'https://untrusted.example/appointments'}:record);
  assert.equal(recommend('adolescent parenting',{librarianDirectory}).librarian,null);
  assert.equal(recommend('Russian nationalism',{librarianDirectory}).librarian,null);
+});
+
+
+test('sanctions questions identify documented historical expertise without inventing comparative-regime specialization',()=>{
+ for(const topic of ['economic sanctions and their effectiveness','sanctions imposed on Russia','Sanctions and their impact on authoritarian regimes vs democracies']) {
+  const person=recommend(topic).faculty.find(p=>p.id==='ben-coates');assert.ok(person,topic);assert.match(person.expertise.join(' '),/sanctions history/i);assert.match(person.scopeNote,/Historical/);
+ }
+ for(const topic of ['academic sanctions and democracy','disciplinary sanctions in authoritarian schools','honor code sanctions']) assert.equal(recommend(topic).faculty.some(p=>p.id==='ben-coates'),false,topic);
+});
+
+test('faculty contact actions use verified university addresses and never attach the search or transcript',()=>{
+ for(const person of WFU_FACULTY_PILOT) {
+  const action=facultyContactAction(person);assert.equal(action.kind,'email');assert.equal(action.href,`mailto:${person.email}`);assert.ok(!action.href.includes('?'));assert.ok(!action.href.includes('body='));
+ }
+ const person=recommend('economic sanctions and confidential assignment notes').faculty.find(p=>p.id==='ben-coates');assert.equal(person.contact.href,'mailto:coatesba@wfu.edu');
+});
+
+test('missing or unsafe contact data falls back to an official profile rather than an invented email',()=>{
+ const person=WFU_FACULTY_PILOT[0];
+ for(const email of ['', 'person@external.example', 'person@wfu.edu?bcc=other@example.com', 'person%0ABcc@wfu.edu', 'person\n@wfu.edu']) {
+  const action=facultyContactAction({...person,email});assert.equal(action.kind,'profile');assert.equal(action.href,person.profileUrl);
+ }
+ assert.equal(facultyContactAction({...person,contactSourceUrl:'https://external.example'}).kind,'profile');
+ assert.equal(facultyContactAction({...person,profileUrl:'javascript:alert(1)'}),null);
 });

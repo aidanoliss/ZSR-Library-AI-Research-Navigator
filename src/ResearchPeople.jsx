@@ -11,35 +11,28 @@ export default function ResearchPeople({ researchSpec, institutionId = WFU_INSTI
   const [open, setOpen] = useState(false);
   const id = useId();
   const people = recommendResearchPeople(researchSpec, { institutionId });
-  const librarian = people.librarian;
-  const wake = people.institutionId === WFU_INSTITUTION_PROFILE.id;
-  return <section className="research-people" aria-label="People who can help">
+  if (people.institutionId !== WFU_INSTITUTION_PROFILE.id) return null;
+  return <section className="research-people" aria-label="Faculty for your topic">
     <div className="research-people-heading">
-      <div><h3>People who can help</h3><p>Get help with your search or explore related faculty expertise.</p></div>
-      <button type="button" aria-expanded={open} aria-controls={`${id}-people`} onClick={() => setOpen(!open)}>{open ? "Hide people" : wake ? "Find someone at Wake" : "Find research help"}<span aria-hidden="true">{open ? "−" : "+"}</span></button>
+      <div><h3>Faculty for your topic</h3><p>Connect with Wake faculty whose research relates to your question.</p></div>
+      <button type="button" aria-expanded={open} aria-controls={`${id}-people`} onClick={() => setOpen(!open)}>{open ? "Hide faculty" : people.faculty.length ? "View faculty (" + people.faculty.length + ")" : "Explore faculty"}<span aria-hidden="true">{open ? "−" : "+"}</span></button>
     </div>
     {open && <div id={`${id}-people`} className="research-people-content">
-      <div className="research-people-grid">
-        <section className="research-person-group" aria-label="Librarian research support">
-          <h4>Research librarian</h4><p className="research-person-purpose">For finding sources, choosing databases, and improving a search.</p>
-          {librarian ? <article className="research-person-card">
-            <h5>{librarian.personName || librarian.name}</h5><p className="research-person-unit">{librarian.title}</p>
-            <p>{librarian.reason}</p>
-            <div className="research-person-links"><a href={librarian.profileUrl} target="_blank" rel="noopener noreferrer">ZSR profile<span aria-hidden="true"> ↗</span></a><a href={librarian.appointmentUrl} target="_blank" rel="noopener noreferrer">Research consultation<span aria-hidden="true"> ↗</span></a></div>
-            <small>Directory checked {checkedDate(librarian.lastReviewedDate || librarian.lastCheckedDate)} · <a href={librarian.sourceUrl} target="_blank" rel="noopener noreferrer">Subject coverage</a></small>
-          </article> : <div className="research-person-empty"><strong>Start with library research help</strong><p>A named subject match isn’t confirmed in this pilot directory.</p>{people.fallback?.href && <a href={people.fallback.href} target="_blank" rel="noopener noreferrer">{people.fallback.label}</a>}</div>}
-        </section>
-        <section className="research-person-group" aria-label="Faculty with related expertise">
-          <h4>Faculty with related expertise <span>Pilot</span></h4><p className="research-person-purpose">For exploring research interests and possible academic connections.</p>
-          {people.faculty.length ? people.faculty.map(person => <article className="research-person-card" key={person.id}>
-            <h5>{person.name}</h5><p className="research-person-unit">{person.department}</p>
-            <p><strong>Why this match:</strong> {person.reason || person.evidenceSummary}</p>
-            <div className="research-person-links"><a href={person.profileUrl} target="_blank" rel="noopener noreferrer">Faculty profile<span aria-hidden="true"> ↗</span></a>{person.sourceUrl !== person.profileUrl && <a href={person.sourceUrl} target="_blank" rel="noopener noreferrer">Research interests<span aria-hidden="true"> ↗</span></a>}</div>
-            <small>Profile checked {checkedDate(person.lastCheckedDate)}</small>
-          </article>) : <div className="research-person-empty"><strong>No verified faculty match yet</strong><p>This small pilot covers selected research interests. A missing match doesn’t mean there isn’t someone at {wake ? "Wake" : "your institution"} studying your topic.</p>{wake && <a href="https://www.wfu.edu/faculty-staff/" target="_blank" rel="noopener noreferrer">Browse Wake faculty directories<span aria-hidden="true"> ↗</span></a>}</div>}
-        </section>
-      </div>
-      <p className="research-people-note">Matches use public subject assignments and research profiles. Faculty availability has not been confirmed. Review a profile before contacting someone.</p>
+      {people.faculty.length ? <>
+        <div className="research-faculty-grid">{people.faculty.map(person => <article className="research-faculty-card" key={person.id} aria-labelledby={`${id}-${person.id}`}>
+          <div className="research-faculty-identity"><span>{person.department}</span><h4 id={`${id}-${person.id}`}>{person.name}</h4></div>
+          <ul className="research-faculty-expertise" aria-label="Research expertise">{person.expertise.map(term => <li key={term}>{term}</li>)}</ul>
+          {person.scopeNote && <p className="research-faculty-scope">{person.scopeNote}</p>}
+          <div className="research-faculty-actions">
+            {person.contact && <a className="faculty-contact-link" href={person.contact.href} aria-label={`Get in touch with ${person.name}`} title={person.contact.hint} {...(person.contact.kind === "profile" ? { target: "_blank", rel: "noopener noreferrer" } : {})}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>Get in touch</a>}
+            <a href={person.profileUrl} target="_blank" rel="noopener noreferrer">View profile<span aria-hidden="true"> ↗</span></a>
+          </div>
+          {person.contact?.kind === "profile" && <small className="research-faculty-contact-hint">Contact details are on the university profile.</small>}
+        </article>)}</div>
+        <div className="research-faculty-footer"><p>{people.faculty.every(person => person.contact?.kind === "email") ? "Get in touch opens an email draft. Nothing is sent automatically." : "Get in touch opens official contact details."}</p>
+          <details><summary>About these matches</summary><p>Suggestions use selected official Wake profiles and may cover part of your question. Review a profile before contacting someone. Navigator does not send messages.</p><ul>{people.faculty.map(person => <li key={person.id}><a href={person.sourceUrl} target="_blank" rel="noopener noreferrer">{person.name}</a> · profile and contact checked {checkedDate(person.lastCheckedDate)}<p>{person.evidenceSummary}</p></li>)}</ul></details>
+        </div>
+      </> : <div className="research-faculty-empty"><strong>No faculty match confirmed for this topic.</strong><p>Explore Wake’s faculty directory for more research interests and contact details.</p><a href="https://www.wfu.edu/faculty-staff/" target="_blank" rel="noopener noreferrer">Browse faculty directories<span aria-hidden="true"> ↗</span></a></div>}
     </div>}
   </section>;
 }

@@ -1,0 +1,11 @@
+# Faculty cards and contact actions — 2026-10-27
+
+Replaced the mixed librarian/faculty panel with Faculty for your topic. Each faculty card shows name, department, listed expertise, View profile, and Get in touch. Verification details live under About these matches. Librarian support remains in the existing toolbar; no librarian card is repeated in this section. A missing faculty match has a short official-directory fallback.
+
+Public university contact details were rechecked for five faculty, including the new Ben Coates sanctions-history record. Source facts and verification methods are in verified-contacts.json and sources.md. Match text describes his historical focus without claiming specialization in comparative regime effectiveness. Academic/disciplinary sanctions are excluded from this match. The faculty list remains curated and incomplete; availability is not verified.
+
+Get in touch uses a verified university mailto address. No search terms, excerpts or conversation text are attached, no message is sent automatically, and no email was sent during verification. Missing or unsafe email metadata falls back to contact details on a verified university profile.
+
+Validation: clean-release QA passed 641 tests, resource audit, 56 strict planner cases (1,232 automated checks), synthetic HTTP fixtures and production build. Twenty-five focused people/directory checks pass, including malformed contact links, header-injection attempts, missing emails, wrong-topic matches, dated records and institution isolation. The final CSS-only selector adjustment was rebuilt and visually checked.
+
+Browser verification used synthetic retrieval fixtures, not real-source accuracy testing. A sanctions topic shows Ben Coates, historical expertise and mailto:coatesba@wfu.edu. The contact button computes to white text with no underline on a black background. Parenting adolescents in refugee camps shows Christy Buchanan and Sarah Lischer with their respective verified mailto links in two 453px cards. Quantum computing hardware shows a short directory fallback with no fabricated expert. Faculty-card-desktop.jpg captures the single-card layout. No mail client was opened and no contacts were messaged.

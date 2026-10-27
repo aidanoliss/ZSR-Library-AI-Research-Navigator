@@ -9,8 +9,8 @@ const reviewed = {
   institutionId: RESEARCH_PEOPLE_INSTITUTION,
   status: "active",
   reviewStatus: "public-source-checked",
-  lastCheckedDate: "2026-10-26",
-  nextReviewDate: "2027-01-24",
+  lastCheckedDate: "2026-10-27",
+  nextReviewDate: "2027-01-25",
 };
 
 export const WFU_FACULTY_PILOT = Object.freeze([
@@ -18,6 +18,8 @@ export const WFU_FACULTY_PILOT = Object.freeze([
     ...reviewed, id: "christy-buchanan", name: "Christy Buchanan", department: "Psychology",
     profileUrl: "https://psychology.wfu.edu/christy-buchanan/",
     sourceUrl: "https://psychology.wfu.edu/christy-buchanan/",
+    email: "buchanan@wfu.edu", contactSourceUrl: "https://psychology.wfu.edu/christy-buchanan/",
+    expertise: ["Adolescent adjustment", "Parenting", "Family relationships"],
     evidenceSummary: "Her profile describes research on adolescent adjustment, family relationships, parenting beliefs, and stereotypes about adolescence.",
     matchGroups: [["adolescence", "adolescent", "adolescents", "teen", "teens", "teenager", "teenagers"], ["parenting", "parent", "parents", "family", "families", "adjustment", "stereotypes", "development"]],
   },
@@ -25,6 +27,8 @@ export const WFU_FACULTY_PILOT = Object.freeze([
     ...reviewed, id: "miles-silman", name: "Miles Silman", department: "Biology",
     profileUrl: "https://biology.wfu.edu/faculty-research/miles-silman/",
     sourceUrl: "https://biology.wfu.edu/faculty-research/miles-silman/",
+    email: "silmanmr@wfu.edu", contactSourceUrl: "https://biology.wfu.edu/faculty-research/miles-silman/",
+    expertise: ["Tropical forest ecology", "Andes & Amazon", "Plant–climate relationships"],
     evidenceSummary: "His profile describes Andean and Amazonian tree communities, tropical forest ecology, and relationships between plants and climate.",
     matchGroups: [["tropical", "amazon", "amazonian", "andes", "andean", "peru", "peruvian", "bolivia", "bolivian"], ["forest", "forests", "tree", "trees", "conservation", "biodiversity", "climate"]],
   },
@@ -32,6 +36,8 @@ export const WFU_FACULTY_PILOT = Object.freeze([
     ...reviewed, id: "sarah-lischer", name: "Sarah Lischer", department: "Politics & International Affairs",
     profileUrl: "https://politics.wfu.edu/faculty-and-staff/sarah-lischer/",
     sourceUrl: "https://politics.wfu.edu/faculty-and-staff/sarah-lischer/",
+    email: "lischesk@wfu.edu", contactSourceUrl: "https://politics.wfu.edu/faculty-and-staff/sarah-lischer/",
+    expertise: ["Refugees & forced migration", "Humanitarian crises", "International conflict"],
     evidenceSummary: "Her profile lists research on refugee crises, forced migration, humanitarian aid, and international conflict.",
     matchGroups: [["refugee", "refugees", "refugee camps", "forced migration", "forced displacement", "humanitarian aid", "humanitarian crises", "humanitarian crisis"]],
   },
@@ -39,10 +45,23 @@ export const WFU_FACULTY_PILOT = Object.freeze([
     ...reviewed, id: "adam-lenton", name: "Adam Lenton", department: "Politics & International Affairs",
     profileUrl: "https://politics.wfu.edu/faculty-and-staff/adam-lenton/",
     sourceUrl: "https://politics.wfu.edu/faculty-and-staff/adam-lenton/",
+    email: "lentona@wfu.edu", contactSourceUrl: "https://politics.wfu.edu/faculty-and-staff/adam-lenton/",
+    expertise: ["Russian politics", "Nationalism & ethnic politics", "International security"],
     evidenceSummary: "His profile describes nationalism, ethnic politics, political development, and security in Russia and the former Soviet Union.",
     matchGroups: [["russia", "russian", "eurasia", "eurasian", "soviet"], ["politics", "political", "nationalism", "ethnic", "security"]],
   },
-].map(record => Object.freeze({ ...record, matchGroups: Object.freeze(record.matchGroups.map(group => Object.freeze(group))) })));
+  {
+    ...reviewed, id: "ben-coates", name: "Ben Coates", department: "History",
+    profileUrl: "https://history.wfu.edu/people/coatesba/",
+    sourceUrl: "https://history.wfu.edu/people/coatesba/",
+    email: "coatesba@wfu.edu", contactSourceUrl: "https://history.wfu.edu/people/coatesba/",
+    expertise: ["Economic sanctions history", "U.S. foreign relations", "International order"],
+    evidenceSummary: "His profile describes research on twentieth-century economic sanctions and U.S. relations with the world. This offers a historical perspective on your topic.",
+    scopeNote: "Historical perspective: twentieth-century economic sanctions.",
+    matchGroups: [["sanctions", "sanction"], ["economic", "financial", "trade", "international", "authoritarian", "autocratic", "democracies", "democracy", "russia", "russian"]],
+    excludedMatchTerms: ["academic misconduct", "disciplinary sanctions", "academic sanctions", "student conduct", "honor code", "school discipline"],
+  },
+].map(record => Object.freeze({ ...record, expertise: Object.freeze(record.expertise), matchGroups: Object.freeze(record.matchGroups.map(group => Object.freeze(group))), ...(record.excludedMatchTerms ? { excludedMatchTerms: Object.freeze(record.excludedMatchTerms) } : {}) })));
 
 const words = value => String(value || "").normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const phraseIn = (text, phrase) => (` ${text} `).includes(` ${words(phrase)} `);
@@ -52,6 +71,17 @@ const officialWakeUrl = value => {
     return url.protocol === "https:" && !url.username && !url.password && (url.hostname === "wfu.edu" || url.hostname.endsWith(".wfu.edu")) && !url.search && !url.hash;
   } catch { return false; }
 };
+
+/** A contact click opens the mail app only; no question, excerpts, or other
+ * conversation content is placed in the draft or sent by Navigator. */
+export function facultyContactAction(person) {
+  if (!person || !officialWakeUrl(person.profileUrl)) return null;
+  const email = String(person.email || "");
+  if (/^[a-z0-9]+(?:[._+-][a-z0-9]+)*@wfu\.edu$/i.test(email) && officialWakeUrl(person.contactSourceUrl)) {
+    return { kind: "email", href: `mailto:${email}`, label: "Get in touch", hint: "Opens an email draft. Nothing is sent automatically." };
+  }
+  return { kind: "profile", href: person.profileUrl, label: "Get in touch", hint: "Contact details are on the official faculty profile." };
+}
 const officialConsultationUrl = value => {
   if (officialWakeUrl(value)) return true;
   try {
@@ -69,6 +99,8 @@ export function validFacultyPilotRecord(record, { asOf = new Date() } = {}) {
   if (!record || record.institutionId !== RESEARCH_PEOPLE_INSTITUTION || record.status !== "active" || record.reviewStatus !== "public-source-checked") return false;
   if (!["id", "name", "department", "evidenceSummary"].every(key => typeof record[key] === "string" && record[key].trim().length > 0 && record[key].length <= 400)) return false;
   if (!officialWakeUrl(record.profileUrl) || !officialWakeUrl(record.sourceUrl)) return false;
+  if (!Array.isArray(record.expertise) || !record.expertise.length || record.expertise.length > 5 || record.expertise.some(term => typeof term !== "string" || !term.trim() || term.length > 100)) return false;
+  if (record.excludedMatchTerms && (!Array.isArray(record.excludedMatchTerms) || record.excludedMatchTerms.length > 12 || record.excludedMatchTerms.some(term => typeof term !== "string" || !words(term) || term.length > 80))) return false;
   const checked = dateOnly(record.lastCheckedDate), next = dateOnly(record.nextReviewDate);
   const instant = new Date(asOf);
   if (!Number.isFinite(instant.getTime())) return false;
@@ -114,6 +146,7 @@ export function recommendResearchPeople(researchSpec = {}, options = {}) {
   const seen = new Set();
   const faculty = (Array.isArray(options.facultyRecords) ? options.facultyRecords : WFU_FACULTY_PILOT)
     .filter(record => validFacultyPilotRecord(record, { asOf }) && record.matchGroups.every(group => group.some(term => phraseIn(text, term))))
+    .filter(record => !(record.excludedMatchTerms || []).some(term => phraseIn(text, term)))
     .sort((left, right) => right.matchGroups.length - left.matchGroups.length || left.name.localeCompare(right.name))
     .filter(record => {
       const identity = words(record.name);
@@ -121,7 +154,7 @@ export function recommendResearchPeople(researchSpec = {}, options = {}) {
       seen.add(record.id); seen.add(identity); return true;
     })
     .slice(0, 2)
-    .map(({ matchGroups, ...record }) => ({ ...record, reason: record.evidenceSummary }));
+    .map(({ matchGroups, excludedMatchTerms, ...record }) => ({ ...record, reason: record.evidenceSummary, contact: facultyContactAction(record) }));
   // A verified faculty match also establishes a subject department for librarian
   // routing. Department alone never creates a faculty expertise match.
   if (!librarian && faculty.length) {
