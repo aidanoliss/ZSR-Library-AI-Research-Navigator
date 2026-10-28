@@ -3,6 +3,15 @@ import { recommendLibrarianRoutes } from "./librarianRoutes.js";
 
 export const RESEARCH_PEOPLE_INSTITUTION = "wfu-zsr-prototype";
 
+// Official department directories, checked 2026-10-27. A directory is a route
+// for browsing; it does not assert that every person there matches the topic.
+const FACULTY_DIRECTORIES = [
+  { id: "politics", department: "Politics & International Affairs", label: "Politics faculty", href: "https://politics.wfu.edu/faculty-and-staff/", terms: ["politics", "political", "international relations", "authoritarian", "democracy", "democracies", "refugees", "forced migration", "foreign policy", "economic sanctions"] },
+  { id: "history", department: "History", label: "History faculty", href: "https://history.wfu.edu/people/", terms: ["history", "historical", "historian", "economic sanctions", "archives"] },
+  { id: "psychology", department: "Psychology", label: "Psychology faculty", href: "https://psychology.wfu.edu/faculty-and-staff/", terms: ["psychology", "psychological", "mental health", "adolescent", "adolescents", "parenting", "autism", "depression", "anxiety", "cognition"] },
+  { id: "biology", department: "Biology", label: "Biology faculty", href: "https://biology.wfu.edu/faculty-research/", terms: ["biology", "biological", "biomedical", "vaccines", "vaccine", "medicine", "health", "ecology", "forests", "climate"] },
+];
+
 // Public profile checks establish only the listed research interests. They do
 // not establish availability, willingness to advise, or institutional approval.
 const reviewed = {
@@ -135,7 +144,7 @@ export function researchPeopleMatchText(spec = {}) {
  * faculty card rather than a model-generated expert or a broad department guess. */
 export function recommendResearchPeople(researchSpec = {}, options = {}) {
   const institutionId = Object.hasOwn(options, "institutionId") ? options.institutionId : RESEARCH_PEOPLE_INSTITUTION;
-  const base = { librarian: null, faculty: [], fallback: null, institutionId, pilot: true };
+  const base = { librarian: null, faculty: [], directories: [], fallback: null, institutionId, pilot: true };
   // A Wake pilot is never presented as a directory for another institution.
   if (institutionId !== RESEARCH_PEOPLE_INSTITUTION) return base;
   const text = researchPeopleMatchText(researchSpec);
@@ -153,7 +162,7 @@ export function recommendResearchPeople(researchSpec = {}, options = {}) {
       if (seen.has(record.id) || seen.has(identity)) return false;
       seen.add(record.id); seen.add(identity); return true;
     })
-    .slice(0, 2)
+    .slice(0, 4)
     .map(({ matchGroups, excludedMatchTerms, ...record }) => ({ ...record, reason: record.evidenceSummary, contact: facultyContactAction(record) }));
   // A verified faculty match also establishes a subject department for librarian
   // routing. Department alone never creates a faculty expertise match.
@@ -165,6 +174,11 @@ export function recommendResearchPeople(researchSpec = {}, options = {}) {
     ...base,
     librarian: librarian ? { ...librarian, reason: librarian.subjectTags?.length ? `ZSR lists ${librarian.subjectTags.join(", ")} among this librarian’s subject areas.` : "ZSR’s subject directory links this librarian with the research area." } : null,
     faculty,
+    directories: [
+      ...FACULTY_DIRECTORIES.filter(directory => faculty.some(person => person.department === directory.department) || directory.terms.some(term => phraseIn(text, term)))
+        .slice(0, 3).map(({ id, label, href }) => ({ id, label, href })),
+      { id: "all-wake-faculty", label: "All Wake faculty", href: "https://www.wfu.edu/faculty-staff/" },
+    ],
     fallback: { label: "Ask ZSR research help", href: "https://zsr.wfu.edu/ask/" },
   };
 }

@@ -36,7 +36,7 @@ test('exclusions and optional concepts do not become faculty matching evidence',
 
 test('another institution receives no Wake faculty, librarian, or directory fallback',()=>{
  const result=recommend('Russian nationalism',{institutionId:'wssu'});
- assert.equal(result.librarian,null);assert.deepEqual(result.faculty,[]);assert.equal(result.fallback,null);assert.equal(result.institutionId,'wssu');
+ assert.equal(result.librarian,null);assert.deepEqual(result.faculty,[]);assert.equal(result.fallback,null);assert.deepEqual(result.directories,[]);assert.equal(result.institutionId,'wssu');
  for(const institutionId of ['',null,'unknown']) {const empty=recommend('Russian nationalism',{institutionId});assert.deepEqual(empty.faculty,[]);assert.equal(empty.librarian,null);assert.equal(empty.fallback,null);}
 });
 
@@ -49,7 +49,7 @@ test('expired, future, retired, unreviewed, and unsafe profile records are not r
 test('faculty suggestions are bounded and deduplicated by both record id and person',()=>{
  const record=WFU_FACULTY_PILOT[0];
  const facultyRecords=[record,{...record},{...record,id:'duplicate-name'},...['A','B','C'].map((suffix,index)=>({...record,id:`additional-${index}`,name:`Example ${suffix}`}))];
- const result=recommend('adolescent parenting',{facultyRecords});assert.equal(result.faculty.length,2);assert.equal(new Set(result.faculty.map(p=>p.name)).size,2);
+ const result=recommend('adolescent parenting',{facultyRecords});assert.equal(result.faculty.length,4);assert.equal(new Set(result.faculty.map(p=>p.name)).size,4);
 });
 
 test('prompt instructions cannot supply names, expertise or links for recommendation',async()=>{
@@ -98,4 +98,21 @@ test('missing or unsafe contact data falls back to an official profile rather th
  }
  assert.equal(facultyContactAction({...person,contactSourceUrl:'https://external.example'}).kind,'profile');
  assert.equal(facultyContactAction({...person,profileUrl:'javascript:alert(1)'}),null);
+});
+
+
+test('official faculty browsing routes remain available alongside individual matches',()=>{
+ const result=recommend('Sanctions and their impact on authoritarian regimes vs democracies');
+ assert.ok(result.faculty.some(person=>person.id==='ben-coates'));
+ assert.deepEqual(result.directories.map(directory=>directory.id),['politics','history','all-wake-faculty']);
+ assert.equal(result.directories[0].href,'https://politics.wfu.edu/faculty-and-staff/');
+ for(const directory of result.directories) {const url=new URL(directory.href);assert.equal(url.protocol,'https:');assert.ok(url.hostname.endsWith('.wfu.edu'));assert.equal(url.search,'');}
+});
+
+test('unmatched or excluded topics get browsing options without a fabricated faculty match',()=>{
+ const unknown=recommend('quantum computing hardware');assert.deepEqual(unknown.faculty,[]);assert.deepEqual(unknown.directories.map(directory=>directory.id),['all-wake-faculty']);
+ const corrected={topic:'economic sanctions',correctedByStudent:true,concepts:[{preferredTerm:'French literature',required:true}],facets:{}};
+ assert.deepEqual(recommendResearchPeople(corrected,{asOf}).directories.map(directory=>directory.id),['all-wake-faculty']);
+ assert.ok(recommend('parenting adolescents').directories.some(directory=>directory.id==='psychology'));
+ assert.ok(recommend('Amazonian forest ecology').directories.some(directory=>directory.id==='biology'));
 });
