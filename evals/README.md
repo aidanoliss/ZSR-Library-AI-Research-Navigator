@@ -1,0 +1,11 @@
+# Research planning evaluation
+
+`node scripts/run-librarian-evals.mjs --strict` evaluates the librarian review set and the generalization review set. The generalization cases exercise unfamiliar prose, neighboring terms outside the controlled vocabulary, assignment constraints, corrected interpretations, long follow-up chains, and independent topic changes. They are regression cases, not an independently held-out benchmark or evidence of librarian approval.
+
+Every recommended query must preserve each case's required concept groups. Putting a missing concept in another query or a fallback does not satisfy this check. Database wildcard prefixes count as retained terms. Publication limits and peer-review requirements must travel in `researchSpec.sourceRequirements`, outside topical query text. A separate mode/paraphrase matrix runs under automatic subject detection, so the evaluation does not supply the expected discipline to the planner.
+
+Conversation cases run each user turn through the shared conversation-context functions and pass the preceding interpretation only for dependent turns. These checks cover deterministic context and planning. They do not execute the live language model, provider retrieval, or the browser transport; those have separate tests.
+
+All checked-in human ratings are blank. To record an actual review, a reviewer must supply ratings, `reviewer`, `reviewedAt`, `approvalStatus`, the exact output `evaluationPlanHash`, and the corresponding `configVersion`. The evaluation hash covers the complete plan, including secondary routes and displayed instructions. Missing identity or bindings cannot count as review; changed plans or configuration invalidate old approval. Automated passage never creates review records.
+
+Publication years are inclusive bounds. “After 2020” becomes 2021 onward, “before 2020” ends in 2019, and “past three years” means the current publication year and the two preceding years. Historical study periods remain topic facets when distinguishable from publication constraints. Ambiguous dates and novel subject language still need student correction and librarian evaluation; these checks do not establish source relevance or peer-review status.

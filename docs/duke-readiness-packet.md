@@ -41,7 +41,7 @@ The current live application is a Wake Forest student-built prototype. Duke has 
 
 ## Recommended narrow pilot
 
-Scope the first review to two disciplines with different evidence patterns, for example one humanities area and one health/social-science area. Use two librarians and 8 to 15 volunteer students. Begin on a staging service with synthetic or volunteered non-sensitive topics. Do not activate the blank Duke profile until the fields above are supplied and approved.
+Scope the first review to two disciplines with different evidence patterns, for example one humanities area and one health/social-science area. Use two librarians and 8 to 15 volunteer students. Begin on a staging service with synthetic or volunteered non-sensitive topics. Do not activate the blank Duke profile until the fields above are supplied and approved. The operational Wake Forest pilot protocol, recruitment gate, scorecard, and moderator script are in `docs/student-pilot-kit.md`.
 
 ### Study tasks
 

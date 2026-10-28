@@ -1,0 +1,2188 @@
+{
+  "prompt": "Qualitative interviews about food insecurity among college students",
+  "status": 200,
+  "reply": {
+    "message": "Qualitative interviews are a valuable method for understanding the nuanced experiences of college students facing food insecurity. This approach allows researchers to explore the 'how' and 'why' behind the issue, capturing personal narratives and perceptions that quantitative data might miss. When searching, you'll want to focus on studies that explicitly mention qualitative methods like interviews, focus groups, or ethnographic research.",
+    "academic_integrity_note": "Remember to always cite your sources properly to give credit to the original authors and avoid plagiarism. ZSR Library offers resources and tools like Zotero to help you manage your citations.",
+    "citation_tips": [
+      "Note the full citation details (authors, year, title, journal, volume, issue, pages, DOI) for every source you consider, even if you only use the abstract.",
+      "Many health and social science fields use APA or AMA citation styles. Check with your instructor for the required style.",
+      "Utilize Zotero or other citation management tools to help organize your research and generate bibliographies."
+    ],
+    "database_strategy": [
+      {
+        "database": "PubMed / MEDLINE",
+        "az_area": "database",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "search_inside": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+          "article-type",
+          "mesh",
+          "population",
+          "date"
+        ],
+        "journals_or_sources": [
+          "Scholarly articles and subject-specific leads that still need source evaluation."
+        ]
+      },
+      {
+        "database": "Web of Science",
+        "az_area": "database",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "search_inside": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+          "document-type",
+          "research-area",
+          "date"
+        ],
+        "journals_or_sources": [
+          "Scholarly articles and subject-specific leads that still need source evaluation."
+        ]
+      },
+      {
+        "database": "ScienceDirect",
+        "az_area": "database",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "search_inside": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+          "content-type",
+          "subject",
+          "date"
+        ],
+        "journals_or_sources": [
+          "Scholarly articles and subject-specific leads that still need source evaluation."
+        ]
+      },
+      {
+        "database": "Academic Search Premier",
+        "az_area": "database",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "search_inside": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+          "peer-reviewed",
+          "subject",
+          "date"
+        ],
+        "journals_or_sources": [
+          "Scholarly articles and subject-specific leads that still need source evaluation."
+        ]
+      },
+      {
+        "database": "ERIC",
+        "az_area": "database",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "search_inside": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+          "publication-type",
+          "education-level",
+          "peer-reviewed",
+          "date"
+        ],
+        "journals_or_sources": [
+          "Scholarly articles and subject-specific leads that still need source evaluation."
+        ]
+      }
+    ],
+    "evidence_notes": [
+      {
+        "source_id": "src_5af08ee1f446cf4896ad",
+        "claim": "Research is needed to better understand the mechanisms by which food insecurity affects students' health and well-being, beyond studies on prevalence and risk factors.",
+        "quote": "In addition to studies on the prevalence and risk factors, research is needed to better understand the mechanisms by which food insecurity affects students' health and well-being.",
+        "evidence_scope": "abstract"
+      },
+      {
+        "source_id": "src_5a1e59ae547afbb86162",
+        "claim": "One study aims to explore college students' experiences related to various domains of food insecurity, including quantitative, qualitative, social, and psychological aspects.",
+        "quote": "The purpose of this study is to explore college students' experiences related to the various domains of food insecurity (quantitative, qualitative, social, and psychological).",
+        "evidence_scope": "abstract"
+      },
+      {
+        "source_id": "src_54a5425449c2fc6683e4",
+        "claim": "A study explores the lived experiences of LGBTQIA+ college students facing food insecurity, noting their increased risks due to intersecting social and structural inequities.",
+        "quote": "This study explores the lived experiences of LGBTQIA+ college students facing food insecurity.",
+        "evidence_scope": "abstract"
+      },
+      {
+        "source_id": "src_ee27e9bdb2bae4711ae4",
+        "claim": "Few studies have qualitatively examined international students' experiences with food insecurity and its impacts on their health and well-being.",
+        "quote": "Yet very few studies have qualitatively examined their experiences with FI and its impacts on their health and well-being.",
+        "evidence_scope": "abstract"
+      },
+      {
+        "source_id": "src_874e94b5babd6b14243f",
+        "claim": "Ethnographic research explores the meaning and experiences of food insecurity among LGBTQIA+ college students to understand the role of identity.",
+        "quote": "This ethnographic research explores the meaning and experiences of food insecurity among LGBTQIA+ college students to understand how identity might play a role in those experiences.",
+        "evidence_scope": "abstract"
+      },
+      {
+        "source_id": "src_ee85920eb31cb00ea249",
+        "claim": "An exploratory analysis investigated the lived experience of food insecurity among college students, including its impact on food decisions and barriers to access.",
+        "quote": "The aims of this study were to explore the meaning of FI and its impact on students’ lived experiences and food decisions, facilitators and barriers to food access as a student, and students’ proposed solutions to",
+        "evidence_scope": "abstract"
+      }
+    ],
+    "librarian_routes": [
+      {
+        "id": "colleen-foy",
+        "routeId": "health-sciences",
+        "label": "Colleen Foy",
+        "unit": "STEM Librarian",
+        "href": "https://wfu.libcal.com/appointment/103618",
+        "reason": "Good route for PubMed/MEDLINE searches, clinical terms, evidence filters, and health outcomes. Contact information is sourced from ZSR's public directory and has not been marked as librarian-approved for this prototype.",
+        "institutionId": "wfu-zsr-prototype",
+        "personName": "Colleen Foy",
+        "title": "STEM Librarian",
+        "profileUrl": "https://zsr.wfu.edu/directory/colleen-foy/",
+        "email": "foyc@wfu.edu",
+        "appointmentUrl": "https://wfu.libcal.com/appointment/103618",
+        "reviewStatus": "public-source-checked",
+        "librarianApproved": false,
+        "lastReviewedDate": "2026-08-27",
+        "nextReviewDate": "2027-02-27",
+        "sourceUrl": "https://zsr.wfu.edu/research/librarians/",
+        "directoryRecordId": "colleen-foy"
+      },
+      {
+        "id": "kathy-shields",
+        "routeId": "history-humanities",
+        "label": "Kathy Shields",
+        "unit": "Head of Research and Liaison Services",
+        "href": "https://wfu.libcal.com/appointment/17180",
+        "reason": "Best fit for historical context, humanities scholarship, books, and primary-source research strategy. Contact information is sourced from ZSR's public directory and has not been marked as librarian-approved for this prototype.",
+        "institutionId": "wfu-zsr-prototype",
+        "personName": "Kathy Shields",
+        "title": "Head of Research and Liaison Services",
+        "profileUrl": "https://zsr.wfu.edu/directory/kathy-shields/",
+        "email": "shielddk@wfu.edu",
+        "appointmentUrl": "https://wfu.libcal.com/appointment/17180",
+        "reviewStatus": "public-source-checked",
+        "librarianApproved": false,
+        "lastReviewedDate": "2026-08-27",
+        "nextReviewDate": "2027-02-27",
+        "sourceUrl": "https://zsr.wfu.edu/research/librarians/",
+        "directoryRecordId": "kathy-shields"
+      },
+      {
+        "id": "ask-zsr",
+        "label": "Ask ZSR general research help",
+        "unit": "Research consultations",
+        "href": "https://zsr.wfu.edu/ask/",
+        "reason": "Fallback route when the topic spans multiple departments or the best subject owner is unclear.",
+        "institutionId": "wfu-zsr-prototype",
+        "email": "askzsr@wfu.edu",
+        "appointmentUrl": "https://wfu.libcal.com/appointments/?g=519&lid=1229&nprf=1",
+        "reviewStatus": "public-source-checked",
+        "librarianApproved": false,
+        "lastReviewedDate": "2026-08-27",
+        "nextReviewDate": "2027-02-27",
+        "sourceUrl": "https://zsr.wfu.edu/research/librarians/",
+        "directoryRecordId": "ask-zsr"
+      }
+    ],
+    "limitations": "I do not have access to the full text of paywalled or copyrighted articles, books, or database records. Therefore, I cannot summarize, quote, paraphrase, or reproduce full-text content. You will need to access these sources through ZSR Library to read them in their entirety.",
+    "search_terms": [
+      "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)"
+    ],
+    "source_evaluation": [
+      "**Relevance:** Does the study directly address food insecurity among college students using qualitative interviews or similar methods? Check the abstract and methodology sections.",
+      "**Source Type:** Prioritize peer-reviewed journal articles, especially those in reputable academic journals for public health, nutrition, education, or sociology.",
+      "**Methodology:** Look for clear descriptions of the qualitative methods used (e.g., in-depth interviews, focus groups, thematic analysis) and how participants were selected.",
+      "**Date:** Consider the publication date to ensure the research is current, especially as the issue of food insecurity among college students is a growing area of study.",
+      "**Authority:** Evaluate the authors' affiliations and expertise. Are they researchers in relevant fields like public health, nutrition, education, or sociology?"
+    ],
+    "starting_points": [
+      {
+        "resource_name": "PubMed / MEDLINE",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract."
+      },
+      {
+        "resource_name": "Web of Science",
+        "url": "https://guides.zsr.wfu.edu/az.php?q=Web%20of%20Science",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract."
+      },
+      {
+        "resource_name": "ScienceDirect",
+        "url": "https://guides.zsr.wfu.edu/az.php?q=ScienceDirect",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract."
+      },
+      {
+        "resource_name": "Academic Search Premier",
+        "url": "https://guides.zsr.wfu.edu/az.php?q=Academic%20Search%20Premier",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract."
+      },
+      {
+        "resource_name": "ERIC",
+        "url": "https://guides.zsr.wfu.edu/az.php?q=ERIC",
+        "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract."
+      }
+    ],
+    "suggested_followups": [
+      "How can I narrow my search to specific populations of college students?",
+      "What are some common challenges in conducting qualitative research on sensitive topics?",
+      "Can you help me find studies that focus on interventions or solutions?"
+    ],
+    "evidence_status": "abstract_notes",
+    "evidence_notice": "These AI-written interpretations cite exact passages from provider-supplied abstract excerpts. The quotation match does not prove that a claim follows from the passage. No full text was retrieved; read the source to assess its findings and limitations.",
+    "message_basis": "unverified_orientation",
+    "source_notice": "These automated source leads may or may not be fully relevant to your search. Open each record and confirm its topic, evidence, source type, and access before using it."
+  },
+  "matchedResources": [
+    {
+      "id": "pubmed-medline",
+      "name": "PubMed / MEDLINE",
+      "type": "database",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/",
+      "description": "Biomedical and public-health literature, including clinical and population-health studies.",
+      "best_for": [
+        "biomedical mechanisms, medicine, genetics, disease pathways, public health, and DOI/PMID follow-up"
+      ],
+      "tags": [
+        "scholarly",
+        "articles",
+        "health",
+        "medicine",
+        "biology",
+        "biochemistry",
+        "protein",
+        "protein folding",
+        "disease",
+        "genetics",
+        "alzheimer",
+        "dementia",
+        "maternal health",
+        "mortality",
+        "statistics",
+        "mental health",
+        "autism",
+        "antidepressant",
+        "ssri",
+        "doi",
+        "pmid"
+      ],
+      "keywords": [
+        "scholarly",
+        "articles",
+        "health",
+        "medicine",
+        "biology",
+        "biochemistry",
+        "protein",
+        "protein folding",
+        "disease",
+        "genetics",
+        "alzheimer",
+        "dementia",
+        "maternal health",
+        "mortality",
+        "statistics",
+        "mental health",
+        "autism",
+        "antidepressant",
+        "ssri",
+        "doi",
+        "pmid"
+      ],
+      "access": "PubMed is open; full text may require Wake Forest access through ZSR or LibKey Nomad.",
+      "paywalled": false,
+      "recommended_query": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+      "recommended_filters": [
+        "article-type",
+        "mesh",
+        "population",
+        "date"
+      ],
+      "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+      "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+      "sourceKinds": [
+        "scholarly-article"
+      ],
+      "queryDialect": "pubmed",
+      "notBestFor": "humanities background sources or market research reports",
+      "maintenanceOwner": "Unassigned - ZSR decision needed",
+      "reviewStatus": "pending-zsr-review",
+      "configReviewedOn": "2026-07-29",
+      "librarianReviewedOn": null,
+      "configVersion": "2026-08-10.2",
+      "provenance": {
+        "matchedSubject": "auto",
+        "matchedSourceMode": "scholarly",
+        "sourceKinds": [
+          "scholarly-article"
+        ],
+        "queryDialect": "pubmed",
+        "metadataSource": "prototype-local-config",
+        "maintenanceOwner": "Unassigned - ZSR decision needed",
+        "reviewStatus": "pending-zsr-review",
+        "configReviewedOn": "2026-07-29",
+        "librarianReviewedOn": null,
+        "configVersion": "2026-08-10.2"
+      },
+      "queryValidation": {
+        "valid": true,
+        "missingConceptIds": [],
+        "naturalLanguage": false
+      }
+    },
+    {
+      "id": "web-of-science",
+      "name": "Web of Science",
+      "type": "database",
+      "url": "https://guides.zsr.wfu.edu/az.php?q=Web%20of%20Science",
+      "description": "Multidisciplinary citation index for science, biomedical, and research-impact discovery.",
+      "best_for": [
+        "citation chaining, highly cited biology or biomedical articles, and cross-disciplinary science searches"
+      ],
+      "tags": [
+        "scholarly",
+        "articles",
+        "science",
+        "biology",
+        "biochemistry",
+        "protein",
+        "protein folding",
+        "disease",
+        "genetics",
+        "citation"
+      ],
+      "keywords": [
+        "scholarly",
+        "articles",
+        "science",
+        "biology",
+        "biochemistry",
+        "protein",
+        "protein folding",
+        "disease",
+        "genetics",
+        "citation"
+      ],
+      "access": "Confirm access through A-Z Databases; use cited-by and references to move from one strong article to related studies.",
+      "paywalled": true,
+      "recommended_query": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+      "recommended_filters": [
+        "document-type",
+        "research-area",
+        "date"
+      ],
+      "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+      "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+      "sourceKinds": [
+        "scholarly-article"
+      ],
+      "queryDialect": "web-of-science",
+      "notBestFor": "consumer market reports, company financials, or quick news coverage",
+      "maintenanceOwner": "Unassigned - ZSR decision needed",
+      "reviewStatus": "pending-zsr-review",
+      "configReviewedOn": "2026-07-29",
+      "librarianReviewedOn": null,
+      "configVersion": "2026-08-10.2",
+      "provenance": {
+        "matchedSubject": "auto",
+        "matchedSourceMode": "scholarly",
+        "sourceKinds": [
+          "scholarly-article"
+        ],
+        "queryDialect": "web-of-science",
+        "metadataSource": "prototype-local-config",
+        "maintenanceOwner": "Unassigned - ZSR decision needed",
+        "reviewStatus": "pending-zsr-review",
+        "configReviewedOn": "2026-07-29",
+        "librarianReviewedOn": null,
+        "configVersion": "2026-08-10.2"
+      },
+      "queryValidation": {
+        "valid": true,
+        "missingConceptIds": [],
+        "naturalLanguage": false
+      }
+    },
+    {
+      "id": "science-direct",
+      "name": "ScienceDirect",
+      "type": "database",
+      "url": "https://guides.zsr.wfu.edu/az.php?q=ScienceDirect",
+      "description": "Science and health journal platform with biology, chemistry, and biomedical article coverage.",
+      "best_for": [
+        "molecular biology, protein folding, biochemistry, disease mechanisms, and review articles"
+      ],
+      "tags": [
+        "scholarly",
+        "articles",
+        "science",
+        "biology",
+        "biochemistry",
+        "protein",
+        "protein folding",
+        "molecular biology",
+        "disease",
+        "genetics"
+      ],
+      "keywords": [
+        "scholarly",
+        "articles",
+        "science",
+        "biology",
+        "biochemistry",
+        "protein",
+        "protein folding",
+        "molecular biology",
+        "disease",
+        "genetics"
+      ],
+      "access": "Confirm available full text through ZSR; use abstracts and references when the full article is not available.",
+      "paywalled": true,
+      "recommended_query": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+      "recommended_filters": [
+        "content-type",
+        "subject",
+        "date"
+      ],
+      "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+      "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+      "sourceKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ],
+      "queryDialect": "science-direct",
+      "notBestFor": "business intelligence, news coverage, or general library navigation",
+      "maintenanceOwner": "Unassigned - ZSR decision needed",
+      "reviewStatus": "pending-zsr-review",
+      "configReviewedOn": "2026-07-29",
+      "librarianReviewedOn": null,
+      "configVersion": "2026-08-10.2",
+      "provenance": {
+        "matchedSubject": "auto",
+        "matchedSourceMode": "scholarly",
+        "sourceKinds": [
+          "scholarly-article",
+          "book-chapter"
+        ],
+        "queryDialect": "science-direct",
+        "metadataSource": "prototype-local-config",
+        "maintenanceOwner": "Unassigned - ZSR decision needed",
+        "reviewStatus": "pending-zsr-review",
+        "configReviewedOn": "2026-07-29",
+        "librarianReviewedOn": null,
+        "configVersion": "2026-08-10.2"
+      },
+      "queryValidation": {
+        "valid": true,
+        "missingConceptIds": [],
+        "naturalLanguage": false
+      }
+    },
+    {
+      "id": "academic-search-premier",
+      "name": "Academic Search Premier",
+      "type": "database",
+      "url": "https://guides.zsr.wfu.edu/az.php?q=Academic%20Search%20Premier",
+      "description": "General-purpose scholarly database covering the social sciences, humanities, education, health, and related disciplines.",
+      "best_for": [
+        "a specific cross-disciplinary article search when no single specialist database clearly owns the topic"
+      ],
+      "tags": [
+        "scholarly",
+        "articles",
+        "multidisciplinary",
+        "social science",
+        "humanities",
+        "education",
+        "health"
+      ],
+      "keywords": [
+        "scholarly",
+        "articles",
+        "multidisciplinary",
+        "social science",
+        "humanities",
+        "education",
+        "health"
+      ],
+      "access": "Use a focused Boolean query, then limit to peer-reviewed journals and the assignment's date range.",
+      "paywalled": true,
+      "recommended_query": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+      "recommended_filters": [
+        "peer-reviewed",
+        "subject",
+        "date"
+      ],
+      "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+      "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+      "sourceKinds": [
+        "scholarly-article"
+      ],
+      "queryDialect": "ebsco",
+      "notBestFor": "specialized legal documents, company financials, or comprehensive biomedical indexing",
+      "maintenanceOwner": "Unassigned - ZSR decision needed",
+      "reviewStatus": "pending-zsr-review",
+      "configReviewedOn": "2026-07-29",
+      "librarianReviewedOn": null,
+      "configVersion": "2026-08-10.2",
+      "provenance": {
+        "matchedSubject": "auto",
+        "matchedSourceMode": "scholarly",
+        "sourceKinds": [
+          "scholarly-article"
+        ],
+        "queryDialect": "ebsco",
+        "metadataSource": "prototype-local-config",
+        "maintenanceOwner": "Unassigned - ZSR decision needed",
+        "reviewStatus": "pending-zsr-review",
+        "configReviewedOn": "2026-07-29",
+        "librarianReviewedOn": null,
+        "configVersion": "2026-08-10.2"
+      },
+      "queryValidation": {
+        "valid": true,
+        "missingConceptIds": [],
+        "naturalLanguage": false
+      }
+    },
+    {
+      "id": "eric",
+      "name": "ERIC",
+      "type": "database",
+      "url": "https://guides.zsr.wfu.edu/az.php?q=ERIC",
+      "description": "Education research database for teaching, learning, disability services, and school policy.",
+      "best_for": [
+        "AI and education, special education, disability support, classroom research, and learning outcomes"
+      ],
+      "tags": [
+        "education",
+        "scholarly",
+        "articles",
+        "ai education",
+        "autism",
+        "special education",
+        "background"
+      ],
+      "keywords": [
+        "education",
+        "scholarly",
+        "articles",
+        "ai education",
+        "autism",
+        "special education",
+        "background"
+      ],
+      "access": "Use ERIC descriptors when possible; broaden to Education Source if ERIC is too narrow.",
+      "paywalled": true,
+      "recommended_query": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+      "recommended_filters": [
+        "publication-type",
+        "education-level",
+        "peer-reviewed",
+        "date"
+      ],
+      "why": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+      "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+      "sourceKinds": [
+        "scholarly-article",
+        "primary-source"
+      ],
+      "queryDialect": "eric",
+      "notBestFor": "consumer market data or clinical-only medical studies",
+      "maintenanceOwner": "Unassigned - ZSR decision needed",
+      "reviewStatus": "pending-zsr-review",
+      "configReviewedOn": "2026-07-29",
+      "librarianReviewedOn": null,
+      "configVersion": "2026-08-10.2",
+      "provenance": {
+        "matchedSubject": "auto",
+        "matchedSourceMode": "scholarly",
+        "sourceKinds": [
+          "scholarly-article",
+          "primary-source"
+        ],
+        "queryDialect": "eric",
+        "metadataSource": "prototype-local-config",
+        "maintenanceOwner": "Unassigned - ZSR decision needed",
+        "reviewStatus": "pending-zsr-review",
+        "configReviewedOn": "2026-07-29",
+        "librarianReviewedOn": null,
+        "configVersion": "2026-08-10.2"
+      },
+      "queryValidation": {
+        "valid": true,
+        "missingConceptIds": [],
+        "naturalLanguage": false
+      }
+    }
+  ],
+  "searchTools": [
+    {
+      "id": "primo",
+      "name": "ZSR Library Search",
+      "search_url_template": "https://wfu.primo.exlibrisgroup.com/discovery/search?query=any,contains,{q}&tab=LibraryCatalog&search_scope=ZSR&vid=01WAKE_INST:ZSR&offset=0"
+    },
+    {
+      "id": "google-scholar",
+      "name": "Google Scholar",
+      "search_url_template": "https://scholar.google.com/scholar?q={q}"
+    }
+  ],
+  "liveResults": [
+    {
+      "title": "“It’s a Feeling That One Is Not Worth Food”: A Qualitative Study Exploring the Psychosocial Experience and Academic Consequences of Food Insecurity Among College Students",
+      "author": "Meza, Anthony; Altman, Emily et al.",
+      "authors": [
+        "Meza, Anthony",
+        "Altman, Emily",
+        "Martinez, Suzanna",
+        "Leung, Cindy W."
+      ],
+      "type": "article",
+      "date": "2019-10-01",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_elsevier_clinicalkey_doi_10_1016_j_jand_2018_09_006&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.1016/j.jand.2018.09.006",
+      "pmid": "30553586",
+      "isbn": "",
+      "issn": "2212-2672",
+      "containerTitle": "Journal of the Academy of Nutrition and Dietetics",
+      "publisher": "Elsevier Inc",
+      "edition": "",
+      "volume": "119",
+      "issue": "10",
+      "pages": "1713-1721.e1",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Academic achievement, California, College students. Published/created 2019-10-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "The issue of food insecurity is one of growing concern among institutions of higher learning in the United States. In addition to studies on the prevalence and risk factors, research is needed to better understand the mechanisms by which food insecurity affects students' health and well-being. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Meza, Anthony; Altman, Emily; Martinez, Suzanna; Leung, Cindy W.",
+        "Subject terms: Academic achievement; California; College students; Educational attainment; Emotions; Female",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Academic achievement",
+        "California",
+        "College students",
+        "Educational attainment",
+        "Emotions",
+        "Female"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "“It’s a Feeling That One Is Not Worth Food”: A Qualitative Study Exploring the Psychosocial Experience and Academic Consequences of Food Insecurity Among College Students"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_5af08ee1f446cf4896ad",
+      "evidenceExcerpt": "The issue of food insecurity is one of growing concern among institutions of higher learning in the United States. In addition to studies on the prevalence and risk factors, research is needed to better understand the mechanisms by which food insecurity affects students' health and well-being. ..."
+    },
+    {
+      "title": "A Comparison of Experiences with Factors Related to Food Insecurity between College Students Who Are Food Secure and Food Insecure: A Qualitative Study",
+      "author": "Richards, Rickelle; Stokes, Nathan et al.",
+      "authors": [
+        "Richards, Rickelle",
+        "Stokes, Nathan",
+        "Banna, Jinan",
+        "Cluskey, Mary",
+        "Bergen, Makenna",
+        "Thomas, Victoria",
+        "Bushnell, Melissa",
+        "Christensen, Rebecca"
+      ],
+      "type": "article",
+      "date": "2023-03-01",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1016_j_jand_2022_08_001&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.1016/j.jand.2022.08.001",
+      "pmid": "35940496",
+      "isbn": "",
+      "issn": "2212-2672",
+      "containerTitle": "Journal of the Academy of Nutrition and Dietetics",
+      "publisher": "Elsevier Inc",
+      "edition": "",
+      "volume": "123",
+      "issue": "3",
+      "pages": "438-453.e2",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Academic achievement, College students, Dietetics. Published/created 2023-03-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "Previous research has reported negative health consequences and poor academic achievement among college students who are food insecure. It is unknown if students with food insecurity’s experiences qualitatively differ from students who are food secure. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Richards, Rickelle; Stokes, Nathan; Banna, Jinan; Cluskey, Mary; Bergen, Makenna; Thomas, Victoria; et al.",
+        "Subject terms: Academic achievement; College students; Dietetics; Educational attainment; Food; Food security",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Academic achievement",
+        "College students",
+        "Dietetics",
+        "Educational attainment",
+        "Food",
+        "Food security"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "A Comparison of Experiences with Factors Related to Food Insecurity between College Students Who Are Food Secure and Food Insecure: A Qualitative Study"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_441ed84ec40e03e83a60",
+      "evidenceExcerpt": "Previous research has reported negative health consequences and poor academic achievement among college students who are food insecure. It is unknown if students with food insecurity’s experiences qualitatively differ from students who are food secure. ..."
+    },
+    {
+      "title": "Food insecurity in college students: a qualitative exploration of the multiple domains",
+      "author": "Anderson, Alyssa; King, Jennifer et al.",
+      "authors": [
+        "Anderson, Alyssa",
+        "King, Jennifer",
+        "Parker, Quinn",
+        "Johnson, Cassandra"
+      ],
+      "type": "article",
+      "date": "2026-07-03",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_pubmed_primary_42491109&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.3389/fpubh.2026.1872467",
+      "pmid": "42491109",
+      "isbn": "",
+      "issn": "2296-2565",
+      "containerTitle": "Frontiers in public health",
+      "publisher": "Frontiers Media SA",
+      "edition": "",
+      "volume": "14",
+      "issue": "",
+      "pages": "1872467-",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Basic needs, Female, Food security. Published/created 2026-07-03. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "To help address student basic needs, universities may benefit from screening students using a tool that captures multiple food insecurity domains. The purpose of this study is to explore college students' experiences related to the various domains of food insecurity (quantitative, qualitative, social, and psychological). ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Anderson, Alyssa; King, Jennifer; Parker, Quinn; Johnson, Cassandra",
+        "Subject terms: Basic needs; Female; Food security; Human beings; Male; Qualitative research",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Basic needs",
+        "Female",
+        "Food security",
+        "Human beings",
+        "Male",
+        "Qualitative research"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Food insecurity in college students: a qualitative exploration of the multiple domains"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_5a1e59ae547afbb86162",
+      "evidenceExcerpt": "To help address student basic needs, universities may benefit from screening students using a tool that captures multiple food insecurity domains. The purpose of this study is to explore college students' experiences related to the various domains of food insecurity (quantitative, qualitative, social, and psychological). ..."
+    },
+    {
+      "title": "Food Insecurity Among LGBTQIA+ College Students: A Qualitative Needs Assessment for Inclusive Nutrition Interventions",
+      "author": "Kairios, Ricardo; Cuite, Cara et al.",
+      "authors": [
+        "Kairios, Ricardo",
+        "Cuite, Cara",
+        "Brescia, Stephanie"
+      ],
+      "type": "article",
+      "date": "2025-08-01",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1016_j_jneb_2025_05_039&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.1016/j.jneb.2025.05.039",
+      "pmid": "",
+      "isbn": "",
+      "issn": "1499-4046",
+      "containerTitle": "Journal of nutrition education and behavior",
+      "publisher": "Elsevier Inc",
+      "edition": "",
+      "volume": "57",
+      "issue": "8",
+      "pages": "S17-S17",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Internal medicine. Published/created 2025-08-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "Food insecurity is a significant issue among college students, with sexual and gender minorities (LGBTQIA+) facing increased risks due to intersecting social and structural inequities. This study explores the lived experiences of LGBTQIA+ college students facing food insecurity. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Kairios, Ricardo; Cuite, Cara; Brescia, Stephanie",
+        "Subject terms: Internal medicine",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Internal medicine"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Food Insecurity Among LGBTQIA+ College Students: A Qualitative Needs Assessment for Inclusive Nutrition Interventions"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_54a5425449c2fc6683e4",
+      "evidenceExcerpt": "Food insecurity is a significant issue among college students, with sexual and gender minorities (LGBTQIA+) facing increased risks due to intersecting social and structural inequities. This study explores the lived experiences of LGBTQIA+ college students facing food insecurity. ..."
+    },
+    {
+      "title": "Psychosocial and Academic Implications of Food Insecurity Among International Students: A Qualitative Study in Hungary",
+      "author": "Hilal, Soukaina; Indrayathi, Putu Ayu et al.",
+      "authors": [
+        "Hilal, Soukaina",
+        "Indrayathi, Putu Ayu",
+        "Kolozsvári, László Róbert",
+        "Torzsa, Péter",
+        "Rurik, Imre"
+      ],
+      "type": "article",
+      "date": "2025-10-20",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_gale_infotracacademiconefile_A862438375&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.3390/nu17203300",
+      "pmid": "41156552",
+      "isbn": "",
+      "issn": "2072-6643",
+      "containerTitle": "Nutrients",
+      "publisher": "MDPI AG",
+      "edition": "",
+      "volume": "17",
+      "issue": "20",
+      "pages": "3300-",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Academic achievement, College students, COVID-19 Pandemic, 2020-. Published/created 2025-10-20. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "Background/Objectives: Recent research suggests that international students are particularly susceptible to food insecurity (FI). Yet very few studies have qualitatively examined their experiences with FI and its impacts on their health and well-being. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Hilal, Soukaina; Indrayathi, Putu Ayu; Kolozsvári, László Róbert; Torzsa, Péter; Rurik, Imre",
+        "Subject terms: Academic achievement; College students; COVID-19 Pandemic, 2020-; Depression, Mental; Educational attainment; Female",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Academic achievement",
+        "College students",
+        "COVID-19 Pandemic, 2020-",
+        "Depression, Mental",
+        "Educational attainment",
+        "Female"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Psychosocial and Academic Implications of Food Insecurity Among International Students: A Qualitative Study in Hungary"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_ee27e9bdb2bae4711ae4",
+      "evidenceExcerpt": "Background/Objectives: Recent research suggests that international students are particularly susceptible to food insecurity (FI). Yet very few studies have qualitatively examined their experiences with FI and its impacts on their health and well-being. ..."
+    },
+    {
+      "title": "Food Habits and Forms of Food Insecurity among International University Students in Oslo: A Qualitative Study",
+      "author": "Bauch, Charlotte; Torheim, Liv Elin et al.",
+      "authors": [
+        "Bauch, Charlotte",
+        "Torheim, Liv Elin",
+        "Almendingen, Kari",
+        "Molin, Marianne",
+        "Terragni, Laura"
+      ],
+      "type": "article",
+      "date": "2023-02-02",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_pubmed_primary_36768058&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.3390/ijerph20032694",
+      "pmid": "36768058",
+      "isbn": "",
+      "issn": "1660-4601",
+      "containerTitle": "International journal of environmental research and public health",
+      "publisher": "MDPI AG",
+      "edition": "",
+      "volume": "20",
+      "issue": "3",
+      "pages": "2694-",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Behavior, College students, Coronaviruses. Published/created 2023-02-02. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "A growing number of studies indicate that university students and especially international students are prone to experiencing food insecurity (FI). Still, few studies have investigated forms of FI among international students in Europe. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Bauch, Charlotte; Torheim, Liv Elin; Almendingen, Kari; Molin, Marianne; Terragni, Laura",
+        "Subject terms: Behavior; College students; Coronaviruses; COVID-19 Pandemic, 2020-; Diet; Experimental design",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Behavior",
+        "College students",
+        "Coronaviruses",
+        "COVID-19 Pandemic, 2020-",
+        "Diet",
+        "Experimental design"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Food Habits and Forms of Food Insecurity among International University Students in Oslo: A Qualitative Study"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_b262636d5cc864c32cc6",
+      "evidenceExcerpt": "A growing number of studies indicate that university students and especially international students are prone to experiencing food insecurity (FI). Still, few studies have investigated forms of FI among international students in Europe. ..."
+    },
+    {
+      "title": "Exploring the Experience of Food Insecurity among University Students Caring for Children: A Qualitative Descriptive Study",
+      "author": "Lee, Sarah; Ball, Geoff DC et al.",
+      "authors": [
+        "Lee, Sarah",
+        "Ball, Geoff DC",
+        "Farmer, Anna",
+        "Willows, Noreen D"
+      ],
+      "type": "article",
+      "date": "2020-05-03",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1080_19320248_2018_1557093&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.1080/19320248.2018.1557093",
+      "pmid": "",
+      "isbn": "",
+      "issn": "1932-0248",
+      "containerTitle": "Journal of hunger & environmental nutrition",
+      "publisher": "Taylor & Francis",
+      "edition": "",
+      "volume": "15",
+      "issue": "3",
+      "pages": "360-371",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Academic achievement, Children, College students. Published/created 2020-05-03. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "Food insecurity negatively impacts the health and well-being of postsecondary students attending college and university. Students may be especially vulnerable for food insecurity if they care for children. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Lee, Sarah; Ball, Geoff DC; Farmer, Anna; Willows, Noreen D",
+        "Subject terms: Academic achievement; Children; College students; Diet; Educational attainment; Food banks",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Academic achievement",
+        "Children",
+        "College students",
+        "Diet",
+        "Educational attainment",
+        "Food banks"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Exploring the Experience of Food Insecurity among University Students Caring for Children: A Qualitative Descriptive Study"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_aa766d667601f4254d7a",
+      "evidenceExcerpt": "Food insecurity negatively impacts the health and well-being of postsecondary students attending college and university. Students may be especially vulnerable for food insecurity if they care for children. ..."
+    },
+    {
+      "title": "Experiences of food insecurity among LGBTQIA+ college students in North Texas",
+      "author": "Lisa Henry; Dani Ellis et al.",
+      "authors": [
+        "Lisa Henry",
+        "Dani Ellis",
+        "Steven Ellis",
+        "Micah Fleck",
+        "Steve Migdol",
+        "Neida Rodriguez",
+        "Vanessa Delgado",
+        "Spencer Esmonde",
+        "Ishraq Islam",
+        "Kio Kazaoka",
+        "Wei Sun",
+        "Paria Tajallipour"
+      ],
+      "type": "article",
+      "date": "2023-03-01",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_doaj_primary_oai_doaj_org_article_4ae01d53d1884c9d97621d91569e699f&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.5304/jafscd.2023.122.021",
+      "pmid": "",
+      "isbn": "",
+      "issn": "",
+      "containerTitle": "Journal of agriculture, food systems, and community development",
+      "publisher": "Lyson Center for Civic Agriculture and Food Systems",
+      "edition": "",
+      "volume": "12",
+      "issue": "2",
+      "pages": "",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Food security, Qualitative research. Published/created 2023-03-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "This ethnographic research explores the meaning and experiences of food insecurity among LGBTQIA+ college students to understand how identity might play a role in those experiences. We offer research-informed recommendations that stu­dent-serving programs could implement to increase accessibility and inclusivity for LGBTQIA+ students to reduce food...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Lisa Henry; Dani Ellis; Steven Ellis; Micah Fleck; Steve Migdol; Neida Rodriguez; et al.",
+        "Subject terms: Food security; Qualitative research",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Food security",
+        "Qualitative research"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Experiences of food insecurity among LGBTQIA+ college students in North Texas"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_874e94b5babd6b14243f",
+      "evidenceExcerpt": "This ethnographic research explores the meaning and experiences of food insecurity among LGBTQIA+ college students to understand how identity might play a role in those experiences. We offer research-informed recommendations that stu­dent-serving programs could implement to increase accessibility and inclusivity for LGBTQIA+ students to reduce food..."
+    },
+    {
+      "title": "FOOD INSECURITY AMONG INTERNATIONAL POST-SECONDARY STUDENTS STUDYING ON A CANADIAN CAMPUS: A QUALITATIVE DESCRIPTIVE STUDY",
+      "author": "Hanbazaza, Mahitab; Ball, Geoff D.C et al.",
+      "authors": [
+        "Hanbazaza, Mahitab",
+        "Ball, Geoff D.C",
+        "Kebbe, Maryam",
+        "Farmer, Anna P",
+        "Willows, Noreen D",
+        "Perez, Arnaldo",
+        "Maximova, Katerina"
+      ],
+      "type": "article",
+      "date": "2021-08-01",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_gale_onefilemisc_PROF_A676442648&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.47678/cjhe.vi0.188977",
+      "pmid": "",
+      "isbn": "",
+      "issn": "0316-1218",
+      "containerTitle": "Canadian journal of higher education (1975)",
+      "publisher": "The Canadian Society for the Study of Higher Education",
+      "edition": "",
+      "volume": "51",
+      "issue": "2",
+      "pages": "33-",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights Academic achievement, College students, Costs. Published/created 2021-08-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "Enrollment of international post-secondary students is increasing across Canadian campuses. International post-secondary students may experience challenges in accessing nutritious foods that meet their dietary needs and food preferences. ...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Hanbazaza, Mahitab; Ball, Geoff D.C; Kebbe, Maryam; Farmer, Anna P; Willows, Noreen D; Perez, Arnaldo; et al.",
+        "Subject terms: Academic achievement; College students; Costs; Educational attainment; Food; Food habits",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "Academic achievement",
+        "College students",
+        "Costs",
+        "Educational attainment",
+        "Food",
+        "Food habits"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "FOOD INSECURITY AMONG INTERNATIONAL POST-SECONDARY STUDENTS STUDYING ON A CANADIAN CAMPUS: A QUALITATIVE DESCRIPTIVE STUDY"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_deb471a092ce1942c658",
+      "evidenceExcerpt": "Enrollment of international post-secondary students is increasing across Canadian campuses. International post-secondary students may experience challenges in accessing nutritious foods that meet their dietary needs and food preferences. ..."
+    },
+    {
+      "title": "Navigating Hidden Hunger: An Exploratory Analysis of the Lived Experience of Food Insecurity among College Students",
+      "author": "Anderson, Ashlyn; Lazarus, Jacqueline et al.",
+      "authors": [
+        "Anderson, Ashlyn",
+        "Lazarus, Jacqueline",
+        "Anderson Steeves, Elizabeth"
+      ],
+      "type": "article",
+      "date": "2022-10-10",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2724249125&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "cover": null,
+      "doi": "10.3390/ijerph191912952",
+      "pmid": "36232251",
+      "isbn": "",
+      "issn": "1660-4601",
+      "containerTitle": "International journal of environmental research and public health",
+      "publisher": "MDPI AG",
+      "edition": "",
+      "volume": "19",
+      "issue": "19",
+      "pages": "12952-",
+      "fulfillment": null,
+      "description": "Potential ZSR discovery lead for this search. Metadata highlights College campuses, College students, Data Collection. Published/created 2022-10-10. Open the record to confirm relevance, access, peer-review status, and citation details.",
+      "abstractExcerpt": "College students are a vulnerable population to food insecurity (FI), which has significant implications for academic and health outcomes. The aims of this study were to explore the meaning of FI and its impact on students’ lived experiences and food decisions, facilitators and barriers to food access as a student, and students’ proposed solutions to...",
+      "abstractSource": "ZSR record metadata",
+      "detailPoints": [
+        "Authors: Anderson, Ashlyn; Lazarus, Jacqueline; Anderson Steeves, Elizabeth",
+        "Subject terms: College campuses; College students; Data Collection; Education, Higher; Food security; Food supply",
+        "Access: use the ZSR record to check full text, PDF availability, and database login."
+      ],
+      "sourceProvider": "ZSR discovery",
+      "peerReviewed": true,
+      "accessScope": "library",
+      "sourceKind": "scholarly-article",
+      "sourceMode": "scholarly",
+      "provenance": {
+        "provider": "ZSR discovery",
+        "recordType": "article",
+        "accessVerified": false,
+        "metadataOnly": true,
+        "demoData": false
+      },
+      "subjects": [
+        "College campuses",
+        "College students",
+        "Data Collection",
+        "Education, Higher",
+        "Food security",
+        "Food supply"
+      ],
+      "sourceAssessment": {
+        "status": "unverified",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          },
+          {
+            "id": "method-include-qualitative interview",
+            "label": "Requested method: qualitative interview",
+            "status": "unverified",
+            "detail": "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+          }
+        ],
+        "issues": [
+          "The metadata does not establish this method. Read the methods or publication description; keyword matches alone are insufficient."
+        ]
+      },
+      "matchExplanation": {
+        "status": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "evidence": [
+          {
+            "concept": "food insecurity",
+            "field": "title",
+            "term": "food insecurity",
+            "excerpt": "Navigating Hidden Hunger: An Exploratory Analysis of the Lived Experience of Food Insecurity among College Students"
+          }
+        ],
+        "relationship": null,
+        "matchedConcepts": [
+          "food insecurity"
+        ],
+        "missingConcepts": [],
+        "missingFacets": [
+          "qualitative interview"
+        ],
+        "explanation": "Metadata mentions food insecurity. Facets not established: qualitative interview. Read the source to confirm the relationship and findings."
+      },
+      "metadataRank": {
+        "score": 143,
+        "coverage": 1,
+        "basis": "title-abstract-subject-metadata"
+      },
+      "retrievedAt": "2026-10-05T02:33:58.412Z",
+      "evidenceId": "src_ee85920eb31cb00ea249",
+      "evidenceExcerpt": "College students are a vulnerable population to food insecurity (FI), which has significant implications for academic and health outcomes. The aims of this study were to explore the meaning of FI and its impact on students’ lived experiences and food decisions, facilitators and barriers to food access as a student, and students’ proposed solutions to..."
+    }
+  ],
+  "sourceDiscovery": {
+    "accessScope": "library",
+    "identity": null,
+    "recovery": null,
+    "lanes": {
+      "library": {
+        "requested": true,
+        "resultCount": 10,
+        "outcome": "success",
+        "status": "success",
+        "errorCode": null,
+        "attempts": [
+          {
+            "provider": "Primo public",
+            "status": "success",
+            "resultCount": 20
+          }
+        ]
+      },
+      "openAccess": {
+        "requested": false,
+        "resultCount": 0,
+        "separateResultCount": 0,
+        "mergedResultCount": 0,
+        "provider": "OpenAlex",
+        "enabled": false,
+        "configured": false,
+        "reason": "missing-api-key",
+        "retrievesFullText": false,
+        "outcome": "not_requested",
+        "status": "not_requested",
+        "errorCode": null,
+        "attempts": []
+      }
+    }
+  },
+  "releaseId": "local",
+  "researchSpec": {
+    "topic": "Qualitative interviews about food insecurity among college students",
+    "mode": "scholarly",
+    "disciplines": [
+      "biology-health"
+    ],
+    "concepts": [
+      {
+        "id": "parsed-1-food-insecurity",
+        "preferredTerm": "food insecurity",
+        "synonyms": [],
+        "required": true,
+        "source": "parsed"
+      }
+    ],
+    "comparison": null,
+    "knownItem": null,
+    "searchIntent": {
+      "originalQuestion": "Qualitative interviews about food insecurity among college students",
+      "neutralQuestion": "What does research show about food insecurity among college students?",
+      "reformulated": false,
+      "explanation": "",
+      "requestedFocus": "",
+      "scopeNotes": []
+    },
+    "methodRequirements": {
+      "include": [
+        "qualitative interview"
+      ],
+      "exclude": []
+    },
+    "sourceRequirements": {
+      "publicationYearFrom": null,
+      "publicationYearTo": null,
+      "peerReviewed": false,
+      "requestedSourceCount": null
+    },
+    "facets": {
+      "population": "college students",
+      "geography": "",
+      "timePeriod": "",
+      "method": "qualitative interview",
+      "documentType": "Scholarly articles"
+    },
+    "sourceContract": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ],
+      "excludedKinds": [
+        "news",
+        "market-report"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": false,
+      "flags": [],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "configVersion": "2026-08-10.2",
+    "planHash": "rp-65983a23"
+  },
+  "planMeta": {
+    "modeId": "scholarly",
+    "configVersion": "2026-08-10.2",
+    "planHash": "rp-65983a23",
+    "sourceMode": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": false,
+      "flags": [],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "safeFailure": {
+      "deterministicPlanAvailable": true,
+      "liveResultsRequired": false,
+      "modelRequiredForRoutes": false,
+      "librarianEscalationAvailable": true
+    },
+    "validation": {
+      "sourceMode": {
+        "valid": true,
+        "topCount": 3,
+        "compatibleCount": 3,
+        "requiredCount": 3
+      },
+      "queries": [
+        {
+          "resourceId": "pubmed-medline",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "web-of-science",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "science-direct",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "academic-search-premier",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "eric",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        }
+      ],
+      "valid": true
+    }
+  },
+  "researchPlan": {
+    "modeId": "scholarly",
+    "configVersion": "2026-08-10.2",
+    "planHash": "rp-65983a23",
+    "sourceMode": {
+      "id": "scholarly",
+      "label": "Scholarly articles",
+      "requiredKinds": [
+        "scholarly-article"
+      ],
+      "allowedKinds": [
+        "scholarly-article",
+        "book-chapter"
+      ]
+    },
+    "safety": {
+      "requiresPremiseCheck": false,
+      "flags": [],
+      "authorityPolicy": "research-orientation-not-conclusion"
+    },
+    "safeFailure": {
+      "deterministicPlanAvailable": true,
+      "liveResultsRequired": false,
+      "modelRequiredForRoutes": false,
+      "librarianEscalationAvailable": true
+    },
+    "validation": {
+      "sourceMode": {
+        "valid": true,
+        "topCount": 3,
+        "compatibleCount": 3,
+        "requiredCount": 3
+      },
+      "queries": [
+        {
+          "resourceId": "pubmed-medline",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "web-of-science",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "science-direct",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "academic-search-premier",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        {
+          "resourceId": "eric",
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        }
+      ],
+      "valid": true
+    },
+    "researchSpec": {
+      "topic": "Qualitative interviews about food insecurity among college students",
+      "mode": "scholarly",
+      "disciplines": [
+        "biology-health"
+      ],
+      "concepts": [
+        {
+          "id": "parsed-1-food-insecurity",
+          "preferredTerm": "food insecurity",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        }
+      ],
+      "comparison": null,
+      "knownItem": null,
+      "searchIntent": {
+        "originalQuestion": "Qualitative interviews about food insecurity among college students",
+        "neutralQuestion": "What does research show about food insecurity among college students?",
+        "reformulated": false,
+        "explanation": "",
+        "requestedFocus": "",
+        "scopeNotes": []
+      },
+      "methodRequirements": {
+        "include": [
+          "qualitative interview"
+        ],
+        "exclude": []
+      },
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": null,
+        "peerReviewed": false,
+        "requestedSourceCount": null
+      },
+      "facets": {
+        "population": "college students",
+        "geography": "",
+        "timePeriod": "",
+        "method": "qualitative interview",
+        "documentType": "Scholarly articles"
+      },
+      "sourceContract": {
+        "id": "scholarly",
+        "label": "Scholarly articles",
+        "requiredKinds": [
+          "scholarly-article"
+        ],
+        "allowedKinds": [
+          "scholarly-article",
+          "book-chapter"
+        ],
+        "excludedKinds": [
+          "news",
+          "market-report"
+        ]
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "configVersion": "2026-08-10.2",
+      "planHash": "rp-65f5b098"
+    },
+    "recommendations": [
+      {
+        "id": "pubmed-medline",
+        "name": "PubMed / MEDLINE",
+        "description": "Biomedical and public-health literature, including clinical and population-health studies.",
+        "subjectArea": "Health Sciences / Medicine",
+        "whyFits": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "accessUrl": "https://pubmed.ncbi.nlm.nih.gov/",
+        "searchTerms": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)"
+        ],
+        "filters": [
+          "article-type",
+          "mesh",
+          "population",
+          "date"
+        ],
+        "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+        "queryValidation": {
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        "provenance": {
+          "matchedSubject": "auto",
+          "matchedSourceMode": "scholarly",
+          "sourceKinds": [
+            "scholarly-article"
+          ],
+          "queryDialect": "pubmed",
+          "metadataSource": "prototype-local-config",
+          "maintenanceOwner": "Unassigned - ZSR decision needed",
+          "reviewStatus": "pending-zsr-review",
+          "configReviewedOn": "2026-07-29",
+          "librarianReviewedOn": null,
+          "configVersion": "2026-08-10.2"
+        }
+      },
+      {
+        "id": "web-of-science",
+        "name": "Web of Science",
+        "description": "Multidisciplinary citation index for science, biomedical, and research-impact discovery.",
+        "subjectArea": "Science Citation Index",
+        "whyFits": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "accessUrl": "https://guides.zsr.wfu.edu/az.php?q=Web%20of%20Science",
+        "searchTerms": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)"
+        ],
+        "filters": [
+          "document-type",
+          "research-area",
+          "date"
+        ],
+        "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+        "queryValidation": {
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        "provenance": {
+          "matchedSubject": "auto",
+          "matchedSourceMode": "scholarly",
+          "sourceKinds": [
+            "scholarly-article"
+          ],
+          "queryDialect": "web-of-science",
+          "metadataSource": "prototype-local-config",
+          "maintenanceOwner": "Unassigned - ZSR decision needed",
+          "reviewStatus": "pending-zsr-review",
+          "configReviewedOn": "2026-07-29",
+          "librarianReviewedOn": null,
+          "configVersion": "2026-08-10.2"
+        }
+      },
+      {
+        "id": "science-direct",
+        "name": "ScienceDirect",
+        "description": "Science and health journal platform with biology, chemistry, and biomedical article coverage.",
+        "subjectArea": "Biology / Life Sciences",
+        "whyFits": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "accessUrl": "https://guides.zsr.wfu.edu/az.php?q=ScienceDirect",
+        "searchTerms": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)"
+        ],
+        "filters": [
+          "content-type",
+          "subject",
+          "date"
+        ],
+        "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+        "queryValidation": {
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        "provenance": {
+          "matchedSubject": "auto",
+          "matchedSourceMode": "scholarly",
+          "sourceKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "queryDialect": "science-direct",
+          "metadataSource": "prototype-local-config",
+          "maintenanceOwner": "Unassigned - ZSR decision needed",
+          "reviewStatus": "pending-zsr-review",
+          "configReviewedOn": "2026-07-29",
+          "librarianReviewedOn": null,
+          "configVersion": "2026-08-10.2"
+        }
+      },
+      {
+        "id": "academic-search-premier",
+        "name": "Academic Search Premier",
+        "description": "General-purpose scholarly database covering the social sciences, humanities, education, health, and related disciplines.",
+        "subjectArea": "Multidisciplinary Articles",
+        "whyFits": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "accessUrl": "https://guides.zsr.wfu.edu/az.php?q=Academic%20Search%20Premier",
+        "searchTerms": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)"
+        ],
+        "filters": [
+          "peer-reviewed",
+          "subject",
+          "date"
+        ],
+        "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+        "queryValidation": {
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        "provenance": {
+          "matchedSubject": "auto",
+          "matchedSourceMode": "scholarly",
+          "sourceKinds": [
+            "scholarly-article"
+          ],
+          "queryDialect": "ebsco",
+          "metadataSource": "prototype-local-config",
+          "maintenanceOwner": "Unassigned - ZSR decision needed",
+          "reviewStatus": "pending-zsr-review",
+          "configReviewedOn": "2026-07-29",
+          "librarianReviewedOn": null,
+          "configVersion": "2026-08-10.2"
+        }
+      },
+      {
+        "id": "eric",
+        "name": "ERIC",
+        "description": "Education research database for teaching, learning, disability services, and school policy.",
+        "subjectArea": "Education",
+        "whyFits": "This fits the Interdisciplinary subject focus and the scholarly articles contract.",
+        "accessUrl": "https://guides.zsr.wfu.edu/az.php?q=ERIC",
+        "searchTerms": [
+          "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)"
+        ],
+        "filters": [
+          "publication-type",
+          "education-level",
+          "peer-reviewed",
+          "date"
+        ],
+        "expect": "Scholarly articles and subject-specific leads that still need source evaluation.",
+        "queryValidation": {
+          "valid": true,
+          "missingConceptIds": [],
+          "naturalLanguage": false
+        },
+        "provenance": {
+          "matchedSubject": "auto",
+          "matchedSourceMode": "scholarly",
+          "sourceKinds": [
+            "scholarly-article",
+            "primary-source"
+          ],
+          "queryDialect": "eric",
+          "metadataSource": "prototype-local-config",
+          "maintenanceOwner": "Unassigned - ZSR decision needed",
+          "reviewStatus": "pending-zsr-review",
+          "configReviewedOn": "2026-07-29",
+          "librarianReviewedOn": null,
+          "configVersion": "2026-08-10.2"
+        }
+      }
+    ],
+    "fallbacks": [
+      {
+        "label": "Too many irrelevant results? Add a requirement you actually need",
+        "text": "Edit the search to add a population, place, outcome, or method required by the assignment. Keep required source types and dates unchanged."
+      },
+      {
+        "label": "Too few results? Broaden with equivalent terms",
+        "text": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+        "href": "https://guides.zsr.wfu.edu/az.php?q=Web%20of%20Science"
+      },
+      {
+        "label": "Switch databases and rerun in Web of Science",
+        "text": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+        "href": "https://guides.zsr.wfu.edu/az.php?q=Web%20of%20Science"
+      },
+      {
+        "label": "Try the topic in Google Scholar",
+        "text": "\"food insecurity\" AND \"college students\" AND (qualitative AND interview*)",
+        "href": "https://scholar.google.com/scholar?q=%22food%20insecurity%22%20AND%20%22college%20students%22%20AND%20(qualitative%20AND%20interview*)"
+      },
+      {
+        "label": "Reuse subject headings from PubMed / MEDLINE",
+        "text": "Open a relevant record and use its subject headings as alternatives within the matching concept group. Retain the other concepts and assignment requirements.",
+        "href": "https://pubmed.ncbi.nlm.nih.gov/"
+      },
+      {
+        "label": "Use citation chaining after one strong result",
+        "text": "Open its references for earlier research and its cited-by list for newer research. Check the assignment requirements for each lead.",
+        "href": "https://scholar.google.com/scholar?q=%22food%20insecurity%22%20AND%20%22college%20students%22%20AND%20(qualitative%20AND%20interview*)"
+      }
+    ],
+    "transparencyNote": "Every route is selected from the governed resource registry, must support the requested source type, and receives a topic-preserving query plus provider-specific filters. Live records remain leads that the student must verify."
+  }
+}

@@ -1,4 +1,4 @@
-import { researchSpecQuery, formatResearchTerm, researchFacetExpressions, researchConceptExpressions } from "./researchSpec.js";
+import { researchSpecQuery, formatResearchTerm, researchFacetExpressions, researchConceptExpressions, conceptTermOptions } from "./researchSpec.js";
 
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
@@ -14,7 +14,7 @@ export function sourceQueryVariants(spec) {
       const terms = variant === "expanded"
         ? [concept.preferredTerm, ...synonyms.slice(0, spec.searchExpansion === "full-synonyms" ? 5 : 3)]
         : [synonyms.length && index === variant ? synonyms[0] : concept.preferredTerm];
-      const expression = [...new Set(terms.map(clean))].map((term) => formatResearchTerm(term, { exact: concept.exactPhrase === true })).join(" OR ");
+      const expression = [...new Set(terms.map(clean))].map((term) => formatResearchTerm(term, term === clean(concept.preferredTerm) ? conceptTermOptions(concept) : { exact: concept.exactPhrase === true })).join(" OR ");
       return terms.length > 1 ? `(${expression})` : expression;
     });
     for (const facet of researchFacetExpressions(spec)) if (!expressions.some((expression) => expression.toLowerCase().includes(facet.toLowerCase()))) expressions.push(facet);

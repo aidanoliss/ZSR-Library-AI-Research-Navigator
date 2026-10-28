@@ -1,0 +1,3165 @@
+[
+  {
+    "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+    "elapsedMs": 3239,
+    "maxTimerGap": 161,
+    "sources": [
+      {
+        "title": "Sanctions and Regime Type: What Works, and When?",
+        "author": "Brooks, Risa A.",
+        "authors": [
+          "Brooks, Risa A."
+        ],
+        "type": "article",
+        "date": "2002-06-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1080_714005349&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1080/714005349",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0963-6412",
+        "containerTitle": "Security studies",
+        "publisher": "Taylor & Francis Group",
+        "edition": "",
+        "volume": "11",
+        "issue": "4",
+        "pages": "1-50",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Coalitions, Democracy, Effectiveness. Published/created 2002-06-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes. It is hypothesized that states will react to different types of sanction -- comprehensive vs targeted -- differently depending on how their leaders perceive their effects on particular economic & social groups; only if the ruling coalition is threatened by sanctions are leaders likely to be willing to comply with external demands. Four case studies -- Yugoslavia, South Africa, Iraq, & Haiti -- support these hypotheses & demonstrate that democratic & authoritarian leaders respond differently to different sanctions. The former are most responsive to comprehensive trade, social, or financial sanctions, since they affect the average voter, provoking lobbying by key economic & social groups important to political coalitions that pressure the government for policy change. In authoritarian regimes, such sanctions can be counterproductive, serving only to strengthen constituencies allied with the ruling regime & weakening the middle class; only when the elite & allied coalitions are threatened are authoritarian leaders motivated to react to sanctions. Implications for the development of \"smart\" sanctions targeted at specific regime types are discussed. 1 Table, 1 Figure. K. Hyatt Stewart",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes. It is hypothesized that states will react to different types of sanction -- comprehensive vs targeted -- differently depending on how their...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Coalitions; Democracy; Effectiveness; International law; International relations; National security",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Coalitions",
+          "Democracy",
+          "Effectiveness",
+          "International law",
+          "International relations",
+          "National security"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "direct-comparison",
+          "label": "Comparison indicated · verify design",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Sanctions and Regime Type: What Works, and When?"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "abstract",
+              "term": "authoritarian regimes",
+              "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes."
+            },
+            {
+              "concept": "democracies",
+              "field": "abstract",
+              "term": "democratic",
+              "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes."
+            }
+          ],
+          "relationship": {
+            "status": "comparison-indicated",
+            "explanation": "The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source.",
+            "evidence": [
+              {
+                "field": "abstract",
+                "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes."
+              }
+            ]
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source."
+        },
+        "metadataRank": {
+          "score": 7168,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1080_714005349&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:27.811Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1080/714005349",
+          "registryTitle": "Sanctions and Regime Type: What Works, and When?",
+          "url": "https://doi.org/10.1080%2F714005349",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:28.029Z"
+        }
+      },
+      {
+        "title": "Aid Sanctions and Hybrid Regimes",
+        "author": "Portela, Clara; Mora-Sanguinetti, Juan S.",
+        "authors": [
+          "Portela, Clara",
+          "Mora-Sanguinetti, Juan S."
+        ],
+        "type": "article",
+        "date": "2025-10-03",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3258063793&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1080/00220388.2025.2481878",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0022-0388",
+        "containerTitle": "The Journal of development studies",
+        "publisher": "Routledge",
+        "edition": "",
+        "volume": "61",
+        "issue": "10",
+        "pages": "1555-1578",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Authoritarianism, Comparative government, Democracy. Published/created 2025-10-03. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Recent advances combining sanctions scholarship and the study of authoritarianism relate sanctions effectiveness to regime type. These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types. This literature at the intersection between international relations and comparative politics focuses on the democracy-autocracy dichotomy, or the categorization of autocratic types, to the detriment of the exploration of 'hybrid' regime types. Equally importantly, it has neglected examining the impact of aid suspensions as a subcategory of sanctions (Nielsen, 2013 ). We address these deficits by investigating whether (i) the autocratic type or the level of democratic openness of the target better predicts sanctions effectiveness, (ii) whether hybrid regimes behave like closed autocracies or like democracies under sanctions, and (iii) whether aid suspensions perform similarly than other sanctions in terms of effectiveness. The hypotheses are tested on an original dataset rich in aid sanctions.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Recent advances combining sanctions scholarship and the study of authoritarianism relate sanctions effectiveness to regime type. These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Authoritarianism; Comparative government; Democracy; Despotism; Dictatorship; Economic development",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Authoritarianism",
+          "Comparative government",
+          "Democracy",
+          "Despotism",
+          "Dictatorship",
+          "Economic development"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "direct-comparison",
+          "label": "Comparison indicated · verify design",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Aid Sanctions and Hybrid Regimes"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "abstract",
+              "term": "authoritarian regimes",
+              "excerpt": "These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types."
+            },
+            {
+              "concept": "democracies",
+              "field": "abstract",
+              "term": "democracies",
+              "excerpt": "These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types."
+            }
+          ],
+          "relationship": {
+            "status": "comparison-indicated",
+            "explanation": "The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source.",
+            "evidence": [
+              {
+                "field": "abstract",
+                "excerpt": "We address these deficits by investigating whether (i) the autocratic type or the level of democratic openness of the target better predicts sanctions effectiveness, (ii) whether hybrid regimes behave like closed autocracies or like democracies under sanctions, and (iii) whether aid suspensions perform similarly than other sanctions in terms of effectiveness"
+              }
+            ]
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source."
+        },
+        "metadataRank": {
+          "score": 7168,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:27.811Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1080/00220388.2025.2481878",
+          "registryTitle": "Aid Sanctions and Hybrid Regimes",
+          "url": "https://doi.org/10.1080%2F00220388.2025.2481878",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:28.032Z"
+        }
+      },
+      {
+        "title": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes",
+        "author": "von Soest, Christian; Wahman, Michael",
+        "authors": [
+          "von Soest, Christian",
+          "Wahman, Michael"
+        ],
+        "type": "article",
+        "date": "2013-01-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_1698380581&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "",
+        "pmid": "",
+        "isbn": "",
+        "issn": "",
+        "containerTitle": "IDEAS Working Paper Series from RePEc",
+        "publisher": "Federal Reserve Bank of St. Louis",
+        "edition": "",
+        "volume": "",
+        "issue": "",
+        "pages": "",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Authoritarianism, Democracy, Human rights. Published/created 2013-01-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Since the end of the Cold War, Western powers have frequently used sanctions as a reaction to declining levels of democracy and human rights violations in authoritarian regimes. However, some of the world's most repressive authoritarian regimes have never been subjected to sanctions, while other more competitive autocracies have been exposed to repeated sanction episodes instigated by Western democracies as an attempt to enhance democracy and human rights. In this paper, we investigate how the United States and the European Union have selectively used sanctions as a tool to improve the level of democracy in targeted authoritarian states. Using a new dataset on democratic sanctions between 1990 and 2010, time - series-cross-sectional logistic regression and a number of strategically selected case studies, we find strong support for the suggestion that senders select economically and politically vulnerable targets where the expected probability of sanction success is high.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Since the end of the Cold War, Western powers have frequently used sanctions as a reaction to declining levels of democracy and human rights violations in authoritarian regimes. However, some of the world's most repressive authoritarian regimes have never been subjected to sanctions, while other more competitive autocracies have been exposed to repeated...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Authoritarianism; Democracy; Human rights",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": null,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Authoritarianism",
+          "Democracy",
+          "Human rights"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "The Selective Targeting of Democratic Sanctions against Authoritarian Regimes"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "title",
+              "term": "authoritarian regimes",
+              "excerpt": "The Selective Targeting of Democratic Sanctions against Authoritarian Regimes"
+            },
+            {
+              "concept": "democracies",
+              "field": "title",
+              "term": "democratic",
+              "excerpt": "The Selective Targeting of Democratic Sanctions against Authoritarian Regimes"
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_1698380581&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          },
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2119147497&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "metadataRank": {
+          "score": 4139,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:27.811Z"
+      },
+      {
+        "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+        "author": "Grauvogel, Julia; von Soest, Christian",
+        "authors": [
+          "Grauvogel, Julia",
+          "von Soest, Christian"
+        ],
+        "type": "article",
+        "date": "2014-11",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_wiley_primary_10_1111_1475_6765_12065_EJPR12065&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1111/1475-6765.12065",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0304-4130",
+        "containerTitle": "European journal of political research",
+        "publisher": "Blackwell Publishing Ltd",
+        "edition": "",
+        "volume": "53",
+        "issue": "4",
+        "pages": "635-653",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Authoritarianism, Democracy, Democratization. Published/created 2014-11. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "International sanctions are one of the most commonly used tools to instigate democratisation in the post‐Cold War era. However, despite long‐term sanction pressure by the European Union, the United States and/or the United Nations, non‐democratic rule has proven to be extremely persistent. Which domestic and international factors account for the regimes' ability to resist external pressure? Based on a new global dataset on sanctions from 1990 to 2011, the results of a fuzzy set qualitative comparative analysis (fsQCA) provide new insights for the research on sanctions and on authoritarian regimes. Most significantly, sanctions strengthen authoritarian rule if the regime manages to incorporate their existence into its legitimation strategy. Such an unintended ‘rally‐round‐the‐flag’ effect occurs where sanctions are imposed on regimes that possess strong claims to legitimacy and have only limited economic and societal linkages to the sender of sanctions.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "International sanctions are one of the most commonly used tools to instigate democratisation in the post‐Cold War era. However, despite long‐term sanction pressure by the European Union, the United States and/or the United Nations, non‐democratic rule has proven to be extremely persistent. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Authoritarianism; Democracy; Democratization; Europe; European Union; Fuzzy sets",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Authoritarianism",
+          "Democracy",
+          "Democratization",
+          "Europe",
+          "European Union",
+          "Fuzzy sets"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "title",
+              "term": "authoritarian regimes",
+              "excerpt": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes"
+            },
+            {
+              "concept": "democracies",
+              "field": "abstract",
+              "term": "democratic",
+              "excerpt": "However, despite long‐term sanction pressure by the European Union, the United States and/or the United Nations, non‐democratic rule has proven to be extremely persistent."
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_wiley_primary_10_1111_1475_6765_12065_EJPR12065&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:27.811Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1111/1475-6765.12065",
+          "registryTitle": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+          "url": "https://doi.org/10.1111%2F1475-6765.12065",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:28.032Z"
+        }
+      },
+      {
+        "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+        "author": "von Soest, Christian; Wahman, Michael",
+        "authors": [
+          "von Soest, Christian",
+          "Wahman, Michael"
+        ],
+        "type": "article",
+        "date": "2015-01-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_sage_journals_10_1177_0022343314551081&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1177/0022343314551081",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0022-3433",
+        "containerTitle": "Journal of peace research",
+        "publisher": "SAGE",
+        "edition": "",
+        "volume": "52",
+        "issue": "1",
+        "pages": "17-31",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Autarchy, Authoritarianism, Cold War. Published/created 2015-01-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Since the end of the Cold War, Western powers have frequently used sanctions to fight declining levels of democracy and human rights violations abroad. However, some of the world's most repressive autocracies have never been subjected to sanctions, while other more competitive authoritarian regimes have been exposed to repeated sanction episodes. In this article, we concentrate on the cost–benefit analysis of Western senders that issue democratic sanctions, those which aim to instigate democratization, against authoritarian states. We argue that Western leaders weight domestic and international pressure to impose sanctions against the probability of sanction success and the sender's own political and economic costs. Their cost–benefit calculus is fundamentally influenced by the strength of trigger events indicating infringements of democratic and human rights. Western sanction senders are most likely to respond to coups d'état, the most drastic trigger events, and tend to sanction vulnerable targets to a higher extent than stable authoritarian regimes. Senders are also more likely to sanction poor targets less integrated in the global economy and countries that do not align with the Western international political agenda, especially in responding to 'weaker' trigger events such as controversial elections. The analysis is carried out using a new dataset of US and EU sanctions against authoritarian states in the period 1990–2010.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Since the end of the Cold War, Western powers have frequently used sanctions to fight declining levels of democracy and human rights violations abroad. However, some of the world's most repressive autocracies have never been subjected to sanctions, while other more competitive authoritarian regimes have been exposed to repeated sanction episodes. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Autarchy; Authoritarianism; Cold War; Cost effectiveness; Democracy; Democratization",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Autarchy",
+          "Authoritarianism",
+          "Cold War",
+          "Cost effectiveness",
+          "Democracy",
+          "Democratization"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "abstract",
+              "term": "authoritarian regimes",
+              "excerpt": "However, some of the world's most repressive autocracies have never been subjected to sanctions, while other more competitive authoritarian regimes have been exposed to repeated sanction episodes."
+            },
+            {
+              "concept": "democracies",
+              "field": "title",
+              "term": "democratic",
+              "excerpt": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions"
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_sage_journals_10_1177_0022343314551081&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:27.811Z",
+        "identityCheck": {
+          "status": "title-difference",
+          "provider": "Crossref",
+          "doi": "10.1177/0022343314551081",
+          "registryTitle": "Not all dictators are equal",
+          "url": "https://doi.org/10.1177%2F0022343314551081",
+          "detail": "The provider title differs from the DOI registry title. This can be a title variant or a metadata error; check the original record before citing.",
+          "checkedAt": "2026-10-16T22:27:28.087Z"
+        }
+      },
+      {
+        "title": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States",
+        "author": "Bondeli, Moritz Emanuel; Mares, Isabela et al.",
+        "authors": [
+          "Bondeli, Moritz Emanuel",
+          "Mares, Isabela",
+          "Pike, Ryan"
+        ],
+        "type": "article",
+        "date": "2026-05-11",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3339827113&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1017/gov.2026.10040",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0017-257X",
+        "containerTitle": "Government and opposition (London)",
+        "publisher": "Cambridge University Press",
+        "edition": "",
+        "volume": "61",
+        "issue": "",
+        "pages": "",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Altruism, Cooperation, Costs. Published/created 2026-05-11. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Economic sanctions are a critical tool of international diplomacy. Existing scholarship shows that citizens in democratic sender states value sanctions that are effective in producing policy concessions. However, they also seek to limit the adverse humanitarian consequences of sanction imposition. How do citizens trade off these objectives against each other? We develop a theory of sanctions preferences where citizens (1) value policy concessions, (2) hold humanitarian motivations and (3) hold beliefs about how policy change occurs in autocracies. We argue that citizens are conditional humanitarians – humanitarian concerns dominate effectiveness considerations only if policy concessions are unlikely. Results from a pre-registered willingness-to-pay experiment examining the preferences of German citizens on sanctions against Russia after its invasion of Ukraine confirm the predictions of our theory.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Economic sanctions are a critical tool of international diplomacy. Existing scholarship shows that citizens in democratic sender states value sanctions that are effective in producing policy concessions. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Bondeli, Moritz Emanuel; Mares, Isabela; Pike, Ryan",
+          "Subject terms: Altruism; Cooperation; Costs; Despotism; Dictatorship; Diplomacy",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Altruism",
+          "Cooperation",
+          "Costs",
+          "Despotism",
+          "Dictatorship",
+          "Diplomacy"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "abstract",
+              "term": "autocracies",
+              "excerpt": "We develop a theory of sanctions preferences where citizens (1) value policy concessions, (2) hold humanitarian motivations and (3) hold beliefs about how policy change occurs in autocracies."
+            },
+            {
+              "concept": "democracies",
+              "field": "title",
+              "term": "democratic",
+              "excerpt": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States"
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:27.811Z"
+      },
+      {
+        "title": "Coercive or Corrosive: The Negative Impact of Economic Sanctions on Democracy",
+        "author": "Peksen, Dursun; Drury, A. Cooper",
+        "authors": [
+          "Peksen, Dursun",
+          "Drury, A. Cooper"
+        ],
+        "type": "article",
+        "date": "2010-08-30",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_758119117&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1080/03050629.2010.502436",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0305-0629",
+        "containerTitle": "International interactions",
+        "publisher": "Taylor & Francis Group",
+        "edition": "",
+        "volume": "36",
+        "issue": "3",
+        "pages": "240-264",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Authority, Civil rights, Coercion. Published/created 2010-08-30. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "This article seeks to analyze the impact that sanctions have on democracy. We argue that economic sanctions worsen the level of democracy because the economic hardship caused by sanctions can be used as a strategic tool by the targeted regime to consolidate authoritarian rule and weaken the opposition. Furthermore, we argue that economic sanctions create new incentives for the political leadership to restrict political liberties, to undermine the challenge of sanctions as an external threat to their authority. Using time-series cross-national data (1972-2000), the findings show that both the immediate and longer-term effects of economic sanctions significantly reduce the level of democratic freedoms in the target. The findings also demonstrate that comprehensive economic sanctions have greater negative impact than limited sanctions. These findings suggest that sanctions can create negative externalities by reducing the political rights and civil liberties in the targeted state.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "This article seeks to analyze the impact that sanctions have on democracy. We argue that economic sanctions worsen the level of democracy because the economic hardship caused by sanctions can be used as a strategic tool by the targeted regime to consolidate authoritarian rule and weaken the opposition. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Authority; Civil rights; Coercion; Democracy; Economic conditions; Economic history",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Authority",
+          "Civil rights",
+          "Coercion",
+          "Democracy",
+          "Economic conditions",
+          "Economic history"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Coercive or Corrosive: The Negative Impact of Economic Sanctions on Democracy"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "abstract",
+              "term": "authoritarian regimes",
+              "excerpt": "We argue that economic sanctions worsen the level of democracy because the economic hardship caused by sanctions can be used as a strategic tool by the targeted regime to consolidate authoritarian rule and weaken the opposition."
+            },
+            {
+              "concept": "democracies",
+              "field": "title",
+              "term": "democracies",
+              "excerpt": "Coercive or Corrosive: The Negative Impact of Economic Sanctions on Democracy"
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_758119117&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:27.811Z"
+      },
+      {
+        "title": "Policy-learning in EU democracy support: strategic adaptation and (un)learning in the EU's response to authoritarian consolidation in Belarus",
+        "author": "Bosse, Giselle",
+        "authors": [
+          "Bosse, Giselle"
+        ],
+        "type": "article",
+        "date": "2025-10-03",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1080_13510347_2025_2484591&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1080/13510347.2025.2484591",
+        "pmid": "",
+        "isbn": "",
+        "issn": "1351-0347",
+        "containerTitle": "Democratization",
+        "publisher": "Routledge",
+        "edition": "",
+        "volume": "32",
+        "issue": "7",
+        "pages": "1708-1728",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Adaptation, Authoritarianism, Bureaucracy. Published/created 2025-10-03. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "This article investigates the European Union's (EU) policy-learning processes in democracy support, focusing on its responses to authoritarian consolidation in Belarus from 2004 to 2024. Despite its commitment to democracy and human rights, the EU has struggled to achieve consistent outcomes in engaging with Belarus, a \"hard case\" of sustained autocracy. The study develops a novel conceptual framework to analyse policy learning, unlearning, and strategic adaptation in EU democracy support, examining how the EU learns from experience and adapts its approaches. The study finds that segmented learning, involving ad-hoc adjustments to immediate events, often shaped EU responses, while cumulative learning - drawing on past experiences to inform long-term strategies - played a more limited role. Strategic adaptation is evident in the EU's oscillation between pragmatic engagement and sanctions, reflecting a complex interplay between normative commitments and geopolitical considerations. Institutional constraints and bureaucratic rigidity not only hampered policy learning but also led to the unlearning of valuable knowledge such as on civil society engagement. While there has been some adaptation in the face of authoritarian resilience and geopolitical competition, the Belarus case demonstrates that the EU lacks the institutional memory and learning mechanisms to systematically integrate democracy support with other foreign policy objectives.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "This article investigates the European Union's (EU) policy-learning processes in democracy support, focusing on its responses to authoritarian consolidation in Belarus from 2004 to 2024. Despite its commitment to democracy and human rights, the EU has struggled to achieve consistent outcomes in engaging with Belarus, a \"hard case\" of sustained autocracy. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Adaptation; Authoritarianism; Bureaucracy; Civil society; Democracy; Despotism",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Adaptation",
+          "Authoritarianism",
+          "Bureaucracy",
+          "Civil society",
+          "Democracy",
+          "Despotism"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "abstract",
+              "term": "Sanctions",
+              "excerpt": "Strategic adaptation is evident in the EU's oscillation between pragmatic engagement and sanctions, reflecting a complex interplay between normative commitments and geopolitical considerations."
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "title",
+              "term": "authoritarian",
+              "excerpt": "Policy-learning in EU democracy support: strategic adaptation and (un)learning in the EU's response to authoritarian consolidation in Belarus"
+            },
+            {
+              "concept": "democracies",
+              "field": "title",
+              "term": "democracies",
+              "excerpt": "Policy-learning in EU democracy support: strategic adaptation and (un)learning in the EU's response to authoritarian consolidation in Belarus"
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:27.811Z"
+      },
+      {
+        "title": "The Cornered Mouse: Sanctioned Elites and Authoritarian Realignment in the Japanese Legislature, 1936–1942",
+        "author": "FUKUMOTO, MAKOTO",
+        "authors": [
+          "FUKUMOTO, MAKOTO"
+        ],
+        "type": "article",
+        "date": "2026-08-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1017_S0003055426101440&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1017/S0003055426101440",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0003-0554",
+        "containerTitle": "The American political science review",
+        "publisher": "Cambridge University Press",
+        "edition": "",
+        "volume": "120",
+        "issue": "3",
+        "pages": "1167-1187",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Armed Forces, Authoritarianism, Automobiles. Published/created 2026-08-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "This study examines how economic elites respond to the erosion of democratic checks and balances, focusing on the Japanese legislature from 1936 to 1942. Using an original dataset of Diet members’ biographies and board memberships, it analyzes the Imperial Japanese Army’s consolidation of power and shifts in parliamentary voting patterns amid the suppression of dissent. Employing difference-in-differences and event-study designs, this study evaluates the effects of two key shocks: economic sanctions and wartime procurement. Legislators tied to sanction-hit sectors—such as textiles and petrochemicals, the weakest performers in the stock market—shifted toward authoritarian alignment. Biographical and legislative records suggest this shift was facilitated by regime-backed campaign finance. In contrast, legislators from procurement-dependent sectors, such as automobiles, maintained stable voting behavior. The findings complicate the conventional view that sanctions prompt elites to advocate international policy change. Instead, they show that sanctions can drive vulnerable actors to submit domestically, thereby accelerating authoritarian consolidation.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "This study examines how economic elites respond to the erosion of democratic checks and balances, focusing on the Japanese legislature from 1936 to 1942. Using an original dataset of Diet members’ biographies and board memberships, it analyzes the Imperial Japanese Army’s consolidation of power and shifts in parliamentary voting patterns amid the...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Armed Forces; Authoritarianism; Automobiles; Beneficiaries; Biography; Building materials",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Armed Forces",
+          "Authoritarianism",
+          "Automobiles",
+          "Beneficiaries",
+          "Biography",
+          "Building materials"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "The Cornered Mouse: Sanctioned Elites and Authoritarian Realignment in the Japanese Legislature, 1936–1942"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "title",
+              "term": "authoritarian",
+              "excerpt": "The Cornered Mouse: Sanctioned Elites and Authoritarian Realignment in the Japanese Legislature, 1936–1942"
+            },
+            {
+              "concept": "democracies",
+              "field": "abstract",
+              "term": "democratic",
+              "excerpt": "This study examines how economic elites respond to the erosion of democratic checks and balances, focusing on the Japanese legislature from 1936 to 1942."
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:27.811Z"
+      },
+      {
+        "title": "Regional sanctions and the struggle for democracy: Introduction to the special issue",
+        "author": "Hellquist, Elin; Palestini, Stefano",
+        "authors": [
+          "Hellquist, Elin",
+          "Palestini, Stefano"
+        ],
+        "type": "article",
+        "date": "2021-09-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_swepub_primary_oai_DiVA_org_su_187545&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1177/0192512120968109",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0192-5121",
+        "containerTitle": "International political science review",
+        "publisher": "Sage Publications, Ltd",
+        "edition": "",
+        "volume": "42",
+        "issue": "4",
+        "pages": "437-450",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Democracy, Despotism, Dictatorship. Published/created 2021-09-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Regional organisations (ROs) around the world increasingly use sanctions against member states in situations of democratic crisis. This special issue unpacks the trend of RO sanctions in regions that are both democracy-dense (Europe and the Americas) and autocracy-dense (Africa, Southeast Asia, and the Middle East). We argue that regional sanctions cannot be taken at face value as instruments of democracy promotion. Instead, the politics of regional sanctions unveil controversies over the substance and limits of democracy, as well as over practical processes of regional interference in a sphere that is at the core of ‘domestic affairs’. In this introductory article, we situate the special issue at the crossroads of debates within comparative regionalism, sanctions, and democracy/autocracy promotion, and discuss how the membership premise crucially distinguishes RO measures from foreign policy and United Nations (UN) sanctions.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Regional organisations (ROs) around the world increasingly use sanctions against member states in situations of democratic crisis. This special issue unpacks the trend of RO sanctions in regions that are both democracy-dense (Europe and the Americas) and autocracy-dense (Africa, Southeast Asia, and the Middle East). ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Democracy; Despotism; Dictatorship; International relations; Regionalism; Regions",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Democracy",
+          "Despotism",
+          "Dictatorship",
+          "International relations",
+          "Regionalism",
+          "Regions"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "supporting",
+          "label": "Topic match · comparison not established",
+          "evidence": [
+            {
+              "concept": "Sanctions",
+              "field": "title",
+              "term": "Sanctions",
+              "excerpt": "Regional sanctions and the struggle for democracy: Introduction to the special issue"
+            },
+            {
+              "concept": "authoritarian regimes",
+              "field": "abstract",
+              "term": "autocracies",
+              "excerpt": "This special issue unpacks the trend of RO sanctions in regions that are both democracy-dense (Europe and the Americas) and autocracy-dense (Africa, Southeast Asia, and the Middle East)."
+            },
+            {
+              "concept": "democracies",
+              "field": "title",
+              "term": "democracies",
+              "excerpt": "Regional sanctions and the struggle for democracy: Introduction to the special issue"
+            }
+          ],
+          "relationship": {
+            "status": "not-established",
+            "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+            "evidence": []
+          },
+          "matchedConcepts": [
+            "Sanctions",
+            "authoritarian regimes",
+            "democracies"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+        },
+        "metadataRank": {
+          "score": 4136,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:27.811Z"
+      }
+    ],
+    "outcomes": {
+      "library": [
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "(Sanctions OR \"economic sanctions\" OR \"financial sanctions\" OR \"trade sanctions\") AND ((\"authoritarian regimes\" OR authoritarian OR autocratic OR autocracies) OR (democracies OR democracy OR democratic OR \"democratic regimes\"))",
+          "retrievedCount": 80,
+          "resultCount": 20
+        },
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "Sanctions AND (\"authoritarian regimes\" OR democracies)",
+          "retrievedCount": 80,
+          "resultCount": 20
+        },
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "Sanctions AND (authoritarian OR democracies)",
+          "retrievedCount": 80,
+          "resultCount": 20
+        }
+      ],
+      "openAccess": []
+    }
+  },
+  {
+    "query": "Climate change and internal migration in Bangladesh",
+    "elapsedMs": 1655,
+    "maxTimerGap": 104,
+    "sources": [
+      {
+        "title": "Climate change and internal migration patterns in Bangladesh: an agent-based model",
+        "author": "Hassani-Mahmooei, Behrooz; Parris, Brett W.",
+        "authors": [
+          "Hassani-Mahmooei, Behrooz",
+          "Parris, Brett W."
+        ],
+        "type": "article",
+        "date": "2012-12-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_2000477394&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1017/S1355770X12000290",
+        "pmid": "",
+        "isbn": "",
+        "issn": "1355-770X",
+        "containerTitle": "Environment and development economics",
+        "publisher": "Cambridge University Press",
+        "edition": "",
+        "volume": "17",
+        "issue": "6",
+        "pages": "763-780",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Bangladesh, Cyclones, Decision making. Published/created 2012-12-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Bangladesh is one of the countries most vulnerable to climate change impacts such as extreme weather events, due to its low-lying topography, high population density and widespread poverty. In this paper, we report on the development and results of an agent-based model of the migration dynamics that may arise in Bangladesh as a result of climate change. The main modules are each calibrated with data on relevant indicators, such as the incidences of extreme poverty, socioeconomic vulnerability, demography, and historical drought, cyclone and flood patterns. The results suggest likely changes in population densities across Bangladesh due to migration from the drought-prone western districts and areas vulnerable to cyclones and floods in the south, towards northern and eastern districts. The model predicts between 3 and 10 million internal migrants over the next 40 years, depending on the severity of the hazards. Some associated policy considerations are also discussed.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Bangladesh is one of the countries most vulnerable to climate change impacts such as extreme weather events, due to its low-lying topography, high population density and widespread poverty. In this paper, we report on the development and results of an agent-based model of the migration dynamics that may arise in Bangladesh as a result of climate change. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Bangladesh; Cyclones; Decision making; Demography; Developing countries; Development economics",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Bangladesh",
+          "Cyclones",
+          "Decision making",
+          "Demography",
+          "Developing countries",
+          "Development economics"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "meets",
+              "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Climate change and internal migration patterns in Bangladesh: an agent-based model”. Verify its coverage in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "title",
+              "term": "Climate change",
+              "excerpt": "Climate change and internal migration patterns in Bangladesh: an agent-based model"
+            },
+            {
+              "concept": "internal migration",
+              "field": "title",
+              "term": "internal migration",
+              "excerpt": "Climate change and internal migration patterns in Bangladesh: an agent-based model"
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Climate change and internal migration patterns in Bangladesh: an agent-based model"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7164,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_2000477394&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1017/S1355770X12000290",
+          "registryTitle": "Climate change and internal migration patterns in Bangladesh: an agent-based model",
+          "url": "https://doi.org/10.1017%2FS1355770X12000290",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:29.639Z"
+        }
+      },
+      {
+        "title": "Coastal climate change, soil salinity and human migration in Bangladesh",
+        "author": "Chen, J.; Mueller, V.",
+        "authors": [
+          "Chen, J.",
+          "Mueller, V."
+        ],
+        "type": "article",
+        "date": "2018-11-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2127645931&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1038/s41558-018-0313-8",
+        "pmid": "",
+        "isbn": "",
+        "issn": "1758-678X",
+        "containerTitle": "Nature climate change",
+        "publisher": "Nature Publishing Group UK",
+        "edition": "",
+        "volume": "8",
+        "issue": "11",
+        "pages": "981-985",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Adaptation, Aquaculture, Coasts. Published/created 2018-11-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Climate change is not only altering weather patterns but also accelerating sea-level rise, leading to increased inundation and saline contamination of soils. Given projected sea-level rise, it is imperative to examine the extent to which farmers in coastal Bangladesh can adapt by diversifying economic activities before resorting to migration within and across borders. Here, to identify patterns in how households adapt to increased sea/freshwater flooding and soil salinity, we analyse nationally representative socioeconomic and migration data against a suite of environmental variables constructed at the sub-district level. Our results show that inundation alone has negligible effects on migration and agricultural production. However, gradual increases in soil salinity correspond to increasing diversification into aquaculture and internal migration of household members. Salinity is also found to have direct effects on internal and international migration even after controlling for income losses, with mobility restricted to certain locations within Bangladesh. Our study suggests that migration is driven, in part, by the adverse consequences of salinity on crop production. Projected sea-level rise and increased flooding threaten coastal agriculture. Gradual increases in soil salinity, but not inundation alone, are shown to correspond to increasing diversification into aquaculture and higher levels of internal migration.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Climate change is not only altering weather patterns but also accelerating sea-level rise, leading to increased inundation and saline contamination of soils. Given projected sea-level rise, it is imperative to examine the extent to which farmers in coastal Bangladesh can adapt by diversifying economic activities before resorting to migration within and...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Adaptation; Aquaculture; Coasts; Crop science; Ecology; Emigration and immigration",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Adaptation",
+          "Aquaculture",
+          "Coasts",
+          "Crop science",
+          "Ecology",
+          "Emigration and immigration"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "meets",
+              "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Coastal climate change, soil salinity and human migration in Bangladesh”. Verify its coverage in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "title",
+              "term": "Climate change",
+              "excerpt": "Coastal climate change, soil salinity and human migration in Bangladesh"
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "However, gradual increases in soil salinity correspond to increasing diversification into aquaculture and internal migration of household members."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Coastal climate change, soil salinity and human migration in Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7161,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2127645931&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z",
+        "identityCheck": {
+          "status": "unverified",
+          "detail": "A matching Crossref registry record was not available. This does not establish whether the source is real or false.",
+          "checkedAt": "2026-10-16T22:27:29.630Z"
+        }
+      },
+      {
+        "title": "Natural hazards, internal migration and protests in Bangladesh",
+        "author": "Petrova, Kristina",
+        "authors": [
+          "Petrova, Kristina"
+        ],
+        "type": "article",
+        "date": "2021-01-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2486099923&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1177/0022343320973741",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0022-3433",
+        "containerTitle": "Journal of peace research",
+        "publisher": "Sage Publications, Inc",
+        "edition": "",
+        "volume": "58",
+        "issue": "1",
+        "pages": "33-49",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Bangladesh, Cities and towns, Districts. Published/created 2021-01-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Does internal migration following natural hazards increase the likelihood of protests in migrant-receiving areas? To address the question, this study first looks at the extent to which experiencing different forms of natural hazards contributes to a household’s decision to leave their district of residence. In a second step, the article explores whether that internal migration flow increases the number of protest events in migrant-hosting districts. In doing so, it contributes to the existing debate on the extent to which natural hazards impact the likelihood of social contention, and the role of migration as a linking pathway in that relationship. The impact of climate-related shocks may erode household assets and therefore adaptive capacity in ways that can eventually influence decisions to migrate to larger urban centres. Although migrants are agents of economical and technological change, urban environments may impose challenges to recently arrived migrants and their host communities, affecting the motivations and mobilization resources of urban social groups to protest. As a consequence, the probability of urban unrest in these locations is expected to increase. To test this, I use geo-referenced household-level data from Bangladesh for the period 2010–15, which records households’ experiences of different forms of natural hazard and internal migration flows, available from the Bangladesh Integrated Household Survey. It combines this with data on protests, derived from the Armed Conflict Location and Event Data. Findings suggest that flood hazards in combination with loss of assets increase the likelihood of internal migration, but unlike other types of domestic mobility, hazard-related migration does not increase the frequency of protests in migrants’ districts of destination.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Does internal migration following natural hazards increase the likelihood of protests in migrant-receiving areas? To address the question, this study first looks at the extent to which experiencing different forms of natural hazards contributes to a household’s decision to leave their district of residence. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Bangladesh; Cities and towns; Districts; Households; Immigrants; Metropolitan areas",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Bangladesh",
+          "Cities and towns",
+          "Districts",
+          "Households",
+          "Immigrants",
+          "Metropolitan areas"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "meets",
+              "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Natural hazards, internal migration and protests in Bangladesh”. Verify its coverage in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": " the role of migration as a linking pathway in that relationship. The impact of climate-related shocks may erode household assets and therefore adaptive capacity in ways that can eventually influence decisions to migrate to larger urban centres. Although migrants are agents of economical and technological change, urban environments may impose challenges to r"
+            },
+            {
+              "concept": "internal migration",
+              "field": "title",
+              "term": "internal migration",
+              "excerpt": "Natural hazards, internal migration and protests in Bangladesh"
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Natural hazards, internal migration and protests in Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7161,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2486099923&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z",
+        "identityCheck": {
+          "status": "unverified",
+          "detail": "A matching Crossref registry record was not available. This does not establish whether the source is real or false.",
+          "checkedAt": "2026-10-16T22:27:29.634Z"
+        }
+      },
+      {
+        "title": "Climate‐influenced migration in Bangladesh: The need for a policy realignment",
+        "author": "Martin, Maxmillan; Kang, Yi hyun et al.",
+        "authors": [
+          "Martin, Maxmillan",
+          "Kang, Yi hyun",
+          "Billah, Motasim",
+          "Siddiqui, Tasneem",
+          "Black, Richard",
+          "Kniveton, Dominic"
+        ],
+        "type": "article",
+        "date": "2017-10",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_wiley_primary_10_1111_dpr_12260_DPR12260&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1111/dpr.12260",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0950-6764",
+        "containerTitle": "Development policy review",
+        "publisher": "Blackwell Publishing Ltd",
+        "edition": "",
+        "volume": "35",
+        "issue": "S2",
+        "pages": "O357-O379",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Civil defense, Economic development, Emergency management. Published/created 2017-10. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Recent research into migration in Bangladesh has highlighted that people migrate for better livelihoods, not necessarily in response to climatic stresses and shocks. If facilitated appropriately, internal and international migration can help build adaptive capacity to future environmental and climatic hazards. In this framing, migration happens in the context of a growing city‐centred economy that promotes remittances to villages. However, a textual analysis of current and recent policies concerning climate change, development and poverty alleviation, and disaster management shows that the economic and adaptive roles of internal migration are often not included in policy framing. We argue that if migration works as a positive step towards adaptation, then the key challenge is to align the policies with this new understanding.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Recent research into migration in Bangladesh has highlighted that people migrate for better livelihoods, not necessarily in response to climatic stresses and shocks. If facilitated appropriately, internal and international migration can help build adaptive capacity to future environmental and climatic hazards. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Martin, Maxmillan; Kang, Yi hyun; Billah, Motasim; Siddiqui, Tasneem; Black, Richard; Kniveton, Dominic",
+          "Subject terms: Civil defense; Economic development; Emergency management; Emigration and immigration; Environmental policy; Migration, Internal",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Civil defense",
+          "Economic development",
+          "Emergency management",
+          "Emigration and immigration",
+          "Environmental policy",
+          "Migration, Internal"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "meets",
+              "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Climate‐influenced migration in Bangladesh: The need for a policy realignment”. Verify its coverage in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": "However, a textual analysis of current and recent policies concerning climate change, development and poverty alleviation, and disaster management shows that the economic and adaptive roles of internal migration are often not included in policy framing."
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "If facilitated appropriately, internal and international migration can help build adaptive capacity to future environmental and climatic hazards."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Climate‐influenced migration in Bangladesh: The need for a policy realignment"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7158,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_wiley_primary_10_1111_dpr_12260_DPR12260&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1111/dpr.12260",
+          "registryTitle": "Climate‐influenced migration in Bangladesh: The need for a policy realignment",
+          "url": "https://doi.org/10.1111%2Fdpr.12260",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:29.759Z"
+        }
+      },
+      {
+        "title": "Environmental change and migration aspirations: Evidence from Bangladesh",
+        "author": "Rudolph, Lukas; Koubi, Vally et al.",
+        "authors": [
+          "Rudolph, Lukas",
+          "Koubi, Vally",
+          "Freihardt, Jan"
+        ],
+        "type": "article",
+        "date": "2025-05-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1016_j_gloenvcha_2025_102966&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1016/j.gloenvcha.2025.102966",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0959-3780",
+        "containerTitle": "Global environmental change",
+        "publisher": "Elsevier Ltd",
+        "edition": "",
+        "volume": "91",
+        "issue": "",
+        "pages": "102966-",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Bangladesh, Rivers, Surveys. Published/created 2025-05-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "•1,594 surveyed households along Bangladesh’s Jamuna River, many facing flood and erosion impacts.•Riverbank erosion affectedness raises migration aspirations by 15 percentage points.•Erosion-affected household heads mainly aspire permanent migration, to rural areas.•Flood affectedness has no effect on migration aspirations six months after the event. The argument that environmental stress is an important driver of migration has gained renewed attention amidst increasing climatic changes. This study examines whether and how two distinct environmental stressors influence migration aspirations among affected populations. Our analysis relies on two waves of original survey data of 1,594 households residing in 36 villages along the 250 km of the Jamuna River in Bangladesh, an area heavily impacted by floods and riverbank erosion. The results reveal that riverbank erosion – a long-term environmental event causing permanent destruction – increases aspirations for internal, permanent migration by about 15 percentage points, 4 to 6 months after the occurrence. In contrast, sudden and short-term events, like floods, which have a more temporary impact, do not affect migration aspirations. These results suggest that the type of environmental event shapes adaptation strategies, with migration emerging as a viable response to more severe and lasting events such as erosion. This entails important policy implications regarding the effects of climate change on future patterns of internal migration and highlights that most affected individuals prefer to adapt to environmental stress in situ or within close proximity.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "•1,594 surveyed households along Bangladesh’s Jamuna River, many facing flood and erosion impacts. •Riverbank erosion affectedness raises migration aspirations by 15 percentage points. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Rudolph, Lukas; Koubi, Vally; Freihardt, Jan",
+          "Subject terms: Bangladesh; Rivers; Surveys",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Bangladesh",
+          "Rivers",
+          "Surveys"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "meets",
+              "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Environmental change and migration aspirations: Evidence from Bangladesh”. Verify its coverage in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": "This entails important policy implications regarding the effects of climate change on future patterns of internal migration and highlights that most affected individuals prefer to adapt to environmental stress in situ or within close proximity."
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "The results reveal that riverbank erosion – a long-term environmental event causing permanent destruction – increases aspirations for internal, permanent migration by about 15 percentage points, 4 to 6 months after the occurrence."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Environmental change and migration aspirations: Evidence from Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7158,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1016_j_gloenvcha_2025_102966&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1016/j.gloenvcha.2025.102966",
+          "registryTitle": "Environmental change and migration aspirations: Evidence from Bangladesh",
+          "url": "https://doi.org/10.1016%2Fj.gloenvcha.2025.102966",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:29.684Z"
+        }
+      },
+      {
+        "title": "Factors affecting whether environmental migration is temporary or permanent: Evidence from Bangladesh",
+        "author": "Joarder, Mohammad Abdul Munim; Miller, Paul W.",
+        "authors": [
+          "Joarder, Mohammad Abdul Munim",
+          "Miller, Paul W."
+        ],
+        "type": "article",
+        "date": "2013-12-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_1663562249&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1016/j.gloenvcha.2013.07.026",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0959-3780",
+        "containerTitle": "Global environmental change",
+        "publisher": "Elsevier Ltd",
+        "edition": "",
+        "volume": "23",
+        "issue": "6",
+        "pages": "1511-1524",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Bangladesh, Females, Households. Published/created 2013-12-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "•Internal migration patterns in response to environmental change can be modelled.•Individual characteristics, climate related factors, motivational characteristics, and adaptation strategies are important.•Gender, prior occupational experience, lost assets are particularly important determinants.•Policy implications and a number of the adaptation strategies can be based on the findings. This study examines whether environmental migrants in Bangladesh move permanently or temporarily. The analyses are based on data collected in 2010 and 2011, and cover four themes, namely migrant characteristics, environmental change related factors, conflict and adaptation strategies, and social networks. The estimates obtained from binary logit models show that most sets of variables have statistically significant impacts on the temporary migration versus permanent migration decision. Females are more inclined to migrate temporarily, a finding which is consistent with prior studies that argued that female migration is one temporary household survival strategy in the face of an environmental crisis. The probability of intending to move temporarily is significantly affected by the prior occupational experience: Migrants who were previously engaged in agriculture or fishing are more inclined to migrate permanently. Those households who reported that they had lost assets due to environmental hazards are shown to have a higher probability of becoming permanent migrants. In contrast, loss of livestock and crop failure are associated with a greater likelihood of temporary migration. The empirical results reveal the groups that can be targeted in destination regions in settlement policy, and equally the groups whose return home can be facilitated once any immediate danger has passed.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "•Internal migration patterns in response to environmental change can be modelled. •Individual characteristics, climate related factors, motivational characteristics, and adaptation strategies are important. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Bangladesh; Females; Households; Immigrants; Livestock; Mathematical models",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Bangladesh",
+          "Females",
+          "Households",
+          "Immigrants",
+          "Livestock",
+          "Mathematical models"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "meets",
+              "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Factors affecting whether environmental migration is temporary or permanent: Evidence from Bangladesh”. Verify its coverage in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": "•Internal migration patterns in response to environmental change can be modelled.•Individual characteristics, climate related factors, motivational characteristics, and adaptation strategies are important.•Gender, prior occupational experience, lost assets are particularly important determinants.•Policy implications and a number of the adaptation strategies "
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "•Internal migration patterns in response to environmental change can be modelled.•Individual characteristics, climate related factors, motivational characteristics, and adaptation strategies are important.•Gender, prior occupational experience, lost assets are particularly important determinants.•Policy implications and a number of the adaptation strategies "
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Factors affecting whether environmental migration is temporary or permanent: Evidence from Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7158,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_1663562249&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z"
+      },
+      {
+        "title": "Is Climate Change Migration an Adjustment to Extreme Weather Events? A Study on the Coastal Areas of Bangladesh",
+        "author": "Islam, Mozharul",
+        "authors": [
+          "Islam, Mozharul"
+        ],
+        "type": "article",
+        "date": "2022-10-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1175_WCAS_D_21_0124_1&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1175/WCAS-D-21-0124.1",
+        "pmid": "",
+        "isbn": "",
+        "issn": "1948-8327",
+        "containerTitle": "Weather, climate, and society",
+        "publisher": "American Meteorological Society",
+        "edition": "",
+        "volume": "14",
+        "issue": "4",
+        "pages": "1247-1260",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Coasts, Extreme Weather, Fishers. Published/created 2022-10-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "This paper explores the internal migration of fishers from coastal communities of Bangladesh in response to extreme weather events. It also assesses the vulnerabilities to extreme weather events of these coastal areas, in general, and of targeted fishing communities, in particular. This qualitative study employs a combination of methods, semistructured interviews and observations, in two villages located in the eastern part of Kalapara Upazila, Patuakhali district of Bangladesh. The results indicate that the participants of the study are susceptible to the vulnerability of extreme weather events due to their households’ socioeconomic and geographical location. This study shows that most people from the fishing communities do not migrate to other places to escape from the vulnerabilities as they have high dependency on fish-related activities. Also, there are various socioeconomic and cultural factors that hinder their migration, including the Mohajon–Dadon system, migration costs, lack of skills and resources, and fear of income insecurity. Instead of migrating, they develop their own traditional adaptation mechanisms to ensure their survival. These people remain underrepresented and are not adequately recorded in national or regional migration data.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "This paper explores the internal migration of fishers from coastal communities of Bangladesh in response to extreme weather events. It also assesses the vulnerabilities to extreme weather events of these coastal areas, in general, and of targeted fishing communities, in particular. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Subject terms: Coasts; Extreme Weather; Fishers; Fishing; Geographical distribution; Households",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Coasts",
+          "Extreme Weather",
+          "Fishers",
+          "Fishing",
+          "Geographical distribution",
+          "Households"
+        ],
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "unverified",
+              "detail": "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+            }
+          ],
+          "issues": [
+            "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "title",
+              "term": "Climate change",
+              "excerpt": "Is Climate Change Migration an Adjustment to Extreme Weather Events?"
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "This paper explores the internal migration of fishers from coastal communities of Bangladesh in response to extreme weather events."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "A Study on the Coastal Areas of Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "Bangladesh"
+          ],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Facets not established: Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4149,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1175_WCAS_D_21_0124_1&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z"
+      },
+      {
+        "title": "Social and Cultural Impacts of Climate-Induced Migration on the Munda Community of Shyamnagar, Bangladesh",
+        "author": "Das, Kaushik Kumar",
+        "authors": [
+          "Das, Kaushik Kumar"
+        ],
+        "type": "article",
+        "date": "2026-03-15",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1177_21632324261427528&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1177/21632324261427528",
+        "pmid": "",
+        "isbn": "",
+        "issn": "2163-2324",
+        "containerTitle": "Migration and development (Abingdon, Oxfordshire, UK)",
+        "publisher": "",
+        "edition": "",
+        "volume": "",
+        "issue": "",
+        "pages": "",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Published/created 2026-03-15. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "The rate of internal migration in Bangladesh is increasing day by day due to climate change, with most people migrating towards urban areas. However, the migration patterns of Bengali people and indigenous communities differ significantly. Indigenous people, in particular, receive less attention in climate change studies compared to other aspects. This study examines the migration patterns of the indigenous Munda community from Shyamnagar, Satkhira, Bangladesh, focusing on the social and cultural impacts. While much of the existing research on migration in Bangladesh emphasises the economic effects, often due to the country’s ethnic homogeneity, this study sheds light on the unique experiences of the Munda community. The findings reveal that the Munda engage in permanent migration only when absolutely necessary, while livelihood disruptions typically lead to temporary migration. The study also highlights that migration adversely affects their language, religion and food habits.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "The rate of internal migration in Bangladesh is increasing day by day due to climate change, with most people migrating towards urban areas. However, the migration patterns of Bengali people and indigenous communities differ significantly. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [],
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "unverified",
+              "detail": "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+            }
+          ],
+          "issues": [
+            "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": "The rate of internal migration in Bangladesh is increasing day by day due to climate change, with most people migrating towards urban areas."
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "The rate of internal migration in Bangladesh is increasing day by day due to climate change, with most people migrating towards urban areas."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Social and Cultural Impacts of Climate-Induced Migration on the Munda Community of Shyamnagar, Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "Bangladesh"
+          ],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Facets not established: Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4146,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1177_21632324261427528&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z"
+      },
+      {
+        "title": "Temporal dynamics of land use/land cover change and its prediction using CA-ANN model for southwestern coastal Bangladesh",
+        "author": "Rahman, M. Tauhid Ur; Tabassum, Faheemah et al.",
+        "authors": [
+          "Rahman, M. Tauhid Ur",
+          "Tabassum, Faheemah",
+          "Rasheduzzaman, Md",
+          "Saba, Humayra",
+          "Sarkar, Lina",
+          "Ferdous, Jannatul",
+          "Uddin, Syed Zia",
+          "Zahedul Islam, A. Z. M."
+        ],
+        "type": "article",
+        "date": "2017-11-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_pubmed_primary_29039035&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1007/s10661-017-6272-0",
+        "pmid": "29039035",
+        "isbn": "",
+        "issn": "0167-6369",
+        "containerTitle": "Environmental monitoring and assessment",
+        "publisher": "Springer International Publishing",
+        "edition": "",
+        "volume": "189",
+        "issue": "11",
+        "pages": "565-565",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Anthropogenic Effects, Aquaculture, Bangladesh. Published/created 2017-11-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Change analysis of land use and land cover (LULC) is a technique to study the environmental degradation and to control the unplanned development. Analysis of the past changing trend of LULC along with modeling future LULC provides a combined opportunity to evaluate and guide the present and future land use policy. The southwest coastal region of Bangladesh, especially Assasuni Upazila of Satkhira District, is the most vulnerable to natural disasters and has faced notable changes in its LULC due to the combined effects of natural and anthropogenic causes. The objectives of this study are to illustrate the temporal dynamics of LULC change in Assasuni Upazila over the last 27 years (i.e., between 1989 and 2015) and also to predict future land use change using CA-ANN (cellular automata and artificial neural network) model for the year 2028. Temporal dynamics of LULC change was analyzed, employing supervised classification of multi-temporal Landsat images. Then, prediction of future LULC was carried out by CA-ANN model using MOLUSCE plugin of QGIS. The analysis of LULC change revealed that the LULC of Assasuni had changed notably during 1989 to 2015. “Bare lands” decreased by 21% being occupied by other land uses, especially by “shrimp farms.” Shrimp farm area increased by 25.9% during this period, indicating a major occupational transformation from agriculture to shrimp aquaculture in the study area during the period under study. Reduction in “settlement” area revealed the trend of migration from the Upazila. The predicted LULC for the year 2028 showed that reduction in bare land area would continue and 1595.97 ha bare land would transform into shrimp farm during 2015 to 2028. Also, the impacts of the changing LULC on the livelihood of local people and migration status of the Upazila were analyzed from the data collected through focus group discussions and questionnaire surveys. The analysis revealed that the changing LULC and the occupational shift from paddy cultivation to shrimp farming were related to each other. Around 31.3% of the total respondents stated that at least one of their family members had migrated. Climate-driven southwestern coastal people usually migrate from the vulnerable rural areas towards the nearest relatively safe city due to adverse effects of natural disasters. To control the unplanned development and reduce the internal migration in Assasuni and other coastal areas, a comprehensive land use management plan was suggested that would accommodate the diversified uses of coastal lands and eventually lessen the threats to the life and livelihood of the local people.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Change analysis of land use and land cover (LULC) is a technique to study the environmental degradation and to control the unplanned development. Analysis of the past changing trend of LULC along with modeling future LULC provides a combined opportunity to evaluate and guide the present and future land use policy. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Rahman, M. Tauhid Ur; Tabassum, Faheemah; Rasheduzzaman, Md; Saba, Humayra; Sarkar, Lina; Ferdous, Jannatul; et al.",
+          "Subject terms: Anthropogenic Effects; Aquaculture; Bangladesh; Cellular automata; Climate; Coasts",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Anthropogenic Effects",
+          "Aquaculture",
+          "Bangladesh",
+          "Cellular automata",
+          "Climate",
+          "Coasts"
+        ],
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "unverified",
+              "detail": "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+            }
+          ],
+          "issues": [
+            "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": "Change analysis of land use and land cover (LULC) is a technique to study the environmental degradation and to control the unplanned development. Analysis of the past changing trend of LULC along with modeling future LULC provides a combined opportunity to evaluate and guide the present and future land use policy. The southwest coastal region of Bangladesh, "
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "To control the unplanned development and reduce the internal migration in Assasuni and other coastal areas, a comprehensive land use management plan was suggested that would accommodate the diversified uses of coastal lands and eventually lessen the threats to the life and livelihood of the local people."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Temporal dynamics of land use/land cover change and its prediction using CA-ANN model for southwestern coastal Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "Bangladesh"
+          ],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Facets not established: Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4146,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_pubmed_primary_29039035&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z"
+      },
+      {
+        "title": "Perceived deservingness shapes attitudes toward environmental migrants in rural Bangladesh",
+        "author": "Rudolph, Lukas; Hormuth, Linus et al.",
+        "authors": [
+          "Rudolph, Lukas",
+          "Hormuth, Linus",
+          "Freihardt, Jan",
+          "Koubi, Vally"
+        ],
+        "type": "article",
+        "date": "2026-02-26",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_pubmed_primary_41859037&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1038/s43247-026-03320-6",
+        "pmid": "41859037",
+        "isbn": "",
+        "issn": "2662-4435",
+        "containerTitle": "Communications earth & environment",
+        "publisher": "Nature Publishing Group UK",
+        "edition": "",
+        "volume": "7",
+        "issue": "1",
+        "pages": "247-",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Attitudes, Developed countries, Developing countries. Published/created 2026-02-26. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "As climate change intensifies, internal migration due to extreme climate events is becoming increasingly common in the Global South. Yet, little is known about how rural host communities respond to incoming environmental migrants. Here, we study attitudes toward environmentally displaced people in northern Bangladesh, focusing on perceived deservingness, empathy through shared experience, and exploratory proxy indicators of prior migrant exposure/contact. Using a pre-registered face-to-face survey of 265 rural residents, including a forced-choice conjoint experiment, we assess how migrant characteristics (reason for migration, occupation, religion, distance to origin) affect host community attitudes. We find that migrants displaced by riverbank erosion are more likely to be accepted than economic migrants (by 21%-points, p < 0.01) and face less discrimination based on other characteristics, indicating that deservingness strongly shapes attitudes. Regarding shared experience of erosion, which we propose as a proxy for empathy, models estimated a positive coefficient (13%-points, p = 0.122), hence not supporting, but indicative of a positive association between experiential proximity and greater acceptance of environmental migrants. We find no credible evidence for heterogeneity in migrant acceptance using coarse proxy measures of prior migrant exposure/contact. These results suggest that, even in resource-constrained regions, moral judgments play a central role, and that experiential proximity may be associated with more inclusive attitudes, informing policies for societal resilience under environmental stress. Migrants displaced by riverbank erosion are more accepted than economic movers, and perceptions of involuntary loss make hosts less sensitive to social differences, based on stated preferences from a survey and choice experiment in rural Bangladesh.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "As climate change intensifies, internal migration due to extreme climate events is becoming increasingly common in the Global South. Yet, little is known about how rural host communities respond to incoming environmental migrants. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Rudolph, Lukas; Hormuth, Linus; Freihardt, Jan; Koubi, Vally",
+          "Subject terms: Attitudes; Developed countries; Developing countries; Earth sciences; Ecology; Economics",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Attitudes",
+          "Developed countries",
+          "Developing countries",
+          "Earth sciences",
+          "Ecology",
+          "Economics"
+        ],
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "geography",
+              "label": "Study geography",
+              "status": "unverified",
+              "detail": "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+            }
+          ],
+          "issues": [
+            "The metadata does not establish the requested study geography (Bangladesh). Background mentions, affiliations, and subject tags alone do not confirm coverage."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Climate change",
+              "field": "abstract",
+              "term": "Climate change",
+              "excerpt": "As climate change intensifies, internal migration due to extreme climate events is becoming increasingly common in the Global South."
+            },
+            {
+              "concept": "internal migration",
+              "field": "abstract",
+              "term": "internal migration",
+              "excerpt": "As climate change intensifies, internal migration due to extreme climate events is becoming increasingly common in the Global South."
+            },
+            {
+              "concept": "Bangladesh",
+              "field": "title",
+              "term": "Bangladesh",
+              "excerpt": "Perceived deservingness shapes attitudes toward environmental migrants in rural Bangladesh"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Climate change",
+            "internal migration",
+            "Bangladesh"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "Bangladesh"
+          ],
+          "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Facets not established: Bangladesh. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4146,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "accessLinks": [
+          {
+            "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_pubmed_primary_41859037&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+            "label": "ZSR discovery",
+            "accessScope": "library"
+          }
+        ],
+        "metadataSources": [
+          "ZSR discovery"
+        ],
+        "retrievedAt": "2026-10-16T22:27:29.532Z"
+      }
+    ],
+    "outcomes": {
+      "library": [
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "\"global warming\" AND \"internal migration\" AND Bangladesh",
+          "retrievedCount": 5,
+          "resultCount": 3
+        },
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "(\"Climate change\" OR \"global warming\" OR \"climate variability\") AND \"internal migration\" AND Bangladesh",
+          "retrievedCount": 47,
+          "resultCount": 18
+        },
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "\"Climate change\" AND \"internal migration\" AND Bangladesh",
+          "retrievedCount": 47,
+          "resultCount": 18
+        }
+      ],
+      "openAccess": []
+    }
+  },
+  {
+    "query": "Offshore wind energy impacts on marine mammals systematic reviews",
+    "elapsedMs": 1008,
+    "maxTimerGap": 102,
+    "sources": [
+      {
+        "title": "Beneath the blades: Marine wind farms support parts of local biodiversity - a systematic review",
+        "author": "Knorrn, Alexander H.; Teder, Tiit et al.",
+        "authors": [
+          "Knorrn, Alexander H.",
+          "Teder, Tiit",
+          "Kaasik, Ants",
+          "Kreitsberg, Randel"
+        ],
+        "type": "article",
+        "date": "2024-07-20",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1016_j_scitotenv_2024_173241&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1016/j.scitotenv.2024.173241",
+        "pmid": "38768731",
+        "isbn": "",
+        "issn": "0048-9697",
+        "containerTitle": "The Science of the total environment",
+        "publisher": "Elsevier B.V",
+        "edition": "",
+        "volume": "935",
+        "issue": "",
+        "pages": "173241-",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Animals, Anthropogenic Effects, Aquatic organisms. Published/created 2024-07-20. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Offshore wind energy developments in European waters are rapidly expanding to meet the increasing global demand for renewable energy. These developments provide new substrates for species colonisation, but also introduce changes in electromagnetic fields, noise levels, and hydrological conditions. Understanding how these man-made structures affect marine biodiversity across various species groups is crucial, yet our knowledge in this field remains incomplete. In this synthesis paper, based on 14 case studies conducted in northeastern Atlantic (North, Irish and Baltic seas), we aggregated species-level data on abundance, biomass, and other quantity proxies spanning the entire food chain from invertebrates to mammals, and compared these variables between wind farms and nearby control sites. Overall, our analysis revealed that in wind farm areas, species tend to occur at higher quantities than in control areas. Additionally, we noticed a slight trend where the positive effect of wind farms was more pronounced in newly established ones, gradually diminishing as wind farms aged. None of the tested covariates (depth, distance from coastline, years in commission) nor species' characteristics (habitat and spawning types, trophic level) showed statistical significance. When examining species groups individually, there was a tendency for wind farm areas to harbour higher quantities of polychaetes, echinoderms and demersal fishes. These findings suggest that wind farms contribute to the so-called reef-effect, providing shelter and food supplies to their inhabitants and acting as no-take-zones. Our results support the idea that wind farms could serve as zones of increased local biodiversity, potentially facilitating spillover effects to nearby areas for certain species groups. Further studies are necessary to gain a more comprehensive understanding of the adverse effects of wind farms on associated biodiversity, while also exploring avenues to amplify their positive impacts. [Display omitted] •There is higher species abundance in wind farm areas compared to control sites.•The difference is stronger in newly-constructed wind farms.•Wind farm areas favour soft-bottom invertebrates and demersal fish species.•Long-term studies with unified methods are needed for future reference.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Offshore wind energy developments in European waters are rapidly expanding to meet the increasing global demand for renewable energy. These developments provide new substrates for species colonisation, but also introduce changes in electromagnetic fields, noise levels, and hydrological conditions. ...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Knorrn, Alexander H.; Teder, Tiit; Kaasik, Ants; Kreitsberg, Randel",
+          "Subject terms: Animals; Anthropogenic Effects; Aquatic organisms; Biodiversity; Biomass; Coasts",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Animals",
+          "Anthropogenic Effects",
+          "Aquatic organisms",
+          "Biodiversity",
+          "Biomass",
+          "Coasts"
+        ],
+        "sourceAssessment": {
+          "status": "meets",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "method-include-systematic review",
+              "label": "Requested method: systematic review",
+              "status": "meets",
+              "detail": "The provider title identifies this work as a systematic review. Verify its methods in the source."
+            }
+          ],
+          "issues": []
+        },
+        "matchExplanation": {
+          "status": "meets",
+          "category": "full-topic-match",
+          "label": "All topic concepts found",
+          "evidence": [
+            {
+              "concept": "Offshore wind energy",
+              "field": "abstract",
+              "term": "Offshore wind energy",
+              "excerpt": "Offshore wind energy developments in European waters are rapidly expanding to meet the increasing global demand for renewable energy."
+            },
+            {
+              "concept": "marine mammals",
+              "field": "abstract",
+              "term": "marine mammals",
+              "excerpt": "and hydrological conditions. Understanding how these man-made structures affect marine biodiversity across various species groups is crucial, yet our knowledge in this field remains incomplete. In this synthesis paper, based on 14 case studies conducted in northeastern Atlantic (North, Irish and Baltic seas), we aggregated species-level data on abundance, bi"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Offshore wind energy",
+            "marine mammals"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [],
+          "explanation": "Metadata mentions Offshore wind energy; marine mammals. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 7150,
+          "coverage": 1,
+          "scopeCoverage": 1,
+          "requestFit": "metadata-supported",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:30.673Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1016/j.scitotenv.2024.173241",
+          "registryTitle": "Beneath the blades: Marine wind farms support parts of local biodiversity - a systematic review",
+          "url": "https://doi.org/10.1016%2Fj.scitotenv.2024.173241",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:30.748Z"
+        }
+      },
+      {
+        "title": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide",
+        "author": "Jon Morant; Ana Payo-Payo et al.",
+        "authors": [
+          "Jon Morant",
+          "Ana Payo-Payo",
+          "Ana María-Valera",
+          "Juan Manuel Pérez-García"
+        ],
+        "type": "journal article",
+        "date": "2025-1",
+        "url": "https://doi.org/10.1016/j.jenvman.2024.123808",
+        "cover": null,
+        "doi": "10.1016/j.jenvman.2024.123808",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0301-4797",
+        "containerTitle": "Journal of Environmental Management",
+        "publisher": "Elsevier BV",
+        "edition": "",
+        "volume": "373",
+        "issue": "",
+        "pages": "123808",
+        "fulfillment": null,
+        "description": "Bibliographic metadata from Crossref for a work in Journal of Environmental Management. Search the exact title in ZSR to confirm access and fit.",
+        "abstractText": "",
+        "abstractTruncated": false,
+        "abstractExcerpt": "",
+        "abstractSource": "",
+        "detailPoints": [
+          "Authors: Jon Morant; Ana Payo-Payo; Ana María-Valera; Juan Manuel Pérez-García",
+          "Publication: Journal of Environmental Management",
+          "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access."
+        ],
+        "sourceProvider": "Crossref scholarly metadata",
+        "peerReviewed": null,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "Crossref",
+          "recordType": "journal article",
+          "accessVerified": false,
+          "metadataOnly": true
+        },
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "method-include-systematic review",
+              "label": "Requested method: systematic review",
+              "status": "unverified",
+              "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            }
+          ],
+          "issues": [
+            "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Offshore wind energy",
+              "field": "title",
+              "term": "Offshore wind energy",
+              "excerpt": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide"
+            },
+            {
+              "concept": "marine mammals",
+              "field": "title",
+              "term": "marine mammals",
+              "excerpt": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Offshore wind energy",
+            "marine mammals"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "systematic review"
+          ],
+          "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4144,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:30.673Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1016/j.jenvman.2024.123808",
+          "registryTitle": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide",
+          "url": "https://doi.org/10.1016%2Fj.jenvman.2024.123808",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:30.729Z"
+        }
+      },
+      {
+        "title": "Evidence of predation events by marine mammals at offshore wind farms",
+        "author": "Anthony W. J. Bicknell; Robert Main et al.",
+        "authors": [
+          "Anthony W. J. Bicknell",
+          "Robert Main",
+          "Samuel Gierhart",
+          "Paul Thompson",
+          "Gordon Hastie",
+          "Philippa F. C. Wright",
+          "Matthew J. Witt"
+        ],
+        "type": "journal article",
+        "date": "2026-8-6",
+        "url": "https://doi.org/10.1038/s41598-026-65167-3",
+        "cover": null,
+        "doi": "10.1038/s41598-026-65167-3",
+        "pmid": "",
+        "isbn": "",
+        "issn": "2045-2322",
+        "containerTitle": "Scientific Reports",
+        "publisher": "Springer Science and Business Media LLC",
+        "edition": "",
+        "volume": "16",
+        "issue": "1",
+        "pages": "",
+        "fulfillment": null,
+        "description": "Bibliographic metadata from Crossref for a work in Scientific Reports. Search the exact title in ZSR to confirm access and fit.",
+        "abstractText": "Abstract Anthropogenic structures in the marine environment alter the availability and distribution of food for marine animals with potential consequences for individual fitness, population and community dynamics. Knowledge of how marine mammals’ behaviour or foraging activities are influence by existing wind farms is essential to predict the effect of future large-scale renewable energy development on local or regional populations. During acoustic tracking of demersal gadoid fish at two offshore wind farms in Scotland, six Atlantic cod were predated by a marine mammal close to or in the vicinity of turbine foundations. The distinct change in the temperature, depth and movement pattern of the acoustic tags allowed estimations of the time and location of predation (and likely predator) and provided details of post consumption behaviour. The detection of tags (predator) at multiple turbines within a relatively short period, post consumption, suggests the targeted use of turbine foundations as foraging sites where prey fish are known to aggregate. Moreover, the bias in predation of cod over haddock, and evidence for the cod being of higher energetic quality, provide rare evidence for prey selection by a marine mammal predator(s). These data provide further evidence for how wind farms and other introduced structures influence the behaviour of marine mammals with potential consequences for individuals and populations through changes in the distribution of prey. The ultimate consequences are to be determined but need consideration with the continued development of offshore wind farm sites.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Abstract Anthropogenic structures in the marine environment alter the availability and distribution of food for marine animals with potential consequences for individual fitness, population and community dynamics. Knowledge of how marine mammals’ behaviour or foraging activities are influence by existing wind farms is essential to predict the effect of...",
+        "abstractSource": "Crossref record metadata",
+        "detailPoints": [
+          "Authors: Anthony W. J. Bicknell; Robert Main; Samuel Gierhart; Paul Thompson; Gordon Hastie; Philippa F. C. Wright; et al.",
+          "Publication: Scientific Reports",
+          "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access."
+        ],
+        "sourceProvider": "Crossref scholarly metadata",
+        "peerReviewed": null,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "Crossref",
+          "recordType": "journal article",
+          "accessVerified": false,
+          "metadataOnly": true
+        },
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "method-include-systematic review",
+              "label": "Requested method: systematic review",
+              "status": "unverified",
+              "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            }
+          ],
+          "issues": [
+            "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Offshore wind energy",
+              "field": "abstract",
+              "term": "Offshore wind energy",
+              "excerpt": " how marine mammals’ behaviour or foraging activities are influence by existing wind farms is essential to predict the effect of future large-scale renewable energy development on local or regional populations. During acoustic tracking of demersal gadoid fish at two offshore wind farms in Scotland, six Atlantic cod were predated by a marine mammal close to o"
+            },
+            {
+              "concept": "marine mammals",
+              "field": "title",
+              "term": "marine mammals",
+              "excerpt": "Evidence of predation events by marine mammals at offshore wind farms"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Offshore wind energy",
+            "marine mammals"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "systematic review"
+          ],
+          "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4141,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:30.673Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1038/s41598-026-65167-3",
+          "registryTitle": "Evidence of predation events by marine mammals at offshore wind farms",
+          "url": "https://doi.org/10.1038%2Fs41598-026-65167-3",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:30.728Z"
+        }
+      },
+      {
+        "title": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities",
+        "author": "Sarah Courbis; Kate Williams et al.",
+        "authors": [
+          "Sarah Courbis",
+          "Kate Williams",
+          "Julia Stepanuk",
+          "Heidi Etter",
+          "Megan McManus",
+          "Fabiola Campoblanco",
+          "Aude Pacini"
+        ],
+        "type": "journal article",
+        "date": "2024-9-10",
+        "url": "https://doi.org/10.4031/mtsj.58.3.1",
+        "cover": null,
+        "doi": "10.4031/mtsj.58.3.1",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0025-3324",
+        "containerTitle": "Marine Technology Society Journal",
+        "publisher": "Marine Technology Society",
+        "edition": "",
+        "volume": "58",
+        "issue": "3",
+        "pages": "5-22",
+        "fulfillment": null,
+        "description": "Bibliographic metadata from Crossref for a work in Marine Technology Society Journal. Search the exact title in ZSR to confirm access and fit.",
+        "abstractText": "Abstract With increased focus on offshore wind (OSW) as a renewable energy resource in the United States and elsewhere, there are concerns about OSW impacts to wildlife, particularly birds and marine mammals. This study identifies technology gaps and technological research and development (R&D) priorities for monitoring marine mammals and birds for fixed and floating OSW. A synthesis of current monitoring technologies generated two databases (with over 100 technologies) that can be integrated in current technology repositories for renewable energy projects. Generally, the key technology R&D needs are similar for birds and marine mammals. The main exception is that some types of bird technologies are more likely to require direct integration with OSW infrastructure, whereas marine mammal systems tend to operate independently. Priorities to advance wildlife monitoring include improved early communication, harmonization of technologies and data collection for monitoring systems on OSW structures, battery/power access improvements, remote data transfer improvements, and advancements in automated collection and analysis of data. The successful integration of wildlife monitoring systems into OSW infrastructure and operations is dependent on remote access mechanisms for data collection, system maintenance, and data transfer, in order to minimize risks to worker safety in the offshore environment, as well as minimizing costs and disruption to normal operational activities. Application of the results of this study to prioritize and fund technology R&D will help to support statistically robust data collection and practicable integration of monitoring systems into OSW operations and infrastructure.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Abstract With increased focus on offshore wind (OSW) as a renewable energy resource in the United States and elsewhere, there are concerns about OSW impacts to wildlife, particularly birds and marine mammals. This study identifies technology gaps and technological research and development (R&D) priorities for monitoring marine mammals and birds for fixed...",
+        "abstractSource": "Crossref record metadata",
+        "detailPoints": [
+          "Authors: Sarah Courbis; Kate Williams; Julia Stepanuk; Heidi Etter; Megan McManus; Fabiola Campoblanco; et al.",
+          "Publication: Marine Technology Society Journal",
+          "Availability is not verified. Use the DOI, exact title, or ZSR search link to check access."
+        ],
+        "sourceProvider": "Crossref scholarly metadata",
+        "peerReviewed": null,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "Crossref",
+          "recordType": "journal article",
+          "accessVerified": false,
+          "metadataOnly": true
+        },
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "method-include-systematic review",
+              "label": "Requested method: systematic review",
+              "status": "unverified",
+              "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            }
+          ],
+          "issues": [
+            "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Offshore wind energy",
+              "field": "abstract",
+              "term": "Offshore wind energy",
+              "excerpt": "Abstract With increased focus on offshore wind (OSW) as a renewable energy resource in the United States and elsewhere, there are concerns about OSW impacts to wildlife, particularly birds and marine mammals."
+            },
+            {
+              "concept": "marine mammals",
+              "field": "title",
+              "term": "marine mammals",
+              "excerpt": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities"
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Offshore wind energy",
+            "marine mammals"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "systematic review"
+          ],
+          "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4141,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:30.673Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.4031/mtsj.58.3.1",
+          "registryTitle": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities",
+          "url": "https://doi.org/10.4031%2Fmtsj.58.3.1",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:30.773Z"
+        }
+      },
+      {
+        "title": "The global impact of offshore wind farms on ecosystem services",
+        "author": "Watson, Stephen C.L.; Somerfield, Paul J. et al.",
+        "authors": [
+          "Watson, Stephen C.L.",
+          "Somerfield, Paul J.",
+          "Lemasson, Anaëlle J.",
+          "Knights, Antony M.",
+          "Edwards-Jones, Andrew",
+          "Nunes, Joana",
+          "Pascoe, Christine",
+          "McNeill, Caroline Louise",
+          "Schratzberger, Michaela",
+          "Thompson, Murray S.A.",
+          "Couce, Elena",
+          "Szostek, Claire L.",
+          "Baxter, Heather",
+          "Beaumont, Nicola J."
+        ],
+        "type": "article",
+        "date": "2024-03-01",
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1016_j_ocecoaman_2024_107023&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "cover": null,
+        "doi": "10.1016/j.ocecoaman.2024.107023",
+        "pmid": "",
+        "isbn": "",
+        "issn": "0964-5691",
+        "containerTitle": "Ocean & coastal management",
+        "publisher": "",
+        "edition": "",
+        "volume": "249",
+        "issue": "",
+        "pages": "107023-",
+        "fulfillment": null,
+        "description": "Potential ZSR discovery lead for this search. Metadata highlights Alcidae, Biodiversity, Biotic communities. Published/created 2024-03-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+        "abstractText": "Understanding the global impact of offshore wind farms (OWF) on biodiversity and ecosystem services (ES) is crucial in developing sustainable energy transition pathways. This study takes a holistic approach, coupling a semi-systematic review with a novel analytical methodology, to consider the consequences of construction & operation of OWF deployment on biodiversity and ES. 314 pieces of evidence taken from 132 peer-reviewed studies provide the basis to determine the ecological and ES impacts. The process showed that construction impacts were predominantly negative across the ecological subject groups (52%), compared with positive impacts (8%) with several species of fish (e.g. brill, cod, dab, plaice) and some species of birds (e.g. common guillemot, northern fulmar, redhead) showing strongly negative trends. Operational phase impacts were more variable and could be either negative (32%) or positive (34%) depending on site specific conditions. More detailed investigations into fish, shellfish, humans and air-surface studies recorded a net positive effect of wind farm operations on these subject groups. Translation into ES outcomes identified that 14 ES are impacted by the construction and operation of OWF. The most substantially enhanced ES included effects on commercial fisheries and experiential recreation. Social acceptance toward new and hypothetical OWF was also strongly positive, irrespective of country location. Negative effects on ES, including existence values for culturally important groups, e.g., marine mammals and birds and the spread of non-native species, are potentially of most significance. Overall, this study finds more than 86% of possible offshore wind farm impacts on ES are still unknown. There was also a paucity of studies on the decommissioning of OWF and the impacts of deeper-water floating structures, with a bias in studies toward northern hemisphere and developed countries.",
+        "abstractTruncated": false,
+        "abstractExcerpt": "Understanding the global impact of offshore wind farms (OWF) on biodiversity and ecosystem services (ES) is crucial in developing sustainable energy transition pathways. This study takes a holistic approach, coupling a semi-systematic review with a novel analytical methodology, to consider the consequences of construction & operation of OWF deployment on...",
+        "abstractSource": "ZSR record metadata",
+        "detailPoints": [
+          "Authors: Watson, Stephen C.L.; Somerfield, Paul J.; Lemasson, Anaëlle J.; Knights, Antony M.; Edwards-Jones, Andrew; Nunes, Joana; et al.",
+          "Subject terms: Alcidae; Biodiversity; Biotic communities; Coastal zone management; Fulmarus; Introduced organisms",
+          "Access: use the ZSR record to check full text, PDF availability, and database login."
+        ],
+        "sourceProvider": "ZSR discovery",
+        "peerReviewed": true,
+        "accessScope": "library",
+        "sourceKind": "scholarly-article",
+        "sourceMode": "scholarly",
+        "provenance": {
+          "provider": "ZSR discovery",
+          "recordType": "article",
+          "accessVerified": false,
+          "metadataOnly": true,
+          "demoData": false
+        },
+        "subjects": [
+          "Alcidae",
+          "Biodiversity",
+          "Biotic communities",
+          "Coastal zone management",
+          "Fulmarus",
+          "Introduced organisms"
+        ],
+        "sourceAssessment": {
+          "status": "unverified",
+          "checks": [
+            {
+              "id": "source-type",
+              "label": "Source format",
+              "status": "meets",
+              "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+            },
+            {
+              "id": "method-include-systematic review",
+              "label": "Requested method: systematic review",
+              "status": "unverified",
+              "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            }
+          ],
+          "issues": [
+            "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+          ]
+        },
+        "matchExplanation": {
+          "status": "partial",
+          "category": "full-topic-match",
+          "label": "Topic match · scope needs checking",
+          "evidence": [
+            {
+              "concept": "Offshore wind energy",
+              "field": "abstract",
+              "term": "Offshore wind energy",
+              "excerpt": "Understanding the global impact of offshore wind farms (OWF) on biodiversity and ecosystem services (ES) is crucial in developing sustainable energy transition pathways."
+            },
+            {
+              "concept": "marine mammals",
+              "field": "abstract",
+              "term": "marine mammals",
+              "excerpt": "Negative effects on ES, including existence values for culturally important groups, e.g., marine mammals and birds and the spread of non-native species, are potentially of most significance."
+            }
+          ],
+          "relationship": null,
+          "matchedConcepts": [
+            "Offshore wind energy",
+            "marine mammals"
+          ],
+          "missingConcepts": [],
+          "missingFacets": [
+            "systematic review"
+          ],
+          "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+        },
+        "metadataRank": {
+          "score": 4138,
+          "coverage": 1,
+          "scopeCoverage": 0,
+          "requestFit": "partial-or-unverified",
+          "basis": "title-abstract-subject-metadata"
+        },
+        "retrievedAt": "2026-10-16T22:27:30.673Z",
+        "identityCheck": {
+          "status": "title-matched",
+          "provider": "Crossref",
+          "doi": "10.1016/j.ocecoaman.2024.107023",
+          "registryTitle": "The global impact of offshore wind farms on ecosystem services",
+          "url": "https://doi.org/10.1016%2Fj.ocecoaman.2024.107023",
+          "detail": "The DOI and normalized title match Crossref metadata. This does not verify findings, full text, or all citation fields.",
+          "checkedAt": "2026-10-16T22:27:30.777Z"
+        }
+      }
+    ],
+    "outcomes": {
+      "library": [
+        {
+          "provider": "Primo public",
+          "status": "empty",
+          "query": "\"Offshore wind energy\" AND \"marine mammals\" AND (\"systematic review\" OR \"systematic reviews\")",
+          "retrievedCount": 1,
+          "resultCount": 0,
+          "emptyReason": "no_eligible_records"
+        },
+        {
+          "provider": "Crossref",
+          "status": "success",
+          "query": "\"Offshore wind energy\" AND \"marine mammals\" AND (\"systematic review\" OR \"systematic reviews\")",
+          "retrievedCount": 30,
+          "resultCount": 3
+        },
+        {
+          "provider": "Primo public",
+          "status": "success",
+          "query": "(Offshore AND wind AND energy) AND (marine AND mammals) AND (\"systematic review\" OR \"systematic reviews\")",
+          "retrievedCount": 4,
+          "resultCount": 2
+        }
+      ],
+      "openAccess": []
+    }
+  }
+]

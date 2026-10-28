@@ -1,0 +1,698 @@
+{
+  "format": "zsr-ai-assisted-relevance-review",
+  "version": 1,
+  "reviewedAt": "2026-10-05",
+  "capture": "docs/validation/2026-10-05/provider-capture.json",
+  "reviewSet": "evals/search-quality-review-set.json",
+  "reviewer": "AI-assisted metadata/abstract review; not human or expert validated",
+  "scope": "First 14 captured cases (indices 0–13), every returned candidate ranked 1–5. Empty cases remain in query denominators but supply no candidate judgments.",
+  "method": "Individual reading of query, reviewPrompt, title, author, date, type, and captured provider abstract. App match explanations and sourceAssessment were not treated as ground truth. Direct means all material requested topic facets are supported in the available metadata; it does not mean study validity or causal conclusions are verified. Supporting means plausible useful background/partial evidence and must not be represented as a direct answer. Unsuitable identifies off-population or contradicted temporal requirements. Uncertain records have insufficient evidence for even a confident supporting judgment.",
+  "temporalInterpretation": "For minimum-wage, after 2015 is interpreted as the studied policy/outcome period, consistent with the captured research specification; publication year alone does not satisfy it. If the intended request were publication after 2015, this case would require regrading.",
+  "limitations": [
+    "Short captured abstracts are generally truncated around 350 characters. A lower direct-match rating can reflect missing metadata, not proof the full publication is irrelevant.",
+    "No full texts, effect estimates, research quality, retractions, or conclusions were assessed.",
+    "No human precision/accuracy field in the original capture was changed. These provisional judgments must not be called a validated overall accuracy rate.",
+    "Bibliographic existence and duplicate-family checks are separate from this topical assessment."
+  ],
+  "counts": {
+    "cases": 14,
+    "casesWithSources": 13,
+    "casesWithAtLeastOneDirect": 8,
+    "returnedTopFiveRecords": 56,
+    "possibleTopFiveSlots": 70,
+    "direct": 23,
+    "supporting": 29,
+    "unsuitable": 3,
+    "uncertain": 1
+  },
+  "caseCounts": [
+    {
+      "caseId": "sanctions-comparison",
+      "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 1,
+        "supporting": 4,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "electoral-systems",
+      "query": "How do proportional representation and first-past-the-post systems affect voter turnout?",
+      "returnedTopFive": 3,
+      "counts": {
+        "direct": 2,
+        "supporting": 1,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "democratic-sanctions",
+      "query": "Economic sanctions and democratic backsliding",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 2,
+        "supporting": 3,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "psychology-comparison",
+      "query": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 0,
+        "supporting": 5,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "sleep-memory",
+      "query": "Sleep deprivation and working memory in college students",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 2,
+        "supporting": 3,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "adolescent-media",
+      "query": "Social media use and adolescent mental health peer-reviewed articles from 2020 to 2025",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 5,
+        "supporting": 0,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "climate-migration",
+      "query": "Climate change and internal migration in Bangladesh",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 5,
+        "supporting": 0,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "urban-biodiversity",
+      "query": "Urban green spaces and bird biodiversity",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 5,
+        "supporting": 0,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "public-health-comparison",
+      "query": "Rural versus urban access to maternal health care in North Carolina",
+      "returnedTopFive": 1,
+      "counts": {
+        "direct": 0,
+        "supporting": 1,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "renewable-energy",
+      "query": "Offshore wind energy impacts on marine mammals systematic reviews",
+      "returnedTopFive": 2,
+      "counts": {
+        "direct": 0,
+        "supporting": 2,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "ai-writing",
+      "query": "Generative AI feedback and undergraduate writing revision",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 1,
+        "supporting": 2,
+        "unsuitable": 1,
+        "uncertain": 1
+      }
+    },
+    {
+      "caseId": "first-generation",
+      "query": "First-generation college student belonging and retention",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 0,
+        "supporting": 5,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "minimum-wage",
+      "query": "Minimum wage increases and employment in restaurants after 2015",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 0,
+        "supporting": 3,
+        "unsuitable": 2,
+        "uncertain": 0
+      }
+    },
+    {
+      "caseId": "housing-policy",
+      "query": "Rent control and housing supply in large US cities",
+      "returnedTopFive": 0,
+      "counts": {
+        "direct": 0,
+        "supporting": 0,
+        "unsuitable": 0,
+        "uncertain": 0
+      }
+    }
+  ],
+  "reviews": [
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 1,
+      "sourceId": "doi:10.1080/714005349",
+      "title": "Sanctions and Regime Type: What Works, and When?",
+      "category": "direct",
+      "reason": "The abstract explicitly investigates state responses to sanctions and compares authoritarian with democratic regimes; it also distinguishes comprehensive and targeted sanctions.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 2,
+      "sourceId": "title:are all dictators equal the selective targeting of democratic sanctions against authoritarian regimes|author:christian michael soest von wahman|year:2013",
+      "title": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes",
+      "category": "supporting",
+      "reason": "Examines which authoritarian regimes receive sanctions, useful for selection bias and one side of the question; it does not establish a democracy-versus-autocracy comparison of effects. The container identifies a working-paper series.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 3,
+      "sourceId": "doi:10.1111/1475-6765.12065",
+      "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+      "category": "supporting",
+      "reason": "Addresses failed democratization under sanctions in authoritarian regimes, providing one-side evidence without a comparison with democratic targets.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 4,
+      "sourceId": "doi:10.1177/0022343314551081",
+      "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+      "category": "supporting",
+      "reason": "Examines selective targeting of autocracies after coups and fraudulent elections, which concerns sanctions selection rather than comparative effects across democratic and authoritarian targets.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 5,
+      "sourceId": "doi:10.1080/13510347.2014.888418",
+      "title": "Are democratic sanctions really counterproductive?",
+      "category": "supporting",
+      "reason": "Discusses sanctions and changes in democracy in targeted authoritarian countries. Useful outcome evidence for one side, but democratic target states are not established in the captured abstract.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "electoral-systems",
+      "rank": 1,
+      "sourceId": "doi:10.1108/03090561011020499",
+      "title": "The influence of promotional activity and different electoral systems on voter turnout: A study of the UK and German Euro elections",
+      "category": "direct",
+      "reason": "The captured abstract explicitly names first-past-the-post, proportional representation, and their influence on voter turnout in UK/German election data. The electoral and time context still requires reading before generalization.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "electoral-systems",
+      "rank": 2,
+      "sourceId": "doi:10.1017/s0007123408000161",
+      "title": "Political Efficacy and Participation in Twenty-Seven Democracies: How Electoral Systems Shape Political Behaviour",
+      "category": "supporting",
+      "reason": "The abstract explicitly contrasts PR and plurality/FPTP and political participation, but its truncated portion does not confirm a voter-turnout outcome as distinct from efficacy or other participation.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "electoral-systems",
+      "rank": 3,
+      "sourceId": "doi:10.1016/j.electstud.2014.07.001",
+      "title": "To vote or to abstain? An experimental test of rational calculus in first past the post and PR elections",
+      "category": "direct",
+      "reason": "The abstract describes laboratory voting decisions under both first-past-the-post and proportional representation, directly addressing the requested comparison and turnout decision. Laboratory evidence is not the same as observed national turnout.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "democratic-sanctions",
+      "rank": 1,
+      "sourceId": "doi:10.1080/13501763.2022.2102671",
+      "title": "When are governmental blaming strategies effective? How blame, source and trust effects shape citizens' acceptance of EU sanctions against democratic backsliding",
+      "category": "supporting",
+      "reason": "Directly addresses public acceptance of sanctions against democratic backsliding, but the excerpt does not identify whether the sanctions are economic rather than other external measures.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "democratic-sanctions",
+      "rank": 2,
+      "sourceId": "doi:10.1080/13501763.2016.1229358",
+      "title": "Political safeguards against democratic backsliding in the EU: the limits of material sanctions and the scope of social pressure",
+      "category": "supporting",
+      "reason": "Covers material sanctions and EU democratic backsliding, but the short excerpt centers Article 7 political safeguards and does not establish the particular economic instrument.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "democratic-sanctions",
+      "rank": 3,
+      "sourceId": "doi:10.1080/13501763.2024.2318483",
+      "title": "Sanctioning democratic backsliding in the European Union: transnational salience, negative intergovernmental spillover, and policy change",
+      "category": "supporting",
+      "reason": "Clearly concerns sanctioning democratic backsliding in Hungary and Poland; the available excerpt calls the measures material without establishing their economic form.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "democratic-sanctions",
+      "rank": 4,
+      "sourceId": "doi:10.1111/jcms.13693",
+      "title": "Money Talks? The Effectiveness of Sanctions in the ‘Rule of Law’ Conflict in the European Union",
+      "category": "direct",
+      "reason": "Explicitly connects democratic backsliding in Hungary and Poland to a sanctions toolbox that includes funding conditionality, establishing an economic mechanism within the requested topic.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "democratic-sanctions",
+      "rank": 5,
+      "sourceId": "doi:10.17645/pag.v10i1.5118",
+      "title": "Beyond Foreign Policy? EU Sanctions at the Intersection of Development, Trade, and CFSP",
+      "category": "direct",
+      "reason": "Explicitly connects democratic backsliding with EU sanctions including financial bans and economic measures. This is policy/toolbox context, not proof that any specific sanction changes democratic outcomes.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "psychology-comparison",
+      "rank": 1,
+      "sourceId": "doi:10.1186/s12909-025-07130-w",
+      "title": "Impact of cognitive-behavioral therapy and mindfulness-based stress reduction in mitigating test anxiety and enhancing academic achievement among vocational education students at Nigerian universities",
+      "category": "supporting",
+      "reason": "The university population and anxiety outcome fit, but the excerpt describes combined CBT and mindfulness effects. This does not establish a head-to-head CBT-versus-mindfulness comparison.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "psychology-comparison",
+      "rank": 2,
+      "sourceId": "doi:10.1186/s12888-024-05651-0",
+      "title": "Low-intensity mindfulness and cognitive–behavioral therapy for social anxiety: a pilot randomized controlled trial",
+      "category": "supporting",
+      "reason": "CBT, mindfulness, social anxiety, and a randomized trial are relevant. The truncated excerpt establishes neither a college-student sample nor separate comparison arms, so it cannot count as a direct match.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "psychology-comparison",
+      "rank": 3,
+      "sourceId": "doi:10.2196/15520",
+      "title": "An Eight-Week, Web-Based Mindfulness Virtual Community Intervention for Students’ Mental Health: Randomized Controlled Trial",
+      "category": "supporting",
+      "reason": "University students and anxiety are relevant, but the intervention is mindfulness informed by CBT constructs; this is an integrated intervention rather than the requested head-to-head comparison.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "psychology-comparison",
+      "rank": 4,
+      "sourceId": "doi:10.2196/50982",
+      "title": "Predicting the Effectiveness of a Mindfulness Virtual Community Intervention for University Students: Machine Learning Model",
+      "category": "supporting",
+      "reason": "University students, anxiety, and both therapeutic concepts fit, but this is a predictive model of an integrated mindfulness/CBT program, not evidence of separate treatment comparisons.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "psychology-comparison",
+      "rank": 5,
+      "sourceId": "doi:10.1007/s12671-024-02342-5",
+      "title": "The Efficacy of a Group Program Integrating Compassionate Mind Training with Cognitive Behavioral Therapy for College Students With Test Anxiety in Mainland China",
+      "category": "supporting",
+      "reason": "College students with test anxiety fit; the intervention combines compassionate mind training with CBT. Neither mindfulness as the comparator nor a separate CBT-versus-mindfulness comparison is established.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sleep-memory",
+      "rank": 1,
+      "sourceId": "doi:10.1097/md.0000000000030210",
+      "title": "Effects of sleep insufficiency on spatial working memory in low-pressure and hypoxic environments",
+      "category": "direct",
+      "reason": "The excerpt explicitly identifies college students, insufficient versus normal sleep, and a spatial working-memory task. The high-altitude/hypoxic setting restricts generalizability.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sleep-memory",
+      "rank": 2,
+      "sourceId": "doi:10.3389/fnins.2020.00469",
+      "title": "Effect of Sleep Deprivation on the Working Memory-Related N2-P3 Components of the Event-Related Potential Waveform",
+      "category": "supporting",
+      "reason": "Explicitly addresses sleep deprivation and working-memory-related electrophysiology, but the captured excerpt does not identify college-student participants.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sleep-memory",
+      "rank": 3,
+      "sourceId": "doi:10.3389/fpsyg.2018.00742",
+      "title": "Frontal Underactivation During Working Memory Processing in Adults With Acute Partial Sleep Deprivation: A Near-Infrared Spectroscopy Study",
+      "category": "supporting",
+      "reason": "Addresses partial sleep deprivation and working-memory processing in adults; college-student status is not established in the captured metadata.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sleep-memory",
+      "rank": 4,
+      "sourceId": "doi:10.37714/josam.vi0.77",
+      "title": "Effects of Acute Sleep Deprivation on Working Memory Capacity in Undergraduate Students",
+      "category": "direct",
+      "reason": "The title explicitly identifies acute sleep deprivation, working-memory capacity, and undergraduate students. The excerpt does not support any claim about the direction or magnitude of effects.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "sleep-memory",
+      "rank": 5,
+      "sourceId": "doi:10.1111/jsr.12744",
+      "title": "Effect of sleep deprivation on emotional working memory",
+      "category": "supporting",
+      "reason": "Addresses sleep deprivation and emotional working memory; the short excerpt does not establish the requested college-student population.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "adolescent-media",
+      "rank": 1,
+      "sourceId": "doi:10.1016/j.chb.2020.106645",
+      "title": "Social media use intensity, social media use problems, and mental health among adolescents: Investigating directionality and mediating processes",
+      "category": "direct",
+      "reason": "Title and excerpt address adolescent social-media use and mental health, the 2021 date fits, and the captured provider reports peer review.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "adolescent-media",
+      "rank": 2,
+      "sourceId": "doi:10.3389/fpsyg.2020.01949",
+      "title": "Social Media Use and Mental Health and Well-Being Among Adolescents – A Scoping Review",
+      "category": "direct",
+      "reason": "The scoping-review title directly covers social-media use and adolescent mental health; the 2020 date fits and peer review is provider-reported. A scoping review is not an original intervention study.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "adolescent-media",
+      "rank": 3,
+      "sourceId": "doi:10.1007/s10567-022-00404-5",
+      "title": "The Perfect Storm: A Developmental–Sociocultural Framework for the Role of Social Media in Adolescent Girls’ Body Image Concerns and Mental Health",
+      "category": "direct",
+      "reason": "The theoretical review addresses adolescent girls, social media, and mental-health outcomes; the 2022 date fits and peer review is provider-reported. Its narrower gender/body-image scope should be stated.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "adolescent-media",
+      "rank": 4,
+      "sourceId": "doi:10.1038/s44159-024-00307-y",
+      "title": "Mechanisms linking social media use to adolescent mental health vulnerability",
+      "category": "direct",
+      "reason": "Directly addresses mechanisms linking adolescent social-media use with mental-health vulnerability; the 2024 date fits and peer review is provider-reported. The excerpt explicitly notes mixed findings.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "adolescent-media",
+      "rank": 5,
+      "sourceId": "doi:10.1016/j.copsyc.2021.08.017",
+      "title": "Social media use and its impact on adolescent mental health: An umbrella review of the evidence",
+      "category": "direct",
+      "reason": "An umbrella review directly covers adolescent social-media use and mental health; the 2022 date fits and peer review is provider-reported. It synthesizes existing reviews rather than supplying new participant data.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 1,
+      "sourceId": "doi:10.1017/s1355770x12000290",
+      "title": "Climate change and internal migration patterns in Bangladesh: an agent-based model",
+      "category": "direct",
+      "reason": "Title and abstract explicitly identify climate change and internal migration dynamics in Bangladesh. The approach is an agent-based model rather than observation of all migration behavior.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 2,
+      "sourceId": "doi:10.1175/wcas-d-21-0124.1",
+      "title": "Is Climate Change Migration an Adjustment to Extreme Weather Events? A Study on the Coastal Areas of Bangladesh",
+      "category": "direct",
+      "reason": "Explicitly studies internal migration of Bangladeshi coastal fishers in response to extreme weather, directly fitting the geographic and migration scope with a narrower livelihood population.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 3,
+      "sourceId": "doi:10.1177/21632324261427528",
+      "title": "Social and Cultural Impacts of Climate-Induced Migration on the Munda Community of Shyamnagar, Bangladesh",
+      "category": "direct",
+      "reason": "Title and excerpt concern climate-induced internal migration in Bangladesh and the Munda community, directly fitting the broad topic with a specific Indigenous-community focus.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 4,
+      "sourceId": "doi:10.1038/s43247-026-03320-6",
+      "title": "Perceived deservingness shapes attitudes toward environmental migrants in rural Bangladesh",
+      "category": "direct",
+      "reason": "The title locates environmental migrants in rural Bangladesh and the abstract connects the study to climate-related internal migration and host-community responses. This addresses reception rather than only the decision to migrate.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 5,
+      "sourceId": "doi:10.1371/journal.pclm.0000239",
+      "title": "Local social-ecological context explains seasonal rural-rural migration of the poorest in south-west Bangladesh",
+      "category": "direct",
+      "reason": "The title identifies seasonal rural-to-rural migration in southwest Bangladesh and the excerpt explicitly frames internal migration as a response to climate-related environmental degradation. This is a specific seasonal/poverty context.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "urban-biodiversity",
+      "rank": 1,
+      "sourceId": "doi:10.1016/j.ufug.2026.129357",
+      "title": "Landscape configuration shapes bird–plant multilayer networks in urban green spaces: Implications for urban biodiversity management",
+      "category": "direct",
+      "reason": "Explicitly studies bird-plant network beta diversity across 13 urban parks and urban green-space configuration, directly fitting the topic.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "urban-biodiversity",
+      "rank": 2,
+      "sourceId": "doi:10.1016/j.ufug.2026.129517",
+      "title": "Biodiversity in the gaps: The role of urban informal green spaces in supporting bird conservation in cities",
+      "category": "direct",
+      "reason": "The title specifies bird conservation and urban informal green spaces, and the abstract explains their biodiversity role. Informal sites are a relevant subset of urban green space.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "urban-biodiversity",
+      "rank": 3,
+      "sourceId": "doi:10.1016/j.ufug.2023.128064",
+      "title": "Characterizing bird species for achieving the win-wins of conserving biodiversity and enhancing regulating ecosystem services in urban green spaces",
+      "category": "direct",
+      "reason": "Title and excerpt explicitly link bird species, biodiversity conservation, and urban green-space planning; the ecosystem-service focus remains within the requested broad topic.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "urban-biodiversity",
+      "rank": 4,
+      "sourceId": "doi:10.5751/ace-02873-200201",
+      "title": "Avian biodiversity in the urban green spaces of Paris: higher bird species richness in larger parks and park centers",
+      "category": "direct",
+      "reason": "Title and abstract directly address avian species richness in urban parks, gardens, and cemeteries in Paris. Peer-review status is unknown in the captured record, but it was not an explicit user filter.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "urban-biodiversity",
+      "rank": 5,
+      "sourceId": "doi:10.34133/ehs.0068",
+      "title": "Bird Biodiversity Increased with the Area of Urban Green Spaces Expanding after 40 Years of Tree Planting in Beijing",
+      "category": "direct",
+      "reason": "The title directly links bird biodiversity and urban green-space expansion in Beijing; the abstract supplies the urbanization context. The title alone does not justify a causal claim about tree planting.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "public-health-comparison",
+      "rank": 1,
+      "sourceId": "doi:10.18043/001c.154043",
+      "title": "You Can’t Go to a Food Bank for Health Care: Medicaid’s Role in North Carolina’s Rural and Urban Communities",
+      "category": "supporting",
+      "reason": "The excerpt includes North Carolina, maternal services, and rural/urban communities, but discusses Medicaid broadly without establishing an actual comparison of maternal-care access between the two settings.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 1,
+      "sourceId": "doi:10.1016/j.jenvman.2024.123808",
+      "title": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide",
+      "category": "supporting",
+      "reason": "The title connects offshore-wind development with marine-mammal feeding sites, but no abstract is captured and systematic-review methodology is unverified. This is a potential topical lead, not a confirmed response to the requested evidence type.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 2,
+      "sourceId": "doi:10.4031/mtsj.58.3.1",
+      "title": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities",
+      "category": "supporting",
+      "reason": "The excerpt addresses marine mammals, offshore wind, and monitoring-technology gaps, but does not establish systematic-review methods or a systematic synthesis of impacts.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "ai-writing",
+      "rank": 1,
+      "sourceId": "doi:10.3390/educsci15020232",
+      "title": "Enhancing EFL Writing Revision Practices: The Impact of AI- and Teacher-Generated Feedback and Their Sequences",
+      "category": "supporting",
+      "reason": "Explicitly addresses generative-AI/teacher feedback and writing revision, but the truncated excerpt does not establish an undergraduate population.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "ai-writing",
+      "rank": 2,
+      "sourceId": "doi:10.61508/refl.v31i3.277514",
+      "title": "Generative AI and Essay Writing: Impacts of Automated Feedback on Revision Performance and Engagement",
+      "category": "direct",
+      "reason": "The excerpt explicitly identifies LLM feedback, essay revision, and first-year university students, supporting all requested topic facets.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "ai-writing",
+      "rank": 3,
+      "sourceId": "doi:10.54254/2755-2721/2026.36194",
+      "title": "Semantic Response Mechanisms of L2 Writing Revision Behavior under Generative AI Feedback",
+      "category": "supporting",
+      "reason": "Addresses generative-AI feedback and L2 writing revision, but the captured excerpt does not identify undergraduates or establish the empirical sample/design.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "ai-writing",
+      "rank": 4,
+      "sourceId": "doi:10.1007/s44217-025-00602-7",
+      "title": "Generative AI-assisted feedback and EFL writing: a study on proficiency, revision frequency and writing quality",
+      "category": "uncertain",
+      "reason": "The title identifies AI-assisted feedback, EFL writing, and revision frequency, but no abstract is captured; generative-AI tools and undergraduate participants cannot be confirmed.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "ai-writing",
+      "rank": 5,
+      "sourceId": "doi:10.63313/ijed.9054",
+      "title": "Construction of a \"Feedback-Revision\" Teaching Model for Senior High School English Continuation Writing Based on Generative AI",
+      "category": "unsuitable",
+      "reason": "The title and abstract explicitly concern senior-high-school English writing rather than undergraduate writing. It should not appear as a direct population match.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "first-generation",
+      "rank": 1,
+      "sourceId": "doi:10.1007/s41042-024-00163-4",
+      "title": "Nostalgia Promotes Positive Beliefs about College Belonging and Success among First-Generation College Students",
+      "category": "supporting",
+      "reason": "Directly addresses first-generation students and beliefs about belonging/success; retention appears as a motivation, but a measured retention outcome or relationship is not established in the excerpt.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "first-generation",
+      "rank": 2,
+      "sourceId": "doi:10.24926/jcotr.v29i2.4869",
+      "title": "College Belonging: How First-Year and First-Generation Students Navigate Campus Life: Review",
+      "category": "supporting",
+      "reason": "This is a review of a book about first-year/first-generation belonging. The abstract invokes retention, but the record is useful background rather than established primary retention evidence.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "first-generation",
+      "rank": 3,
+      "sourceId": "doi:10.5430/jnep.v8n12p58",
+      "title": "First generation college students and non-first-generation college students: Perceptions of belonging",
+      "category": "supporting",
+      "reason": "Addresses first-generation students and perceptions of belonging. Retention is described as a rationale, but the excerpt does not establish a retention outcome or direct relationship test.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "first-generation",
+      "rank": 4,
+      "sourceId": "doi:10.1186/s40594-025-00586-8",
+      "title": "Roles of mathematics-related psychological factors in STEM sense of belonging and identity: a structural equation modeling analysis",
+      "category": "supporting",
+      "reason": "Concerns STEM belonging and mathematical psychosocial factors, mentioning first-generation students and retention in the background; the excerpt does not establish a first-generation-specific retention analysis.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "first-generation",
+      "rank": 5,
+      "sourceId": "doi:10.1371/journal.pcbi.1010499",
+      "title": "Ten simple rules for successfully supporting first-generation/low-income (FLI) students in STEM",
+      "category": "supporting",
+      "reason": "Practical guidance addresses first-generation/low-income students, belonging, and retention. It is useful background, but not an established empirical analysis of their relationship.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "minimum-wage",
+      "rank": 1,
+      "sourceId": "doi:10.1111/ecin.13284",
+      "title": "Employment effects of minimum wage indexing: Establishment evidence from Oregon restaurants",
+      "category": "unsuitable",
+      "reason": "The excerpt explicitly locates the establishment analysis in 2000–2007, so it does not meet the requested after-2015 study period despite its 2025 publication date.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "minimum-wage",
+      "rank": 2,
+      "sourceId": "doi:10.1108/ijchm-03-2016-0130",
+      "title": "Minimum wage change effects on restaurant pricing and employment",
+      "category": "supporting",
+      "reason": "Title and metadata concern restaurant minimum-wage changes and employment and were published in 2018, but the excerpt does not establish that the studied changes/outcomes occurred after 2015.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "minimum-wage",
+      "rank": 3,
+      "sourceId": "doi:10.1007/s11294-020-09770-8",
+      "title": "Effects of Local, State, and Federal Minimum Wage on Employment Growth among Teenagers in the Restaurant Industry",
+      "category": "supporting",
+      "reason": "Addresses minimum-wage hikes and restaurant-sector employment, focusing on teenagers; the 2020 publication date does not establish an after-2015 observation period.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "minimum-wage",
+      "rank": 4,
+      "sourceId": "title:higher pay s price rise in minimum wage spurs some firms to cut hours and hiring of youths emphasis on the fast food and restaurant industry|author:ingrassia paul|year:1978",
+      "title": "Higher pay's price: rise in minimum wage spurs some firms to cut hours and hiring of youths [emphasis on the fast food and restaurant industry]",
+      "category": "unsuitable",
+      "reason": "A 1978 newspaper item cannot directly analyze restaurant employment after 2015. It is also a news article rather than established scholarly research.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    },
+    {
+      "caseId": "minimum-wage",
+      "rank": 5,
+      "sourceId": "doi:10.1016/j.ijhm.2019.102325",
+      "title": "Does a minimum wage increase endanger restaurant jobs? Examining the role of franchising",
+      "category": "supporting",
+      "reason": "Title and excerpt address restaurant employment effects of federal minimum-wage increases, but the 2020 publication date does not establish an after-2015 study period.",
+      "limitations": "Captured metadata and a short provider abstract only; no full-text review. Peer-review flags, when mentioned, are provider assertions rather than independently verified editorial review."
+    }
+  ],
+  "recommendations": [
+    "Add comparison-role labels that distinguish separate treatment comparisons from integrated interventions; none of the five psychology results establishes the requested head-to-head comparison in captured metadata.",
+    "Check studied time periods independently of publication dates. Suppress the 1978 newspaper and label pre-2015 study evidence as historical background for the minimum-wage query.",
+    "Require or visibly qualify population evidence; the AI-writing results include an explicitly high-school record.",
+    "Treat systematic-review methodology as unverified unless supported by retrieved metadata; neither offshore-wind result is a confirmed systematic review.",
+    "Retrieve longer abstracts when possible before claiming complete topic fit. Separate topical background, empirical research, working papers, and book reviews.",
+    "Rent-control/housing-supply remains an empty result case and needs a controlled broadening strategy rather than being counted as an accuracy success."
+  ]
+}

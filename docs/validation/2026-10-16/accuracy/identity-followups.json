@@ -1,0 +1,65 @@
+[
+  {
+    "doi": "10.1080/714005349",
+    "url": "https://api.crossref.org/works/10.1080%2F714005349",
+    "status": 200,
+    "title": [
+      "Sanctions and Regime Type: What Works, and When?"
+    ],
+    "subtitle": [],
+    "author": [
+      {
+        "given": "Risa A.",
+        "family": "Brooks",
+        "sequence": "first",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          2002,
+          6
+        ]
+      ]
+    }
+  },
+  {
+    "doi": "10.4335/12.1.145-162(2014)",
+    "url": "https://api.crossref.org/works/10.4335%2F12.1.145-162(2014)",
+    "status": 200,
+    "title": [
+      "Electoral System Changes and Voter Turnout: Reflections on New Zealand Local Elections"
+    ],
+    "subtitle": [],
+    "author": [
+      {
+        "given": "Jacky Yaakov",
+        "family": "Zvulun",
+        "sequence": "first",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          2013,
+          10,
+          2
+        ]
+      ]
+    }
+  }
+]

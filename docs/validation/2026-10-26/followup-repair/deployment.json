@@ -1,0 +1,24 @@
+{
+  "releaseId": "1fd3883023da",
+  "commit": "1fd3883023daa989a5cb69881d30d3ccf495ca11",
+  "health": {
+    "ok": true,
+    "releaseId": "1fd3883023da",
+    "version": "1.1.0"
+  },
+  "ci": {
+    "conclusion": "success",
+    "url": "https://github.com/aidanoliss/ZSR-Library-AI-Research-Navigator/actions/runs/40362288230"
+  },
+  "note": "Deployment health and CI verified after publication; browser check is in a separate private session.",
+  "browserVerification": {
+    "originalQuestionCandidateCount": 10,
+    "childrenFollowupCandidateCount": 10,
+    "retainedTopic": "vaccines and autism",
+    "population": "children",
+    "publicationYears": "2022\u20132026",
+    "plannerReopenedOnFollowup": false,
+    "searchStatus": "partial",
+    "note": "Related records are not necessarily direct causal evidence; no medical accuracy rate inferred."
+  }
+}

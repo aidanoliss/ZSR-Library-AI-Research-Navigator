@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-18",
+  "release": "b027a52",
+  "synthetic": true,
+  "networkCalls": 0,
+  "identity": {
+    "liveStatus": "title-difference",
+    "saved": null,
+    "jsonPreserved": false,
+    "markdownPreserved": false,
+    "risPreserved": false
+  },
+  "export": {
+    "mislabelsCrossrefAsZsr": true,
+    "outdatedNoLiveStatement": true,
+    "preservesRegistryWarning": false
+  },
+  "history": {
+    "recordCount": 1,
+    "entry": {
+      "id": "search-100-0",
+      "key": "autism intervention|primo|https://example.org/search",
+      "query": "autism intervention",
+      "tool": "Primo",
+      "url": "https://example.org/search",
+      "resultNote": "first run",
+      "usedAt": 200
+    },
+    "markdown": "# ZSR Research Trail\n\n## Topic\n\nResearch topic\n\n## Saved research\n\nNo research leads saved yet.\n\n## Searches tried\n\n- `autism intervention` in Primo\n  - Result note: first run\n\n---\n\n_Saved locally by the ZSR Research Navigator prototype. Open each source to confirm relevance, access, and citation details._"
+  },
+  "grounding": {
+    "unsafeMessageRetained": false,
+    "summaryRetained": false,
+    "notes": [
+      {
+        "source_id": "src_096a6a5b0eec4b8bbc48",
+        "quote": "This synthetic study did not establish a causal effect.",
+        "evidence_scope": "abstract"
+      }
+    ],
+    "dropped": [
+      {
+        "index": 1,
+        "reason": "quote_not_in_provider_excerpt"
+      }
+    ]
+  }
+}

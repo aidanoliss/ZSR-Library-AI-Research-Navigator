@@ -1,0 +1,240 @@
+{
+  "format": "zsr-search-quality-review",
+  "version": 1,
+  "label": "Final city scope synonym check",
+  "capturedAt": "2026-10-05T02:33:52.337Z",
+  "live": true,
+  "instructions": "Grade each candidate judgment as useful, not-useful, or uncertain after inspecting the source. Leave null until reviewed. Candidate ranks 1–5 are the displayed top five; additional candidates support ranking review. Metadata and rank are not human judgments.",
+  "cases": [
+    {
+      "id": "housing-policy",
+      "query": "Rent control and housing supply in large US cities",
+      "tags": [
+        "economics",
+        "policy"
+      ],
+      "reviewPrompt": "Check whether rent-control policy and housing-supply evidence both appear.",
+      "modeId": "scholarly",
+      "subjectFocusId": "auto",
+      "accessScopeId": "library",
+      "status": "captured",
+      "researchSpec": {
+        "topic": "Rent control and housing supply in large US cities",
+        "mode": "scholarly",
+        "disciplines": [
+          "interdisciplinary"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-rent-control",
+            "preferredTerm": "Rent control",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-2-housing-supply",
+            "preferredTerm": "housing supply",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "urban-context",
+            "preferredTerm": "large cities",
+            "synonyms": [
+              "major cities",
+              "metropolitan areas"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Rent control and housing supply in large US cities",
+          "neutralQuestion": "What does research show about Rent control and housing supply and large cities in United States?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "United States",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-30afa571"
+      },
+      "queries": [
+        "\"Rent control\" AND \"housing supply\" AND \"large cities\" AND \"United States\"",
+        "\"Rent control\" AND \"housing supply\" AND (\"large cities\" OR \"major cities\" OR \"metropolitan areas\") AND \"United States\"",
+        "\"Rent control\" AND \"housing supply\" AND \"major cities\" AND \"United States\""
+      ],
+      "topFive": [],
+      "candidates": [],
+      "retrieval": {
+        "latencyMs": 1826,
+        "outcomes": {
+          "library": [
+            {
+              "provider": "Primo public",
+              "status": "empty",
+              "resultCount": 0
+            },
+            {
+              "provider": "Primo public",
+              "status": "empty",
+              "resultCount": 0
+            },
+            {
+              "provider": "Primo public",
+              "status": "empty",
+              "resultCount": 0
+            },
+            {
+              "provider": "Crossref",
+              "status": "empty",
+              "resultCount": 0
+            },
+            {
+              "provider": "Crossref",
+              "status": "empty",
+              "resultCount": 0
+            }
+          ],
+          "openAccess": []
+        },
+        "recovery": {
+          "kind": "manual",
+          "query": "\"Rent control\" AND \"housing supply\" AND \"large cities\" AND \"United States\"",
+          "researchSpec": {
+            "topic": "Rent control and housing supply in large US cities",
+            "mode": "scholarly",
+            "disciplines": [
+              "interdisciplinary"
+            ],
+            "concepts": [
+              {
+                "id": "parsed-1-rent-control",
+                "preferredTerm": "Rent control",
+                "synonyms": [],
+                "required": true,
+                "source": "parsed"
+              },
+              {
+                "id": "parsed-2-housing-supply",
+                "preferredTerm": "housing supply",
+                "synonyms": [],
+                "required": true,
+                "source": "parsed"
+              },
+              {
+                "id": "urban-context",
+                "preferredTerm": "large cities",
+                "synonyms": [
+                  "major cities",
+                  "metropolitan areas"
+                ],
+                "required": true,
+                "source": "controlled-vocabulary"
+              }
+            ],
+            "comparison": null,
+            "knownItem": null,
+            "searchIntent": {
+              "originalQuestion": "Rent control and housing supply in large US cities",
+              "neutralQuestion": "What does research show about Rent control and housing supply and large cities in United States?",
+              "reformulated": false,
+              "explanation": "",
+              "requestedFocus": "",
+              "scopeNotes": []
+            },
+            "methodRequirements": {
+              "include": [],
+              "exclude": []
+            },
+            "sourceRequirements": {
+              "publicationYearFrom": null,
+              "publicationYearTo": null,
+              "peerReviewed": false,
+              "requestedSourceCount": null
+            },
+            "facets": {
+              "population": "",
+              "geography": "United States",
+              "timePeriod": "",
+              "method": "",
+              "documentType": "Scholarly articles"
+            },
+            "sourceContract": {
+              "id": "scholarly",
+              "label": "Scholarly articles",
+              "requiredKinds": [
+                "scholarly-article"
+              ],
+              "allowedKinds": [
+                "scholarly-article",
+                "book-chapter"
+              ],
+              "excludedKinds": [
+                "news",
+                "market-report"
+              ]
+            },
+            "safety": {
+              "requiresPremiseCheck": false,
+              "flags": [],
+              "authorityPolicy": "research-orientation-not-conclusion"
+            },
+            "configVersion": "2026-08-10.2",
+            "planHash": "rp-30afa571"
+          },
+          "buttonLabel": "Edit search",
+          "explanation": "The completed searches found no leads passing the current checks. Review the topic wording or try a subject database.",
+          "changes": [
+            "No automatic change can safely broaden this search while preserving the stated requirements."
+          ],
+          "preservedRequirements": [
+            "Source type: Scholarly articles",
+            "geography: United States"
+          ]
+        }
+      }
+    }
+  ]
+}

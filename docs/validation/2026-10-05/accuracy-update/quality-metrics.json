@@ -1,0 +1,1662 @@
+{
+  "label": "Final fuller-abstract and source-fit update",
+  "generatedAt": "2026-10-05T23:30:13.104Z",
+  "interpretation": "Human usefulness is separate from metadata matching. Unrated and uncertain results are excluded from judged precision; missing values are not successes or zero scores. Standard precision@5 uses five slots per captured query and is withheld until displayed results have determinate judgments.",
+  "summary": {
+    "totalCases": 28,
+    "capturedCases": 28,
+    "plannedCases": 0,
+    "failedCaptures": 0,
+    "emptyResults": 4,
+    "emptyWithProviderFailures": 0,
+    "emptyWithDisabledProviders": 1,
+    "candidateCount": 186,
+    "topFiveCount": 102,
+    "judged": 0,
+    "useful": 0,
+    "unjudged": 102,
+    "uncertain": 0,
+    "humanReviewStatus": "not_started",
+    "judgedPrecisionAt5": null,
+    "precisionAt5": null,
+    "duplicateCount": 0,
+    "topFiveDuplicates": 0,
+    "meanLatencyMs": 3112.0714285714284,
+    "providerFailures": 2,
+    "metadata": {
+      "title": {
+        "present": 186,
+        "total": 186,
+        "proportion": 1
+      },
+      "author": {
+        "present": 183,
+        "total": 186,
+        "proportion": 0.9838709677419355
+      },
+      "year": {
+        "present": 184,
+        "total": 186,
+        "proportion": 0.989247311827957
+      },
+      "type": {
+        "present": 186,
+        "total": 186,
+        "proportion": 1
+      },
+      "link": {
+        "present": 186,
+        "total": 186,
+        "proportion": 1
+      },
+      "provider": {
+        "present": 186,
+        "total": 186,
+        "proportion": 1
+      },
+      "abstract": {
+        "present": 172,
+        "total": 186,
+        "proportion": 0.9247311827956989
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "sanctions-comparison",
+      "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 5091,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "electoral-systems",
+      "query": "How do proportional representation and first-past-the-post systems affect voter turnout?",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 9,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 2834,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 9,
+          "total": 9,
+          "proportion": 1
+        },
+        "author": {
+          "present": 9,
+          "total": 9,
+          "proportion": 1
+        },
+        "year": {
+          "present": 8,
+          "total": 9,
+          "proportion": 0.8888888888888888
+        },
+        "type": {
+          "present": 9,
+          "total": 9,
+          "proportion": 1
+        },
+        "link": {
+          "present": 9,
+          "total": 9,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 9,
+          "total": 9,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 9,
+          "total": 9,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "democratic-sanctions",
+      "query": "Economic sanctions and democratic backsliding",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 6017,
+      "providerFailures": 1,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "psychology-comparison",
+      "query": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 4676,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "sleep-memory",
+      "query": "Sleep deprivation and working memory in college students",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 2114,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "adolescent-media",
+      "query": "Social media use and adolescent mental health peer-reviewed articles from 2020 to 2025",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 4539,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "climate-migration",
+      "query": "Climate change and internal migration in Bangladesh",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 3884,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "urban-biodiversity",
+      "query": "Urban green spaces and bird biodiversity",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 6014,
+      "providerFailures": 1,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "public-health-comparison",
+      "query": "Rural versus urban access to maternal health care in North Carolina",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 3,
+      "topFiveCount": 3,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 3,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 3251,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "author": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "year": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "type": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "link": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "renewable-energy",
+      "query": "Offshore wind energy impacts on marine mammals systematic reviews",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 3,
+      "topFiveCount": 3,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 3,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1651,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "author": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "year": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "type": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "link": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 3,
+          "total": 3,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 2,
+          "total": 3,
+          "proportion": 0.6666666666666666
+        }
+      }
+    },
+    {
+      "id": "ai-writing",
+      "query": "Generative AI feedback and undergraduate writing revision",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1382,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 9,
+          "total": 10,
+          "proportion": 0.9
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 8,
+          "total": 10,
+          "proportion": 0.8
+        }
+      }
+    },
+    {
+      "id": "first-generation",
+      "query": "First-generation college student belonging and retention",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 4224,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "minimum-wage",
+      "query": "Minimum wage increases and employment in restaurants after 2015",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 5853,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "housing-policy",
+      "query": "Rent control and housing supply in large US cities",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 1,
+      "topFiveCount": 1,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 1,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1571,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        },
+        "author": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        },
+        "year": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        },
+        "type": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        },
+        "link": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 1,
+          "total": 1,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "supply-chain",
+      "query": "Supply chain resilience in small businesses during the COVID-19 pandemic",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 2204,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "history-primary",
+      "query": "Primary sources about the Greensboro sit-ins in 1960",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 2,
+      "topFiveCount": 2,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 2,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1380,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "author": {
+          "present": 1,
+          "total": 2,
+          "proportion": 0.5
+        },
+        "year": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "type": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "link": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 1,
+          "total": 2,
+          "proportion": 0.5
+        }
+      }
+    },
+    {
+      "id": "women-abolition",
+      "query": "Women abolitionists in the United States before 1865",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 4,
+      "topFiveCount": 4,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 4,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 5303,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 4,
+          "total": 4,
+          "proportion": 1
+        },
+        "author": {
+          "present": 4,
+          "total": 4,
+          "proportion": 1
+        },
+        "year": {
+          "present": 4,
+          "total": 4,
+          "proportion": 1
+        },
+        "type": {
+          "present": 4,
+          "total": 4,
+          "proportion": 1
+        },
+        "link": {
+          "present": 4,
+          "total": 4,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 4,
+          "total": 4,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 3,
+          "total": 4,
+          "proportion": 0.75
+        }
+      }
+    },
+    {
+      "id": "books-background",
+      "query": "Books introducing environmental justice in the United States",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 2455,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 9,
+          "total": 10,
+          "proportion": 0.9
+        },
+        "year": {
+          "present": 9,
+          "total": 10,
+          "proportion": 0.9
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 2,
+          "total": 10,
+          "proportion": 0.2
+        }
+      }
+    },
+    {
+      "id": "exact-book-title",
+      "query": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 2,
+      "topFiveCount": 2,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 2,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 660,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "author": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "year": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "type": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "link": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 1,
+          "total": 2,
+          "proportion": 0.5
+        }
+      }
+    },
+    {
+      "id": "exact-article-title",
+      "query": "Find the article \"The Tragedy of the Commons\" by Garrett Hardin",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1619,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "date-window",
+      "query": "Peer-reviewed articles on antibiotic resistance in wastewater published from 2021 to 2024",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 4829,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "qualitative-explicit",
+      "query": "Qualitative interviews about food insecurity among college students",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 6004,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "no-method-requested",
+      "query": "Food insecurity among college students",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 10,
+      "topFiveCount": 5,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 5,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 5303,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "author": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "year": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "type": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "link": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 10,
+          "total": 10,
+          "proportion": 1
+        }
+      }
+    },
+    {
+      "id": "sparse-local",
+      "query": "Night-shift public transit access for hospital workers in Winston-Salem",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 0,
+      "topFiveCount": 0,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 0,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": true,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1048,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "author": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "year": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "type": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "link": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "provider": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "abstract": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        }
+      }
+    },
+    {
+      "id": "sparse-intersection",
+      "query": "Library makerspaces and language revitalization in Indigenous communities",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 0,
+      "topFiveCount": 0,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 0,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": true,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 740,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "author": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "year": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "type": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "link": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "provider": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "abstract": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        }
+      }
+    },
+    {
+      "id": "sparse-new-technology",
+      "query": "Microplastic capture by floating wetlands in urban stormwater ponds",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 0,
+      "topFiveCount": 0,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 0,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": true,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 843,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 0,
+      "metadata": {
+        "title": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "author": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "year": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "type": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "link": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "provider": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "abstract": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        }
+      }
+    },
+    {
+      "id": "open-access-scope",
+      "query": "Open access articles on climate change and urban heat islands",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 0,
+      "topFiveCount": 0,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 0,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": true,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 3,
+      "metadata": {
+        "title": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "author": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "year": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "type": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "link": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "provider": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        },
+        "abstract": {
+          "present": 0,
+          "total": 0,
+          "proportion": null
+        }
+      }
+    },
+    {
+      "id": "mixed-access-scope",
+      "query": "Peer-reviewed research on misinformation correction and political polarization",
+      "captured": true,
+      "status": "captured",
+      "candidateCount": 2,
+      "topFiveCount": 2,
+      "useful": 0,
+      "judged": 0,
+      "unjudged": 2,
+      "uncertain": 0,
+      "judgedPrecisionAt5": null,
+      "precisionAt5": null,
+      "empty": false,
+      "duplicateCount": 0,
+      "topFiveDuplicates": 0,
+      "latencyMs": 1648,
+      "providerFailures": 0,
+      "disabledProviderOutcomes": 1,
+      "metadata": {
+        "title": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "author": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "year": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "type": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "link": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "provider": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        },
+        "abstract": {
+          "present": 2,
+          "total": 2,
+          "proportion": 1
+        }
+      }
+    }
+  ]
+}

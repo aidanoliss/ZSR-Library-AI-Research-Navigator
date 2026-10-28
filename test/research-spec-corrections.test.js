@@ -61,7 +61,7 @@ test("natural student prose preserves canopy, outcome, and assignment requiremen
   assert.equal(plan.subjectFocus.id, "science-engineering");
   for (const resource of plan.recommendations) {
     assert.match(resource.searchTerms[0], /tree canopy/i);
-    assert.match(resource.searchTerms[0], /neighborhood summer temperatures/i);
+    assert.match(resource.searchTerms[0], /neighborhood\b.*\bsummer\b.*\btemperatures/i);
     assert.doesNotMatch(resource.searchTerms[0], /peer-reviewed|published|since|2020|first-year|paper/i);
     assert.ok(resource.filters.some((filter) => filter.includes("2020")));
   }

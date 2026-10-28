@@ -1,4 +1,5 @@
 import { checkSourceIdentities } from "./sourceIdentityCheck.js";
+import { rerankSources } from "./sourceRerank.js";
 import {
   getAccessScope,
   includesLibraryResults,
@@ -74,9 +75,18 @@ export function sourceIdentityStatus(results = [], researchSpec, outcomes = {}) 
 
 /** Compatibility array API; servers receive per-request outcomes through onStatus. */
 export async function searchSourceCandidatesForScope(queries, limit = 10, modeId, accessScopeId, options = {}) {
-  const discovery = await discoverSourcesForScope(queries, limit, modeId, accessScopeId, options);
+  // With rerank, retrieve a larger pool so the question-level ranking has real
+  // alternatives to choose from, then keep the requested number.
+  const poolLimit = options.rerank ? Math.min(20, Math.max(limit, limit * 2)) : limit;
+  const discovery = await discoverSourcesForScope(queries, poolLimit, modeId, accessScopeId, options);
   options.onStatus?.(discovery.outcomes);
-  return options.verifyIdentities === false ? discovery.results : checkSourceIdentities(discovery.results, { signal: options.signal });
+  let results = discovery.results;
+  if (options.rerank && results.length > 2 && !options.signal?.aborted) {
+    options.onStage?.("ranking");
+    results = (await rerankSources(results, options.researchSpec, { signal: options.signal })).results;
+  }
+  results = results.slice(0, limit);
+  return options.verifyIdentities === false ? results : checkSourceIdentities(results, { signal: options.signal });
 }
 
 function laneOutcome(requested, results, attempts = []) {

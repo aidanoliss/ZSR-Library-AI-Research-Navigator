@@ -1,0 +1,311 @@
+{
+  "summary": {
+    "evaluatedAt": "2026-10-18T21:19:33.632Z",
+    "warning": "Not an accuracy rate. Small purposive adversarial sample, metadata-based model judgments, no human panel, no model-generated claim audit.",
+    "positiveQueries": 11,
+    "nonemptyPositiveQueries": 8,
+    "fiveOrMorePositiveQueries": 3,
+    "totalRecords": 32,
+    "reviewedTopFive": 26,
+    "totals": {
+      "candidate-match": 6,
+      "partial": 12,
+      "wrong-constraint": 6,
+      "uncertain": 2
+    },
+    "queryWithCandidateMatch": 4,
+    "providerFailures": 0,
+    "latencyRangeMs": [
+      148,
+      3053
+    ]
+  },
+  "records": [
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 1,
+      "title": "Sanctions and Regime Type: What Works, and When?",
+      "doi": "10.1080/714005349",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1080_714005349&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "candidate-match",
+      "reason": "Abstract explicitly compares authoritarian and democratic responses to sanctions using cases.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 2,
+      "title": "Aid Sanctions and Hybrid Regimes",
+      "doi": "10.1080/00220388.2025.2481878",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3258063793&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "candidate-match",
+      "reason": "Abstract tests autocratic type/democratic openness and sanctions effectiveness, including hybrid regimes.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 3,
+      "title": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes",
+      "doi": null,
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_1698380581&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Studies sender targeting of authoritarian states, not effects on democratic vs authoritarian target regimes.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 4,
+      "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+      "doi": "10.1111/1475-6765.12065",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_wiley_primary_10_1111_1475_6765_12065_EJPR12065&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Authoritarian regime outcomes only; useful background, not the requested contrast.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 5,
+      "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+      "doi": "10.1177/0022343314551081",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_sage_journals_10_1177_0022343314551081&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Sender selection and targets, not democratic vs authoritarian recipient outcomes.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "population-geography-method",
+      "rank": 1,
+      "title": "Meta-Analytic Evaluation of Stress Reduction Interventions for Undergraduate and Graduate Students",
+      "doi": "10.1037/str0000099",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2034046153&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "wrong-constraint",
+      "reason": "Returned meta-analysis, not a randomized controlled trial; mixed undergraduate/graduate and multinational studies.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "historical-period",
+      "rank": 1,
+      "title": "A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain",
+      "doi": "10.1080/09612025.2024.2373505",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1080_09612025_2024_2373505&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Main scope late1940s/1950s after WWII; some1944 context, not chiefly1939–45.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "historical-period",
+      "rank": 2,
+      "title": "Jericho’s Daughters: Feminist Historiography and Class Resistance in Pip Williams’ The Bookbinder of Jericho",
+      "doi": "10.3390/h14070138",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3233219322&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "wrong-constraint",
+      "reason": "Abstract explicitly studies WWI via a novel; requested WWII1939–45.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "historical-period",
+      "rank": 3,
+      "title": "Chemical ‘canaries’: Munitions workers in the First World War",
+      "doi": "10.1177/00732753231173063",
+      "url": "https://doi.org/10.1177/00732753231173063",
+      "judgment": "wrong-constraint",
+      "reason": "Title and abstract explicitly First World War, not WWII.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "historical-period",
+      "rank": 4,
+      "title": "Women and the ACT, 1933–59",
+      "doi": "10.1332/policypress/9781529206296.003.0002",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_oup_upso_upso_9781529206296_chapter_002&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Relevant wartime women workers, but book chapter rather than requested peer-reviewed article; peer review unresolved.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "historical-period",
+      "rank": 5,
+      "title": "Women and the ACT, 1933-59",
+      "doi": "10.51952/9781529206302.ch001",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_bup_books_10_51952_9781529206302_ch001&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Apparent alternate version/edition of rank4 chapter; format/peer-review mismatch remains.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "humanities-books",
+      "rank": 1,
+      "title": "Post-soul satire : black identity after Civil Rights",
+      "doi": null,
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=alma9945915119906286&context=L&vid=01WAKE_INST%3AZSR&tab=LibraryCatalog&search_scope=ZSR",
+      "judgment": "candidate-match",
+      "reason": "Publisher description covers contemporary African American writers/satire, identity and historical memory; broad interdisciplinary coverage.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "known-book",
+      "rank": 1,
+      "title": "Governing the commons : the evolution of institutions for collective action",
+      "doi": null,
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=alma9946315794606286&context=L&vid=01WAKE_INST%3AZSR&tab=LibraryCatalog&search_scope=ZSR",
+      "judgment": "candidate-match",
+      "reason": "Requested title and author; 2015 manifestation.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "known-book",
+      "rank": 2,
+      "title": "Governing the commons : the evolution of institutions for collective action",
+      "doi": null,
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=alma995516773806286&context=L&vid=01WAKE_INST%3AZSR&tab=LibraryCatalog&search_scope=ZSR",
+      "judgment": "candidate-match",
+      "reason": "Requested title and author; 1990 manifestation, should be grouped as another edition.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "known-book",
+      "rank": 3,
+      "title": "Balancing the commons in Switzerland : institutional transformations and sustainable innovations",
+      "doi": null,
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=alma9945953278506286&context=L&vid=01WAKE_INST%3AZSR&tab=LibraryCatalog&search_scope=ZSR",
+      "judgment": "wrong-constraint",
+      "reason": "Different book/author; correctly labeled related work by system but not the requested known item.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "nursing-review",
+      "rank": 1,
+      "title": "Effectiveness of Nurse-Led Telemonitoring Versus Usual Care on Readmission and Mortality Rates in Patients With Chronic Heart Failure",
+      "doi": "10.1097/jcn.0000000000001344",
+      "url": "https://doi.org/10.1097/jcn.0000000000001344",
+      "judgment": "partial",
+      "reason": "Review/meta-analysis of nurse-led telemonitoring vs usual care/readmissions, but adults overall, not established older-adult population.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "nursing-review",
+      "rank": 2,
+      "title": "Technology-supported nurse-led transitional interventions to improve self-care in heart failure patients after hospital discharge: a systematic review and meta-analysis of randomized controlled trials",
+      "doi": "10.1093/eurjcn/zvag159",
+      "url": "https://doi.org/10.1093/eurjcn/zvag159",
+      "judgment": "partial",
+      "reason": "Systematic review of nurse-led care/usual care; primary outcome self-care, not requested readmission, and mixed adult age.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "science-review",
+      "rank": 1,
+      "title": "Offshore wind farm impacts on marine fauna across taxa and ecological levels: A global review",
+      "doi": "10.1016/j.isci.2026.117814",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_doaj_primary_oai_doaj_org_article_e767d023de9b42a1a5688b2943f1557b&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "candidate-match",
+      "reason": "Abstract explicitly systematic review of offshore wind and marine biodiversity. Future issue date needs clearer date treatment, not evidence of fabrication.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "science-review",
+      "rank": 2,
+      "title": "Marine biodiversity impact pathways for offshore wind farm decommissioning: Implications for Life Cycle impact assessment development",
+      "doi": "10.1016/j.ecolind.2024.112613",
+      "url": "https://doi.org/10.1016/j.ecolind.2024.112613",
+      "judgment": "uncertain",
+      "reason": "Topic matches; no abstract to establish systematic-review method.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "science-review",
+      "rank": 3,
+      "title": "SPECIES DIVERSITY AND SPATIAL DISTRIBUTION OF MARINE MAMMALS RECORDED IN AREAS PROPOSED FOR OFFSHORE WIND FARMS IN BRAZIL",
+      "doi": "10.23900/artefactum.v25i7.3637",
+      "url": "https://doi.org/10.23900/artefactum.v25i7.3637",
+      "judgment": "wrong-constraint",
+      "reason": "Abstract describes integrated environmental monitoring data, not systematic review.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "science-review",
+      "rank": 4,
+      "title": "Metagenomic biodiversity assessment within an offshore wind farm",
+      "doi": "10.1038/s41598-025-01541-x",
+      "url": "https://doi.org/10.1038/s41598-025-01541-x",
+      "judgment": "wrong-constraint",
+      "reason": "Abstract describes original eDNA sampling/metagenomics study, not systematic review.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "science-review",
+      "rank": 5,
+      "title": "The global impact of offshore wind farms on ecosystem services",
+      "doi": "10.1016/j.ocecoaman.2024.107023",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1016_j_ocecoaman_2024_107023&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Explicitly semi-systematic review with different methodology; useful adjacent evidence, not interchangeable with requested systematic review.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "geography-method",
+      "rank": 1,
+      "title": "Socioeconomic consequences of climate induced human displacement and migration in Bangladesh",
+      "doi": "10.1177/0268580917693173",
+      "url": "https://doi.org/10.1177/0268580917693173",
+      "judgment": "partial",
+      "reason": "Qualitative/interviews in Bangladesh established; women mentioned in impacts but no women-specific sampling established.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "geography-method",
+      "rank": 2,
+      "title": "Climate refugees or labour migrants? climate reductive translations of women’s migration from coastal Bangladesh",
+      "doi": "10.1080/03066150.2023.2195555",
+      "url": "https://doi.org/10.1080/03066150.2023.2195555",
+      "judgment": "uncertain",
+      "reason": "Women migration/coastal Bangladesh in title, but absent abstract leaves interview method unresolved.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "geography-method",
+      "rank": 3,
+      "title": "Impacts of Climate Change Induced Migration on Gender: A Qualitative Study from the Southwest Coastal Region of Bangladesh",
+      "doi": "10.11114/ijsss.v7i4.4292",
+      "url": "https://doi.org/10.11114/ijsss.v7i4.4292",
+      "judgment": "partial",
+      "reason": "Qualitative gender comparison in Bangladesh; interview collection not established in available abstract.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    },
+    {
+      "caseId": "geography-method",
+      "rank": 4,
+      "title": "Waiting for the wave, but missing the tide: Case studies of climate-related (im)mobility and health",
+      "doi": "10.1016/j.jmh.2022.100147",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1016_j_jmh_2022_100147&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "judgment": "partial",
+      "reason": "Interviews/Bangladesh included, but women evidence sentence is about Burkina Faso, not Bangladesh.",
+      "evaluator": "AI model; not an independent librarian or human reviewer",
+      "basis": "Captured provider title and abstract/description; targeted independent identity checks, not full-text claim validation"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "format": "zsr-independent-cases-v1",
+  "provenance": {
+    "collectedBy": "",
+    "collectedAt": "",
+    "authorship": "human",
+    "anonymized": false,
+    "consentToEvaluation": false,
+    "notUsedForTuning": false
+  },
+  "acceptanceCriteria": {
+    "approvedBy": "",
+    "minimumCases": null,
+    "minimumUsefulProportion": null,
+    "maximumEmptyProportion": null
+  },
+  "cases": []
+}

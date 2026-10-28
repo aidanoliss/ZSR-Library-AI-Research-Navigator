@@ -1,0 +1,12 @@
+{
+  "releaseId": "70d724a121c2",
+  "health": {
+    "ok": true,
+    "version": "1.1.0"
+  },
+  "ci": "success",
+  "ciUrl": "https://github.com/aidanoliss/ZSR-Library-AI-Research-Navigator/actions/runs/40604681400",
+  "automatedTestsPassed": 641,
+  "uiVerification": "Production bundle verified in the browser fixture before deployment; matching, contact href and button styles checked. Live release health confirmed after deployment. A post-deployment browser reload was unavailable because browser control could not reconnect.",
+  "emailsSent": 0
+}

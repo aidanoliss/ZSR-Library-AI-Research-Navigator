@@ -1,0 +1,47 @@
+{
+  "samples": [
+    {
+      "id": "psychology-comparison",
+      "query": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+      "tags": [
+        "comparison",
+        "psychology"
+      ],
+      "reviewPrompt": "Check intervention, comparison, outcome, and population; avoid inferring treatment effectiveness from a title."
+    },
+    {
+      "id": "books-background",
+      "query": "Books introducing environmental justice in the United States",
+      "modeId": "books",
+      "tags": [
+        "books",
+        "background"
+      ],
+      "reviewPrompt": "Check book format, topic coverage, and suitability for an introduction."
+    },
+    {
+      "id": "exact-book-title",
+      "query": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+      "modeId": "books",
+      "tags": [
+        "exact-title",
+        "books"
+      ],
+      "reviewPrompt": "Check title and author identity; a review or book about Ostrom is not the requested book."
+    }
+  ],
+  "selectedReviewIds": [
+    "sanctions-comparison",
+    "psychology-comparison",
+    "climate-migration",
+    "renewable-energy",
+    "history-primary",
+    "exact-book-title",
+    "new-wearables",
+    "new-urban-heat",
+    "new-student-ai",
+    "new-broadband",
+    "new-microplastics",
+    "negative-invented-title"
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "samples": [
+    {
+      "id": "sanctions-comparison",
+      "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+      "tags": [
+        "comparison",
+        "political-science"
+      ],
+      "reviewPrompt": "Does the source compare effects across regime types, or provide useful evidence about one side? Record that distinction.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "electoral-systems",
+      "query": "How do proportional representation and first-past-the-post systems affect voter turnout?",
+      "tags": [
+        "comparison",
+        "political-science"
+      ],
+      "reviewPrompt": "Look for turnout evidence and the electoral-system comparison, not election coverage alone.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "psychology-comparison",
+      "query": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+      "tags": [
+        "comparison",
+        "psychology"
+      ],
+      "reviewPrompt": "Check intervention, comparison, outcome, and population; avoid inferring treatment effectiveness from a title.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "sleep-memory",
+      "query": "Sleep deprivation and working memory in college students",
+      "tags": [
+        "psychology"
+      ],
+      "reviewPrompt": "Does the study address working memory and relevant participants?",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "adolescent-media",
+      "query": "Social media use and adolescent mental health peer-reviewed articles from 2020 to 2025",
+      "tags": [
+        "dates",
+        "peer-review"
+      ],
+      "reviewPrompt": "Check population, relationship, dates, and reported peer-review evidence separately.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "climate-migration",
+      "query": "Climate change and internal migration in Bangladesh",
+      "tags": [
+        "geography",
+        "population"
+      ],
+      "reviewPrompt": "Look for Bangladesh and internal migration rather than climate migration generally.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "public-health-comparison",
+      "query": "Rural versus urban access to maternal health care in North Carolina",
+      "tags": [
+        "comparison",
+        "geography"
+      ],
+      "reviewPrompt": "Check both geographic specificity and access-to-care comparison.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "renewable-energy",
+      "query": "Offshore wind energy impacts on marine mammals systematic reviews",
+      "tags": [
+        "source-type",
+        "environment"
+      ],
+      "reviewPrompt": "Check whether the record is actually a systematic review and addresses marine mammals.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "ai-writing",
+      "query": "Generative AI feedback and undergraduate writing revision",
+      "tags": [
+        "education",
+        "emerging-topic"
+      ],
+      "reviewPrompt": "Distinguish empirical student revision research from general AI commentary.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "housing-policy",
+      "query": "Rent control and housing supply in large US cities",
+      "tags": [
+        "economics",
+        "policy"
+      ],
+      "reviewPrompt": "Check whether rent-control policy and housing-supply evidence both appear.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "history-primary",
+      "query": "Primary sources about the Greensboro sit-ins in 1960",
+      "modeId": "primary",
+      "tags": [
+        "primary-sources",
+        "history"
+      ],
+      "reviewPrompt": "Verify whether the item is a contemporaneous primary source; scholarship describing one does not qualify.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "books-background",
+      "query": "Books introducing environmental justice in the United States",
+      "modeId": "books",
+      "tags": [
+        "books",
+        "background"
+      ],
+      "reviewPrompt": "Check book format, topic coverage, and suitability for an introduction.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "exact-book-title",
+      "query": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+      "modeId": "books",
+      "tags": [
+        "exact-title",
+        "books"
+      ],
+      "reviewPrompt": "Check title and author identity; a review or book about Ostrom is not the requested book.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "exact-article-title",
+      "query": "Find the article \"The Tragedy of the Commons\" by Garrett Hardin",
+      "tags": [
+        "exact-title",
+        "articles"
+      ],
+      "reviewPrompt": "Check the original article identity; responses and later discussions are different works.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "date-window",
+      "query": "Peer-reviewed articles on antibiotic resistance in wastewater published from 2021 to 2024",
+      "tags": [
+        "dates",
+        "peer-review"
+      ],
+      "reviewPrompt": "Check publication window and reported peer-review evidence, then topical relevance.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "qualitative-explicit",
+      "query": "Qualitative interviews about food insecurity among college students",
+      "tags": [
+        "explicit-method",
+        "education"
+      ],
+      "reviewPrompt": "The user explicitly requested interviews; check the reported method rather than inferring it.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "sparse-local",
+      "query": "Night-shift public transit access for hospital workers in Winston-Salem",
+      "tags": [
+        "sparse",
+        "local"
+      ],
+      "reviewPrompt": "Record exact local evidence versus broader supporting material. Do not treat a broader source as a local study.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "open-access-scope",
+      "query": "Open access articles on climate change and urban heat islands",
+      "accessScopeId": "open-access",
+      "tags": [
+        "access-scope",
+        "environment"
+      ],
+      "reviewPrompt": "Check topic relevance and whether the reported open-access link resolves. Missing provider configuration is not no literature.",
+      "cohort": "existing-developer-benchmark"
+    },
+    {
+      "id": "new-wearables",
+      "query": "Wearable devices for detecting atrial fibrillation in adults",
+      "reviewPrompt": "Does the evidence address detection of atrial fibrillation using wearables in adults?",
+      "cohort": "new-diagnostic"
+    },
+    {
+      "id": "new-urban-heat",
+      "query": "Street tree canopy and summer heat exposure in low-income urban neighborhoods",
+      "reviewPrompt": "Check tree canopy, heat exposure, and low-income neighborhoods.",
+      "cohort": "new-diagnostic"
+    },
+    {
+      "id": "new-student-ai",
+      "query": "How does generative AI use affect critical thinking among undergraduate students?",
+      "reviewPrompt": "Check generative AI, critical thinking, and undergraduate population; conceptual commentary is supporting only.",
+      "cohort": "new-diagnostic"
+    },
+    {
+      "id": "new-broadband",
+      "query": "Rural broadband access and small business growth in North Carolina",
+      "reviewPrompt": "Check rural broadband, small businesses, growth, and North Carolina.",
+      "cohort": "new-diagnostic"
+    },
+    {
+      "id": "new-microplastics",
+      "query": "Microplastics in agricultural soil and effects on earthworms",
+      "reviewPrompt": "Check agricultural soil, microplastics, and earthworm outcomes.",
+      "cohort": "new-diagnostic"
+    },
+    {
+      "id": "negative-invented-title",
+      "query": "Find the article \"The Quantum Library of Purple Giraffes: A Randomized Trial of Lunar Database Navigation\" by Aurelia Testfixture",
+      "reviewPrompt": "Invented title/author negative control. Must not claim a matching publication exists.",
+      "negativeControl": true,
+      "cohort": "new-diagnostic"
+    }
+  ],
+  "selectedReviewIds": [
+    "sanctions-comparison",
+    "psychology-comparison",
+    "climate-migration",
+    "renewable-energy",
+    "history-primary",
+    "exact-book-title",
+    "new-wearables",
+    "new-urban-heat",
+    "new-student-ai",
+    "new-broadband",
+    "new-microplastics",
+    "negative-invented-title"
+  ]
+}

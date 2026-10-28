@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-18T23:39:24.762Z",
+  "httpStatus": 200,
+  "status": "success",
+  "provider": "Crossref",
+  "records": 8,
+  "message": "These leads come from Crossref's deposited reference list. Metadata and citation coverage are incomplete. Verify relevance and access in the source.",
+  "release": "9973b15ee0d4"
+}

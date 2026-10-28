@@ -1,0 +1,937 @@
+{
+  "capturedAt": "2026-10-18T21:18:51.298Z",
+  "note": "Separate fresh sequential Crossref registry fetches; DOI/title corroboration, not full-text or claim verification. Purposive subset including unverified records and possible alternate versions.",
+  "records": [
+    {
+      "doi": "10.1080/714005349",
+      "providerTitle": "Sanctions and Regime Type: What Works, and When?",
+      "url": "https://api.crossref.org/works/10.1080%2F714005349",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1080/714005349",
+        "title": [
+          "Sanctions and Regime Type: What Works, and When?"
+        ],
+        "author": [
+          {
+            "given": "Risa A.",
+            "family": "Brooks",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2002,
+              6
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2002,
+              6
+            ]
+          ]
+        },
+        "publisher": "Informa UK Limited",
+        "URL": "https://doi.org/10.1080/714005349"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1080/00220388.2025.2481878",
+      "providerTitle": "Aid Sanctions and Hybrid Regimes",
+      "url": "https://api.crossref.org/works/10.1080%2F00220388.2025.2481878",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1080/00220388.2025.2481878",
+        "title": [
+          "Aid Sanctions and Hybrid Regimes"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0001-9289-3245",
+            "authenticated-orcid": false,
+            "given": "Clara",
+            "family": "Portela",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "Department of Constitutional Law and Political Science, Faculty of Law",
+                "place": [
+                  "Valencia, Spain"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0003-0964-784X",
+            "authenticated-orcid": false,
+            "given": "Juan S.",
+            "family": "Mora-Sanguinetti",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "DG Statistics, Economics and International, Banque de France, Paris, France and Banco de España – Eurosystem",
+                "place": [
+                  "Madrid, Spain"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2025,
+              4,
+              29
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2025,
+              4,
+              29
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2025,
+              10,
+              3
+            ]
+          ]
+        },
+        "publisher": "Informa UK Limited",
+        "URL": "https://doi.org/10.1080/00220388.2025.2481878"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1037/str0000099",
+      "providerTitle": "Meta-Analytic Evaluation of Stress Reduction Interventions for Undergraduate and Graduate Students",
+      "url": "https://api.crossref.org/works/10.1037%2Fstr0000099",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1037/str0000099",
+        "title": [
+          "Meta-analytic evaluation of stress reduction interventions for undergraduate and graduate students."
+        ],
+        "author": [
+          {
+            "given": "Miryam",
+            "family": "Yusufov",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jennifer",
+            "family": "Nicoloro-SantaBarbara",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Natalie E.",
+            "family": "Grey",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Anne",
+            "family": "Moyer",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0002-7841-2422",
+            "authenticated-orcid": false,
+            "given": "Marci",
+            "family": "Lobel",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2019,
+              5
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2019,
+              5
+            ]
+          ]
+        },
+        "publisher": "American Psychological Association (APA)",
+        "URL": "https://doi.org/10.1037/str0000099"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1080/09612025.2024.2373505",
+      "providerTitle": "A new phase of activism: women's occupational organisations and married women's paid work after the Second World War in Britain",
+      "url": "https://api.crossref.org/works/10.1080%2F09612025.2024.2373505",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1080/09612025.2024.2373505",
+        "title": [
+          "A new phase of activism: women’s occupational organisations and married women’s paid work after the Second World War in Britain"
+        ],
+        "author": [
+          {
+            "given": "Helen",
+            "family": "Glew",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "University of Westminster",
+                "place": [
+                  "London, UK"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2024,
+              7,
+              14
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2024,
+              7,
+              14
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2025,
+              6,
+              7
+            ]
+          ]
+        },
+        "publisher": "Informa UK Limited",
+        "URL": "https://doi.org/10.1080/09612025.2024.2373505"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1177/00732753231173063",
+      "providerTitle": "Chemical ‘canaries’: Munitions workers in the First World War",
+      "url": "https://api.crossref.org/works/10.1177%2F00732753231173063",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1177/00732753231173063",
+        "title": [
+          "Chemical ‘canaries’: Munitions workers in the First World War"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0002-5616-3162",
+            "authenticated-orcid": false,
+            "given": "Patricia",
+            "family": "Fara",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "Clare College, Cambridge, UK"
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2023,
+              6,
+              2
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2023,
+              6,
+              2
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2023,
+              12
+            ]
+          ]
+        },
+        "publisher": "SAGE Publications",
+        "URL": "https://doi.org/10.1177/00732753231173063"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1332/policypress/9781529206296.003.0002",
+      "providerTitle": "Women and the ACT, 1933–59",
+      "url": "https://api.crossref.org/works/10.1332%2Fpolicypress%2F9781529206296.003.0002",
+      "http": 200,
+      "registry": {
+        "DOI": "10.51952/9781529206302.ch001",
+        "title": [
+          "Women and the ACT, 1933–59"
+        ],
+        "author": [
+          {
+            "given": "Frances C.",
+            "family": "Galt",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "book-chapter",
+        "published": {
+          "date-parts": [
+            [
+              2021,
+              11,
+              27
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2021,
+              11,
+              27
+            ]
+          ]
+        },
+        "publisher": "Bristol University Press",
+        "URL": "https://doi.org/10.51952/9781529206302.ch001"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.51952/9781529206302.ch001",
+      "providerTitle": "Women and the ACT, 1933-59",
+      "url": "https://api.crossref.org/works/10.51952%2F9781529206302.ch001",
+      "http": 200,
+      "registry": {
+        "DOI": "10.51952/9781529206302.ch001",
+        "title": [
+          "Women and the ACT, 1933–59"
+        ],
+        "author": [
+          {
+            "given": "Frances C.",
+            "family": "Galt",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "book-chapter",
+        "published": {
+          "date-parts": [
+            [
+              2021,
+              11,
+              27
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2021,
+              11,
+              27
+            ]
+          ]
+        },
+        "publisher": "Bristol University Press",
+        "URL": "https://doi.org/10.51952/9781529206302.ch001"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1097/jcn.0000000000001344",
+      "providerTitle": "Effectiveness of Nurse-Led Telemonitoring Versus Usual Care on Readmission and Mortality Rates in Patients With Chronic Heart Failure",
+      "url": "https://api.crossref.org/works/10.1097%2Fjcn.0000000000001344",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1097/jcn.0000000000001344",
+        "title": [
+          "Effectiveness of Nurse-Led Telemonitoring Versus Usual Care on Readmission and Mortality Rates in Patients With Chronic Heart Failure"
+        ],
+        "author": [
+          {
+            "given": "Lei",
+            "family": "Xiao",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "Lei Xiao, Southern Medical Branch of PLA General Hospital, Beijing, China. Jingqiao Tao, Southern Medical Branch of PLA General Hospital, Beijing, China. Li Yao, Urology Surgery, The Seventh Medical Center of PLA General Hospital, Beijing, China. Yanyan Sun, Southern Medical Branch of PLA General Hospital, Beijing, China. Fangqing Chen, Southern Medical Branch of PLA General Hospital, Beijing, China. Hong Zhou, Southern Medical Branch of PLA General Hospital, Beijing, China."
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jingqiao",
+            "family": "Tao",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Lei Xiao, Southern Medical Branch of PLA General Hospital, Beijing, China. Jingqiao Tao, Southern Medical Branch of PLA General Hospital, Beijing, China. Li Yao, Urology Surgery, The Seventh Medical Center of PLA General Hospital, Beijing, China. Yanyan Sun, Southern Medical Branch of PLA General Hospital, Beijing, China. Fangqing Chen, Southern Medical Branch of PLA General Hospital, Beijing, China. Hong Zhou, Southern Medical Branch of PLA General Hospital, Beijing, China."
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Li",
+            "family": "Yao",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Lei Xiao, Southern Medical Branch of PLA General Hospital, Beijing, China. Jingqiao Tao, Southern Medical Branch of PLA General Hospital, Beijing, China. Li Yao, Urology Surgery, The Seventh Medical Center of PLA General Hospital, Beijing, China. Yanyan Sun, Southern Medical Branch of PLA General Hospital, Beijing, China. Fangqing Chen, Southern Medical Branch of PLA General Hospital, Beijing, China. Hong Zhou, Southern Medical Branch of PLA General Hospital, Beijing, China."
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Yanyan",
+            "family": "Sun",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Lei Xiao, Southern Medical Branch of PLA General Hospital, Beijing, China. Jingqiao Tao, Southern Medical Branch of PLA General Hospital, Beijing, China. Li Yao, Urology Surgery, The Seventh Medical Center of PLA General Hospital, Beijing, China. Yanyan Sun, Southern Medical Branch of PLA General Hospital, Beijing, China. Fangqing Chen, Southern Medical Branch of PLA General Hospital, Beijing, China. Hong Zhou, Southern Medical Branch of PLA General Hospital, Beijing, China."
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Fangqing",
+            "family": "Chen",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Lei Xiao, Southern Medical Branch of PLA General Hospital, Beijing, China. Jingqiao Tao, Southern Medical Branch of PLA General Hospital, Beijing, China. Li Yao, Urology Surgery, The Seventh Medical Center of PLA General Hospital, Beijing, China. Yanyan Sun, Southern Medical Branch of PLA General Hospital, Beijing, China. Fangqing Chen, Southern Medical Branch of PLA General Hospital, Beijing, China. Hong Zhou, Southern Medical Branch of PLA General Hospital, Beijing, China."
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Hong",
+            "family": "Zhou",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Lei Xiao, Southern Medical Branch of PLA General Hospital, Beijing, China. Jingqiao Tao, Southern Medical Branch of PLA General Hospital, Beijing, China. Li Yao, Urology Surgery, The Seventh Medical Center of PLA General Hospital, Beijing, China. Yanyan Sun, Southern Medical Branch of PLA General Hospital, Beijing, China. Fangqing Chen, Southern Medical Branch of PLA General Hospital, Beijing, China. Hong Zhou, Southern Medical Branch of PLA General Hospital, Beijing, China."
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              7
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              7
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2026,
+              11
+            ]
+          ]
+        },
+        "publisher": "Ovid Technologies (Wolters Kluwer Health)",
+        "URL": "https://doi.org/10.1097/jcn.0000000000001344"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1093/eurjcn/zvag159",
+      "providerTitle": "Technology-supported nurse-led transitional interventions to improve self-care in heart failure patients after hospital discharge: a systematic review and meta-analysis of randomized controlled trials",
+      "url": "https://api.crossref.org/works/10.1093%2Feurjcn%2Fzvag159",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1093/eurjcn/zvag159",
+        "title": [
+          "Technology-supported nurse-led transitional interventions to improve self-care in heart failure patients after hospital discharge: a systematic review and meta-analysis of randomized controlled trials"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0001-6048-6784",
+            "authenticated-orcid": false,
+            "given": "Ismail",
+            "family": "Fahmi",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "Faculty of Nursing, Universitas Indonesia, Jl. Prof. Dr. Bahder Djohan, Kampus UI Depok, Depok 16424, West Java ,",
+                "place": [
+                  "Indonesia"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0002-7025-6429",
+            "authenticated-orcid": false,
+            "given": "Tuti",
+            "family": "Herawati",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Faculty of Nursing, Universitas Indonesia, Jl. Prof. Dr. Bahder Djohan, Kampus UI Depok, Depok 16424, West Java ,",
+                "place": [
+                  "Indonesia"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0002-2922-0600",
+            "authenticated-orcid": false,
+            "given": "Imami Nur",
+            "family": "Rachmawati",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Faculty of Nursing, Universitas Indonesia, Jl. Prof. Dr. Bahder Djohan, Kampus UI Depok, Depok 16424, West Java ,",
+                "place": [
+                  "Indonesia"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0003-3303-1519",
+            "authenticated-orcid": false,
+            "given": "Amelia",
+            "family": "Ganefianty",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Department of Nursing, Hasan Sadikin Hospital , Jl. Pasteur No. 38, Bandung 40161, West Java ,",
+                "place": [
+                  "Indonesia"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0003-3998-1590",
+            "authenticated-orcid": false,
+            "given": "Bambang Budi",
+            "family": "Siswanto",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Faculty of Medicine, Universitas Indonesia , Jl. Salemba Raya No. 6, Central Jakarta 10430, Jakarta ,",
+                "place": [
+                  "Indonesia"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0001-9032-8998",
+            "authenticated-orcid": false,
+            "given": "Simon",
+            "family": "Stewart",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Institute of Health Research, Notre Dame University of Australia , 32 Mouat St, Fremantle, WA 6160 ,",
+                "place": [
+                  "Australia"
+                ]
+              },
+              {
+                "name": "School of Medicine, Dentistry and Nursing, University of Glasgow , 57–61 Oakfield Avenue, Glasgow G12 8LL ,",
+                "place": [
+                  "UK"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              6,
+              30
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2026,
+              6,
+              30
+            ]
+          ]
+        },
+        "publisher": "Oxford University Press (OUP)",
+        "URL": "https://doi.org/10.1093/eurjcn/zvag159"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1016/j.isci.2026.117814",
+      "providerTitle": "Offshore wind farm impacts on marine fauna across taxa and ecological levels: A global review",
+      "url": "https://api.crossref.org/works/10.1016%2Fj.isci.2026.117814",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1016/j.isci.2026.117814",
+        "title": [
+          "Offshore wind farm impacts on marine fauna across taxa and ecological levels: A global review"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0002-0057-9142",
+            "authenticated-orcid": false,
+            "given": "Gabriella",
+            "family": "La Manna",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Mariangela Moro",
+            "family": "Merella",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Alessia",
+            "family": "Crobu",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Arianna",
+            "family": "Pansini",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Giulia",
+            "family": "Ceccherelli",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              11
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2026,
+              11
+            ]
+          ]
+        },
+        "publisher": "Elsevier BV",
+        "URL": "https://doi.org/10.1016/j.isci.2026.117814"
+      },
+      "normalizedTitleMatches": true
+    },
+    {
+      "doi": "10.1177/0268580917693173",
+      "providerTitle": "Socioeconomic consequences of climate induced human displacement and migration in Bangladesh",
+      "url": "https://api.crossref.org/works/10.1177%2F0268580917693173",
+      "http": 200,
+      "registry": {
+        "DOI": "10.1177/0268580917693173",
+        "title": [
+          "Socioeconomic consequences of climate induced human displacement and migration in Bangladesh"
+        ],
+        "author": [
+          {
+            "given": "M Rezaul",
+            "family": "Islam",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "University of Dhaka, Bangladesh"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "M",
+            "family": "Shamsuddoha",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Centre for Participatory Research and Development (CPRD), Dhaka, Bangladesh"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "published": {
+          "date-parts": [
+            [
+              2017,
+              2,
+              1
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2017,
+              2,
+              1
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2017,
+              5
+            ]
+          ]
+        },
+        "publisher": "SAGE Publications",
+        "URL": "https://doi.org/10.1177/0268580917693173"
+      },
+      "normalizedTitleMatches": true
+    }
+  ]
+}

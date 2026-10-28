@@ -68,6 +68,12 @@ Do not share a `localhost` URL with Amanda unless she is on the same machine. Fo
 
 Private keys must stay server-side. The browser should only call `/api/chat` or `/api/chat/stream`.
 
+The Gemini key is read by Node and sent to Google in the `x-goog-api-key` request header; it is never shipped in the Vite bundle or placed in a provider URL. Chat writes have a process-local per-client rate limit (default 30 requests per 10 minutes) and simultaneous-work limits (default 2 per client, 8 per process). Body, message, turn, provider timeout, retry, and circuit bounds add further cost controls. These limits reset on restart and are not shared across instances. They do not identify a student or stop a determined attacker using many IPs.
+
+The app screens obvious prompt-override requests and validates model-generated resource links against curated routes. The model prompt contains no API key or browser credentials, and the model has no private database access or action tools. The generated research orientation and synonym suggestions can still be wrong, fabricated, or influenced by adversarial text; students must verify claims and source fit. This is not a complete prompt-injection defense.
+
+Wake Forest login is **not implemented**. Before a campus-wide or authenticated pilot, ZSR/WFU should choose an approved identity gateway or OIDC integration, require verified sessions for chat API routes, establish per-user and per-IP quotas in a shared store, and set a cost budget and incident owner. The app must verify identity on the server; a client-supplied WFU email or forwarded identity header is not authentication. Do not present the current public-link prototype as WFU-login protected.
+
 Suggested demo framing:
 
 - This is a student-built prototype, not an official ZSR service unless ZSR approves it.
@@ -151,7 +157,9 @@ This is not a LibKey API integration and does not control the browser extension.
 
 ## Optional Primo API Readiness
 
-`server/primoApi.js` contains a future-facing service that can build Primo-compatible requests when `PRIMO_API_ENDPOINT` and `PRIMO_API_KEY` are configured. Without credentials, it falls back gracefully to current ZSR/Scholar links and the existing live Primo lookup.
+`server/primoApi.js` implements explicit `guest` and `institutional` profiles, Ex Libris header authentication, bounded requests, shared response normalization, and a fail-safe public-metadata fallback. Guest-sandbox data is always marked as demo data and is never eligible for student-facing results. An institutional profile must be configured and separately enabled with `PRIMO_API_USE_FOR_DISCOVERY=on`.
+
+Use `npm run verify:primo -- --query "cloud computing" --mode books` to validate a configured profile without printing the key. Setup and promotion gates are documented in `docs/primo-guest-sandbox-spike.md`.
 
 ## Pilot Admin And Handoff
 
@@ -183,6 +191,8 @@ For library technical staff review, use:
 - `docs/duke-demo-10-minute.md`
 - `docs/technical-correction-note.md`
 - `docs/provider-integration-roadmap.md`
+- `docs/primo-guest-sandbox-spike.md`
+- `docs/student-pilot-kit.md`
 
 ## Useful Commands
 

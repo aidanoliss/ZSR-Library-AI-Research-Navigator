@@ -1,0 +1,100 @@
+{
+  "auditDate": "2026-10-07",
+  "scope": "Read-only deterministic probes of current application modules; no live provider requests or paid AI calls.",
+  "warning": "All records and AI replies in validation probes are synthetic adversarial fixtures. They demonstrate accepted failure cases, not actual student searches, actual published findings, or measured model error rates.",
+  "probes": [
+    {
+      "id": "comparison-population-dropped",
+      "input": "Compare loneliness in adolescents and older adults",
+      "function": "buildResearchSpec / researchSpecQuery",
+      "actual": {
+        "concepts": ["loneliness"],
+        "population": "adolescent*",
+        "comparison": null,
+        "compiledQuery": "loneliness AND adolescent*"
+      },
+      "expected": "Retain both adolescents and older adults and the comparison intent, or request clarification. Never silently remove one requested population.",
+      "references": ["config/researchSpec.js:205", "config/researchSpec.js:418"]
+    },
+    {
+      "id": "method-exclusion-reversed",
+      "input": "Find studies of social media and mental health, but I do not want systematic reviews",
+      "function": "buildResearchSpec / researchSpecQuery",
+      "actual": {
+        "concepts": ["social media", "mental health", "but not"],
+        "methods": {"include": ["systematic review"], "exclude": []},
+        "compiledQuery": "\"social media\" AND \"mental health\" AND \"but not\" AND (\"systematic review\" OR \"systematic reviews\")"
+      },
+      "expected": "Exclude systematic reviews, preserve the two topic concepts, and remove instruction words from the topical query.",
+      "references": ["config/researchSpec.js:243", "config/researchSpec.js:250"]
+    },
+    {
+      "id": "quotation-omits-negation",
+      "syntheticOnly": true,
+      "function": "prepareSourceEvidence / validateReply",
+      "source": {
+        "title": "A study",
+        "url": "https://example.org/study",
+        "abstractText": "The study did not establish that vaccination causes autism in children. The observed association was due to selection bias."
+      },
+      "submittedReply": {
+        "message": "Vaccination causes autism, this study proves it.",
+        "quote": "vaccination causes autism in children.",
+        "evidence_scope": "abstract"
+      },
+      "actual": {
+        "message": "Vaccination causes autism, this study proves it.",
+        "acceptedQuote": "vaccination causes autism in children.",
+        "evidence_status": "abstract_notes",
+        "message_basis": "unverified_orientation",
+        "evidenceDropped": []
+      },
+      "expected": "Do not display a substring that reverses the full sentence's meaning. Preserve complete sentence context, negation, and qualifications. Suppress unsupported research conclusions rather than relying only on an unverified-orientation disclaimer.",
+      "references": ["server/sourceEvidence.js:73", "server/validate.js:109"]
+    },
+    {
+      "id": "metadata-cooccurrence-is-not-research-fit",
+      "syntheticOnly": true,
+      "input": "Air pollution and childhood asthma",
+      "function": "rankSourceResults",
+      "source": {
+        "title": "Bibliometric map of air pollution research and childhood asthma publications",
+        "type": "article",
+        "abstractText": "This bibliometric index describes the number of publications on air pollution. Childhood asthma appears in the indexing keywords; no health outcomes were studied.",
+        "url": "https://example.org/index"
+      },
+      "actual": {
+        "returned": true,
+        "sourceAssessmentStatus": "meets",
+        "relevanceStatus": "meets",
+        "category": "full-topic-match",
+        "label": "All topic concepts found",
+        "metadataRankScore": 161
+      },
+      "expected": "A keyword label can be literally correct, but should not establish research usefulness. Distinguish bibliometric/background roles from studies of the requested relationship, and evaluate ranking against independent judgments.",
+      "references": ["server/sourceRelevance.js:12", "server/sourceRelevance.js:176", "server/sourceRelevance.js:220"]
+    }
+  ],
+  "workingRegressionChecks": [
+    {"input": "Find peer-reviewed studies of newspaper coverage of climate change", "actualMode": "scholarly"},
+    {"input": "Find scholarly articles about book banning in school libraries", "actualMode": "scholarly"}
+  ],
+  "safeConfigurationCheck": {
+    "function": "getOpenAlexStatus after dotenv/config",
+    "enabled": false,
+    "configured": false,
+    "reason": "missing-api-key",
+    "credentialsPrinted": false
+  },
+  "latestSavedRetrievalBenchmark": {
+    "date": "2026-10-06",
+    "path": "docs/validation/2026-10-06/search-recovery/provider-report.md",
+    "queries": 28,
+    "nonempty": 24,
+    "unjudgedTopFiveResults": 104,
+    "humanJudgments": 0,
+    "precisionAtFive": null,
+    "claimAccuracy": null,
+    "limitation": "Availability is not accuracy. No new live benchmark or librarian review was performed in this audit."
+  }
+}

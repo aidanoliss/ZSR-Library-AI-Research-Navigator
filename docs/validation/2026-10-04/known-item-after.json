@@ -1,0 +1,363 @@
+{
+  "capturedAt": "2026-10-05T02:22:39.550Z",
+  "query": "Find the article \"The Tragedy of the Commons\" by Garrett Hardin",
+  "queries": [
+    "\"The Tragedy of the Commons\" AND \"Garrett Hardin\""
+  ],
+  "elapsedMs": 2312,
+  "knownItem": {
+    "kind": "article",
+    "title": "The Tragedy of the Commons",
+    "author": "Garrett Hardin"
+  },
+  "outcomes": {
+    "library": [
+      {
+        "provider": "Primo public",
+        "status": "success",
+        "resultCount": 20
+      }
+    ],
+    "openAccess": []
+  },
+  "identity": {
+    "status": "matched",
+    "requestedTitle": "The Tragedy of the Commons",
+    "requestedAuthor": "Garrett Hardin",
+    "exactCount": 1,
+    "relatedCount": 9,
+    "unverifiedCount": 0,
+    "explanation": "A provider record matches the requested bibliographic identity. Confirm the edition or version in the record."
+  },
+  "results": [
+    {
+      "rank": 1,
+      "title": "The Tragedy of the Commons",
+      "authors": [
+        "Hardin, Garrett"
+      ],
+      "date": "1968-12-13",
+      "doi": "10.1126/science.162.3859.1243",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_jstor_primary_1724745&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "exact",
+        "titleMatch": true,
+        "authorMatch": true,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "title-and-author-fields",
+        "explanation": "The requested title and supplied author match the bibliographic fields. Confirm the edition or version in the linked record."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 2,
+      "title": "The Tragedy of the Commons: twenty-two years later",
+      "authors": [
+        "Berkes, F",
+        "McCay, B.J",
+        "Acheson, J.M"
+      ],
+      "date": "1990-03",
+      "doi": "10.1007/bf00889070",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_jstor_primary_4602950&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": true,
+        "authorMatch": false,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its author field does not match the requested author."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 3,
+      "title": "The Tragedy of the Commons",
+      "authors": [
+        "Vogel, Joseph Henry",
+        "Vogel, Joseph"
+      ],
+      "date": "2012",
+      "doi": "10.7135/UPO9781843318637.006",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_ebookcentralchapters_840514_10_43&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": true,
+        "authorMatch": false,
+        "identifierMatch": null,
+        "typeMatch": false,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its author field does not match the requested author. Its document type differs from the requested item."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 4,
+      "title": "THE TRAGEDY OF THE COMMONS: A Class of Problems that has no Technical Solution",
+      "authors": [
+        "Joseph Henry Vogel"
+      ],
+      "date": "2010-01-01",
+      "doi": "",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_jstor_books_j_ctt1gsmz58_9&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": true,
+        "authorMatch": false,
+        "identifierMatch": null,
+        "typeMatch": false,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its author field does not match the requested author. Its document type differs from the requested item."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 5,
+      "title": "Extensions of \"The Tragedy of the Commons\"",
+      "authors": [
+        "Hardin, Garrett"
+      ],
+      "date": "1998-05-01",
+      "doi": "10.1126/science.280.5364.682",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_743576566&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": false,
+        "authorMatch": true,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its title differs from the requested title."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 6,
+      "title": "Excerpts from “The Tragedy of the Commons”",
+      "authors": [
+        "GARRETT HARDIN",
+        "Christopher Schlottmann",
+        "Dale Jamieson",
+        "Colin Jerolmack",
+        "Anne Rademacher",
+        "Maria Damon"
+      ],
+      "date": "2017-01-24",
+      "doi": "10.2307/j.ctt1ht4vw6.33",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_jstor_books_10_2307_j_ctt1ht4vw6_33&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": false,
+        "authorMatch": true,
+        "identifierMatch": null,
+        "typeMatch": false,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its title differs from the requested title. Its document type differs from the requested item."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 7,
+      "title": "Commentary: Living on a Lifeboat",
+      "authors": [
+        "Hardin, Garrett"
+      ],
+      "date": "1974-10-01",
+      "doi": "10.2307/1296629",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_2307_1296629&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": false,
+        "authorMatch": true,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its title differs from the requested title."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 8,
+      "title": "Cold War Pastures: Garrett Hardin and the “Tragedy of the Commons”",
+      "authors": [
+        "Locher, Fabien"
+      ],
+      "date": "2013-04-01",
+      "doi": "10.3917/rhmc.601.0007",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_3917_rhmc_601_0007&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": false,
+        "authorMatch": false,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its title differs from the requested title. Its author field does not match the requested author."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 9,
+      "title": "Garrett Hardin, The Tragedy of the Commons and the Firth of Forth",
+      "authors": [
+        "Smout, T.C."
+      ],
+      "date": "2011-08-01",
+      "doi": "10.3197/096734011X13077054787109",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_884120724&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": false,
+        "authorMatch": false,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its title differs from the requested title. Its author field does not match the requested author."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    },
+    {
+      "rank": 10,
+      "title": "The Real Tragedy of the Commons – Garrett Hardin (1968) Revised",
+      "authors": [
+        "Brunnhuber, Stefan"
+      ],
+      "date": "2022-01-01",
+      "doi": "10.35784/pe.2022.2.02",
+      "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_35784_pe_2022_2_02&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+      "sourceProvider": "ZSR discovery",
+      "identity": {
+        "status": "related",
+        "titleMatch": false,
+        "authorMatch": false,
+        "identifierMatch": null,
+        "typeMatch": true,
+        "basis": "metadata-identity-check",
+        "explanation": "This is a related work, not a matched copy of the requested item. Its title differs from the requested title. Its author field does not match the requested author."
+      },
+      "sourceAssessment": {
+        "status": "meets",
+        "checks": [
+          {
+            "id": "source-type",
+            "label": "Source format",
+            "status": "meets",
+            "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+          }
+        ],
+        "issues": []
+      }
+    }
+  ],
+  "limitations": "Bibliographic identity and retrieval only; no human relevance judgments or full-text verification."
+}

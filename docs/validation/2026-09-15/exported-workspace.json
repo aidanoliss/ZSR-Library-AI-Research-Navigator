@@ -1,0 +1,342 @@
+{
+  "format": "zsr-research-workspace",
+  "version": 1,
+  "exportedAt": "2026-09-15T22:48:48.697Z",
+  "topic": "Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+  "workspace": {
+    "assignment": {
+      "enabled": true,
+      "course": "",
+      "assignmentType": "",
+      "dueDate": "",
+      "sourceCount": "4",
+      "sourceTypes": "",
+      "dateRange": "",
+      "constraints": ""
+    },
+    "trail": [
+      {
+        "id": "synthetic-older-book",
+        "kind": "catalog",
+        "title": "[SYNTHETIC TEST FIXTURE] Older background book: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+        "url": "http://127.0.0.1:3004/__fixtures__/source/older-book",
+        "detail": "book · Taylor Fixture · 2018",
+        "status": "use",
+        "notes": "Browser regression note: verify this source.",
+        "citation": "",
+        "savedAt": 1789512416932,
+        "sourceRecord": {
+          "id": "synthetic-older-book",
+          "title": "[SYNTHETIC TEST FIXTURE] Older background book: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+          "author": "Taylor Fixture",
+          "type": "book",
+          "date": "2018",
+          "sourceProvider": "SYNTHETIC library fixture",
+          "sourceKind": "book",
+          "sourceMode": "scholarly",
+          "accessScope": "library",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "issn": "",
+          "containerTitle": "Synthetic Teaching Press",
+          "publisher": "Synthetic Test Publisher",
+          "abstractExcerpt": "Synthetic abstract for interface testing only. Topic terms: urban, tree canopy, summer temperatures. No research findings are asserted.",
+          "abstractSource": "Synthetic test fixture",
+          "description": "Synthetic metadata for browser regression tests. This is not a real publication, library holding, or access claim.",
+          "retrievedAt": "2026-09-15T12:00:00.000Z",
+          "url": "http://127.0.0.1:3004/__fixtures__/source/older-book",
+          "cover": "",
+          "publicationYear": 2018,
+          "authors": [
+            {
+              "family": "Fixture",
+              "given": "Taylor"
+            }
+          ],
+          "subjects": [
+            "urban",
+            "tree canopy",
+            "summer temperatures"
+          ],
+          "detailPoints": [
+            "Test data only. Do not cite this record or treat it as a library result."
+          ],
+          "peerReviewed": false,
+          "matchExplanation": {
+            "status": "meets",
+            "matchedConcepts": [
+              "urban",
+              "tree canopy",
+              "summer temperatures"
+            ],
+            "missingConcepts": [],
+            "explanation": "Synthetic record repeats the requested concepts to exercise the fit explanation UI. This is not evidence of real source relevance."
+          },
+          "sourceAssessment": {
+            "status": "mismatch",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "mismatch",
+                "detail": "Metadata type book does not match Scholarly articles."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "mismatch",
+                "detail": "Published 2018; required 2022–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "mismatch",
+                "detail": "The provider reports this source is not peer reviewed."
+              }
+            ],
+            "issues": [
+              "Metadata type book does not match Scholarly articles.",
+              "Published 2018; required 2022–present.",
+              "The provider reports this source is not peer reviewed."
+            ]
+          },
+          "provenance": {
+            "provider": "SYNTHETIC browser fixture",
+            "recordType": "book",
+            "metadataOnly": true,
+            "accessVerified": false,
+            "peerReviewed": false,
+            "retrievedAt": "2026-09-15T12:00:00.000Z"
+          },
+          "citation": {
+            "title": "[SYNTHETIC TEST FIXTURE] Older background book: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+            "authors": [
+              {
+                "family": "Fixture",
+                "given": "Taylor"
+              }
+            ],
+            "year": 2018,
+            "venue": "Synthetic Teaching Press",
+            "type": "book"
+          }
+        },
+        "imported": false
+      },
+      {
+        "id": "synthetic-unknown-review",
+        "kind": "catalog",
+        "title": "[SYNTHETIC TEST FIXTURE] Review with unverified peer review: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+        "url": "http://127.0.0.1:3004/__fixtures__/source/unknown-review",
+        "detail": "journal-article · Morgan Fixture · 2024",
+        "status": "use",
+        "notes": "",
+        "citation": "",
+        "savedAt": 1789512416671,
+        "sourceRecord": {
+          "id": "synthetic-unknown-review",
+          "title": "[SYNTHETIC TEST FIXTURE] Review with unverified peer review: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+          "author": "Morgan Fixture",
+          "type": "journal-article",
+          "date": "2024",
+          "sourceProvider": "SYNTHETIC library fixture",
+          "sourceKind": "scholarly-article",
+          "sourceMode": "scholarly",
+          "accessScope": "library",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "issn": "",
+          "containerTitle": "Synthetic Research Review",
+          "publisher": "Synthetic Test Publisher",
+          "abstractExcerpt": "Synthetic abstract for interface testing only. Topic terms: urban, tree canopy, summer temperatures. No research findings are asserted.",
+          "abstractSource": "Synthetic test fixture",
+          "description": "Synthetic metadata for browser regression tests. This is not a real publication, library holding, or access claim.",
+          "retrievedAt": "2026-09-15T12:00:00.000Z",
+          "url": "http://127.0.0.1:3004/__fixtures__/source/unknown-review",
+          "cover": "",
+          "publicationYear": 2024,
+          "authors": [
+            {
+              "family": "Fixture",
+              "given": "Morgan"
+            }
+          ],
+          "subjects": [
+            "urban",
+            "tree canopy",
+            "summer temperatures"
+          ],
+          "detailPoints": [
+            "Test data only. Do not cite this record or treat it as a library result."
+          ],
+          "peerReviewed": null,
+          "matchExplanation": {
+            "status": "meets",
+            "matchedConcepts": [
+              "urban",
+              "tree canopy",
+              "summer temperatures"
+            ],
+            "missingConcepts": [],
+            "explanation": "Synthetic record repeats the requested concepts to exercise the fit explanation UI. This is not evidence of real source relevance."
+          },
+          "sourceAssessment": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2024; required 2022–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "unverified",
+                "detail": "Peer review is not established by the metadata; verify it with the journal or database."
+              }
+            ],
+            "issues": [
+              "Peer review is not established by the metadata; verify it with the journal or database."
+            ]
+          },
+          "provenance": {
+            "provider": "SYNTHETIC browser fixture",
+            "recordType": "journal-article",
+            "metadataOnly": true,
+            "accessVerified": false,
+            "peerReviewed": null,
+            "retrievedAt": "2026-09-15T12:00:00.000Z"
+          },
+          "citation": {
+            "title": "[SYNTHETIC TEST FIXTURE] Review with unverified peer review: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+            "authors": [
+              {
+                "family": "Fixture",
+                "given": "Morgan"
+              }
+            ],
+            "year": 2024,
+            "venue": "Synthetic Research Review",
+            "type": "journal-article"
+          }
+        },
+        "imported": false
+      },
+      {
+        "id": "synthetic-current-article",
+        "kind": "catalog",
+        "title": "[SYNTHETIC TEST FIXTURE] Current journal article: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+        "url": "http://127.0.0.1:3004/__fixtures__/source/current-article",
+        "detail": "journal-article · Alex Fixture · 2025",
+        "status": "use",
+        "notes": "",
+        "citation": "",
+        "savedAt": 1789512416382,
+        "sourceRecord": {
+          "id": "synthetic-current-article",
+          "title": "[SYNTHETIC TEST FIXTURE] Current journal article: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+          "author": "Alex Fixture",
+          "type": "journal-article",
+          "date": "2025",
+          "sourceProvider": "SYNTHETIC library fixture",
+          "sourceKind": "scholarly-article",
+          "sourceMode": "scholarly",
+          "accessScope": "library",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "issn": "",
+          "containerTitle": "Synthetic Journal of Interface Testing",
+          "publisher": "Synthetic Test Publisher",
+          "abstractExcerpt": "Synthetic abstract for interface testing only. Topic terms: urban, tree canopy, summer temperatures. No research findings are asserted.",
+          "abstractSource": "Synthetic test fixture",
+          "description": "Synthetic metadata for browser regression tests. This is not a real publication, library holding, or access claim.",
+          "retrievedAt": "2026-09-15T12:00:00.000Z",
+          "url": "http://127.0.0.1:3004/__fixtures__/source/current-article",
+          "cover": "",
+          "publicationYear": 2025,
+          "authors": [
+            {
+              "family": "Fixture",
+              "given": "Alex"
+            }
+          ],
+          "subjects": [
+            "urban",
+            "tree canopy",
+            "summer temperatures"
+          ],
+          "detailPoints": [
+            "Test data only. Do not cite this record or treat it as a library result."
+          ],
+          "peerReviewed": true,
+          "matchExplanation": {
+            "status": "meets",
+            "matchedConcepts": [
+              "urban",
+              "tree canopy",
+              "summer temperatures"
+            ],
+            "missingConcepts": [],
+            "explanation": "Synthetic record repeats the requested concepts to exercise the fit explanation UI. This is not evidence of real source relevance."
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              },
+              {
+                "id": "publication-date",
+                "label": "Publication date",
+                "status": "meets",
+                "detail": "Published 2025; required 2022–present."
+              },
+              {
+                "id": "peer-review",
+                "label": "Peer review",
+                "status": "meets",
+                "detail": "The provider explicitly reports peer review."
+              }
+            ],
+            "issues": []
+          },
+          "provenance": {
+            "provider": "SYNTHETIC browser fixture",
+            "recordType": "journal-article",
+            "metadataOnly": true,
+            "accessVerified": false,
+            "peerReviewed": true,
+            "retrievedAt": "2026-09-15T12:00:00.000Z"
+          },
+          "citation": {
+            "title": "[SYNTHETIC TEST FIXTURE] Current journal article: Find 3 peer-reviewed articles published since 2022 about urban tree canopy and summer temperatures.",
+            "authors": [
+              {
+                "family": "Fixture",
+                "given": "Alex"
+              }
+            ],
+            "year": 2025,
+            "venue": "Synthetic Journal of Interface Testing",
+            "type": "journal-article"
+          }
+        },
+        "imported": false
+      }
+    ],
+    "searchHistory": []
+  }
+}

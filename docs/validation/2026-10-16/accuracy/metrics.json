@@ -1,0 +1,24 @@
+{
+  "releaseId": "4b8a0b7b8b11",
+  "totalRequests": 24,
+  "realQueries": 23,
+  "nonemptyRealQueries": 16,
+  "atLeastFiveRealQueries": 14,
+  "completedSourceStages": 22,
+  "topFiveSlotsReturned": 74,
+  "detectedWithinQueryTopFiveDuplicates": 0,
+  "medianCompletedSourceStageMs": 2521.0,
+  "timeoutOrProviderTimeoutCases": [
+    "psychology-comparison",
+    "books-background",
+    "exact-book-title"
+  ],
+  "aiRelevanceScreen": {
+    "direct": 17,
+    "supporting": 12,
+    "off-target": 2,
+    "uncertain": 1
+  },
+  "humanRelevanceAccuracy": null,
+  "generatedClaimAccuracy": null
+}

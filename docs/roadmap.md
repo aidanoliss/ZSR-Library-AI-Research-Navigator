@@ -21,12 +21,14 @@
 
 ## Next pilot priorities
 
-1. Have librarians score the baseline and 54-case discipline-by-mode-by-paraphrase matrix.
-2. Replace unassigned resource owners and pending review states with approved institutional records.
-3. Conduct manual keyboard-only, screen-reader, zoom, contrast, reduced-motion, and mobile usability review.
-4. Add configuration writes, approval, import, and rollback only after institutional authentication, authorization, persistence, and audit ownership exist. The current QA console is intentionally read-only.
-5. Run the narrow two-discipline student pilot described in `docs/duke-readiness-packet.md`.
-6. Sample and librarian-score OpenAlex relevance, OA-location accuracy, and license/version display before making the combined lane the default.
+1. Ask Amanda/ZSR, a faculty advisor, and the Wake Forest IRB for the determination and co-design review in `docs/student-pilot-kit.md`; do not recruit before required review.
+2. Have librarians score the baseline and 54-case discipline-by-mode-by-paraphrase matrix.
+3. Replace unassigned resource owners and pending review states with approved institutional records.
+4. Conduct manual keyboard-only, screen-reader, zoom, contrast, reduced-motion, and mobile usability review.
+5. Complete the Ex Libris guest-sandbox contract spike, then request a ZSR-approved read-only staging profile using `docs/primo-guest-sandbox-spike.md`.
+6. Run the 8-to-12-student formative pilot and review route/query/source relevance with ZSR.
+7. Add configuration writes, approval, import, and rollback only after institutional authentication, authorization, persistence, and audit ownership exist. The current QA console is intentionally read-only.
+8. Sample and librarian-score OpenAlex relevance, OA-location accuracy, and license/version display before making the combined lane the default.
 
 ## Hardening completed on the pilot branch
 
@@ -43,11 +45,13 @@
 - Handoff focus management, workspace tab semantics, and reduced-motion support
 - Release evidence and institution-config-diff scripts
 - Official integration proposal and staff decision packet
+- Explicit guest/institutional Primo API profiles, server-side authentication, verifier, and demo-data isolation
+- Controlled student-pilot protocol, scorecard, stopping rules, and ZSR co-design request
 
 ## Official integration track
 
 - Replace hand-maintained database metadata with a reviewed LibGuides/A-Z export when available.
-- Use an approved Primo API endpoint and key rather than relying only on public discovery requests.
+- Validate the adapter against the Ex Libris guest sandbox, then use an approved Primo API endpoint and key rather than relying only on public discovery requests. Guest data must never appear as ZSR data.
 - Confirm LibKey/Third Iron configuration and preferred full-text workflow.
 - Obtain and monitor a server-side OpenAlex API key if the OA lane is enabled in a shared deployment.
 - Pilot full-text summaries only after exact-version rights enforcement, privacy/retention approval, and citation-preserving summary evaluation exist.

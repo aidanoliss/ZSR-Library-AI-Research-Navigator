@@ -33,7 +33,8 @@ test("requested scholarly format wins over source nouns in the subject, without 
     }
   }
   assert.equal(buildResearchSpec("Find book banning studies").mode, "scholarly");
-  assert.match(researchSpecQuery(buildResearchSpec("Find book banning studies")), /book banning/);
+  // Extracted multi-word phrases are searched as required words, not exact phrases (docs/validation/2026-10-27).
+  assert.match(researchSpecQuery(buildResearchSpec("Find book banning studies")), /\bbook\b.*\bbanning\b/);
   assert.equal(buildResearchSpec("Find newspaper articles about climate change").mode, "news");
   assert.equal(buildResearchSpec("Primary sources about the Greensboro sit-ins in 1960").mode, "primary");
   assert.equal(buildResearchSpec("Compare US and European newspaper coverage of the war in Ukraine").mode, "news");
@@ -339,7 +340,7 @@ test("conversational and coordinated method exclusions remain negative without s
   assert.deepEqual(buildResearchSpec("Sleep and attention, do not include systematic reviews or meta-analyses").methodRequirements, { include: [], exclude: ["systematic review", "meta-analysis"] });
   for (const prompt of ["Find studies of the reliability of systematic reviews", "Find studies about systematic reviews", "Research on limitations of systematic reviews"]) {
     assert.deepEqual(buildResearchSpec(prompt).methodRequirements, { include: [], exclude: [] }, prompt);
-    assert.match(researchSpecQuery(buildResearchSpec(prompt)), /systematic reviews/i);
+    assert.match(researchSpecQuery(buildResearchSpec(prompt)), /systematic\b.*\breviews/i);
   }
 });
 

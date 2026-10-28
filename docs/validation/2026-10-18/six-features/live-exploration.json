@@ -82,61 +82,973 @@
           "title": "PROTOCOL: The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
           "doi": "10.1002/cl2.1041",
           "url": "https://doi.org/10.1002%2Fcl2.1041",
-          "type": "journal article"
+          "authors": [
+            "Cho Naing",
+            "Dinesh Kumar Chellappan",
+            "Wong Shew Fung",
+            "Amy Riegelman",
+            "Maxine A Whittaker"
+          ],
+          "author": "Cho Naing; Dinesh Kumar Chellappan",
+          "type": "journal article",
+          "date": "2019-09",
+          "containerTitle": "Campbell Systematic Reviews: Better Evidence for a Better World",
+          "publisher": "SAGE Publications",
+          "isbn": "",
+          "issn": "1891-1803",
+          "volume": "15",
+          "issue": "3",
+          "pages": "",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "PROTOCOL: The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review",
+            "authors": [
+              "Cho Naing",
+              "Dinesh Kumar Chellappan",
+              "Wong Shew Fung",
+              "Amy Riegelman",
+              "Maxine A Whittaker"
+            ],
+            "doi": "10.1002/cl2.1041",
+            "type": "journal article",
+            "year": 2019,
+            "publicationDate": "2019-09"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "PROTOCOL: The effects of flipped classrooms to improve learning outcomes in undergraduate health professional education: A systematic review"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Exploring flipped classrooms in undergraduate nursing and health science: A systematic review",
           "doi": "10.1016/j.nepr.2022.103417",
           "url": "https://doi.org/10.1016%2Fj.nepr.2022.103417",
-          "type": "journal article"
+          "authors": [
+            "Laura Banks",
+            "Robin Kay"
+          ],
+          "author": "Laura Banks; Robin Kay",
+          "type": "journal article",
+          "date": "2022-10",
+          "containerTitle": "Nurse Education in Practice",
+          "publisher": "Elsevier BV",
+          "isbn": "",
+          "issn": "1471-5953",
+          "volume": "64",
+          "issue": "",
+          "pages": "103417",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Exploring flipped classrooms in undergraduate nursing and health science: A systematic review",
+            "authors": [
+              "Laura Banks",
+              "Robin Kay"
+            ],
+            "doi": "10.1016/j.nepr.2022.103417",
+            "type": "journal article",
+            "year": 2022,
+            "publicationDate": "2022-10"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Exploring flipped classrooms in undergraduate nursing and health science: A systematic review"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Flipped classrooms with proper scheduling improve learning engagement",
           "doi": "10.4103/efh.efh_57_19",
           "url": "https://doi.org/10.4103%2Fefh.efh_57_19",
-          "type": "journal article"
+          "authors": [
+            "MGanesh Kamath",
+            "Sreejith Govindan"
+          ],
+          "author": "MGanesh Kamath; Sreejith Govindan",
+          "type": "journal article",
+          "date": "2022",
+          "containerTitle": "Education for Health",
+          "publisher": "The Network: Towards Unity for Health",
+          "isbn": "",
+          "issn": "1357-6283",
+          "volume": "35",
+          "issue": "3",
+          "pages": "113",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Flipped classrooms with proper scheduling improve learning engagement",
+            "authors": [
+              "MGanesh Kamath",
+              "Sreejith Govindan"
+            ],
+            "doi": "10.4103/efh.efh_57_19",
+            "type": "journal article",
+            "year": 2022,
+            "publicationDate": "2022"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Flipped classrooms with proper scheduling improve learning engagement"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Evaluating Whether Flipped Classrooms Improve Student Learning in Science Education: A Systematic Review and Meta-Analysis",
           "doi": "10.1080/00313831.2021.1983868",
           "url": "https://doi.org/10.1080%2F00313831.2021.1983868",
-          "type": "journal article"
+          "authors": [
+            "Zeynep Turan"
+          ],
+          "author": "Zeynep Turan",
+          "type": "journal article",
+          "date": "2021-10-05",
+          "containerTitle": "Scandinavian Journal of Educational Research",
+          "publisher": "Informa UK Limited",
+          "isbn": "",
+          "issn": "0031-3831",
+          "volume": "67",
+          "issue": "1",
+          "pages": "1-19",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Evaluating Whether Flipped Classrooms Improve Student Learning in Science Education: A Systematic Review and Meta-Analysis",
+            "authors": [
+              "Zeynep Turan"
+            ],
+            "doi": "10.1080/00313831.2021.1983868",
+            "type": "journal article",
+            "year": 2021,
+            "publicationDate": "2021-10-05"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Evaluating Whether Flipped Classrooms Improve Student Learning in Science Education: A Systematic Review and Meta-Analysis"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Hybrid, Online, and Flipped Classrooms in Health Science",
           "doi": "10.4018/978-1-4666-8571-0.ch003",
           "url": "https://doi.org/10.4018%2F978-1-4666-8571-0.ch003",
-          "type": "book chapter"
+          "authors": [
+            "Lynda Tierney Konecny"
+          ],
+          "author": "Lynda Tierney Konecny",
+          "type": "book chapter",
+          "date": "",
+          "containerTitle": "Advances in Higher Education and Professional Development",
+          "publisher": "IGI Global",
+          "isbn": "9781466685710",
+          "issn": "2327-6983",
+          "volume": "",
+          "issue": "",
+          "pages": "105-125",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "With the changing face of education and increased need for unique and technology-enhanced learning environments, educators must have current and relevant information to assist in making informed choices about how to create the most effective learning experiences. In this chapter, hybrid, online, and flipped classrooms are defined based on information found in relevant peer-reviewed and professional literature. Examples in practice within health sciences education are provided of each classroom type, as well as uses in environments where students take control of their own learning. Positive and negative aspects of each learning environment are discussed. Recommendations and best practices are suggested to facilitate the practical application of each.",
+          "abstractExcerpt": "With the changing face of education and increased need for unique and technology-enhanced learning environments, educators must have current and relevant information to assist in making informed choices about how to create the most effective learning experiences. In this chapter, hybrid, online, and flipped classrooms are defined based on information foun…",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Hybrid, Online, and Flipped Classrooms in Health Science",
+            "authors": [
+              "Lynda Tierney Konecny"
+            ],
+            "doi": "10.4018/978-1-4666-8571-0.ch003",
+            "type": "book chapter",
+            "year": null,
+            "publicationDate": ""
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: book-chapter. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Hybrid, Online, and Flipped Classrooms in Health Science"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Exploring flipped classrooms in undergraduate anatomy and physiology courses: a systematic review",
           "doi": "10.1152/advan.00223.2025",
           "url": "https://doi.org/10.1152%2Fadvan.00223.2025",
-          "type": "journal article"
+          "authors": [
+            "Maggie L. Hearns",
+            "Robin Kay",
+            "Laura Banks"
+          ],
+          "author": "Maggie L. Hearns; Robin Kay",
+          "type": "journal article",
+          "date": "2026-09-01",
+          "containerTitle": "Advances in Physiology Education",
+          "publisher": "American Physiological Society",
+          "isbn": "",
+          "issn": "1043-4046",
+          "volume": "50",
+          "issue": "3",
+          "pages": "760-767",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "Our systematic review shows that flipped classrooms in undergraduate anatomy and physiology courses can boost academic performance and student satisfaction, especially when paired with well-structured curriculum design. These findings highlight both the promise of flipped learning and the need for stronger, more consistent research in this area.",
+          "abstractExcerpt": "Our systematic review shows that flipped classrooms in undergraduate anatomy and physiology courses can boost academic performance and student satisfaction, especially when paired with well-structured curriculum design. These findings highlight both the promise of flipped learning and the need for stronger, more consistent research in this area.",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Exploring flipped classrooms in undergraduate anatomy and physiology courses: a systematic review",
+            "authors": [
+              "Maggie L. Hearns",
+              "Robin Kay",
+              "Laura Banks"
+            ],
+            "doi": "10.1152/advan.00223.2025",
+            "type": "journal article",
+            "year": 2026,
+            "publicationDate": "2026-09-01"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Exploring flipped classrooms in undergraduate anatomy and physiology courses: a systematic review"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Flipped but engaged? A systematic review of student engagement in higher education flipped classrooms incorporating the agentic dimension",
           "doi": "10.1080/2331186x.2026.2644673",
           "url": "https://doi.org/10.1080%2F2331186x.2026.2644673",
-          "type": "journal article"
+          "authors": [
+            "Chamintsetseg Myagmarkhorloo",
+            "Anita Habók"
+          ],
+          "author": "Chamintsetseg Myagmarkhorloo; Anita Habók",
+          "type": "journal article",
+          "date": "2026-03-19",
+          "containerTitle": "Cogent Education",
+          "publisher": "Informa UK Limited",
+          "isbn": "",
+          "issn": "2331-186X",
+          "volume": "13",
+          "issue": "1",
+          "pages": "",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Flipped but engaged? A systematic review of student engagement in higher education flipped classrooms incorporating the agentic dimension",
+            "authors": [
+              "Chamintsetseg Myagmarkhorloo",
+              "Anita Habók"
+            ],
+            "doi": "10.1080/2331186x.2026.2644673",
+            "type": "journal article",
+            "year": 2026,
+            "publicationDate": "2026-03-19"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "A systematic review of student engagement in higher education flipped classrooms incorporating the agentic dimension"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Effects of the Traditional and Flipped Classrooms on Undergraduate Student Opinions and Success",
           "doi": "10.1061/(asce)ei.1943-5541.0000259",
           "url": "https://doi.org/10.1061%2F(asce)ei.1943-5541.0000259",
-          "type": "journal article"
+          "authors": [
+            "Susan L. Hotle",
+            "Laurie A. Garrow"
+          ],
+          "author": "Susan L. Hotle; Laurie A. Garrow",
+          "type": "journal article",
+          "date": "2016-01",
+          "containerTitle": "Journal of Professional Issues in Engineering Education and Practice",
+          "publisher": "American Society of Civil Engineers (ASCE)",
+          "isbn": "",
+          "issn": "1052-3928",
+          "volume": "142",
+          "issue": "1",
+          "pages": "",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Effects of the Traditional and Flipped Classrooms on Undergraduate Student Opinions and Success",
+            "authors": [
+              "Susan L. Hotle",
+              "Laurie A. Garrow"
+            ],
+            "doi": "10.1061/(asce)ei.1943-5541.0000259",
+            "type": "journal article",
+            "year": 2016,
+            "publicationDate": "2016-01"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Effects of the Traditional and Flipped Classrooms on Undergraduate Student Opinions and Success"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Promoting Personalized Learning in Flipped Classrooms: A Systematic Review Study",
           "doi": "10.3390/su141811393",
           "url": "https://doi.org/10.3390%2Fsu141811393",
-          "type": "journal article"
+          "authors": [
+            "Mustafa Cevikbas",
+            "Gabriele Kaiser"
+          ],
+          "author": "Mustafa Cevikbas; Gabriele Kaiser",
+          "type": "journal article",
+          "date": "2022-09-10",
+          "containerTitle": "Sustainability",
+          "publisher": "MDPI AG",
+          "isbn": "",
+          "issn": "2071-1050",
+          "volume": "14",
+          "issue": "18",
+          "pages": "11393",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "Flipped classroom (FC) is a widely accepted, innovative pedagogy designated to enhance students’ learning by changing the paradigm of instruction. It has the potential to adapt learning to the students’ needs, interests, and mutual expectations by using the advantages of both online and face-to-face learning, which strengthens the quality of the instruction. The potential of FC to foster personalized learning (PL) has become vital in education, as individuals face different possibilities and difficulties in the learning process. To date, no systematic review study has focused on the ways in which PL occurs in FCs and the role of personalized FCs in education. The present study aims to close this gap by exploring the value of flipping instruction and strategies to support PL. We searched the literature, focusing on peer-reviewed research studies published in English that focus on PL in FCs. The key results include (a) the study characteristics, (b) the approaches developed and used in FCs to enhance PL, and (c) the role of personalized FCs in teaching and learning. Overall, this systematic review study provides insight into successful FC implementations and strategies to sustain PL.",
+          "abstractExcerpt": "Flipped classroom (FC) is a widely accepted, innovative pedagogy designated to enhance students’ learning by changing the paradigm of instruction. It has the potential to adapt learning to the students’ needs, interests, and mutual expectations by using the advantages of both online and face-to-face learning, which strengthens the quality of the instructi…",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Promoting Personalized Learning in Flipped Classrooms: A Systematic Review Study",
+            "authors": [
+              "Mustafa Cevikbas",
+              "Gabriele Kaiser"
+            ],
+            "doi": "10.3390/su141811393",
+            "type": "journal article",
+            "year": 2022,
+            "publicationDate": "2022-09-10"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Promoting Personalized Learning in Flipped Classrooms: A Systematic Review Study"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "The Effectiveness of Flipped Classroom Models in Undergraduate Medical Education: A Systematic Review",
           "doi": "10.54393/pjhs.v6i8.3404",
           "url": "https://doi.org/10.54393%2Fpjhs.v6i8.3404",
-          "type": "journal article"
+          "authors": [
+            "Muhammad Tauqeer Ehsan",
+            ". Mahrukh",
+            "Azqa Ali",
+            "Muhammad Suleman Sadiq Hashmi",
+            "Muhammad Zeeshan Baig",
+            "Fatima Muhammad Khan"
+          ],
+          "author": "Muhammad Tauqeer Ehsan; . Mahrukh",
+          "type": "journal article",
+          "date": "2025-08-31",
+          "containerTitle": "Pakistan Journal of Health Sciences",
+          "publisher": "CrossLinks International Publishers",
+          "isbn": "",
+          "issn": "2790-9352",
+          "volume": "",
+          "issue": "",
+          "pages": "175-181",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "The flipped classroom has emerged as a progressive pedagogical model in undergraduate medical education, aiming to improve learning outcomes by combining self-directed pre-class learning with interactive in-class activities. Unlike traditional lectures, this method fosters active engagement, critical thinking, and practical skill development. Objectives: To evaluate the effectiveness of flipped classroom models in improving academic outcomes, student satisfaction, and skill acquisition among undergraduate medical students. Methods: A comprehensive literature search was conducted across PubMed, Springer Link, Science Direct, BMC, Wiley Online Library, and Taylor & Francis for studies published between January 2019 and August 2024. Eligible studies included undergraduate medical or allied health students exposed to flipped classroom models, with outcomes compared against traditional teaching methods. Data extraction and quality appraisal were performed using standardized tools, and results were synthesized narratively due to heterogeneity. Results: Most included studies reported improvements in academic performance, student satisfaction, and engagement. The flipped classroom was particularly effective in enhancing clinical reasoning and knowledge retention. However, some studies demonstrated variable outcomes depending on the quality of implementation and learner readiness. Conclusions: The flipped classroom approach shows considerable potential to strengthen undergraduate medical education. Its effectiveness is maximized when supported by structured implementation, faculty training, and strategies that foster self-regulated learning among students.",
+          "abstractExcerpt": "The flipped classroom has emerged as a progressive pedagogical model in undergraduate medical education, aiming to improve learning outcomes by combining self-directed pre-class learning with interactive in-class activities. Unlike traditional lectures, this method fosters active engagement, critical thinking, and practical skill development. Objectives: …",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Related search result · no citation relationship established. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Related search result · no citation relationship established",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "The Effectiveness of Flipped Classroom Models in Undergraduate Medical Education: A Systematic Review",
+            "authors": [
+              "Muhammad Tauqeer Ehsan",
+              ". Mahrukh",
+              "Azqa Ali",
+              "Muhammad Suleman Sadiq Hashmi",
+              "Muhammad Zeeshan Baig",
+              "Fatima Muhammad Khan"
+            ],
+            "doi": "10.54393/pjhs.v6i8.3404",
+            "type": "journal article",
+            "year": 2025,
+            "publicationDate": "2025-08-31"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "similar",
+            "label": "Related search result · no citation relationship established",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:06.932Z",
+            "citationRelationship": false
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "The Effectiveness of Flipped Classroom Models in Undergraduate Medical Education: A Systematic Review"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         }
       ],
       "coverage": {
@@ -183,49 +1095,835 @@
           "title": "Comparison of Pharmaceutical Calculations Learning Outcomes Achieved Within a Traditional Lecture or Flipped Classroom Andragogy",
           "doi": "10.5688/ajpe81470",
           "url": "https://doi.org/10.5688%2Fajpe81470",
-          "type": "journal article"
+          "authors": [
+            "H. Glenn Anderson",
+            "Lisa Frazier",
+            "Stephanie L. Anderson",
+            "Robert Stanton",
+            "Chris Gillette",
+            "Kim Broedel-Zaugg",
+            "Kevin Yingling"
+          ],
+          "author": "H. Glenn Anderson; Lisa Frazier",
+          "type": "journal article",
+          "date": "2017-05",
+          "containerTitle": "American Journal of Pharmaceutical Education",
+          "publisher": "Elsevier BV",
+          "isbn": "",
+          "issn": "0002-9459",
+          "volume": "81",
+          "issue": "4",
+          "pages": "70",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Comparison of Pharmaceutical Calculations Learning Outcomes Achieved Within a Traditional Lecture or Flipped Classroom Andragogy",
+            "authors": [
+              "H. Glenn Anderson",
+              "Lisa Frazier",
+              "Stephanie L. Anderson",
+              "Robert Stanton",
+              "Chris Gillette",
+              "Kim Broedel-Zaugg",
+              "Kevin Yingling"
+            ],
+            "doi": "10.5688/ajpe81470",
+            "type": "journal article",
+            "year": 2017,
+            "publicationDate": "2017-05"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Comparison of Pharmaceutical Calculations Learning Outcomes Achieved Within a Traditional Lecture or Flipped Classroom Andragogy"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Student Performance in a Pharmacotherapy Oncology Module Before and After Flipping the Classroom",
           "doi": "10.5688/ajpe80231",
           "url": "https://doi.org/10.5688%2Fajpe80231",
-          "type": "journal article"
+          "authors": [
+            "John B. Bossaer",
+            "Peter Panus",
+            "David W. Stewart",
+            "Nick E Hagemeier",
+            "Joshua George"
+          ],
+          "author": "John B. Bossaer; Peter Panus",
+          "type": "journal article",
+          "date": "2016-03",
+          "containerTitle": "American Journal of Pharmaceutical Education",
+          "publisher": "Elsevier BV",
+          "isbn": "",
+          "issn": "0002-9459",
+          "volume": "80",
+          "issue": "2",
+          "pages": "31",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Student Performance in a Pharmacotherapy Oncology Module Before and After Flipping the Classroom",
+            "authors": [
+              "John B. Bossaer",
+              "Peter Panus",
+              "David W. Stewart",
+              "Nick E Hagemeier",
+              "Joshua George"
+            ],
+            "doi": "10.5688/ajpe80231",
+            "type": "journal article",
+            "year": 2016,
+            "publicationDate": "2016-03"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Student Performance in a Pharmacotherapy Oncology Module Before and After Flipping the Classroom"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
-          "title": "Effectiveness of flipped classroom as a teaching\u2013learning method among undergraduate medical students \u2013 An interventional study",
+          "title": "Effectiveness of flipped classroom as a teaching–learning method among undergraduate medical students – An interventional study",
           "doi": "10.4103/jehp.jehp_163_19",
           "url": "https://doi.org/10.4103%2Fjehp.jehp_163_19",
-          "type": "journal article"
+          "authors": [
+            "Netravathi Basavaraj Angadi",
+            "Avinash Kavi",
+            "Kimi Shetty",
+            "Nayana Kamalnayan Hashilkar"
+          ],
+          "author": "Netravathi Basavaraj Angadi; Avinash Kavi",
+          "type": "journal article",
+          "date": "2019-10",
+          "containerTitle": "Journal of Education and Health Promotion",
+          "publisher": "Ovid Technologies (Wolters Kluwer Health)",
+          "isbn": "",
+          "issn": "2277-9531",
+          "volume": "8",
+          "issue": "1",
+          "pages": "",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "BACKGROUND: Attempts to put the available teaching–learning time to better use and address the needs of students by increasing active involvement led to the evolution of the flipped classroom (FC). It involves providing study resources for students to use outside the class so that class time is freed up for instructional activities. This study was done to assess the effectiveness of flipped classroom activity as a teaching–learning method. MATERIALS AND METHODS: In this interventional study, 98 students were divided into two batches of flipped class and conventional small group teaching (SGT). An online Google group was created for the batch of FC. Brief introduction and prerecorded videos related to the assigned topic were posted in the Google group. Discussion was carried out in the form of solving cases and problem-solving exercises. Pretest and posttest were conducted at each session, and an end of module test was conducted for both the groups. RESULTS: There was a significant difference between the pre- and posttest scores and also the mean scores of summative test between two groups ( P < 0.001). The perception of the students regarding FC was also evaluated. Eighty-two percent strongly agreed that FC was more engaging and interesting in comparison to traditional class. Seventy-six percent strongly agreed that more such classes should be conducted in the future. CONCLUSION: Flipped classroom improved the student performance and learning experience effectively as compared to conventional SGT, and students’ response was also largely positive.",
+          "abstractExcerpt": "BACKGROUND: Attempts to put the available teaching–learning time to better use and address the needs of students by increasing active involvement led to the evolution of the flipped classroom (FC). It involves providing study resources for students to use outside the class so that class time is freed up for instructional activities. This study was done to…",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Effectiveness of flipped classroom as a teaching–learning method among undergraduate medical students – An interventional study",
+            "authors": [
+              "Netravathi Basavaraj Angadi",
+              "Avinash Kavi",
+              "Kimi Shetty",
+              "Nayana Kamalnayan Hashilkar"
+            ],
+            "doi": "10.4103/jehp.jehp_163_19",
+            "type": "journal article",
+            "year": 2019,
+            "publicationDate": "2019-10"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Effectiveness of flipped classroom as a teaching–learning method among undergraduate medical students – An interventional study"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Flipping the advanced cardiac life support classroom with team-based learning: comparison of cognitive testing performance for medical students at the University of California, Irvine, United States",
           "doi": "10.3352/jeehp.2016.13.11",
           "url": "https://doi.org/10.3352%2Fjeehp.2016.13.11",
-          "type": "journal article"
+          "authors": [
+            "Megan Boysen-Osborn",
+            "Craig L. Anderson",
+            "Roman Navarro",
+            "Justin Yanuck",
+            "Suzanne Strom",
+            "Christopher E. McCoy",
+            "Julie Youm",
+            "Mary Frances Ypma-Wong",
+            "Mark I. Langdorf"
+          ],
+          "author": "Megan Boysen-Osborn; Craig L. Anderson",
+          "type": "journal article",
+          "date": "2016-02-18",
+          "containerTitle": "Journal of Educational Evaluation for Health Professions",
+          "publisher": "Korea Health Personnel Licensing Examination Institute",
+          "isbn": "",
+          "issn": "1975-5937",
+          "volume": "13",
+          "issue": "",
+          "pages": "11",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "Purpose: It aimed to find if written test results improved for advanced cardiac life support (ACLS) taught in flipped classroom/team-based Learning (FC/TBL) vs. lecture-based (LB) control in University of California-Irvine School of Medicine, USA. Methods: Medical students took 2010 ACLS with FC/TBL (2015), compared to 3 classes in LB (2012-14) format. There were 27.5 hours of instruction for FC/TBL model (TBL 10.5, podcasts 9, small-group simulation 8 hours), and 20 (12 lecture, simulation 8 hours) in LB. TBL covered 13 cardiac cases; LB had none. Seven simulation cases and didactic content were the same by lecture (2012-14) or podcast (2015) as was testing: 50 multiple-choice questions (MCQ), 20 rhythm matchings, and 7 fill-in clinical cases. Results: 354 students took the course (259 [73.1%] in LB in 2012-14, and 95 [26.9%] in FC/TBL in 2015). Two of 3 tests (MCQ and fill-in) improved for FC/TBL. Overall, median scores increased from 93.5% (IQR 90.6, 95.4) to 95.1% (92.8, 96.7, P=0.0001). For the fill-in test: 94.1% for LB (89.6, 97.2) to 96.6% for FC/TBL (92.4, 99.20 P=0.0001). For MC: 88% for LB (84, 92) to 90% for FC/TBL (86, 94, P=0.0002). For the rhythm test: median 100% for both formats. More students failed 1 of 3 tests with LB vs. FC/TBL (24.7% vs. 14.7%), and 2 or 3 components (8.1% vs. 3.2%, P=0.006). Conversely, 82.1% passed all 3 with FC/TBL vs. 67.2% with LB (difference 14.9%, 95% CI 4.8-24.0%). Conclusion: A FC/TBL format for ACLS marginally improved written test results.",
+          "abstractExcerpt": "Purpose: It aimed to find if written test results improved for advanced cardiac life support (ACLS) taught in flipped classroom/team-based Learning (FC/TBL) vs. lecture-based (LB) control in University of California-Irvine School of Medicine, USA. Methods: Medical students took 2010 ACLS with FC/TBL (2015), compared to 3 classes in LB (2012-14) format. Th…",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Flipping the advanced cardiac life support classroom with team-based learning: comparison of cognitive testing performance for medical students at the University of California, Irvine, United States",
+            "authors": [
+              "Megan Boysen-Osborn",
+              "Craig L. Anderson",
+              "Roman Navarro",
+              "Justin Yanuck",
+              "Suzanne Strom",
+              "Christopher E. McCoy",
+              "Julie Youm",
+              "Mary Frances Ypma-Wong",
+              "Mark I. Langdorf"
+            ],
+            "doi": "10.3352/jeehp.2016.13.11",
+            "type": "journal article",
+            "year": 2016,
+            "publicationDate": "2016-02-18"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Flipping the advanced cardiac life support classroom with team-based learning: comparison of cognitive testing performance for medical students at the University of California, Irvine, United States"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
-          "title": "The \u201cflipped classroom\u201d approach: Stimulating positive learning attitudes and improving mastery of histology among medical students",
+          "title": "The “flipped classroom” approach: Stimulating positive learning attitudes and improving mastery of histology among medical students",
           "doi": "10.1002/ase.1664",
           "url": "https://doi.org/10.1002%2Fase.1664",
-          "type": "journal article"
+          "authors": [
+            "Xin Cheng",
+            "Kenneth Ka Ho Lee",
+            "Eric Y. Chang",
+            "Xuesong Yang"
+          ],
+          "author": "Xin Cheng; Kenneth Ka Ho Lee",
+          "type": "journal article",
+          "date": "2016-11-04",
+          "containerTitle": "Anatomical Sciences Education",
+          "publisher": "Wiley",
+          "isbn": "",
+          "issn": "1935-9772",
+          "volume": "10",
+          "issue": "4",
+          "pages": "317-327",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "Traditional medical education methodologies have been dramatically impacted by the introduction of new teaching approaches over the past few decades. In particular, the “flipped classroom” format has drawn a great deal of attention. However, evidence regarding the effectiveness of the flipped model remains limited due to a lack of outcome‐based studies. In the present study, a pilot histology curriculum of the organ systems was implemented among 24 Traditional Chinese Medicine (TCM) students in a flipped classroom format at Jinan University. As a control, another 87 TCM students followed a conventional histology curriculum. The academic performance of the two groups was compared. In addition, a questionnaire was administered to the flipped classroom group. The test scores for the flipped classroom participants were found to be significantly higher compared to non‐participants in the control group. These results suggest that students may benefit from using the flipped classroom format. Follow‐up questionnaires also revealed that most of the flipped classroom participants undertook relatively more earnest preparations before class and were actively involved in classroom learning activities. The teachers were also found to have more class time for leading discussions and delivering quizzes rather than repeating rote didactics. Consequently, the increased teaching and learning activities contributed to a better performance among the flipped classroom group. This pilot study suggests that a flipped classroom approach can be used to improve histology education among medical students. However, future studies employing randomization, larger numbers of students, and more precise tracking methods are needed before definitive conclusions can be drawn. Anat Sci Educ 10: 317–327. © 2016 American Association of Anatomists.",
+          "abstractExcerpt": "Traditional medical education methodologies have been dramatically impacted by the introduction of new teaching approaches over the past few decades. In particular, the “flipped classroom” format has drawn a great deal of attention. However, evidence regarding the effectiveness of the flipped model remains limited due to a lack of outcome‐based studies. I…",
+          "abstractSource": "Crossref provider abstract metadata",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "The “flipped classroom” approach: Stimulating positive learning attitudes and improving mastery of histology among medical students",
+            "authors": [
+              "Xin Cheng",
+              "Kenneth Ka Ho Lee",
+              "Eric Y. Chang",
+              "Xuesong Yang"
+            ],
+            "doi": "10.1002/ase.1664",
+            "type": "journal article",
+            "year": 2016,
+            "publicationDate": "2016-11-04"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "The “flipped classroom” approach: Stimulating positive learning attitudes and improving mastery of histology among medical students"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
-          "title": "The Effectiveness of a Simulation-Based Flipped Classroom in the Acquisition of Laparoscopic Suturing Skills in Medical Students\u2014A Pilot Study",
+          "title": "The Effectiveness of a Simulation-Based Flipped Classroom in the Acquisition of Laparoscopic Suturing Skills in Medical Students—A Pilot Study",
           "doi": "10.1016/j.jsurg.2017.07.007",
           "url": "https://doi.org/10.1016%2Fj.jsurg.2017.07.007",
-          "type": "journal article"
+          "authors": [
+            "Hsin-Yi Chiu",
+            "Yi-No Kang",
+            "Wei-Lin Wang",
+            "Hung-Chang Huang",
+            "Chien-Chih Wu",
+            "Wayne Hsu",
+            "Yiu-Shun Tong",
+            "Po-Li Wei"
+          ],
+          "author": "Hsin-Yi Chiu; Yi-No Kang",
+          "type": "journal article",
+          "date": "2018-03",
+          "containerTitle": "Journal of Surgical Education",
+          "publisher": "Elsevier BV",
+          "isbn": "",
+          "issn": "1931-7204",
+          "volume": "75",
+          "issue": "2",
+          "pages": "326-332",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "The Effectiveness of a Simulation-Based Flipped Classroom in the Acquisition of Laparoscopic Suturing Skills in Medical Students—A Pilot Study",
+            "authors": [
+              "Hsin-Yi Chiu",
+              "Yi-No Kang",
+              "Wei-Lin Wang",
+              "Hung-Chang Huang",
+              "Chien-Chih Wu",
+              "Wayne Hsu",
+              "Yiu-Shun Tong",
+              "Po-Li Wei"
+            ],
+            "doi": "10.1016/j.jsurg.2017.07.007",
+            "type": "journal article",
+            "year": 2018,
+            "publicationDate": "2018-03"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "The Effectiveness of a Simulation-Based Flipped Classroom in the Acquisition of Laparoscopic Suturing Skills in Medical Students—A Pilot Study"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "The effects of the flipped classroom in teaching evidence based nursing: A quasi-experimental study",
           "doi": "10.1371/journal.pone.0210606",
           "url": "https://doi.org/10.1371%2Fjournal.pone.0210606",
-          "type": "journal article"
+          "authors": [
+            "Tsung-Lan Chu",
+            "Jeng Wang",
+            "Lynn Monrouxe",
+            "Yu-Chih Sung",
+            "Chen-li Kuo",
+            "Lun-Hui Ho",
+            "Yueh-E Lin"
+          ],
+          "author": "Tsung-Lan Chu; Jeng Wang",
+          "type": "journal article",
+          "date": "2019-01-15",
+          "containerTitle": "PLOS ONE",
+          "publisher": "Public Library of Science (PLoS)",
+          "isbn": "",
+          "issn": "1932-6203",
+          "volume": "14",
+          "issue": "1",
+          "pages": "e0210606",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "The effects of the flipped classroom in teaching evidence based nursing: A quasi-experimental study",
+            "authors": [
+              "Tsung-Lan Chu",
+              "Jeng Wang",
+              "Lynn Monrouxe",
+              "Yu-Chih Sung",
+              "Chen-li Kuo",
+              "Lun-Hui Ho",
+              "Yueh-E Lin"
+            ],
+            "doi": "10.1371/journal.pone.0210606",
+            "type": "journal article",
+            "year": 2019,
+            "publicationDate": "2019-01-15"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "The effects of the flipped classroom in teaching evidence based nursing: A quasi-experimental study"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         },
         {
           "title": "Effectiveness of flipped classroom instructional model in teaching pharmaceutical calculations",
           "doi": "10.1016/j.cptl.2016.06.011",
           "url": "https://doi.org/10.1016%2Fj.cptl.2016.06.011",
-          "type": "journal article"
+          "authors": [
+            "Karyn I. Cotta",
+            "Samit Shah",
+            "Michaela M. Almgren",
+            "Lilia Z. Macías-Moriarity",
+            "Vicky Mody"
+          ],
+          "author": "Karyn I. Cotta; Samit Shah",
+          "type": "journal article",
+          "date": "2016-09",
+          "containerTitle": "Currents in Pharmacy Teaching and Learning",
+          "publisher": "Elsevier BV",
+          "isbn": "",
+          "issn": "1877-1297",
+          "volume": "8",
+          "issue": "5",
+          "pages": "646-653",
+          "sourceProvider": "Crossref source exploration",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "summaryEligible": false,
+          "abstractText": "",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "subjects": [],
+          "description": "Referenced by your selected source · Crossref metadata. Open the source to confirm relevance and access. A reference is not an endorsement or evidence for a claim.",
+          "detailPoints": [
+            "Referenced by your selected source · Crossref metadata",
+            "Crossref metadata does not establish full-text access or complete citation coverage."
+          ],
+          "citation": {
+            "title": "Effectiveness of flipped classroom instructional model in teaching pharmaceutical calculations",
+            "authors": [
+              "Karyn I. Cotta",
+              "Samit Shah",
+              "Michaela M. Almgren",
+              "Lilia Z. Macías-Moriarity",
+              "Vicky Mody"
+            ],
+            "doi": "10.1016/j.cptl.2016.06.011",
+            "type": "journal article",
+            "year": 2016,
+            "publicationDate": "2016-09"
+          },
+          "provenance": {
+            "provider": "Crossref",
+            "metadataOnly": true,
+            "accessVerified": false
+          },
+          "exploration": {
+            "relationship": "references",
+            "label": "Referenced by your selected source · Crossref metadata",
+            "seedId": "https://doi.org/10.1002/cl2.1339",
+            "provider": "Crossref",
+            "retrievedAt": "2026-10-18T23:28:07.351Z",
+            "citationRelationship": true
+          },
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "flipped classroom",
+                "field": "title",
+                "term": "flipped classroom",
+                "excerpt": "Effectiveness of flipped classroom instructional model in teaching pharmaceutical calculations"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "flipped classroom"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions flipped classroom. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7148,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
         }
       ],
       "coverage": {
@@ -327,6 +2025,5 @@
         "queries": []
       }
     }
-  ],
-  "artifactNote": "Public bibliographic metadata and retrieval status only; abstracts omitted. No human relevance labels."
+  ]
 }

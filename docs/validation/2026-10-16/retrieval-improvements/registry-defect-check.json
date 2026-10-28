@@ -1,0 +1,133 @@
+[
+  {
+    "title": "Electoral System Changes and Voter Turnout: Reflections on New Zealand General Elections",
+    "author": "Zvulun, Jacky Yaakov",
+    "authors": [
+      "Zvulun, Jacky Yaakov"
+    ],
+    "type": "article",
+    "date": "2014-01-01",
+    "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_1559004130&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+    "cover": null,
+    "doi": "10.4335/12.1.145-162(2014)",
+    "pmid": "",
+    "isbn": "",
+    "issn": "1581-5374",
+    "containerTitle": "Lex localis-journal of local self-government",
+    "publisher": "Institute for Local Self-Government and Public Procurement Maribor",
+    "edition": "",
+    "volume": "12",
+    "issue": "1",
+    "pages": "145-162",
+    "fulfillment": null,
+    "description": "Potential ZSR discovery lead for this search. Metadata highlights Citizen participation, Democracy, Elections. Published/created 2014-01-01. Open the record to confirm relevance, access, peer-review status, and citation details.",
+    "abstractText": "Voter turnout in local and general elections is a key element in measuring citizen participation. From 2004, New Zealand local elections were unique in that local councils had the choice of two different electoral systems: plurality majority and proportional representation. We have here the opportunity to study more about New Zealand local elections and changes in electoral systems. This article analyses the impact of the \"Single Transferable Vote\" electoral system in those councils that adopted it, comparing it to those councils which used \"First Past the Post\". This article explains how the STV electoral system has not increased voter turnout and was not the cause of low voter turnout in the 2004-2007 local elections. It might, however, offer voters a better way to choose their preferences. [PUBLICATION ABSTRACT]",
+    "abstractTruncated": false,
+    "abstractExcerpt": "Voter turnout in local and general elections is a key element in measuring citizen participation. From 2004, New Zealand local elections were unique in that local councils had the choice of two different electoral systems: plurality majority and proportional representation. ...",
+    "abstractSource": "ZSR record metadata",
+    "detailPoints": [
+      "Subject terms: Citizen participation; Democracy; Elections; Local elections; Local government; New Zealand",
+      "Access: use the ZSR record to check full text, PDF availability, and database login."
+    ],
+    "sourceProvider": "ZSR discovery",
+    "peerReviewed": true,
+    "accessScope": "library",
+    "sourceKind": "scholarly-article",
+    "sourceMode": "scholarly",
+    "provenance": {
+      "provider": "ZSR discovery",
+      "recordType": "article",
+      "accessVerified": false,
+      "metadataOnly": true,
+      "demoData": false
+    },
+    "subjects": [
+      "Citizen participation",
+      "Democracy",
+      "Elections",
+      "Local elections",
+      "Local government",
+      "New Zealand"
+    ],
+    "sourceAssessment": {
+      "status": "meets",
+      "checks": [
+        {
+          "id": "source-type",
+          "label": "Source format",
+          "status": "meets",
+          "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+        }
+      ],
+      "issues": []
+    },
+    "matchExplanation": {
+      "status": "meets",
+      "category": "full-topic-match",
+      "label": "All topic concepts found",
+      "evidence": [
+        {
+          "concept": "proportional representation",
+          "field": "abstract",
+          "term": "proportional representation",
+          "excerpt": "From 2004, New Zealand local elections were unique in that local councils had the choice of two different electoral systems: plurality majority and proportional representation."
+        },
+        {
+          "concept": "first-past-the-post",
+          "field": "abstract",
+          "term": "first-past-the-post",
+          "excerpt": "This article analyses the impact of the \"Single Transferable Vote\" electoral system in those councils that adopted it, comparing it to those councils which used \"First Past the Post\"."
+        },
+        {
+          "concept": "voter turnout",
+          "field": "title",
+          "term": "voter turnout",
+          "excerpt": "Electoral System Changes and Voter Turnout: Reflections on New Zealand General Elections"
+        }
+      ],
+      "relationship": null,
+      "matchedConcepts": [
+        "proportional representation",
+        "first-past-the-post",
+        "voter turnout"
+      ],
+      "missingConcepts": [],
+      "missingFacets": [],
+      "explanation": "Metadata mentions proportional representation; first-past-the-post; voter turnout. Read the source to confirm the relationship and findings."
+    },
+    "accessLinks": [
+      {
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_1559004130&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "label": "ZSR discovery",
+        "accessScope": "library"
+      },
+      {
+        "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_4335_12_1_145_162_2014&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+        "label": "ZSR discovery",
+        "accessScope": "library"
+      }
+    ],
+    "metadataSources": [
+      "ZSR discovery"
+    ],
+    "metadataRank": {
+      "score": 163,
+      "coverage": 1,
+      "basis": "title-abstract-subject-metadata"
+    },
+    "retrievedAt": "2026-10-16T18:15:58.768Z",
+    "evidenceId": "src_53151f81f982dd53fc40",
+    "evidenceExcerpt": "Voter turnout in local and general elections is a key element in measuring citizen participation. From 2004, New Zealand local elections were unique in that local councils had the choice of two different electoral systems: plurality majority and proportional representation. We have here the opportunity to study more about New Zealand local elections and changes in electoral systems. This article analyses the impact of the \"Single Transferable Vote\" electoral system in those councils that adopted it, comparing it to those councils which used \"First Past the Post\". This article explains how the STV electoral system has not increased voter turnout and was not the cause of low voter turnout in the 2004-2007 local elections. It might, however, offer voters a better way to choose their preferences. [PUBLICATION ABSTRACT]",
+    "rank": 2,
+    "judgment": null,
+    "identityCheck": {
+      "status": "title-difference",
+      "provider": "Crossref",
+      "doi": "10.4335/12.1.145-162(2014)",
+      "registryTitle": "Electoral System Changes and Voter Turnout: Reflections on New Zealand Local Elections",
+      "url": "https://doi.org/10.4335%2F12.1.145-162(2014)",
+      "detail": "The provider title differs from the DOI registry title. This can be a title variant or a metadata error; check the original record before citing.",
+      "checkedAt": "2026-10-16T19:37:38.391Z"
+    }
+  }
+]

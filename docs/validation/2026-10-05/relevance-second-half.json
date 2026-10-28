@@ -1,0 +1,518 @@
+{
+  "format": "zsr-ai-assisted-source-relevance-review",
+  "version": 1,
+  "reviewedAt": "2026-10-05",
+  "capture": "docs/validation/2026-10-05/provider-capture.json",
+  "reviewSet": "evals/search-quality-review-set.json",
+  "method": "AI-assisted metadata/abstract review; not human or librarian validated. No live retrieval or full-text reading was performed by this reviewer.",
+  "scope": {
+    "caseIndicesZeroBased": [
+      14,
+      27
+    ],
+    "cases": 14,
+    "maximumRank": 5,
+    "candidateRecordsReviewed": 33
+  },
+  "rubric": {
+    "direct": "Captured evidence supports the material topic facets and explicit format, method, and date requirements; record identity suffices for exact-work requests. Topic-level relevance may be supported by an unambiguous title for broad questions.",
+    "supporting": "Useful context or partial fit, including records whose truncated excerpt does not establish a required facet or method. This is not a finding that the full work necessarily fails the request.",
+    "unsuitable": "Evidence contradicts a material requested format, event, or purpose; off-topic or inappropriate for the specified task.",
+    "uncertain": "Insufficient captured evidence to decide even contextual usefulness for the requested question."
+  },
+  "limitations": [
+    "Many captured abstracts stop after about 300 characters and may omit methods, geographic details, or findings. Direct-match counts are conservative and not an estimate of scholarly truth or full-text accuracy.",
+    "Provider peer-review flags are reported evidence only. Neither peer-review practices nor methodological quality was independently checked.",
+    "No judgments assert that an AI-generated claim is correct; source relevance and bibliographic existence differ from claim accuracy.",
+    "Supporting records in exact-item queries are distinct related readings, not additional exact matches. Probable duplicate manifestations are flagged separately.",
+    "No original capture judgments or human-review fields were modified. A faculty/librarian review is still required."
+  ],
+  "counts": {
+    "direct": 13,
+    "supporting": 15,
+    "unsuitable": 4,
+    "uncertain": 1
+  },
+  "concerns": [
+    {
+      "priority": "high",
+      "caseId": "books-background",
+      "finding": "Government hearings occupy the first two positions for an introductory-book request. Record-format normalization or ranking is too permissive."
+    },
+    {
+      "priority": "high",
+      "caseId": "history-primary",
+      "finding": "The returned records do not establish contemporaneous Greensboro primary evidence; a Wichita oral history is a different event and the second interview lacks usable descriptive metadata."
+    },
+    {
+      "priority": "high",
+      "caseId": "women-abolition",
+      "finding": "A newspaper review of a historical novel ranks first; the other result is an academic book review, so the search supplies no confirmed historical study in the top results."
+    },
+    {
+      "priority": "medium",
+      "caseId": "exact-article-title",
+      "finding": "The correct original ranks first, but two Vogel chapter manifestations appear potentially duplicated. Verify by publisher DOI/ISBN; normalized title and date alone miss this case."
+    },
+    {
+      "priority": "medium",
+      "caseId": "qualitative-explicit",
+      "finding": "All five results are promising qualitative topic matches, but the capture truncates before interview methods. Evaluation should retain fuller method excerpts or full abstracts before claiming method accuracy."
+    },
+    {
+      "priority": "high",
+      "caseIds": [
+        "sparse-local",
+        "sparse-intersection",
+        "sparse-new-technology",
+        "open-access-scope",
+        "mixed-access-scope"
+      ],
+      "finding": "These five cases returned no sources in this half. Missing provider configuration and narrow-query coverage require separate diagnosis; no-source output is not a negative literature finding."
+    }
+  ],
+  "recommendations": [
+    "Enforce requested document kinds before treating catalog records as matching books; distinguish monographs from government hearings and book reviews.",
+    "For history, assess the relationship of a primary artifact to the event and time period rather than assuming that a title keyword or an interview format establishes suitability.",
+    "Rank underlying books and historical scholarship above reviews and reviews of fiction for scholarly research requests.",
+    "Deduplicate title variants using DOI, ISBN, container, authors, and chapter metadata; preserve edition distinctions only when materially useful.",
+    "Retain enough abstract text for method assessment and label unknown methods as unknown instead of inferring interviews from qualitative.",
+    "Report this review as provisional AI-assisted relevance assessment and retain human review as a separate validation step."
+  ],
+  "caseSummaries": [
+    {
+      "caseId": "supply-chain",
+      "query": "Supply chain resilience in small businesses during the COVID-19 pandemic",
+      "reviewPrompt": "Check small-business applicability and pandemic context.",
+      "returnedTopFive": 3,
+      "counts": {
+        "supporting": 2,
+        "direct": 1
+      },
+      "note": ""
+    },
+    {
+      "caseId": "history-primary",
+      "query": "Primary sources about the Greensboro sit-ins in 1960",
+      "reviewPrompt": "Verify whether the item is a contemporaneous primary source; scholarship describing one does not qualify.",
+      "returnedTopFive": 2,
+      "counts": {
+        "unsuitable": 1,
+        "uncertain": 1
+      },
+      "note": ""
+    },
+    {
+      "caseId": "women-abolition",
+      "query": "Women abolitionists in the United States before 1865",
+      "reviewPrompt": "Check historical period and the role of women in abolition movements.",
+      "returnedTopFive": 2,
+      "counts": {
+        "unsuitable": 1,
+        "supporting": 1
+      },
+      "note": ""
+    },
+    {
+      "caseId": "books-background",
+      "query": "Books introducing environmental justice in the United States",
+      "reviewPrompt": "Check book format, topic coverage, and suitability for an introduction.",
+      "returnedTopFive": 5,
+      "counts": {
+        "unsuitable": 2,
+        "supporting": 3
+      },
+      "note": ""
+    },
+    {
+      "caseId": "exact-book-title",
+      "query": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+      "reviewPrompt": "Check title and author identity; a review or book about Ostrom is not the requested book.",
+      "returnedTopFive": 1,
+      "counts": {
+        "direct": 1
+      },
+      "note": ""
+    },
+    {
+      "caseId": "exact-article-title",
+      "query": "Find the article \"The Tragedy of the Commons\" by Garrett Hardin",
+      "reviewPrompt": "Check the original article identity; responses and later discussions are different works.",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 1,
+        "supporting": 4
+      },
+      "note": ""
+    },
+    {
+      "caseId": "date-window",
+      "query": "Peer-reviewed articles on antibiotic resistance in wastewater published from 2021 to 2024",
+      "reviewPrompt": "Check publication window and reported peer-review evidence, then topical relevance.",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 5
+      },
+      "note": ""
+    },
+    {
+      "caseId": "qualitative-explicit",
+      "query": "Qualitative interviews about food insecurity among college students",
+      "reviewPrompt": "The user explicitly requested interviews; check the reported method rather than inferring it.",
+      "returnedTopFive": 5,
+      "counts": {
+        "supporting": 5
+      },
+      "note": ""
+    },
+    {
+      "caseId": "no-method-requested",
+      "query": "Food insecurity among college students",
+      "reviewPrompt": "Assess useful evidence without requiring a particular research method.",
+      "returnedTopFive": 5,
+      "counts": {
+        "direct": 5
+      },
+      "note": ""
+    },
+    {
+      "caseId": "sparse-local",
+      "query": "Night-shift public transit access for hospital workers in Winston-Salem",
+      "reviewPrompt": "Record exact local evidence versus broader supporting material. Do not treat a broader source as a local study.",
+      "returnedTopFive": 0,
+      "counts": {},
+      "note": "No returned candidates to assess; this is a retrieval gap, not evidence that no literature exists."
+    },
+    {
+      "caseId": "sparse-intersection",
+      "query": "Library makerspaces and language revitalization in Indigenous communities",
+      "reviewPrompt": "Check how much of this intersection the source actually addresses.",
+      "returnedTopFive": 0,
+      "counts": {},
+      "note": "No returned candidates to assess; this is a retrieval gap, not evidence that no literature exists."
+    },
+    {
+      "caseId": "sparse-new-technology",
+      "query": "Microplastic capture by floating wetlands in urban stormwater ponds",
+      "reviewPrompt": "Distinguish exact experimental evidence from background on wetlands or microplastics.",
+      "returnedTopFive": 0,
+      "counts": {},
+      "note": "No returned candidates to assess; this is a retrieval gap, not evidence that no literature exists."
+    },
+    {
+      "caseId": "open-access-scope",
+      "query": "Open access articles on climate change and urban heat islands",
+      "reviewPrompt": "Check topic relevance and whether the reported open-access link resolves. Missing provider configuration is not no literature.",
+      "returnedTopFive": 0,
+      "counts": {},
+      "note": "No returned candidates to assess; this is a retrieval gap, not evidence that no literature exists."
+    },
+    {
+      "caseId": "mixed-access-scope",
+      "query": "Peer-reviewed research on misinformation correction and political polarization",
+      "reviewPrompt": "Check relevance and duplicate works across provider lanes; access claims require opening the record.",
+      "returnedTopFive": 0,
+      "counts": {},
+      "note": "No returned candidates to assess; this is a retrieval gap, not evidence that no literature exists."
+    }
+  ],
+  "reviews": [
+    {
+      "caseId": "supply-chain",
+      "rank": 1,
+      "sourceId": "doi:10.1108/ijopm-08-2021-0555",
+      "title": "Rebuilding disrupted supply chains: How can a self-organised social group facilitate supply chain resilience?",
+      "category": "supporting",
+      "reason": "The article explicitly studies resilience in PPE and food small-business supply chains during an emergency. This is a strong topical lead, but the saved abstract stops before establishing that the emergency studied is COVID-19.",
+      "limitations": "The provider abstract is truncated. Pandemic specificity needs the full abstract or paper; this rating does not establish a topic mismatch."
+    },
+    {
+      "caseId": "supply-chain",
+      "rank": 2,
+      "sourceId": "doi:10.3390/systems12060220",
+      "title": "Business Resilience for Small and Medium Enterprises and Startups by Digital Transformation and the Role of Marketing Capabilities—A Systematic Review",
+      "category": "supporting",
+      "reason": "The review addresses small businesses, resilience, and digital transformation; supply-chain management appears as context. The saved text does not establish a focus on supply-chain resilience during COVID-19.",
+      "limitations": "The full review may include relevant pandemic cases, but neither their extent nor findings is available in the saved excerpt."
+    },
+    {
+      "caseId": "supply-chain",
+      "rank": 3,
+      "sourceId": "doi:10.1177/02807270231173650",
+      "title": "Intersections of small business mobility, adaptive capacity, and resilience during crises",
+      "category": "direct",
+      "reason": "The title addresses small-business resilience and the abstract describes pandemic and hurricane impacts on Charleston small businesses, including a supply-chain mobility case study. This supplies directly relevant small-business pandemic evidence.",
+      "limitations": "The saved excerpt says a pandemic without naming COVID-19; identification with COVID-19 is a contextual inference from the 2023 date. The study also covers hurricanes and does not isolate a pandemic-only effect in this excerpt."
+    },
+    {
+      "caseId": "history-primary",
+      "rank": 1,
+      "sourceId": "title:the historymakers video oral history with ronald walters|author:al crowe et f larry ronald w walters|year:2016",
+      "title": "The HistoryMakers video oral history with Ronald Walters.",
+      "category": "unsuitable",
+      "reason": "The description concerns Walters organizing the 1958 Wichita Dockum sit-in; Greensboro in 1960 is mentioned as a later comparison. A retrospective oral history about Wichita does not establish the requested contemporaneous Greensboro source.",
+      "limitations": "An oral history can be primary evidence for appropriate questions. This judgment concerns the specified event and contemporaneous-source review criterion, not a claim that oral history is inherently secondary."
+    },
+    {
+      "caseId": "history-primary",
+      "rank": 2,
+      "sourceId": "title:williamson george audio interview and transcript|author:|year:2022",
+      "title": "Williamson, George (Audio Interview and Transcript)",
+      "category": "uncertain",
+      "reason": "The generic interview/transcript title has no abstract or named creator. Nothing in the saved bibliographic fields establishes Greensboro coverage, a participant connection, or contemporaneous evidence.",
+      "limitations": "The 2022 record date may describe cataloging or publication rather than the interview or historical material. The item must be opened before deciding relevance and primary-source status."
+    },
+    {
+      "caseId": "women-abolition",
+      "rank": 1,
+      "sourceId": "title:chained bodies free spirits the invention of wings offers soaring story inspired by women abolitionists|author:carol memmott newspapers special to tribune|year:2014",
+      "title": "Chained bodies, free spirits: 'The Invention of Wings' offers soaring story inspired by women abolitionists",
+      "category": "unsuitable",
+      "reason": "This Chicago Tribune review discusses a historical novel inspired by women abolitionists. It does not provide scholarly historical evidence about women in the pre-1865 abolition movement.",
+      "limitations": "A novel review may aid reception or literary research, but the user did not ask that question."
+    },
+    {
+      "caseId": "women-abolition",
+      "rank": 2,
+      "sourceId": "doi:10.2307/2167471",
+      "title": "Black Women Abolitionists: A Study in Activism, 1828-1860",
+      "category": "supporting",
+      "reason": "The reviewed book concerns Black women abolitionists in 1828–1860, directly relevant to the historical topic. The returned item is Darlene Clark Hine’s book review, not the historical study itself.",
+      "limitations": "No abstract is provided. Use this as a lead to the underlying book; do not attribute the book’s authorship or findings to the review."
+    },
+    {
+      "caseId": "books-background",
+      "rank": 1,
+      "sourceId": "title:impacts of plastic production and disposal on environmental justice communities hearing before the subcommittee on chemical safety waste management environmental justice and regulatory oversight of the committee on environment and public works united states senate one hundred eighteenth congress first session june 15 2023|author:and committee congress environment on public s senate states united works|year:2026",
+      "title": "Impacts of plastic production and disposal on environmental justice communities : hearing before the Subcommittee on Chemical Safety, Waste Management, Environmental Justice, and Regulatory Oversight of the Committee on Environment and Public Works, United States Senate, One Hundred Eighteenth Congress, first session, June 15, 2023.",
+      "category": "unsuitable",
+      "reason": "This is a congressional hearing on plastics and environmental-justice communities, not an introductory book. Keyword overlap and a catalog record do not satisfy the requested format and introductory purpose.",
+      "limitations": "The hearing could be useful primary policy material for a narrower project, but that is a different use."
+    },
+    {
+      "caseId": "books-background",
+      "rank": 2,
+      "sourceId": "title:examining current issues adversely affecting environmental justice populations hearing before the subcommittee on chemical safety waste management environmental justice and regulatory oversight of the committee on environment and public works united states senate one hundred seventeenth congress first session july 22 2021|author:and committee congress environment on public s senate states united works|year:2022",
+      "title": "Examining current issues adversely affecting environmental justice populations : hearing before the Subcommittee on Chemical Safety, Waste Management, Environmental Justice, and Regulatory Oversight of the Committee on Environment and Public Works, United States Senate, One Hundred Seventeenth Congress, first session, July 22, 2021.",
+      "category": "unsuitable",
+      "reason": "This is a congressional hearing on current environmental-justice issues. It does not meet the requested introductory-book purpose.",
+      "limitations": "The source is relevant to US policy but cannot be counted as a successful introductory-book recommendation from this metadata."
+    },
+    {
+      "caseId": "books-background",
+      "rank": 3,
+      "sourceId": "doi:10.1525/9780520384347",
+      "title": "Ground Truths : Community-Engaged Research for Environmental Justice",
+      "category": "supporting",
+      "reason": "This is a book on environmental justice and community-engaged research. Its methods emphasis may provide useful background, but the available abstract is only an open-access availability notice and does not establish introductory US coverage.",
+      "limitations": "The full table of contents or publisher description is needed to judge geographic coverage and suitability for a beginner."
+    },
+    {
+      "caseId": "books-background",
+      "rank": 4,
+      "sourceId": "title:community based federal environmental justice resource guide|author:environmental federal group interagency justice on states united working|year:2011",
+      "title": "Community-based federal environmental justice resource guide",
+      "category": "supporting",
+      "reason": "The federal environmental-justice resource guide is relevant to the United States and listed as a book. It is a practical resource guide rather than an established broad introductory treatment.",
+      "limitations": "No abstract is available. Format and title alone do not establish depth, current accuracy, or teaching suitability; the record dates from 2011."
+    },
+    {
+      "caseId": "books-background",
+      "rank": 5,
+      "sourceId": "title:improving the environment in indian country and environmental justice communities|author:agency environm environmental of office protection region states united vi|year:2006",
+      "title": "Improving the environment in Indian Country and Environmental Justice communities",
+      "category": "supporting",
+      "reason": "The EPA title concerns environmental justice in Indian Country and is listed as a book. It offers a narrower US context, rather than clearly meeting the requested general introduction.",
+      "limitations": "No abstract is available. The record dates from 2006, and the document’s scope, length, and introductory suitability need inspection."
+    },
+    {
+      "caseId": "exact-book-title",
+      "rank": 1,
+      "sourceId": "title:governing the commons the evolution of institutions for collective action|author:elinor ostrom|year:2015",
+      "title": "Governing the commons : the evolution of institutions for collective action",
+      "category": "direct",
+      "reason": "Book title and Elinor Ostrom authorship match the requested work; the subtitle is consistent with the identified work and the record is a book.",
+      "limitations": "The 2015 record can represent a later edition. This metadata review does not verify its edition details, full text, or access rights."
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 1,
+      "sourceId": "doi:10.1126/science.162.3859.1243",
+      "title": "The Tragedy of the Commons",
+      "category": "direct",
+      "reason": "The title, Garrett Hardin authorship, article format, Science venue, 1968 date, and DOI identify the requested original article.",
+      "limitations": "This confirms identity from captured metadata, not correctness of Hardin’s argument or independently verified bibliographic accuracy."
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 2,
+      "sourceId": "doi:10.1007/bf00889070",
+      "title": "The Tragedy of the Commons: twenty-two years later",
+      "category": "supporting",
+      "reason": "Berkes, McCay, and colleagues explicitly revisit Hardin’s model twenty-two years later. It is useful critical context but a different work and not the requested original.",
+      "limitations": "Known-item results should label this as related reading and avoid counting it as an additional exact match."
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 3,
+      "sourceId": "doi:10.7135/upo9781843318637.006",
+      "title": "The Tragedy of the Commons",
+      "category": "supporting",
+      "reason": "This Joseph Henry Vogel book chapter discusses Hardin’s essay. It is relevant commentary, but the author, format, and date show it is not Hardin’s original article.",
+      "limitations": "The rank-4 Vogel record has the same container and near-identical opening excerpt. This review flags a probable cross-format duplicate for root’s publisher/ISBN verification; the two should not be counted as distinct works without that check."
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 4,
+      "sourceId": "title:the tragedy of the commons a class of problems that has no technical solution|author:henry joseph vogel|year:2010",
+      "title": "THE TRAGEDY OF THE COMMONS: A Class of Problems that has no Technical Solution",
+      "category": "supporting",
+      "reason": "This is another Joseph Henry Vogel chapter record interpreting Hardin, not the original Hardin article. It adds no established distinct work beyond the very similar rank-3 record.",
+      "limitations": "Its title expansion and date difference do not prove a new work. Same author, container, and near-identical excerpt suggest duplicate manifestations; parent reviewer is independently checking the publisher record."
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 5,
+      "sourceId": "doi:10.1126/science.280.5364.682",
+      "title": "Extensions of \"The Tragedy of the Commons\"",
+      "category": "supporting",
+      "reason": "Hardin’s 1998 extension discusses his earlier essay and provides useful later context. It is nevertheless a separate article, not the requested 1968 original.",
+      "limitations": "Exact title fragments and the same author are insufficient to treat it as the requested work."
+    },
+    {
+      "caseId": "date-window",
+      "rank": 1,
+      "sourceId": "doi:10.1016/j.envres.2023.118052",
+      "title": "Antibiotic resistance monitoring in wastewater in the Nordic countries: A systematic review",
+      "category": "direct",
+      "reason": "The title directly addresses antibiotic-resistance monitoring in wastewater; the 2024 date is within 2021–2024 and the provider reports peer review.",
+      "limitations": "Peer review is reported by the provider, not independently audited here. The brief abstract opening alone does not establish the review’s conclusions."
+    },
+    {
+      "caseId": "date-window",
+      "rank": 2,
+      "sourceId": "doi:10.3390/antibiotics11050630",
+      "title": "Nanofiltration as an Efficient Tertiary Wastewater Treatment: Elimination of Total Bacteria and Antibiotic Resistance Genes from the Discharged Effluent of a Full-Scale Wastewater Treatment Plant",
+      "category": "direct",
+      "reason": "The title and abstract address antibiotic-resistant bacteria and resistance genes in wastewater treatment. The 2022 date is in range and the provider reports peer review.",
+      "limitations": "No independent journal peer-review or study-quality audit was performed."
+    },
+    {
+      "caseId": "date-window",
+      "rank": 3,
+      "sourceId": "doi:10.1016/j.envint.2021.106641",
+      "title": "Wastewater treatment plants as a reservoir of integrase and antibiotic resistance genes – An epidemiological threat to workers and environment",
+      "category": "direct",
+      "reason": "The wastewater-treatment title and abstract concern resistance genes and environmental release. The 2021 date is in range and the provider reports peer review.",
+      "limitations": "The saved abstract is a short highlights excerpt, insufficient to validate study methods or causal claims."
+    },
+    {
+      "caseId": "date-window",
+      "rank": 4,
+      "sourceId": "doi:10.1016/j.envpol.2023.122586",
+      "title": "Antibiotic resistance in wastewater: Indian scenario",
+      "category": "direct",
+      "reason": "The title directly addresses antibiotic resistance in wastewater, specifically India. The 2023 date is in range and peer review is reported by the provider.",
+      "limitations": "No geographic limit was requested. Peer review and scientific quality remain separate from topical fit."
+    },
+    {
+      "caseId": "date-window",
+      "rank": 5,
+      "sourceId": "doi:10.1016/j.scitotenv.2022.154354",
+      "title": "Metagenomics analysis of probable transmission of determinants of antibiotic resistance from wastewater to the environment – A case study",
+      "category": "direct",
+      "reason": "The title and abstract concern antibiotic-resistance determinants moving from wastewater into the environment. The 2022 date is in range and the provider reports peer review.",
+      "limitations": "The phrase probable transmission does not prove transmission or a causal health effect. Findings require reading the paper."
+    },
+    {
+      "caseId": "qualitative-explicit",
+      "rank": 1,
+      "sourceId": "doi:10.1016/j.jand.2018.09.006",
+      "title": "“It’s a Feeling That One Is Not Worth Food”: A Qualitative Study Exploring the Psychosocial Experience and Academic Consequences of Food Insecurity Among College Students",
+      "category": "supporting",
+      "reason": "The title explicitly identifies qualitative research on food insecurity among college students. The saved abstract stops at the background and does not identify interviews.",
+      "limitations": "Interview method is unconfirmed, not disproved. A full abstract or methods section may upgrade this to direct."
+    },
+    {
+      "caseId": "qualitative-explicit",
+      "rank": 2,
+      "sourceId": "doi:10.1016/j.jand.2022.08.001",
+      "title": "A Comparison of Experiences with Factors Related to Food Insecurity between College Students Who Are Food Secure and Food Insecure: A Qualitative Study",
+      "category": "supporting",
+      "reason": "The title identifies a qualitative comparison of food-secure and food-insecure college students. The saved background excerpt does not state that interviews were conducted.",
+      "limitations": "Qualitative does not necessarily mean interviews. Confirm data collection in the full abstract or methods."
+    },
+    {
+      "caseId": "qualitative-explicit",
+      "rank": 3,
+      "sourceId": "doi:10.3389/fpubh.2026.1872467",
+      "title": "Food insecurity in college students: a qualitative exploration of the multiple domains",
+      "category": "supporting",
+      "reason": "The title and excerpt describe qualitative exploration of college-student food insecurity. They provide topic and qualitative-method relevance but do not establish interviews.",
+      "limitations": "The excerpt describes study purpose, not the data-collection method. Do not infer interviews or screening efficacy from it."
+    },
+    {
+      "caseId": "qualitative-explicit",
+      "rank": 4,
+      "sourceId": "doi:10.1016/j.jneb.2025.05.039",
+      "title": "Food Insecurity Among LGBTQIA+ College Students: A Qualitative Needs Assessment for Inclusive Nutrition Interventions",
+      "category": "supporting",
+      "reason": "The title and excerpt concern qualitative food-insecurity experiences among LGBTQIA+ college students. This relevant subgroup can inform the broader topic, but interviews are not specified in the saved text.",
+      "limitations": "The record type says article; full publication details and methods should be checked, including whether this is a conference abstract or full paper."
+    },
+    {
+      "caseId": "qualitative-explicit",
+      "rank": 5,
+      "sourceId": "doi:10.3390/nu17203300",
+      "title": "Psychosocial and Academic Implications of Food Insecurity Among International Students: A Qualitative Study in Hungary",
+      "category": "supporting",
+      "reason": "The title identifies qualitative research on international students’ food insecurity in Hungary. This is a relevant college-student subgroup, but the saved excerpt does not confirm interviews.",
+      "limitations": "Confirm study participants’ educational setting and interview data collection in the full abstract or paper."
+    },
+    {
+      "caseId": "no-method-requested",
+      "rank": 1,
+      "sourceId": "doi:10.5539/gjhs.v14n5p17",
+      "title": "Food Insecurity among College Students",
+      "category": "direct",
+      "reason": "The title and abstract describe prevalence and determinants of food insecurity among UNLV college students using a cross-sectional survey. This directly addresses the broad topic with no requested method restriction.",
+      "limitations": "Convenience sampling at one university limits generalizability; topical fit does not establish population-wide estimates."
+    },
+    {
+      "caseId": "no-method-requested",
+      "rank": 2,
+      "sourceId": "doi:10.1097/tin.0000000000000336",
+      "title": "Food Insecurity in College Students",
+      "category": "direct",
+      "reason": "The title and abstract address factors associated with college-student food insecurity, including semistructured interviews and a mixed-methods approach.",
+      "limitations": "The study concerns one private university. Its findings should not be generalized to all students without further evidence."
+    },
+    {
+      "caseId": "no-method-requested",
+      "rank": 3,
+      "sourceId": "doi:10.1111/soc4.12790",
+      "title": "Food insecurity among college students",
+      "category": "direct",
+      "reason": "The title and abstract explicitly address food insecurity among college students and its relevance to student hardship and success.",
+      "limitations": "The excerpt does not establish empirical design or effects. A review or synthesis can still fit this unrestricted question."
+    },
+    {
+      "caseId": "no-method-requested",
+      "rank": 4,
+      "sourceId": "doi:10.1249/fit.0000000000000500",
+      "title": "Food Insecurity Among College Students",
+      "category": "direct",
+      "reason": "The title and journal-article record directly match food insecurity among college students; the broad query imposes no narrower method or outcome requirement.",
+      "limitations": "No abstract is present. Direct here means topic-level relevance established by the title, not confirmed original research, peer review, or a usable finding."
+    },
+    {
+      "caseId": "no-method-requested",
+      "rank": 5,
+      "sourceId": "doi:10.20429/gcpa.2024.400106",
+      "title": "Food Insecurity Amongst Urban College Students",
+      "category": "direct",
+      "reason": "The title and journal-article record address food insecurity among urban college students, a relevant subset of the broad requested population.",
+      "limitations": "No abstract is provided. The type of evidence, findings, and generalizability remain unverified."
+    }
+  ]
+}

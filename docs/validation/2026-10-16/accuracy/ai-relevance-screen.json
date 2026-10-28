@@ -1,0 +1,299 @@
+{
+  "method": "Preselected 12-case screen: 11 real questions plus one negative control. Seven yielded records on the initial pass; all their 32 top-five records were screened from titles and provider abstracts. Failed/empty cases remain in query-level denominators. Direct requires explicit fit to the full requested topic/constraints; supporting means related but a requirement is unconfirmed or missing. Do not equate supporting with assignment compliance. Not an independent, blinded, human or full-text review. Undergraduates are not inferred from generic university-student labels. No causal effect is inferred from self-report or correlation. No scientific-validity grade.",
+  "counts": {
+    "direct": 17,
+    "supporting": 12,
+    "off-target": 2,
+    "uncertain": 1
+  },
+  "records": [
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 1,
+      "title": "Sanctions and Regime Type: What Works, and When?",
+      "doi": "10.1080/714005349",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Explicit comparison of responses to sanctions across democratic and authoritarian regimes.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 2,
+      "title": "Aid Sanctions and Hybrid Regimes",
+      "doi": "10.1080/00220388.2025.2481878",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Studies sanction effectiveness across regime types, including hybrid regimes.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 3,
+      "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+      "doi": "10.1111/1475-6765.12065",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Explains authoritarian resilience, but does not establish the requested cross-regime comparison.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 4,
+      "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+      "doi": "10.1177/0022343314551081",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Examines sanction targeting against authoritarian states rather than comparative effects.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 5,
+      "title": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States",
+      "doi": "10.1017/gov.2026.10040",
+      "aiDiagnosticLabel": "off-target",
+      "reason": "Focus is sender citizens' preferences, not effects on target regime types.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 1,
+      "title": "Climate change and internal migration patterns in Bangladesh: an agent-based model",
+      "doi": "10.1017/S1355770X12000290",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Models climate-related internal migration in Bangladesh.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 2,
+      "title": "Coastal climate change, soil salinity and human migration in Bangladesh",
+      "doi": "10.1038/s41558-018-0313-8",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Examines salinity and internal migration in Bangladesh.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 3,
+      "title": "Is Climate Change Migration an Adjustment to Extreme Weather Events? A Study on the Coastal Areas of Bangladesh",
+      "doi": "10.1175/WCAS-D-21-0124.1",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Qualitative study of internal migration and extreme weather among Bangladeshi fishers.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 4,
+      "title": "Natural hazards, internal migration and protests in Bangladesh",
+      "doi": "10.1177/0022343320973741",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Analyzes hazard-related internal migration using Bangladesh household data.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "climate-migration",
+      "rank": 5,
+      "title": "Climate\u2010influenced migration in Bangladesh: The need for a policy realignment",
+      "doi": "10.1111/dpr.12260",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Addresses climate-influenced internal migration and Bangladesh policy.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 1,
+      "title": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide",
+      "doi": "10.1016/j.jenvman.2024.123808",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Offshore wind and marine mammals fit; no abstract to establish systematic-review methodology.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 2,
+      "title": "Evidence of predation events by marine mammals at offshore wind farms",
+      "doi": "10.1038/s41598-026-65167-3",
+      "aiDiagnosticLabel": "off-target",
+      "reason": "Primary tracking study, not the requested systematic review.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 3,
+      "title": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities",
+      "doi": "10.4031/mtsj.58.3.1",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Monitoring-technology synthesis; systematic-review method is not established.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 4,
+      "title": "Beneath the blades: Marine wind farms support parts of local biodiversity - a systematic review",
+      "doi": "10.1016/j.scitotenv.2024.173241",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Explicit systematic review including marine mammals among multiple taxonomic groups.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "renewable-energy",
+      "rank": 5,
+      "title": "The global impact of offshore wind farms on ecosystem services",
+      "doi": "10.1016/j.ocecoaman.2024.107023",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Describes itself as semi-systematic; relevant background but not a confirmed systematic review meeting the full request.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "history-primary",
+      "rank": 1,
+      "title": "The HistoryMakers video oral history with Ronald Walters.",
+      "doi": "",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Oral history about the 1958 Wichita sit-in organizer; Greensboro 1960 is contextual, not established as the focus.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "history-primary",
+      "rank": 2,
+      "title": "Williamson, George (Audio Interview and Transcript)",
+      "doi": "",
+      "aiDiagnosticLabel": "uncertain",
+      "reason": "Interview format, but no abstract or sufficient metadata to establish the requested event coverage.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-wearables",
+      "rank": 1,
+      "title": "Remote and wearable ECG devices with diagnostic abilities in adults: A state-of-the-science scoping review",
+      "doi": "10.1016/j.hrthm.2022.02.030",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Adult wearable ECG review explicitly addresses AF detection.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-wearables",
+      "rank": 2,
+      "title": "Detection of Atrial Fibrillation in a Large Population Using Wearable Devices: The Fitbit Heart Study",
+      "doi": "10.1161/CIRCULATIONAHA.122.060291",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Large adult wearable AF detection study.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-wearables",
+      "rank": 3,
+      "title": "Feasibility of a T-Shirt-Type Wearable Electrocardiography Monitor for Detection of Covert Atrial Fibrillation in Young Healthy Adults",
+      "doi": "10.1038/s41598-019-48267-1",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Wearable ECG feasibility study for covert AF in young adults.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-wearables",
+      "rank": 4,
+      "title": "Diagnostic Value of a Wearable Continuous Electrocardiogram Monitoring Device (AT-Patch) for New-Onset Atrial Fibrillation in High-Risk Patients: Prospective Cohort Study",
+      "doi": "10.2196/45760",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Adult prospective cohort evaluating a wearable patch for AF detection.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-wearables",
+      "rank": 5,
+      "title": "Diagnostic Accuracy of Wearable ECG Devices for Atrial Fibrillation and ST-Segment Changes: A Systematic Review",
+      "doi": "10.3390/diagnostics15243162",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Systematic review explicitly includes adults, wearables, and AF diagnostic accuracy.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-student-ai",
+      "rank": 1,
+      "title": "Collaborative Working and Critical Thinking: Adoption of Generative Artificial Intelligence Tools in Higher Education",
+      "doi": "10.3390/su16135367",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Relevant student perceptions of critical thinking; undergraduate eligibility not established in the abstract and self-report is not a causal effect.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-student-ai",
+      "rank": 2,
+      "title": "Information competence and critical thinking in digital environments evidence from university students in Kazakhstan",
+      "doi": "10.3389/feduc.2026.1809360",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Explicit undergraduate sample and AI-related evaluative behavior, but not a direct assessment of changes in critical thinking from AI use.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-student-ai",
+      "rank": 3,
+      "title": "Associations between generative AI usage orientations and critical thinking disposition among college students in China",
+      "doi": "10.3389/fpsyg.2026.1957029",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Direct association between GenAI use and critical-thinking disposition; undergraduate-only population not confirmed from the captured college-student description.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-student-ai",
+      "rank": 4,
+      "title": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading",
+      "doi": "10.32674/jey59q25",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Relevant qualitative perceptions; undergraduate status not confirmed in the abstract.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-student-ai",
+      "rank": 5,
+      "title": "The Impact of Generative AI Dependence on University Students\u2019 Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation",
+      "doi": "10.3390/jintelligence14080168",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Relevant experiments and survey, but undergraduate population not confirmed from the abstract.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-microplastics",
+      "rank": 1,
+      "title": "Effects of polystyrene microplastics on the fitness of earthworms in an agricultural soil",
+      "doi": "10.1088/1755-1315/61/1/012148",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Agricultural-soil microplastic experiment measuring earthworm growth and mortality.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-microplastics",
+      "rank": 2,
+      "title": "Accumulation of microplastics and Tcep pollutants in agricultural soil: Exploring the links between metabolites and gut microbiota in earthworm homeostasis",
+      "doi": "10.1016/j.envint.2022.107590",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Agricultural contamination and experimental earthworm effects, including additive co-exposure.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-microplastics",
+      "rank": 3,
+      "title": "Effects of Polyethylene Microplastics in Agricultural Soil on Eisenia fetida (Annelida: Oligochaeta) Behavior, Biomass, and Mortality",
+      "doi": "10.3390/agriculture14040578",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Agricultural-soil experiment measuring earthworm behavior, biomass and mortality.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-microplastics",
+      "rank": 4,
+      "title": "Seasonal variations and risk assessment of microplastic contamination in agricultural soil and associated macroinvertebrates in Egypt",
+      "doi": "10.1038/s41598-025-88715-9",
+      "aiDiagnosticLabel": "supporting",
+      "reason": "Field measurements of contamination in soil and earthworms; biological harm is not directly evaluated.",
+      "reviewer": "Codex AI; not independent human review"
+    },
+    {
+      "caseId": "new-microplastics",
+      "rank": 5,
+      "title": "Effects of microplastics and chlorpyrifos on earthworms (Lumbricus terrestris) and their biogenic transport in sandy soil",
+      "doi": "10.1016/j.envpol.2022.120483",
+      "aiDiagnosticLabel": "direct",
+      "reason": "Soil mesocosm study of microplastic/pesticide effects on earthworm growth, reproduction and mortality in an agricultural-pollution context.",
+      "reviewer": "Codex AI; not independent human review"
+    }
+  ]
+}

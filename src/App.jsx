@@ -198,10 +198,14 @@ function LoadingBubble({ progress }) {
   }, []);
   const concepts = [...(progress?.concepts || []), progress?.population].filter(Boolean);
   const searching = progress?.stage === "searching";
+  const ranking = progress?.stage === "ranking";
+  // Keep the concepts visible once known; ranking follows searching.
+  const [lastConcepts, setLastConcepts] = useState([]);
+  useEffect(() => { if (concepts.length) setLastConcepts(concepts); }, [concepts.join("|")]);
   return (
     <div className="bubble assistant loading-bubble" role="status" aria-live="polite">
-      <span className="typing-text">{searching ? "Searching the ZSR catalog" : "Reading your question"}<span className="typing-dots" aria-hidden="true">...</span></span>
-      {searching && concepts.length > 0 && <span className="loading-concepts">For: {concepts.join(" · ")}</span>}
+      <span className="typing-text">{ranking ? "Ranking results by how well they answer your question" : searching ? "Searching the ZSR catalog" : "Reading your question"}<span className="typing-dots" aria-hidden="true">...</span></span>
+      {(searching || ranking) && lastConcepts.length > 0 && <span className="loading-concepts">For: {lastConcepts.join(" · ")}</span>}
       {elapsed >= 8 && <span className="loading-slow">Still working. The library catalog can be slow; results appear as soon as they arrive.</span>}
     </div>
   );

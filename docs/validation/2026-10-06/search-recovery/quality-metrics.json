@@ -1,0 +1,15 @@
+{
+  "queries": 28,
+  "nonempty": 24,
+  "five_or_more": 18,
+  "candidate_records": 188,
+  "top_five_records": 104,
+  "human_judgments": 0,
+  "accuracy_rate": null,
+  "empty_queries": [
+    "sparse-local",
+    "sparse-intersection",
+    "sparse-new-technology",
+    "open-access-scope"
+  ]
+}

@@ -1,0 +1,348 @@
+{
+  "note": "Deterministic planning probes only, not live source retrieval.",
+  "cases": [
+    {
+      "query": "Find peer-reviewed studies of newspaper coverage of climate change",
+      "mode": "news",
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": null,
+        "peerReviewed": true,
+        "requestedSourceCount": null
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "concepts": [
+        {
+          "id": "parsed-1-newspaper-coverage",
+          "preferredTerm": "newspaper coverage",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        },
+        {
+          "id": "climate-change",
+          "preferredTerm": "climate change",
+          "synonyms": [
+            "global warming",
+            "climate variability"
+          ],
+          "required": true,
+          "source": "controlled-vocabulary"
+        }
+      ],
+      "queries": [
+        "\"newspaper coverage\" AND \"climate change\"",
+        "\"newspaper coverage\" AND (\"climate change\" OR \"global warming\" OR \"climate variability\")",
+        "\"newspaper coverage\" AND \"global warming\""
+      ],
+      "routes": [
+        {
+          "name": "ProQuest Research Library",
+          "query": "\"newspaper coverage\" AND \"climate change\""
+        },
+        {
+          "name": "Factiva",
+          "query": "\"newspaper coverage\" AND (\"climate change\" OR \"global warming\")"
+        },
+        {
+          "name": "CQ Researcher",
+          "query": "\"newspaper coverage\" AND \"climate change\""
+        },
+        {
+          "name": "ProQuest News & Newspapers",
+          "query": "\"newspaper coverage\" AND (\"climate change\" OR \"global warming\")"
+        },
+        {
+          "name": "ProQuest Political Science Database",
+          "query": "\"newspaper coverage\" AND \"climate change\""
+        }
+      ]
+    },
+    {
+      "query": "Find scholarly articles about book banning in school libraries",
+      "mode": "books",
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": null,
+        "peerReviewed": false,
+        "requestedSourceCount": null
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "concepts": [
+        {
+          "id": "parsed-1-book-banning",
+          "preferredTerm": "book banning",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        },
+        {
+          "id": "parsed-2-school-libraries",
+          "preferredTerm": "school libraries",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        }
+      ],
+      "queries": [
+        "\"book banning\" AND \"school libraries\""
+      ],
+      "routes": [
+        {
+          "name": "ZSR Library Search",
+          "query": "\"book banning\" AND \"school libraries\""
+        },
+        {
+          "name": "Project MUSE",
+          "query": "\"book banning\" AND \"school libraries\""
+        },
+        {
+          "name": "JSTOR",
+          "query": "\"book banning\" AND \"school libraries\""
+        }
+      ]
+    },
+    {
+      "query": "Find peer-reviewed studies on primary sources in history classrooms",
+      "mode": "primary",
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": null,
+        "peerReviewed": true,
+        "requestedSourceCount": null
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "concepts": [
+        {
+          "id": "parsed-1-primary",
+          "preferredTerm": "primary",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        },
+        {
+          "id": "parsed-2-history-classrooms",
+          "preferredTerm": "history classrooms",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        }
+      ],
+      "queries": [
+        "primary AND \"history classrooms\""
+      ],
+      "routes": [
+        {
+          "name": "Special Collections & Archives",
+          "query": "primary AND \"history classrooms\""
+        },
+        {
+          "name": "ZSR Digital Collections",
+          "query": "primary AND \"history classrooms\""
+        },
+        {
+          "name": "HeinOnline",
+          "query": "primary AND \"history classrooms\""
+        },
+        {
+          "name": "ProQuest News & Newspapers",
+          "query": "primary AND \"history classrooms\""
+        },
+        {
+          "name": "ZSR Library Search",
+          "query": "primary AND \"history classrooms\""
+        }
+      ]
+    },
+    {
+      "query": "Find studies proving that social media damages adolescent mental health",
+      "mode": "scholarly",
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": null,
+        "peerReviewed": false,
+        "requestedSourceCount": null
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "concepts": [
+        {
+          "id": "parsed-1-proving",
+          "preferredTerm": "proving",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        },
+        {
+          "id": "social-media",
+          "preferredTerm": "social media",
+          "synonyms": [
+            "social platform*",
+            "online social networking",
+            "platform use",
+            "Instagram",
+            "TikTok",
+            "Snapchat"
+          ],
+          "required": true,
+          "source": "controlled-vocabulary"
+        },
+        {
+          "id": "parsed-3-damages",
+          "preferredTerm": "damages",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        },
+        {
+          "id": "mental-health",
+          "preferredTerm": "mental health",
+          "synonyms": [
+            "psychological well-being",
+            "well-being",
+            "wellbeing"
+          ],
+          "required": true,
+          "source": "controlled-vocabulary"
+        }
+      ],
+      "queries": [
+        "proving AND \"social media\" AND damages AND \"mental health\" AND \"adolescent*\"",
+        "proving AND (\"social media\" OR \"social platform*\" OR \"online social networking\" OR \"platform use\") AND damages AND (\"mental health\" OR \"psychological well-being\" OR well-being OR wellbeing) AND adolescent*",
+        "proving AND \"social platform*\" AND damages AND \"mental health\" AND adolescent*",
+        "proving AND \"social media\" AND damages AND \"psychological well-being\" AND adolescent*",
+        "proving AND \"social media\" AND damages AND \"mental health\" AND adolescent*"
+      ],
+      "routes": [
+        {
+          "name": "PsycINFO",
+          "query": "proving AND \"social media\" AND damages AND \"mental health\" AND adolescent*"
+        },
+        {
+          "name": "Communication & Mass Media Complete",
+          "query": "proving AND (\"social media\" OR \"social platform*\") AND damages AND \"mental health\" AND adolescent*"
+        },
+        {
+          "name": "PubMed / MEDLINE",
+          "query": "proving AND \"social media\" AND damages AND \"mental health\" AND adolescent*"
+        },
+        {
+          "name": "SocINDEX",
+          "query": "proving AND \"social media\" AND damages AND (\"mental health\" OR \"psychological well-being\") AND adolescent*"
+        }
+      ]
+    },
+    {
+      "query": "Women abolitionists in the United States before 1865",
+      "mode": "scholarly",
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": 1864,
+        "peerReviewed": false,
+        "requestedSourceCount": null
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "concepts": [
+        {
+          "id": "parsed-1-women-abolitionists",
+          "preferredTerm": "Women abolitionists",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        },
+        {
+          "id": "parsed-2-united-states",
+          "preferredTerm": "United States",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        }
+      ],
+      "queries": [
+        "\"Women abolitionists\" AND \"United States\""
+      ],
+      "routes": [
+        {
+          "name": "Academic Search Premier",
+          "query": "\"Women abolitionists\" AND \"United States\""
+        },
+        {
+          "name": "ProQuest Research Library",
+          "query": "\"Women abolitionists\" AND \"United States\""
+        },
+        {
+          "name": "JSTOR",
+          "query": "\"Women abolitionists\" AND \"United States\""
+        }
+      ]
+    },
+    {
+      "query": "Qualitative interviews about food insecurity among college students",
+      "mode": "scholarly",
+      "sourceRequirements": {
+        "publicationYearFrom": null,
+        "publicationYearTo": null,
+        "peerReviewed": false,
+        "requestedSourceCount": null
+      },
+      "safety": {
+        "requiresPremiseCheck": false,
+        "flags": [],
+        "authorityPolicy": "research-orientation-not-conclusion"
+      },
+      "concepts": [
+        {
+          "id": "parsed-1-qualitative-interviews-food-insecuri",
+          "preferredTerm": "Qualitative interviews food insecurity",
+          "synonyms": [],
+          "required": true,
+          "source": "parsed"
+        }
+      ],
+      "queries": [
+        "\"Qualitative interviews food insecurity\" AND \"college students\""
+      ],
+      "routes": [
+        {
+          "name": "PubMed / MEDLINE",
+          "query": "\"Qualitative interviews food insecurity\" AND \"college students\""
+        },
+        {
+          "name": "Web of Science",
+          "query": "\"Qualitative interviews food insecurity\" AND \"college students\""
+        },
+        {
+          "name": "ScienceDirect",
+          "query": "\"Qualitative interviews food insecurity\" AND \"college students\""
+        },
+        {
+          "name": "Academic Search Premier",
+          "query": "\"Qualitative interviews food insecurity\" AND \"college students\""
+        },
+        {
+          "name": "ERIC",
+          "query": "\"Qualitative interviews food insecurity\" AND \"college students\""
+        }
+      ]
+    }
+  ]
+}

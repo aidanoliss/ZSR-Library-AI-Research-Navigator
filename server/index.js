@@ -493,7 +493,7 @@ app.post("/api/chat", async (req, res) => {
     // Retrieve evidence before asking the model to interpret any source.
     const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec), plannerContext, previousResearchSpec });
     primoPromise = (lookupCatalog
-      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
+      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; }, rerank: true })
       : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
     const liveResults = await primoPromise;
     const rawReply = await generateChatResponse(aiHistory, resources, effectiveMode, responseStyle, subjectFocusId, { signal: providerAbort.signal, liveResults });
@@ -617,7 +617,7 @@ app.post("/api/chat/stream", async (req, res) => {
     const effectiveMode = plan?.modeId || mode;
     const lookupCatalog = needsFreshSourceEvidence(last.content, previousResearchSpec) || shouldLookupCatalog(last.content, responseStyle, history.filter((message) => message.role === "user").length, { correctedResearchSpec: Boolean(researchSpec), plannerContext, previousResearchSpec });
     primoPromise = (lookupCatalog
-      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
+      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; }, rerank: true })
       : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
     const liveResults = await primoPromise;
     const initial = validateReply({ evidence_notes: [] }, resources, liveResults).reply;

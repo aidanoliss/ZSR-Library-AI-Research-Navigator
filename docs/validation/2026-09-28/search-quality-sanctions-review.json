@@ -1,0 +1,1840 @@
+{
+  "format": "zsr-search-quality-review",
+  "version": 1,
+  "label": "updated-sanctions",
+  "capturedAt": "2026-09-28T14:29:11.087Z",
+  "live": true,
+  "instructions": "Grade each candidate judgment as useful, not-useful, or uncertain after inspecting the source. Leave null until reviewed. Candidate ranks 1–5 are the displayed top five; additional candidates support ranking review. Metadata and rank are not human judgments.",
+  "cases": [
+    {
+      "id": "sanctions-comparison",
+      "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+      "tags": [
+        "comparison",
+        "political-science"
+      ],
+      "reviewPrompt": "Does the source compare effects across regime types, or provide useful evidence about one side? Record that distinction.",
+      "modeId": "scholarly",
+      "subjectFocusId": "auto",
+      "accessScopeId": "library",
+      "status": "captured",
+      "researchSpec": {
+        "topic": "Sanctions and their impact on authoritarian regimes vs democracies",
+        "mode": "scholarly",
+        "disciplines": [
+          "policy-law"
+        ],
+        "concepts": [
+          {
+            "id": "economic-sanctions",
+            "preferredTerm": "Sanctions",
+            "synonyms": [
+              "economic sanctions",
+              "financial sanctions",
+              "trade sanctions"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "authoritarian-regimes",
+            "preferredTerm": "authoritarian regimes",
+            "synonyms": [
+              "authoritarian",
+              "autocratic",
+              "autocracies",
+              "dictatorships",
+              "authoritarian states"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "democracies",
+            "preferredTerm": "democracies",
+            "synonyms": [
+              "democracy",
+              "democratic",
+              "democratic regimes",
+              "democratic states"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": {
+          "conceptIds": [
+            "authoritarian-regimes",
+            "democracies"
+          ],
+          "terms": [
+            "authoritarian regimes",
+            "democracies"
+          ]
+        },
+        "knownItem": null,
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-d72d6256"
+      },
+      "queries": [
+        "Sanctions AND \"authoritarian regimes\" AND democracies",
+        "(Sanctions OR \"economic sanctions\" OR \"financial sanctions\" OR \"trade sanctions\") AND (\"authoritarian regimes\" OR authoritarian OR autocratic OR autocracies) AND (democracies OR democracy OR democratic OR \"democratic regimes\")",
+        "\"economic sanctions\" AND \"authoritarian regimes\" AND democracies",
+        "Sanctions AND authoritarian AND democracies",
+        "Sanctions AND \"authoritarian regimes\" AND democracy"
+      ],
+      "topFive": [
+        {
+          "rank": 1,
+          "sourceId": "doi:10.1080/13510347.2014.888418"
+        },
+        {
+          "rank": 2,
+          "sourceId": "doi:10.1080/03050629.2012.640253"
+        },
+        {
+          "rank": 3,
+          "sourceId": "doi:10.1080/714005349"
+        },
+        {
+          "rank": 4,
+          "sourceId": "doi:10.1080/00220388.2025.2481878"
+        },
+        {
+          "rank": 5,
+          "sourceId": "doi:10.1002/polq.12251"
+        }
+      ],
+      "candidates": [
+        {
+          "rank": 1,
+          "sourceId": "doi:10.1080/13510347.2014.888418",
+          "title": "Are democratic sanctions really counterproductive?",
+          "author": "von Soest, Christian; Wahman, Michael",
+          "authors": [
+            "von Soest, Christian",
+            "Wahman, Michael"
+          ],
+          "date": "2015-09-19",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1080_13510347_2014_888418&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/13510347.2014.888418",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Democratization",
+          "publisher": "Routledge",
+          "abstractExcerpt": "Previous research has shown that sanctions have a negative impact on the level of democracy in targeted authoritarian countries. This runs counter to substantive comparative literature on democratization which finds that economic stress is connected with regime collapse and democratic liberalization. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison terms found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Are democratic sanctions really counterproductive?"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Previous research has shown that sanctions have a negative impact on the level of democracy in targeted authoritarian countries. This runs counter to substantive comparative literature on democratization which finds that"
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Are democratic sanctions really counterproductive?"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 176,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 2,
+          "sourceId": "doi:10.1080/03050629.2012.640253",
+          "title": "Timing Is Everything: Economic Sanctions, Regime Type, and Domestic Instability",
+          "author": "Major, Solomon",
+          "authors": [
+            "Major, Solomon"
+          ],
+          "date": "2012-01-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1080_03050629_2012_640253&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/03050629.2012.640253",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "International interactions",
+          "publisher": "Taylor & Francis Group",
+          "abstractExcerpt": "Recent scholarship suggests that democracies are more vulnerable to economic coercion than authoritarian regimes; unfortunately, the countries most often targeted by economic sanctions are nondemocratic. While agreeing that authoritarians are indeed more robust to sanctions at most times, this article argues that there exist \"windows of opportunity,\"...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison terms found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Timing Is Everything: Economic Sanctions, Regime Type, and Domestic Instability"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Recent scholarship suggests that democracies are more vulnerable to economic coercion than authoritarian regimes; unfortunately, the countries most often targeted by economic sanctions are nondemocratic. While agreeing t"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democracies",
+                "excerpt": "Recent scholarship suggests that democracies are more vulnerable to economic coercion than authoritarian regimes; unfortunately, the countries most often targeted by economic sanctions are nondemocratic. While agreeing t"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 173,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 3,
+          "sourceId": "doi:10.1080/714005349",
+          "title": "Sanctions and Regime Type: What Works, and When?",
+          "author": "Brooks, Risa A.",
+          "authors": [
+            "Brooks, Risa A."
+          ],
+          "date": "2002-06-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1080_714005349&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/714005349",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Security studies",
+          "publisher": "Taylor & Francis Group",
+          "abstractExcerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes. It is hypothesized that states will react to different types of sanction -- comprehensive vs targeted -- differently depending on how their...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison terms found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Sanctions and Regime Type: What Works, and When?"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes. It is hyp"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democratic",
+                "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes. It is hyp"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 173,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 4,
+          "sourceId": "doi:10.1080/00220388.2025.2481878",
+          "title": "Aid Sanctions and Hybrid Regimes",
+          "author": "Portela, Clara; Mora-Sanguinetti, Juan S.",
+          "authors": [
+            "Portela, Clara",
+            "Mora-Sanguinetti, Juan S."
+          ],
+          "date": "2025-10-03",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3258063793&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/00220388.2025.2481878",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "The Journal of development studies",
+          "publisher": "Routledge",
+          "abstractExcerpt": "Recent advances combining sanctions scholarship and the study of authoritarianism relate sanctions effectiveness to regime type. These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison terms found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Aid Sanctions and Hybrid Regimes"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Recent advances combining sanctions scholarship and the study of authoritarianism relate sanctions effectiveness to regime type. These studies generally conclude that economic sanctions tend to be more effective on democ"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democracies",
+                "excerpt": "Recent advances combining sanctions scholarship and the study of authoritarianism relate sanctions effectiveness to regime type. These studies generally conclude that economic sanctions tend to be more effective on democ"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 173,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 5,
+          "sourceId": "doi:10.1002/polq.12251",
+          "title": "Sanctions, Regime Type, and Democratization: Lessons from U.S.-Central American Relations in the 1980s",
+          "author": "Walldorf Jr, C. William",
+          "authors": [
+            "Walldorf Jr, C. William"
+          ],
+          "date": "2014-12-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_1646394172&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1002/polq.12251",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Political science quarterly",
+          "publisher": "Blackwell Publishing Ltd",
+          "abstractExcerpt": "SINCE THE END OF THE COLD WAR, sanctions have become a popular tool for states (the United States, in particular) to press authoritarian regimes to democratize and to respect human rights. [...]as part of this process, the sender should make it clear publicly and repeatedly (so that hard? ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison terms found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Sanctions, Regime Type, and Democratization: Lessons from U.S.-Central American Relations in the 1980s"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "SINCE THE END OF THE COLD WAR, sanctions have become a popular tool for states (the United States, in particular) to press authoritarian regimes to democratize and to respect human rights. [...]as part of this process, t"
+              },
+              {
+                "concept": "democracies",
+                "field": "subjects",
+                "term": "democracies",
+                "excerpt": "Arms transfers; Authoritarianism; Cold War; Costs; Defense industries; Democracy"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 170,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 6,
+          "sourceId": "title:are all dictators equal the selective targeting of democratic sanctions against authoritarian regimes|author:christian michael soest von wahman|year:2013",
+          "title": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes",
+          "author": "Christian von Soest; Wahman, Michael",
+          "authors": [
+            "Christian von Soest",
+            "Wahman, Michael"
+          ],
+          "date": "2013-01-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2119147497&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "IDEAS Working Paper Series from RePEc",
+          "publisher": "Federal Reserve Bank of St. Louis",
+          "abstractExcerpt": "Since the end of the Cold War, Western powers have frequently used sanctions as a reaction to declining levels of democracy and human rights violations in authoritarian regimes. However, some of the world's most repressive authoritarian regimes have never been subjected to sanctions, while other more competitive autocracies have been exposed to repeated...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "title",
+                "term": "authoritarian regimes",
+                "excerpt": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes"
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Are All Dictators Equal? The Selective Targeting of Democratic Sanctions against Authoritarian Regimes"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 169,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 7,
+          "sourceId": "doi:10.1111/1475-6765.12065",
+          "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+          "author": "Grauvogel, Julia; von Soest, Christian",
+          "authors": [
+            "Grauvogel, Julia",
+            "von Soest, Christian"
+          ],
+          "date": "2014-11",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_wiley_primary_10_1111_1475_6765_12065_EJPR12065&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/1475-6765.12065",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "European journal of political research",
+          "publisher": "Blackwell Publishing Ltd",
+          "abstractExcerpt": "International sanctions are one of the most commonly used tools to instigate democratisation in the post‐Cold War era. However, despite long‐term sanction pressure by the European Union, the United States and/or the United Nations, non‐democratic rule has proven to be extremely persistent. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "title",
+                "term": "authoritarian regimes",
+                "excerpt": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democratic",
+                "excerpt": "International sanctions are one of the most commonly used tools to instigate democratisation in the post‐Cold War era. However, despite long‐term sanction pressure by the European Union, the United States and/or the Unit"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 166,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 8,
+          "sourceId": "doi:10.1177/0022343314551081",
+          "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+          "author": "von Soest, Christian; Wahman, Michael",
+          "authors": [
+            "von Soest, Christian",
+            "Wahman, Michael"
+          ],
+          "date": "2015-01-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_sage_journals_10_1177_0022343314551081&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1177/0022343314551081",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Journal of peace research",
+          "publisher": "SAGE",
+          "abstractExcerpt": "Since the end of the Cold War, Western powers have frequently used sanctions to fight declining levels of democracy and human rights violations abroad. However, some of the world's most repressive autocracies have never been subjected to sanctions, while other more competitive authoritarian regimes have been exposed to repeated sanction episodes. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Since the end of the Cold War, Western powers have frequently used sanctions to fight declining levels of democracy and human rights violations abroad. However, some of the world's most repressive autocracies have never "
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 166,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 9,
+          "sourceId": "doi:10.1080/03050629.2010.502436",
+          "title": "Coercive or Corrosive: The Negative Impact of Economic Sanctions on Democracy",
+          "author": "Peksen, Dursun; Drury, A. Cooper",
+          "authors": [
+            "Peksen, Dursun",
+            "Drury, A. Cooper"
+          ],
+          "date": "2010-08-30",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_758119117&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/03050629.2010.502436",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "International interactions",
+          "publisher": "Taylor & Francis Group",
+          "abstractExcerpt": "This article seeks to analyze the impact that sanctions have on democracy. We argue that economic sanctions worsen the level of democracy because the economic hardship caused by sanctions can be used as a strategic tool by the targeted regime to consolidate authoritarian rule and weaken the opposition. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Coercive or Corrosive: The Negative Impact of Economic Sanctions on Democracy"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "This article seeks to analyze the impact that sanctions have on democracy. We argue that economic sanctions worsen the level of democracy because the economic hardship caused by sanctions can be used as a strategic tool "
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democracies",
+                "excerpt": "Coercive or Corrosive: The Negative Impact of Economic Sanctions on Democracy"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 166,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 10,
+          "sourceId": "title:sanctions and democratization in the post cold war era|author:christian michael soest von wahman|year:2013",
+          "title": "Sanctions and Democratization in the Post-Cold War Era",
+          "author": "Christian von Soest; Wahman, Michael",
+          "authors": [
+            "Christian von Soest",
+            "Wahman, Michael"
+          ],
+          "date": "2013-01-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2119146875&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "IDEAS Working Paper Series from RePEc",
+          "publisher": "Federal Reserve Bank of St. Louis",
+          "abstractExcerpt": "Previous research, which has focused mostly on pre-1990 dynamics, has shown that sanctions have a negative impact on the level of democracy in targeted authoritarian countries. Given this finding, it is puzzling that democratization has become the most common goal of sanctions issued against authoritarian states. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Sanctions and Democratization in the Post-Cold War Era"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian",
+                "excerpt": "Previous research, which has focused mostly on pre-1990 dynamics, has shown that sanctions have a negative impact on the level of democracy in targeted authoritarian countries. Given this finding, it is puzzling that dem"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democracies",
+                "excerpt": "Previous research, which has focused mostly on pre-1990 dynamics, has shown that sanctions have a negative impact on the level of democracy in targeted authoritarian countries. Given this finding, it is puzzling that dem"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 163,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 11,
+          "sourceId": "doi:10.1080/07388940701468435",
+          "title": "Economic War and Democratic Peace",
+          "author": "GOENNER, CULLEN F.",
+          "authors": [
+            "GOENNER, CULLEN F."
+          ],
+          "date": "2007-10-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1080_07388940701468435&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1080/07388940701468435",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Conflict management and peace science",
+          "publisher": "Taylor & Francis Group, LLC",
+          "abstractExcerpt": "Research has shown that democracies rarely, if ever, engage each other in war and are less likely to have militarized disputes than when interacting with authoritarian regimes. Economic sanctions are an alternative to militarized conflict viewed by the masses as more acceptable. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "abstract",
+                "term": "Sanctions",
+                "excerpt": "Research has shown that democracies rarely, if ever, engage each other in war and are less likely to have militarized disputes than when interacting with authoritarian regimes. Economic sanctions are an alternative to mi"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Research has shown that democracies rarely, if ever, engage each other in war and are less likely to have militarized disputes than when interacting with authoritarian regimes. Economic sanctions are an alternative to mi"
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Economic War and Democratic Peace"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 163,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 12,
+          "sourceId": "title:democratic anchoring of the european union towards post communist countries|author:fabio fossati|year:2014",
+          "title": "DEMOCRATIC ANCHORING OF THE EUROPEAN UNION TOWARDS POST COMMUNIST COUNTRIES",
+          "author": "Fossati, Fabio",
+          "authors": [
+            "Fossati, Fabio"
+          ],
+          "date": "2014-03-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_1541645787&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Studia Universitatis Babes-Bolyai. Studia Europaea",
+          "publisher": "Studia Universitatis Babes-Bolyai",
+          "abstractExcerpt": "First, a classification of the international processes of democratic anchoring has been presented: inertial emulation (contagion if spontaneous or convergence if intentional), control (direct by military intervention, or in indirect through arms trade and military assistance), political conditionality (by applying negative sanctions to authoritarian...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "abstract",
+                "term": "Sanctions",
+                "excerpt": "First, a classification of the international processes of democratic anchoring has been presented: inertial emulation (contagion if spontaneous or convergence if intentional), control (direct by military intervention, or"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian",
+                "excerpt": "First, a classification of the international processes of democratic anchoring has been presented: inertial emulation (contagion if spontaneous or convergence if intentional), control (direct by military intervention, or"
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "DEMOCRATIC ANCHORING OF THE EUROPEAN UNION TOWARDS POST COMMUNIST COUNTRIES"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 163,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 13,
+          "sourceId": "doi:10.1525/as.2005.45.3.437",
+          "title": "Burma and U.S. Sanctions: Punishing an Authoritarian Regime",
+          "author": "Seekins, Donald M.",
+          "authors": [
+            "Seekins, Donald M."
+          ],
+          "date": "2005-05-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_224258076&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1525/as.2005.45.3.437",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Asian Survey",
+          "publisher": "University of California Press",
+          "abstractExcerpt": "Sanctions imposed by the U.S. government against Burma in July 2003 have caused hardship for ordinary Burmese people without significantly impacting the State Peace and Development Council military regime. A new approach is needed in dealing with Burma that recognizes the shortcomings of both sanctions and “constructive engagement.”",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Burma and U.S. Sanctions: Punishing an Authoritarian Regime"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "title",
+                "term": "authoritarian regimes",
+                "excerpt": "Burma and U.S. Sanctions: Punishing an Authoritarian Regime"
+              },
+              {
+                "concept": "democracies",
+                "field": "subjects",
+                "term": "democracies",
+                "excerpt": "Authoritarianism; Automobiles; Democracy; Dictatorship; Economic sanctions; Effectiveness"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 163,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 14,
+          "sourceId": "doi:10.1017/gov.2026.10040",
+          "title": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States",
+          "author": "Bondeli, Moritz Emanuel; Mares, Isabela et al.",
+          "authors": [
+            "Bondeli, Moritz Emanuel",
+            "Mares, Isabela",
+            "Pike, Ryan"
+          ],
+          "date": "2026-05-11",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3339827113&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1017/gov.2026.10040",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Government and opposition (London)",
+          "publisher": "Cambridge University Press",
+          "abstractExcerpt": "Economic sanctions are a critical tool of international diplomacy. Existing scholarship shows that citizens in democratic sender states value sanctions that are effective in producing policy concessions. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "subjects",
+                "term": "dictatorships",
+                "excerpt": "Altruism; Cooperation; Costs; Despotism; Dictatorship; Diplomacy"
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 163,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 15,
+          "sourceId": "title:trade and human rights the case of china|author:a dorn james|year:1996",
+          "title": "Trade and Human Rights: The Case of China",
+          "author": "Dorn, James A",
+          "authors": [
+            "Dorn, James A"
+          ],
+          "date": "1996-04-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_195573936&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "The Cato journal",
+          "publisher": "Cato Institute",
+          "abstractExcerpt": "The rise of democracy in South Korea and Taiwan attests to the power of the market in generating political liberalization. Both countries have moved from closed, authoritarian regimes to open-market democracies without bloody revolutions and without the threat of economic sanctions. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "abstract",
+                "term": "Sanctions",
+                "excerpt": "The rise of democracy in South Korea and Taiwan attests to the power of the market in generating political liberalization. Both countries have moved from closed, authoritarian regimes to open-market democracies without b"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "The rise of democracy in South Korea and Taiwan attests to the power of the market in generating political liberalization. Both countries have moved from closed, authoritarian regimes to open-market democracies without b"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democracies",
+                "excerpt": "The rise of democracy in South Korea and Taiwan attests to the power of the market in generating political liberalization. Both countries have moved from closed, authoritarian regimes to open-market democracies without b"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 160,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 16,
+          "sourceId": "title:the efficacy of economic sanctions on venezuela|author:jennifer perez|year:2026",
+          "title": "The Efficacy of Economic Sanctions on Venezuela",
+          "author": "Pérez, Jennifer",
+          "authors": [
+            "Pérez, Jennifer"
+          ],
+          "date": "2026-12-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3357242180&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Northwestern journal of international law & business",
+          "publisher": "Northwestern University (on behalf of School of Law)",
+          "abstractExcerpt": "This article examines the persistent failure of U.S. economic sanctions to catalyze democratic transition in Venezuela, addressing the growing disconnect between the statutory intent of American foreign policy and the resulting humanitarian and geopolitical realities. While the U.S. government shifted from targeted sanctions against corrupt individuals...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "The Efficacy of Economic Sanctions on Venezuela"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "subjects",
+                "term": "dictatorships",
+                "excerpt": "Altruism; Authoritarianism; Democracy; Despotism; Dictatorship; Economic development"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democratic",
+                "excerpt": "This article examines the persistent failure of U.S. economic sanctions to catalyze democratic transition in Venezuela, addressing the growing disconnect between the statutory intent of American foreign policy and the re"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 160,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 17,
+          "sourceId": "doi:10.1111/j.1743-8594.2008.00069.x",
+          "title": "Political Institutions and Constrained Response to Economic Sanctions",
+          "author": "Allen, Susan Hannah",
+          "authors": [
+            "Allen, Susan Hannah"
+          ],
+          "date": "2008-07-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_jstor_primary_24907303&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/j.1743-8594.2008.00069.x",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Foreign policy analysis",
+          "publisher": "Blackwell Publishing Ltd",
+          "abstractExcerpt": "Institutional constraints within the target state not only influence a leader's ability to resist economic sanctions, but they also affect the decision-making process within the target state and the nature of information that a sender can ascertain about likely response. Autocratic leaders, who are less constrained, send noisier signals about their...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Political Institutions and Constrained Response to Economic Sanctions"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "autocratic",
+                "excerpt": "Institutional constraints within the target state not only influence a leader's ability to resist economic sanctions, but they also affect the decision-making process within the target state and the nature of information"
+              },
+              {
+                "concept": "democracies",
+                "field": "subjects",
+                "term": "democracies",
+                "excerpt": "Democracy; Economic sanctions"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 160,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 18,
+          "sourceId": "doi:10.1016/j.ejpoleco.2025.102732",
+          "title": "A dictator’s retort to economic sanctions: Evidence from North Korea",
+          "author": "Park, Youngseok",
+          "authors": [
+            "Park, Youngseok"
+          ],
+          "date": "2025-09-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_elsevier_sciencedirect_doi_10_1016_j_ejpoleco_2025_102732&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1016/j.ejpoleco.2025.102732",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "European Journal of Political Economy",
+          "publisher": "Elsevier B.V",
+          "abstractExcerpt": "This paper examines how economic sanctions affect internal resource allocation in North Korea. Drawing on insights from the political economy of authoritarian regimes, I propose that as sanctions intensify, the regime reallocates resources to maintain elite loyalty at the expense of weapons development. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "A dictator’s retort to economic sanctions: Evidence from North Korea"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "This paper examines how economic sanctions affect internal resource allocation in North Korea. Drawing on insights from the political economy of authoritarian regimes, I propose that as sanctions intensify, the regime re"
+              },
+              {
+                "concept": "democracies",
+                "field": "subjects",
+                "term": "democratic",
+                "excerpt": "Democratic People's Republic of Korea; Economic sanctions; Resource allocation"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 160,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 19,
+          "sourceId": "title:the j curve and authoritarian leadership transitions|author:al bremmer et ian sparks willis|year:2007",
+          "title": "The J Curve and Authoritarian Leadership Transitions",
+          "author": "Bremmer, Ian; Sparks, Willis et al.",
+          "authors": [
+            "Bremmer, Ian",
+            "Sparks, Willis",
+            "Kennedy, Craig"
+          ],
+          "date": "2007-10-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_219494650&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "The Brown journal of world affairs",
+          "publisher": "Brown Journal of World Affairs",
+          "abstractExcerpt": "",
+          "abstractSource": "",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": null,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "subjects",
+                "term": "Sanctions",
+                "excerpt": "Authoritarianism; Democracy; Economic sanctions; Hispanic Americans; Nuclear weapons; Political capital"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "title",
+                "term": "authoritarian",
+                "excerpt": "The J Curve and Authoritarian Leadership Transitions"
+              },
+              {
+                "concept": "democracies",
+                "field": "subjects",
+                "term": "democracies",
+                "excerpt": "Authoritarianism; Democracy; Economic sanctions; Hispanic Americans; Nuclear weapons; Political capital"
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 157,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 20,
+          "sourceId": "title:carrots and sticks the construction of an american foreign policy toward north korea|author:grzelczyk virginie|year:2008",
+          "title": "Carrots and Sticks: The Construction of an American Foreign Policy toward North Korea",
+          "author": "Grzelczyk, Virginie",
+          "authors": [
+            "Grzelczyk, Virginie"
+          ],
+          "date": "2008-01-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_miscellaneous_37206295&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "",
+          "pmid": "",
+          "isbn": "",
+          "containerTitle": "Korea observer",
+          "publisher": "Institute of Korean Studies",
+          "abstractExcerpt": "The United States' involvement on the Korean peninsula has always oscillated between extremes, especially when dealing with the Democratic People's Republic of Korea and Washington has used a variety of policies ranging from engagement to threats in order to try to steer North Korea out of a seemingly roguish path. Some argue that American sanctions have...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-09-28T14:29:14.373Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source type",
+                "status": "meets",
+                "detail": "Metadata type: scholarly-article."
+              }
+            ],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "abstract",
+                "term": "Sanctions",
+                "excerpt": "The United States' involvement on the Korean peninsula has always oscillated between extremes, especially when dealing with the Democratic People's Republic of Korea and Washington has used a variety of policies ranging "
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "subjects",
+                "term": "dictatorships",
+                "excerpt": "Democratic People's Republic of Korea; Dictatorship; Foreign relations; International relations; Japanese language; National security"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democratic",
+                "excerpt": "The United States' involvement on the Korean peninsula has always oscillated between extremes, especially when dealing with the Democratic People's Republic of Korea and Washington has used a variety of policies ranging "
+              }
+            ],
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 157,
+            "coverage": 1,
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        }
+      ],
+      "retrieval": {
+        "latencyMs": 3254,
+        "outcomes": {
+          "library": [
+            {
+              "provider": "Primo public",
+              "status": "success",
+              "resultCount": 11
+            },
+            {
+              "provider": "Primo public",
+              "status": "success",
+              "resultCount": 17
+            },
+            {
+              "provider": "Primo public",
+              "status": "success",
+              "resultCount": 24
+            }
+          ],
+          "openAccess": []
+        },
+        "recovery": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,654 @@
+{
+  "note": "Actual AI responses; no full-text or factual certification. No human reviews collected.",
+  "samples": [
+    {
+      "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+      "mode": "scholarly",
+      "researchSpec": {
+        "topic": "Sanctions and their impact on authoritarian regimes vs democracies",
+        "mode": "scholarly",
+        "disciplines": [
+          "policy-law"
+        ],
+        "concepts": [
+          {
+            "id": "economic-sanctions",
+            "preferredTerm": "Sanctions",
+            "synonyms": [
+              "economic sanctions",
+              "financial sanctions",
+              "trade sanctions"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "authoritarian-regimes",
+            "preferredTerm": "authoritarian regimes",
+            "synonyms": [
+              "authoritarian",
+              "autocratic",
+              "autocracies",
+              "dictatorships",
+              "authoritarian states"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "democracies",
+            "preferredTerm": "democracies",
+            "synonyms": [
+              "democracy",
+              "democratic",
+              "democratic regimes",
+              "democratic states"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": {
+          "conceptIds": [
+            "authoritarian-regimes",
+            "democracies"
+          ],
+          "terms": [
+            "authoritarian regimes",
+            "democracies"
+          ]
+        },
+        "knownItem": null,
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-d72d6256"
+      },
+      "stage": "AI generation and existing reply validator; not a full UI response",
+      "latencyMs": 16756,
+      "reply": {
+        "message": "Researching the impact of sanctions on authoritarian regimes versus democracies involves examining political science, economics, and international relations perspectives. You'll want to look for scholarly articles that analyze the effectiveness of sanctions, their intended and unintended consequences, and how different political structures respond to external economic pressure. Consider how different types of sanctions (financial, trade) might have varied effects. This research plan will help you find relevant peer-reviewed sources.",
+        "academic_integrity_note": "Remember to cite all sources properly to avoid plagiarism. ZSR Library offers resources and tools like Zotero to help you manage your citations.",
+        "citation_tips": [
+          "Capture full citation details (author, title, journal, volume, issue, pages, DOI) as you find sources.",
+          "Political science and economics often use Chicago or APA citation styles; check your assignment guidelines.",
+          "Use Zotero or ZSR's citation guides for help with formatting your references."
+        ],
+        "database_strategy": [
+          {
+            "database": "ProQuest Political Science Database",
+            "az_area": "Political Science",
+            "why": "Excellent for political science and international relations research on governance, public policy, and cross-national political studies.",
+            "search_inside": [
+              "(Sanctions OR \"economic sanctions\") AND \"authoritarian regimes\" AND democracies",
+              "source-type",
+              "location",
+              "date"
+            ],
+            "journals_or_sources": [
+              "scholarly journals",
+              "dissertations",
+              "working papers",
+              "conference proceedings"
+            ]
+          },
+          {
+            "database": "HeinOnline",
+            "az_area": "Law",
+            "why": "Useful for legal and policy perspectives on sanctions, including international law, government documents, and legal scholarly articles.",
+            "search_inside": [
+              "Sanctions AND (\"authoritarian regimes\" OR authoritarian) AND democracies",
+              "collection",
+              "jurisdiction",
+              "document-type",
+              "date"
+            ],
+            "journals_or_sources": [
+              "legal journals",
+              "law reviews",
+              "government documents",
+              "international agreements"
+            ]
+          },
+          {
+            "database": "SocINDEX",
+            "az_area": "Sociology",
+            "why": "Provides a social science lens to understand the societal impacts and human responses to sanctions in different political contexts.",
+            "search_inside": [
+              "Sanctions AND \"authoritarian regimes\" AND (democracies OR democracy)",
+              "peer-reviewed",
+              "population",
+              "subject",
+              "date"
+            ],
+            "journals_or_sources": [
+              "sociological journals",
+              "social science articles",
+              "social policy reports"
+            ]
+          },
+          {
+            "database": "JSTOR",
+            "az_area": "Multidisciplinary",
+            "why": "Good for historical and foundational scholarly articles in political science, economics, and international relations, offering broad disciplinary coverage.",
+            "search_inside": [
+              "(Sanctions OR \"economic sanctions\") AND \"authoritarian regimes\" AND democracies",
+              "content-type",
+              "discipline",
+              "date",
+              "language"
+            ],
+            "journals_or_sources": [
+              "scholarly journals",
+              "books",
+              "historical scholarship"
+            ]
+          }
+        ],
+        "limitations": "I do not have access to the full text of paywalled or copyrighted articles, books, or database records. You will need to open sources through ZSR Library's subscriptions to read their full content.",
+        "search_terms": [
+          "\"economic sanctions\" AND \"authoritarian regimes\" AND democracies",
+          "sanctions AND autocracy AND democracy",
+          "\"financial sanctions\" AND \"dictatorships\" AND \"democratic states\"",
+          "\"trade sanctions\" AND \"authoritarian states\" AND \"democratic regimes\"",
+          "sanctions AND (authoritarian OR autocracy) AND (democracy OR democratic)",
+          "\"sanctions policy\" AND \"regime type\"",
+          "\"coercive diplomacy\" AND (authoritarian OR democratic)"
+        ],
+        "source_evaluation": [
+          "**Relevance:** Does the article directly address the impact of sanctions on different regime types?",
+          "**Methodology:** What research methods did the authors use (e.g., quantitative analysis, case studies, historical comparison)? Do they seem appropriate for the research question?",
+          "**Recency:** Given the evolving nature of international relations, prioritize recent studies, but also look for foundational works.",
+          "**Authority:** Who are the authors and what are their affiliations? Are they recognized experts in political science, economics, or international relations?",
+          "**Evidence:** What kind of evidence is presented? Is it empirical, theoretical, or a review of existing literature?"
+        ],
+        "starting_points": [
+          {
+            "resource_name": "ProQuest Political Science Database",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=ProQuest%20Political%20Science%20Database",
+            "why": "A core database for finding scholarly articles, dissertations, and working papers on political science and international relations."
+          },
+          {
+            "resource_name": "JSTOR",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=JSTOR",
+            "why": "Excellent for accessing a broad archive of scholarly journals and books in the humanities and social sciences, including political science and economics."
+          }
+        ],
+        "suggested_followups": [
+          "How can I narrow my topic to a specific region or time period?",
+          "Can you help me find case studies related to this topic?",
+          "What are some key authors or theories in this area?"
+        ]
+      },
+      "validationReport": {
+        "dropped": [
+          {
+            "name": "ZSR Library Search",
+            "url": "https://zsr.wfu.edu"
+          }
+        ],
+        "corrected": []
+      }
+    },
+    {
+      "query": "Find studies proving that social media damages adolescent mental health",
+      "mode": "scholarly",
+      "researchSpec": {
+        "topic": "Find studies proving that social media damages adolescent mental health",
+        "mode": "scholarly",
+        "disciplines": [
+          "psychology",
+          "biology-health",
+          "communication-media"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-proving",
+            "preferredTerm": "proving",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "social-media",
+            "preferredTerm": "social media",
+            "synonyms": [
+              "social platform*",
+              "online social networking",
+              "platform use",
+              "Instagram",
+              "TikTok",
+              "Snapchat"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "parsed-3-damages",
+            "preferredTerm": "damages",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "mental-health",
+            "preferredTerm": "mental health",
+            "synonyms": [
+              "psychological well-being",
+              "well-being",
+              "wellbeing"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "adolescent*",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-1f1f179c"
+      },
+      "stage": "AI generation and existing reply validator; not a full UI response",
+      "latencyMs": 14577,
+      "reply": {
+        "message": "Research on social media and adolescent mental health often explores associations, impacts, and effects rather than definitive 'proof' of damage, as mental health outcomes are complex and influenced by many factors. When searching, focus on studies that investigate the relationship between social media use and various mental health indicators, paying close attention to their methodologies and findings. You'll want to look for peer-reviewed articles that use empirical data.",
+        "academic_integrity_note": "Remember to cite all sources properly according to your assignment's style guide. Using citation management tools like Zotero can help you keep track of your research and generate bibliographies.",
+        "citation_tips": [
+          "Most psychology and social science research uses APA style. Be sure to capture author names, publication year, article title, journal title, volume, issue, and page numbers.",
+          "Look for a DOI (Digital Object Identifier) for each article, as this is a stable link and often required for accurate citation.",
+          "ZSR Library's citation guide and Zotero workshops can provide additional support for managing and citing your sources."
+        ],
+        "database_strategy": [
+          {
+            "database": "PsycINFO",
+            "az_area": "database",
+            "why": "This database is excellent for finding scholarly psychology articles on adolescent development, mental health, and the psychological effects of social media.",
+            "search_inside": [
+              "proving AND \"social media\" AND damages AND \"mental health\" AND adolescent*",
+              "peer-reviewed",
+              "population",
+              "methodology",
+              "date"
+            ],
+            "journals_or_sources": [
+              "Journal of Adolescent Health",
+              "Developmental Psychology",
+              "Journal of Youth and Adolescence",
+              "Clinical Psychological Science"
+            ]
+          },
+          {
+            "database": "Communication & Mass Media Complete",
+            "az_area": "database",
+            "why": "Use this database for research from a communication or media studies perspective, focusing on media effects, platform use, and audience studies related to social media.",
+            "search_inside": [
+              "proving AND (\"social media\" OR \"social platform*\") AND damages AND \"mental health\" AND adolescent*",
+              "peer-reviewed",
+              "subject",
+              "date"
+            ],
+            "journals_or_sources": [
+              "New Media & Society",
+              "Journal of Computer-Mediated Communication",
+              "Social Media + Society",
+              "Communication Research"
+            ]
+          },
+          {
+            "database": "PubMed / MEDLINE",
+            "az_area": "database",
+            "why": "This database is valuable for biomedical and public health literature, including clinical and population-health studies on adolescent mental health outcomes related to social media.",
+            "search_inside": [
+              "proving AND \"social media\" AND damages AND \"mental health\" AND adolescent*",
+              "article-type",
+              "mesh",
+              "population",
+              "date"
+            ],
+            "journals_or_sources": [
+              "JAMA Pediatrics",
+              "Pediatrics",
+              "Journal of Adolescent Health",
+              "JAMA Psychiatry"
+            ]
+          },
+          {
+            "database": "SocINDEX",
+            "az_area": "database",
+            "why": "SocINDEX provides a sociological lens, allowing you to explore social factors, youth studies, peer networks, and the broader social context of social media use and mental health.",
+            "search_inside": [
+              "proving AND \"social media\" AND damages AND (\"mental health\" OR \"psychological well-being\") AND adolescent*",
+              "peer-reviewed",
+              "population",
+              "subject",
+              "date"
+            ],
+            "journals_or_sources": [
+              "Youth & Society",
+              "Journal of Youth Studies",
+              "Social Problems",
+              "Sociology of Health & Illness"
+            ]
+          }
+        ],
+        "limitations": "I cannot access, download, or summarize the full text of paywalled or copyrighted articles, books, or database records. You will need to open the exact database entries through ZSR and read the sources yourself to evaluate their content.",
+        "search_terms": [
+          "\"social media\" AND adolescent* AND \"mental health\" AND (impact OR effect OR association)",
+          "\"social media\" AND teen* AND (depression OR anxiety OR \"well-being\")",
+          "\"social media use\" AND youth AND \"psychological distress\"",
+          "\"online social networking\" AND adolescent* AND \"mental health outcomes\"",
+          "Instagram OR TikTok OR Snapchat AND adolescent* AND (anxiety OR depression)",
+          "\"social media\" AND adolescent* AND \"mental health\" AND longitudinal",
+          "\"social media\" AND adolescent* AND \"mental health\" AND (risk OR protective)"
+        ],
+        "source_evaluation": [
+          "**Relevance:** Does the study directly address the relationship between social media and adolescent mental health? Look at the research question and abstract.",
+          "**Source Type:** Prioritize peer-reviewed journal articles, especially empirical studies, systematic reviews, or meta-analyses, over opinion pieces or non-academic reports.",
+          "**Methodology:** Evaluate the study's design (e.g., longitudinal, cross-sectional, experimental), sample size, and data collection methods. Stronger evidence comes from well-designed studies with appropriate statistical analysis.",
+          "**Date:** Look for recent research, generally within the last 5-10 years, as social media platforms and their use evolve rapidly.",
+          "**Authority:** Consider the authors' affiliations and funding sources. Are they experts in psychology, communication, public health, or related fields?"
+        ],
+        "starting_points": [
+          {
+            "resource_name": "PsycINFO",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=PsycINFO",
+            "why": "This is a core database for psychology, offering extensive peer-reviewed literature on adolescent development, mental health, and the psychological impacts of technology."
+          },
+          {
+            "resource_name": "Communication & Mass Media Complete",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=Communication%20%26%20Mass%20Media%20Complete",
+            "why": "This database is essential for understanding the communication and media studies perspective on social media, including media effects and platform use among adolescents."
+          },
+          {
+            "resource_name": "PubMed / MEDLINE",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/",
+            "why": "For a health sciences angle, PubMed offers clinical and public health research, which can provide insights into specific mental health conditions and population-level impacts."
+          }
+        ],
+        "suggested_followups": [
+          "How can I narrow my topic to a specific aspect of social media or mental health?",
+          "What are some key theories that explain the relationship between social media and mental health?",
+          "Can you help me find studies that focus on interventions or positive effects of social media on adolescent mental health?"
+        ]
+      },
+      "validationReport": {
+        "dropped": [],
+        "corrected": []
+      }
+    },
+    {
+      "query": "Find peer-reviewed studies of newspaper coverage of climate change",
+      "mode": "news",
+      "researchSpec": {
+        "topic": "Find peer-reviewed studies of newspaper coverage of climate change",
+        "mode": "news",
+        "disciplines": [
+          "science-engineering"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-newspaper-coverage",
+            "preferredTerm": "newspaper coverage",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "climate-change",
+            "preferredTerm": "climate change",
+            "synonyms": [
+              "global warming",
+              "climate variability"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": true,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "News and current events"
+        },
+        "sourceContract": {
+          "id": "news",
+          "label": "News and current events",
+          "requiredKinds": [
+            "news"
+          ],
+          "allowedKinds": [
+            "news",
+            "background"
+          ],
+          "excludedKinds": [
+            "scholarly-article",
+            "dataset"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-b45d3d19"
+      },
+      "stage": "AI generation and existing reply validator; not a full UI response",
+      "latencyMs": 14128,
+      "reply": {
+        "message": "To find peer-reviewed studies on newspaper coverage of climate change, you'll want to focus on databases that index academic journals in communication, political science, and environmental studies. These studies often analyze how news outlets frame climate issues, the language they use, and the impact on public perception. The key is to look for research *about* newspaper coverage, rather than the newspaper articles themselves.",
+        "academic_integrity_note": "Remember to cite all sources properly according to your assignment's style guide. ZSR Library offers resources and tools like Zotero to help you manage your citations and avoid plagiarism.",
+        "database_strategy": [
+          {
+            "database": "ProQuest Research Library",
+            "az_area": "database",
+            "why": "This multidisciplinary database is excellent for finding scholarly articles, including peer-reviewed studies on media and environmental topics.",
+            "search_inside": [
+              "\"newspaper coverage\" AND \"climate change\"",
+              "Peer reviewed: verify the database or journal's review status",
+              "source-type",
+              "subject",
+              "date"
+            ],
+            "journals_or_sources": [
+              "Communication Research",
+              "Environmental Communication",
+              "Journalism & Mass Communication Quarterly"
+            ]
+          },
+          {
+            "database": "Factiva",
+            "az_area": "database",
+            "why": "This is a reviewed capability match for the news or current events path (news).",
+            "search_inside": [
+              "\"newspaper coverage\" AND (\"climate change\" OR \"global warming\")",
+              "Peer reviewed: verify the database or journal's review status",
+              "source",
+              "region",
+              "date",
+              "content-type"
+            ],
+            "journals_or_sources": []
+          },
+          {
+            "database": "CQ Researcher",
+            "az_area": "database",
+            "why": "While not primarily for peer-reviewed studies, CQ Researcher provides in-depth reports and background on current issues, which may include summaries or analyses of how topics like climate change are covered in the media, offering useful context for your research.",
+            "search_inside": [
+              "\"newspaper coverage\" AND \"climate change\"",
+              "Peer reviewed: verify the database or journal's review status",
+              "topic",
+              "issue-date",
+              "section"
+            ],
+            "journals_or_sources": [
+              "Issue reports",
+              "Pro/Con analyses",
+              "Policy briefs"
+            ]
+          },
+          {
+            "database": "ProQuest News & Newspapers",
+            "az_area": "database",
+            "why": "This is a reviewed capability match for the news or current events path (news, primary-source).",
+            "search_inside": [
+              "\"newspaper coverage\" AND (\"climate change\" OR \"global warming\")",
+              "Peer reviewed: verify the database or journal's review status",
+              "publication",
+              "location",
+              "date",
+              "document-type"
+            ],
+            "journals_or_sources": []
+          },
+          {
+            "database": "ProQuest Political Science Database",
+            "az_area": "database",
+            "why": "This database focuses on political science and international relations, which often includes research on public discourse, policy, and media's role in shaping political issues like climate change.",
+            "search_inside": [
+              "\"newspaper coverage\" AND \"climate change\"",
+              "Peer reviewed: verify the database or journal's review status",
+              "source-type",
+              "location",
+              "date"
+            ],
+            "journals_or_sources": [
+              "Political Communication",
+              "Environmental Politics",
+              "International Journal of Press/Politics"
+            ]
+          }
+        ],
+        "librarian_routes": [
+          {
+            "label": "Communication / Media Studies librarian",
+            "reason": "For specialized help with research on media effects, content analysis, and journalism studies."
+          },
+          {
+            "label": "Science / Environmental Studies librarian",
+            "reason": "For assistance with the scientific context of climate change and related research methods."
+          },
+          {
+            "label": "Ask ZSR general research help",
+            "reason": "For general research questions or if you get stuck at any point."
+          }
+        ],
+        "limitations": "I do not have access to the full text of paywalled or copyrighted articles, books, or database records. You will need to access these sources through the ZSR Library's databases to read their full content.",
+        "search_terms": [
+          "\"media representation\" AND \"global warming\"",
+          "\"press coverage\" AND \"climate variability\"",
+          "\"news reporting\" AND \"climate change\" AND (analysis OR study OR research)",
+          "\"newspaper content analysis\" AND \"climate change\"",
+          "\"media framing\" AND \"climate change\" AND journalism",
+          "\"climate change communication\" AND newspapers",
+          "\"public opinion\" AND \"climate change\" AND media"
+        ],
+        "source_evaluation": [
+          "Verify that the study itself is peer-reviewed and published in a reputable academic journal, not just a news article about a study.",
+          "Examine the methodology section of each study: How did the researchers analyze newspaper content? What period did they cover? Which newspapers did they include?",
+          "Consider the date of the study and the period of newspaper coverage it analyzes, as media discourse on climate change evolves.",
+          "Assess the study's findings for any disciplinary biases (e.g., political science vs. communication studies) and compare them across different research pieces.",
+          "Look for studies that discuss the distinction between news reporting, opinion pieces, and analytical features within newspaper coverage."
+        ],
+        "starting_points": [
+          {
+            "resource_name": "ProQuest Research Library",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=ProQuest%20Research%20Library",
+            "why": "A strong starting point for finding peer-reviewed articles across many disciplines, including those relevant to media studies and environmental science."
+          },
+          {
+            "resource_name": "ProQuest Political Science Database",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=ProQuest%20Political%20Science%20Database",
+            "why": "Ideal for studies that examine the political dimensions of climate change and its portrayal in the press."
+          },
+          {
+            "resource_name": "CQ Researcher",
+            "url": "https://guides.zsr.wfu.edu/az.php?q=CQ%20Researcher",
+            "why": "Useful for gaining background context, timelines, and policy discussions around climate change, which can inform your understanding of media coverage trends."
+          }
+        ],
+        "suggested_followups": [
+          "How can I narrow my search if I find too many results?",
+          "Can you suggest some specific communication or media studies journals I should look for?",
+          "What are some ways to evaluate the methodology of these studies?"
+        ]
+      },
+      "validationReport": {
+        "dropped": [],
+        "corrected": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "testedQueries": 28,
+  "nonemptyQueries": 22,
+  "queriesWithAtLeastFive": 15,
+  "totalCandidates": 149,
+  "topFiveRecords": 89,
+  "topFivePossibleSlots": 140,
+  "doiRecords": 78,
+  "registeredDois": 78,
+  "corroboratedDoiTitles": 78,
+  "exactNormalizedDoiTitles": 74,
+  "publisherConfirmedTitleVariants": 4,
+  "noDoiRecords": 11,
+  "independentHumanRatings": 0,
+  "narrativeFactualAccuracy": "not measured",
+  "notes": [
+    "100% DOI/title corroboration applies to the 78 DOI-bearing records out of 89 returned top-five records. It does not grade all metadata fields, relevance, study quality, peer review, access, or generated claims.",
+    "Five Crossref 429 responses resolved through slow targeted retries; original responses are retained.",
+    "The automated duplicate count of zero missed one same-chapter pair across ISBN-linked title/date variants."
+  ],
+  "aiAssistedRelevance": {
+    "categories": {
+      "direct": 36,
+      "supporting": 44,
+      "uncertain": 2,
+      "unsuitable": 7
+    },
+    "casesWithAtLeastOneDirect": 13,
+    "cases": 28,
+    "reviewedTopFiveRecords": 89,
+    "directAmongReturnedRate": 0.4044943820224719,
+    "directCaseRate": 0.4642857142857143,
+    "method": "AI-assisted reading of displayed title, date, type and provider abstract excerpts; provisional, not human or full-text validation."
+  }
+}

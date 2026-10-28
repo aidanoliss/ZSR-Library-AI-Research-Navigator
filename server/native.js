@@ -413,6 +413,8 @@ async function handleChat(req, res, stream = false) {
   let plan = null;
   let primoPromise = Promise.resolve([]);
   let discoveryOutcomes = {};
+  // Stream progress so students see each step (reading, searching, ranking).
+  const stageUpdate = stream ? (stage, extra = {}) => { if (sendNdjsonHead(res)) writeNdjson(res, { type: "status", stage, ...extra }); } : null;
   try {
     const researchContext = await retrieveResearchContext(studentText, 6, mode, subjectFocusId, {
       assignmentContext,
@@ -420,6 +422,8 @@ async function handleChat(req, res, stream = false) {
       researchSpec,
       previousResearchSpec,
       latestUserText,
+      signal: providerAbort.signal,
+      onStage: stageUpdate,
     });
     plan = researchContext.plan;
     aiHistory = appendRequestContextForAi(history, { assignmentContext, plannerContext, researchSpec: plan?.researchSpec });
@@ -432,7 +436,7 @@ async function handleChat(req, res, stream = false) {
       writeNdjson(res, { type: "status", stage: "searching", concepts: (plan?.researchSpec?.concepts || []).slice(0, 6).map((concept) => String(concept.preferredTerm || "").replace(/\*$/, "")), population: String(plan?.researchSpec?.facets?.population || "").replace(/\*$/, "") });
     }
     primoPromise = (lookupCatalog
-      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; } })
+      ? searchSourceCandidatesForScope(liveSearchQueries(plan, studentText), 10, effectiveMode, accessScope, { signal: providerAbort.signal, researchSpec: plan?.researchSpec, onStatus: (outcomes) => { discoveryOutcomes = outcomes; }, rerank: true, onStage: (stage) => stageUpdate?.(stage) })
       : Promise.resolve([])).then((results) => signResearchChatSources(prepareSourceEvidence(results).sources));
     // Evidence must be available before generation; the model never sees client-supplied source text.
     const liveResults = await primoPromise;

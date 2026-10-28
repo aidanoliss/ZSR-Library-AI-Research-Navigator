@@ -12,7 +12,7 @@ flowchart LR
   Server -->|"Conversation context and compact curated resource metadata"| Gemini["Google Gemini API"]
   Gemini --> Validate["Schema, link, and source-contract validation"]
   Registry --> Validate
-  Server -->|"Separate best-effort public metadata request"| Primo["WFU Primo public discovery surface"]
+  Server -->|"Approved API when enabled; otherwise best-effort public metadata"| Primo["Primo discovery adapter"]
   Server -->|"Article-compatible fallback only"| Crossref["Crossref public bibliographic metadata"]
   Server -->|"Only when the student requests the OA lane and a server key is configured"| OpenAlex["OpenAlex OA metadata"]
   Primo --> Results["Provider-labelled discovery leads"]
@@ -56,7 +56,9 @@ Gemini does not browse library pages, search Primo or OpenAlex, query licensed d
 
 ## Public metadata discovery
 
-`server/primo.js` makes a best-effort server-side request to WFU’s public Primo discovery surface. The current deployment does not use an institution-issued Primo API key. `PRIMO_LIVE=off` disables public discovery while leaving the deterministic plan available.
+`server/primoApi.js` implements explicit `off`, `guest`, and `institutional` profiles for the official Primo Search API. The `guest` profile exists only to validate the request/response contract against Ex Libris demo data; guest records are marked as demo data and are never eligible for student-facing results. The `institutional` profile can supply discovery results only when all required settings are present and `PRIMO_API_USE_FOR_DISCOVERY=on`. The API key remains server-side and is sent in the documented authorization header.
+
+Until ZSR approves and configures that institutional profile, `server/primo.js` continues to make a best-effort server-side request to WFU’s public Primo discovery surface. `PRIMO_LIVE=off` disables public discovery while leaving the deterministic plan available. API or public-discovery failure leaves the governed resource plan intact.
 
 In books mode, the public Primo request asks for delivery metadata. When the response supplies a best location, call number, and availability status, the server returns those exact fields with a check timestamp and a direct record link. The interface describes this as status “when checked,” warns that it can change, and provides ZSR Delivers as the request fallback. Missing delivery fields stay missing.
 
@@ -83,7 +85,7 @@ See `docs/data-inventory.md` for field-level handling and `docs/privacy-logging-
 
 ## HTTP and provider reliability boundary
 
-Both server entry points use shared request parsing, bounded JSON bodies, per-scope rate limits, security headers, and same-origin or explicit-origin CORS rules from `server/httpSecurity.js`. Forwarded client addresses are trusted only when a bounded `TRUST_PROXY` value is configured. Administrative reads require `ADMIN_TOKEN` and use timing-safe comparison.
+Both server entry points use shared request parsing, bounded JSON bodies, per-scope rate limits, simultaneous chat-work limits, security headers, and same-origin or explicit-origin CORS rules from `server/httpSecurity.js`. The rate and concurrency limits are process-local, not shared across replicas or restarts. Forwarded client addresses are trusted only when a bounded `TRUST_PROXY` value is configured. Administrative reads require `ADMIN_TOKEN` and use timing-safe comparison.
 
 Gemini calls have an abortable timeout, bounded retry for transient failures, and a circuit breaker. Public Primo, Crossref, and OpenAlex requests fail closed to an empty result set. OpenAlex also has a bounded timeout and short-lived process-local metadata cache. Model or discovery failure does not remove the deterministic plan. `/api/health` identifies the release process as alive, while `/api/ready` also checks required configuration and the current Gemini circuit state.
 
@@ -97,4 +99,4 @@ To preserve that URL, deploy releases to the existing Render service rather than
 
 ## Not present today
 
-The prototype does not currently have an official Primo API integration, a live LibGuides/A-Z feed, an approved LibKey institutional identifier, institutional authentication, licensed-database APIs, a Scite MCP connection, OA full-text retrieval or summaries, a library ticketing integration, an approved Duke resource registry, or Duke credentials. It also has no selected repository software license. Placeholders, policy records, and templates for those capabilities are future integration points, not claims of current functionality.
+The prototype has a disabled, contract-tested official Primo API adapter, but it does not have an approved WFU API profile or credentials and does not use guest demo records in student results. It also does not have a live LibGuides/A-Z feed, an approved LibKey institutional identifier, institutional authentication, licensed-database APIs, a Scite MCP connection, OA full-text retrieval or summaries, a library ticketing integration, an approved Duke resource registry, or Duke credentials. It has no selected repository software license. Placeholders, policy records, and templates for those capabilities are future integration points, not claims of current functionality.

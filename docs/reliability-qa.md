@@ -13,19 +13,21 @@ The main test suite now covers:
 - Primo relevance filtering, record deduplication, polluted metadata cleanup, and Crossref disclosure
 - duplicate search suppression across database cards, search terms, fallbacks, and secondary paths
 - server-side resource metadata and URL-shape validation
+- Primo API guest/institutional profile separation, documented Ex Libris authentication, and guest-data exclusion from student results
 
 The two Node server entry points now use the same `server/chatRequest.js` parser, so request validation cannot drift independently.
 
 ## Verified baseline
 
-On July 29, 2026:
+On September 2, 2026, in the current working tree:
 
-- `npm test` passed 115/115 tests.
-- The strict pilot evaluation passed 47/47 cases and 470/470 automated checks.
+- `npm test` passed 202/202 tests.
+- The strict pilot evaluation passed 47/47 cases and 893/893 automated checks.
 - `/api/health` returned `ok: true`.
 - `/api/pilot/status` confirmed query logging and handoff contact storage are off by default.
 - An empty `/api/chat` request returned a bounded user-facing validation error without crashing the server.
 - The production build completed successfully.
+- The resource audit found no technical registry errors. All 31 configured resources still require librarian review and an assigned maintenance owner before institutional production use.
 
 ## Manual failure drills
 
@@ -43,4 +45,5 @@ Run these before a staff demo:
 - Provider quota and sustained-load testing have not been completed.
 - Render free-tier cold starts can delay the first request.
 - Public Primo and Crossref lookups remain best-effort external dependencies.
+- The official Primo adapter is contract-tested but has not completed a live guest-sandbox handshake because no guest API key is configured locally. It cannot be tested against WFU metadata until ZSR supplies an approved read-only institutional profile.
 - There is no institutional uptime, alerting, or incident owner.

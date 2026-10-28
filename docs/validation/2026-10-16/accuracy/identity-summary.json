@@ -1,0 +1,392 @@
+{
+  "slots": 74,
+  "doiSlots": 71,
+  "uniqueDois": 71,
+  "registered": 69,
+  "normalizedTitles": 65,
+  "authorMatches": 68,
+  "yearMatches": 68,
+  "flags": [
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 1,
+      "title": "Sanctions and Regime Type: What Works, and When?",
+      "status": 429,
+      "titleMatch": false,
+      "authorMatch": false,
+      "yearMatch": false,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.1080%2F714005349",
+        "status": 429
+      }
+    },
+    {
+      "caseId": "sanctions-comparison",
+      "rank": 4,
+      "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+      "status": 200,
+      "titleMatch": false,
+      "authorMatch": true,
+      "yearMatch": true,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.1177%2F0022343314551081",
+        "status": 200,
+        "doi": "10.1177/0022343314551081",
+        "title": [
+          "Not all dictators are equal"
+        ],
+        "author": [
+          {
+            "given": "Christian",
+            "family": "von Soest",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "GIGA German Institute of Global and Area Studies & Weatherhead Center for International Affairs, Harvard University"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Michael",
+            "family": "Wahman",
+            "sequence": "additional",
+            "affiliation": [
+              {
+                "name": "Department of Government, London School of Economics and Political Science"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "publisher": "Oxford University Press (OUP)",
+        "containerTitle": [
+          "Journal of Peace Research"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              21
+            ]
+          ]
+        },
+        "published": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              21
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2015,
+              1,
+              1
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2014,
+              11,
+              21
+            ]
+          ]
+        },
+        "url": "https://doi.org/10.1177/0022343314551081"
+      }
+    },
+    {
+      "caseId": "electoral-systems",
+      "rank": 2,
+      "title": "Electoral System Changes and Voter Turnout: Reflections on New Zealand General Elections",
+      "status": 404,
+      "titleMatch": false,
+      "authorMatch": false,
+      "yearMatch": false,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.4335%2F12.1.145-162(2014",
+        "status": 404
+      }
+    },
+    {
+      "caseId": "electoral-systems",
+      "rank": 3,
+      "title": "The influence of promotional activity and different electoral systems on voter turnout: A study of the UK and German Euro elections",
+      "status": 200,
+      "titleMatch": false,
+      "authorMatch": true,
+      "yearMatch": true,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.1108%2F03090561011020499",
+        "status": 200,
+        "doi": "10.1108/03090561011020499",
+        "title": [
+          "The influence of promotional activity and different electoral systems on voter turnout"
+        ],
+        "author": [
+          {
+            "given": "Amy",
+            "family": "Whitelock",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jeryl",
+            "family": "Whitelock",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Jennifer",
+            "family": "van Heerde",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "publisher": "Emerald",
+        "containerTitle": [
+          "European Journal of Marketing"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2010,
+              4,
+              6
+            ]
+          ]
+        },
+        "published": {
+          "date-parts": [
+            [
+              2010,
+              4,
+              6
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2010,
+              4,
+              6
+            ]
+          ]
+        },
+        "url": "https://doi.org/10.1108/03090561011020499"
+      }
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 3,
+      "title": "THE TRAGEDY OF THE COMMONS: A Class of Problems that has no Technical Solution",
+      "status": 200,
+      "titleMatch": false,
+      "authorMatch": false,
+      "yearMatch": true,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.7135%2Fupo9781843318637.006",
+        "status": 200,
+        "doi": "10.7135/upo9781843318637.006",
+        "title": [
+          "The Tragedy of the Commons"
+        ],
+        "type": "book-chapter",
+        "publisher": "Anthem Press",
+        "containerTitle": [
+          "The Economics of the Yasuní Initiative"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2010,
+              1,
+              1
+            ]
+          ]
+        },
+        "published": {
+          "date-parts": [
+            [
+              2010,
+              1,
+              1
+            ]
+          ]
+        },
+        "publishedPrint": {
+          "date-parts": [
+            [
+              2010,
+              1,
+              1
+            ]
+          ]
+        },
+        "url": "https://doi.org/10.7135/upo9781843318637.006"
+      }
+    },
+    {
+      "caseId": "exact-article-title",
+      "rank": 5,
+      "title": "Excerpts from “The Tragedy of the Commons”",
+      "status": 200,
+      "titleMatch": true,
+      "authorMatch": true,
+      "yearMatch": false,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.2307%2Fj.ctt1ht4vw6.33",
+        "status": 200,
+        "doi": "10.2307/j.ctt1ht4vw6.33",
+        "title": [
+          "Excerpts from “The Tragedy of the Commons”"
+        ],
+        "author": [
+          {
+            "given": "GARRETT",
+            "family": "HARDIN",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "type": "book-chapter",
+        "publisher": "NYU Press",
+        "containerTitle": [
+          "Environment and Society"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              null
+            ]
+          ]
+        },
+        "url": "https://doi.org/10.2307/j.ctt1ht4vw6.33"
+      }
+    },
+    {
+      "caseId": "new-student-ai",
+      "rank": 4,
+      "title": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading",
+      "status": 200,
+      "titleMatch": false,
+      "authorMatch": true,
+      "yearMatch": true,
+      "registry": {
+        "endpoint": "https://api.crossref.org/works/10.32674%2Fjey59q25",
+        "status": 200,
+        "doi": "10.32674/jey59q25",
+        "title": [
+          "Generative AI and critical thinking in higher education"
+        ],
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0009-0000-5902-2202",
+            "authenticated-orcid": false,
+            "given": "Bijon Kumar",
+            "family": "Roy",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "ORCID": "https://orcid.org/0000-0003-0433-0878",
+            "authenticated-orcid": false,
+            "given": "Md. Solaiman",
+            "family": "Jony",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "type": "journal-article",
+        "publisher": "STAR Scholars Network",
+        "containerTitle": [
+          "Journal of Interdisciplinary Studies in Education"
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2026,
+              5,
+              27
+            ]
+          ]
+        },
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              5,
+              27
+            ]
+          ]
+        },
+        "publishedOnline": {
+          "date-parts": [
+            [
+              2026,
+              5,
+              27
+            ]
+          ]
+        },
+        "url": "https://doi.org/10.32674/jey59q25"
+      }
+    }
+  ]
+}

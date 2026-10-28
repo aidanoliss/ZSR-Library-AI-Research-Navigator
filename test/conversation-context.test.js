@@ -281,7 +281,7 @@ test("actual planner scope values become fields and comparison groups without in
   assert.equal(spec.facets.geography, "Denmark");
   assert.equal(spec.facets.timePeriod, "before 2020");
   assert.deepEqual(spec.comparison.terms, ["online teaching", "in-person teaching"]);
-  assert.match(researchSpecQuery(spec), /training outcomes.*online teaching.*in-person teaching.*nurses.*Denmark/);
+  assert.match(researchSpecQuery(spec), /training\b.*\boutcomes.*online\b.*\bteaching.*in-person\b.*\bteaching.*nurses.*Denmark/);
   assert.doesNotMatch(researchSpecQuery(spec), /Population|Geography|Comparison|Study period|Published/i);
 });
 

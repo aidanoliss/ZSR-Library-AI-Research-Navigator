@@ -13,13 +13,13 @@ The browser calls only the Node API. Gemini credentials remain server-side. The 
 - optional Crossref bibliographic metadata when ZSR discovery is sparse
 - public A-Z, research-guide, Ask ZSR, and full-text workflow links
 
-The prototype does not have authenticated Primo, LibGuides, LibKey, proxy, identity, or course-system access.
+The prototype has a server-side Primo Search API adapter but no ZSR-approved API key or WFU staging profile. The adapter's guest profile is contract-test-only and cannot enter the student results lane. The prototype does not have approved LibGuides, LibKey, proxy, identity, or course-system access.
 
 ## Proposed integrations
 
 ### 1. Primo Search API
 
-ZSR provides an approved endpoint, API key, allowed scopes, request limits, and expected result schema. The server maps the response into the existing source-lead contract:
+The adapter already supports Ex Libris header authentication, configurable endpoint/view/tab/scope values, bounded timeouts, normalized PNX metadata, and an explicit institutional enable flag. ZSR provides an approved endpoint, API key, allowed scopes, request limits, record host, and expected result schema. The server maps the response into the existing source-lead contract:
 
 ```text
 title, authors, date, source type, subjects, abstract excerpt,
@@ -27,6 +27,8 @@ DOI/PMID, record URL, thumbnail, provider, access status
 ```
 
 Only provider-supplied abstracts may be excerpted. The app must not generate source summaries from titles or incomplete metadata. If the API fails or returns no relevant records, the UI keeps the current explicit zero-result state.
+
+The Ex Libris guest sandbox is useful only for request/response contract validation. Its demo records are labelled as demo data, are ineligible for student results, and do not establish Wake Forest holdings, access, scope behavior, or relevance.
 
 ### 2. LibGuides / A-Z resource feed
 

@@ -219,13 +219,14 @@ test("the plan uses an assisted spec only for the same fresh request", () => {
   assert.equal(corrected.researchSpec.interpretation, undefined, "a student correction always wins");
 });
 
-test("assisted interpretation is off unless enabled, and provider failures fall back silently", async () => {
+test("assisted interpretation can be switched off, needs a key, and provider failures fall back silently", async () => {
   clearInterpretationCache();
   const base = buildResearchSpec("is nuclear power safer than solar");
   let calls = 0;
   const fetchImpl = async () => { calls += 1; throw new Error("network down"); };
-  assert.equal(await assistInterpretation(base.topic, base, { env: { GEMINI_API_KEY: "k" }, fetchImpl }), null);
-  assert.equal(calls, 0, "no provider call when the flag is off");
+  assert.equal(await assistInterpretation(base.topic, base, { env: { GEMINI_API_KEY: "k", AI_QUERY_INTERPRETATION: "off" }, fetchImpl }), null);
+  assert.equal(await assistInterpretation(base.topic, base, { env: {}, fetchImpl }), null);
+  assert.equal(calls, 0, "no provider call when switched off or without a key");
   const env = { GEMINI_API_KEY: "k", AI_QUERY_INTERPRETATION: "on" };
   assert.equal(await assistInterpretation(base.topic, base, { env, fetchImpl }), null);
   assert.equal(calls, 1);

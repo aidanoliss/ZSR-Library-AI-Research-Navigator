@@ -1,4 +1,4 @@
-import { formatResearchTerm, mergeSuppliedResearchSpec, buildResearchSpec, suggestedResearchVocabulary } from "../config/researchSpec.js";
+import { formatResearchTerm, mergeSuppliedResearchSpec, buildResearchSpec, suggestedResearchVocabulary, deterministicHash } from "../config/researchSpec.js";
 import { screenPromptOverride } from "./screen.js";
 import { ProviderError, createCircuitBreaker, providerHttpError, runProviderOperation } from "./providerResilience.js";
 
@@ -149,8 +149,58 @@ async function requestSuggestions(spec, { fetchImpl = fetch, apiKey, signal, tim
   }, { signal, timeoutMs, totalTimeoutMs: timeoutMs, retries: 1, circuit });
 }
 
+const SUGGESTION_CACHE_LIMIT = 300;
+const suggestionCache = new Map();
+const cacheKey = (spec) => JSON.stringify([clean(spec.mode), ...(spec.concepts || []).map((concept) => clean(concept.preferredTerm).toLowerCase())]);
+
 /** Never throws: falls back to built-in vocabulary on any provider problem. */
 export async function suggestSearchTerms(spec, options = {}) {
+  const key = cacheKey(spec);
+  const cached = suggestionCache.get(key);
+  if (cached && cached.fetchRef === (options.fetchImpl || globalThis.fetch)) return { ...cached.value, topic: spec.topic, searchStrings: searchStringsFor(spec, cached.value) };
+  const result = await suggestSearchTermsUncached(spec, options);
+  if (result.source === "ai-suggested") {
+    suggestionCache.set(key, { value: result, fetchRef: options.fetchImpl || globalThis.fetch });
+    if (suggestionCache.size > SUGGESTION_CACHE_LIMIT) suggestionCache.delete(suggestionCache.keys().next().value);
+  }
+  return result;
+}
+
+export function clearSearchTermCache() { suggestionCache.clear(); }
+
+/** On by default when a Gemini key is configured; AI_SEARCH_EXPANSION=off disables it. */
+export function searchExpansionEnabled(env = process.env) {
+  const key = env.GEMINI_API_KEY;
+  return !/^(?:off|false|0)$/i.test(String(env.AI_SEARCH_EXPANSION || "")) && Boolean(key && key !== "your_api_key_here");
+}
+
+/**
+ * Add AI-suggested alternatives to each concept so retrieval and the
+ * relevance check recognize the same idea in different words. The brief's
+ * concepts, facets, exclusions and requirements are unchanged; curated
+ * vocabulary stays first.
+ */
+export function expandSpecWithSuggestions(spec, suggestions) {
+  if (!spec || !suggestions?.concepts?.length) return spec;
+  const concepts = spec.concepts.map((concept) => {
+    const group = suggestions.concepts.find((item) => item.conceptId === concept.id || item.term === concept.preferredTerm);
+    if (!group?.synonyms?.length) return concept;
+    return { ...concept, synonyms: [...new Set([...(concept.synonyms || []), ...group.synonyms])].slice(0, 7) };
+  });
+  const next = { ...spec, concepts, searchExpansion: "full-synonyms", interpretation: { ...(spec.interpretation || {}), synonyms: "ai-suggested" } };
+  delete next.planHash;
+  return { ...next, planHash: deterministicHash(next) };
+}
+
+/** The expanded spec for retrieval, or null when disabled, a known item, or unavailable. */
+export async function expandedSearchSpec(spec, options = {}) {
+  const env = options.env || process.env;
+  if (!spec?.concepts?.length || spec.knownItem || !searchExpansionEnabled(env)) return null;
+  const terms = await suggestSearchTerms(spec, { ...options, timeoutMs: options.timeoutMs || 4500 });
+  return terms.source === "ai-suggested" ? expandSpecWithSuggestions(spec, terms) : null;
+}
+
+async function suggestSearchTermsUncached(spec, options = {}) {
   const env = options.env || process.env;
   const apiKey = options.apiKey || env.GEMINI_API_KEY;
   let suggestions = null;

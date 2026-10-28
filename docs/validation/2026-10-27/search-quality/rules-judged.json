@@ -1,0 +1,1178 @@
+[
+ {
+  "q": "does homework actually improve learning in elementary school",
+  "variant": "rules",
+  "ms": 6828,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "homework AND learning AND \"elementary school\"",
+  "count": 8,
+  "failures": 1,
+  "top": [
+   {
+    "title": "The Relationship between Homework and Motivation for Learning among Arab Elementary School Students in Israel",
+    "type": "journal article",
+    "year": "2021",
+    "abstract": "Summary Students, parents, teachers and researchers in the field of education disagree with each other about the contribution of homework in the overall student learning process. In particular, widespread criticism is directed at the emotional and cognitive load that homework imposes on the student, the considerable time they consume, and the disruption caused, according to the claim, to the social development of the student. This claim is supported by a series of empirical studies that have been carried out for decades, especially recently, in the world and in Israel. Nevertheless, the role t",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "OPTIMIZING STUDENT GROWTH THROUGH INNOVATIVE HOMEWORK: IMPLICATIONS FOR LEARNING ENHANCEMENT IN ELEMENTARY AND SECONDARY SCHOOL",
+    "type": "journal article",
+    "year": "2025",
+    "abstract": "This study investigates how innovative homework ideas enhance student learning and development in the Municipality of Dimataling. The research evaluates the impact of tactics such as pre-learning, comprehension checks, practice, and processing on learners' academic performance and engagement. The study employed both quantitative and qualitative methodologies to poll educators and administrators regarding their perspectives and implementation procedures. Research indicates that innovative homework promotes student autonomy, enhances classroom learning, and cultivates lifetime learning abilities",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "HOMEWORK AND THE WELL-BEING OF ELEMENTARY SCHOOL CHILDREN: A CONCEPTUAL CRITIQUE OF CONVENTIONAL LEARNING PRACTICES",
+    "type": "journal article",
+    "year": "2026",
+    "abstract": "This study critically examines the practice of homework (PR) in elementary schools from the perspective of child well-being. Although homework has long been regarded as a pedagogical instrument to reinforce learning outcomes, discipline, and academic achievement, recent debates highlight its potential psychological and relational consequences for young learners. Using a qualitative approach with a library research design, this study synthesizes relevant scholarly literature on homework practices, student motivation, parental involvement, and holistic child development in basic education. Data ",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "HOMEWORK IN ELEMENTARY SCHOOL",
+    "type": "journal article",
+    "year": "2025",
+    "abstract": "The foundation of academic success is often laid during the years when students first encounter a structured learning environment. An essential part of this process is, undoubtedly, homework. Well-planned assignments not only reinforce the retention of knowledge learned in the classroom but also help students develop a sense of responsibility and contribute to the improvement of time management skills from an early age. Additionally, homework supports the development of problem-solving and critical thinking skills while also strengthening students’ academic discipline and self-regulation abili",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "Multiple Goals and Homework Involvement in Elementary School Students",
+    "type": "journal article",
+    "year": "2015",
+    "abstract": "Abstract This work arises from the need to investigate the role of motivational variables in homework involvement and academic achievement of elementary school students. The aims of this study are twofold: identifying the different combinations of student academic goals and analyzing the differences in homework involvement and academic achievement. The sample was composed of 535 fourth-, fifth- and sixth-grade elementary school students, between the ages of 9 and 13 years old. Findings showed three groups with different motivational profiles: a group of students with high multiple goals, anoth",
+    "label": "All topic concepts found",
+    "peer": false
+   }
+  ],
+  "ratings": [
+   1,
+   2,
+   1,
+   2,
+   0
+  ]
+ },
+ {
+  "q": "effects of gentrification on long-term residents in Atlanta",
+  "variant": "rules",
+  "ms": 653,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "gentrification AND \"long-term residents\" AND Atlanta",
+  "count": 1,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Regional Growth, Gentriﬁcation, and Displacement",
+    "type": "book_chapter",
+    "year": "2015",
+    "abstract": "The term “gentriﬁcation” ﬁrst appeared in the 1960s, coined by sociologist Ruth Glass (1964), who was describing the inﬂux of the middle class into poor London neighborhoods. Since then, the debate over its meaning and impact has only intensiﬁed. Who are the gentry, and who is beneﬁting from the changes? Clearly the newcomers have higher incomes than the long-term residents of the neighborhood, plus, often, equity to invest in local housing. That probably means higher levels of educational attainment, too, given that income and schooling are highly correlated. But can there be “positive” gentr",
+    "label": "All topic concepts found",
+    "peer": false
+   }
+  ],
+  "ratings": [
+   1
+  ]
+ },
+ {
+  "q": "how do bilingual children perform on executive function tasks compared to monolingual children",
+  "variant": "rules",
+  "ms": 2045,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "bilingual AND perform AND \"executive function\" AND \"tasks monolingual\" AND child*",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Similarities and differences across countries in the development of executive functions in children: A systematic review",
+    "type": "article",
+    "year": "2020",
+    "abstract": "A systematic review was conducted to gain a more nuanced understanding of similarities and distinctions across countries in the development of executive functions (EF). The review includes 26 studies, with child and adolescent participants, that were published between 2006 and 2018. Both similarities and differences within developmental patterns of EF are identified across different countries. Across countries, bilingual children are shown to outperform their monolingual peers. Task improvement with age is not consistently reported in all studies, with no linear effects apparent in children fr",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Using semantic verbal fluency to estimate the relative and absolute vocabulary size of bilinguals: An exploratory study of children and adolescents",
+    "type": "article",
+    "year": "2024",
+    "abstract": "•Verbal fluency tasks allow you to determine the dominant language.•Verbal fluency tasks provide a rough estimate of vocabulary knowledge.•Different exposure groups perform similarly on total and conceptual vocabulary.•Producing more infrequent words indicates higher vocabulary. The full assessment of bilingual children often involves at least one language for which formal vocabulary tests are lacking and which the examiner does not speak. We examined, in a sample of children with typical development (TD), whether a semantic verbal fluency task, typically used in research as a measure of execu",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Cognitive Mechanisms of Monolingual and Bilingual Children in Monoliterate Educational Settings: Evidence From Sentence Repetition",
+    "type": "article",
+    "year": "2021",
+    "abstract": "Sentence repetition (SR) tasks have been extensively employed to assess bilingual children’s linguistic and cognitive resources. The present study examined whether monoliterate bilingual children differ from their monolingual (and monoliterate) peers in SR accuracy and cognitive tasks, and investigated links between vocabulary, updating, verbal and visuospatial working memory and SR performance in the same children. Participants were two groups of 35 children, 8–12 years of age: one group consisted of Albanian-Greek monoliterate bilingual children and the other of Greek monolingual children at",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Bilingual experience and executive functioning in young children",
+    "type": "journal article",
+    "year": "2008",
+    "abstract": "Abstract Advanced inhibitory control skills have been found in bilingual speakers as compared to monolingual controls ( Bialystok, 1999 ). We examined whether this effect is generalized to an unstudied language group (Spanish‐English bilingual) and multiple measures of executive function by administering a battery of tasks to 50 kindergarten children drawn from three language groups: native bilinguals, monolinguals (English), and English speakers enrolled in second‐language immersion kindergarten. Despite having significantly lower verbal scores and parent education/income level, Spanish‐Engli",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "Executive Function Differences Between Bilingual Arabic–English and Monolingual Arabic Children",
+    "type": "article",
+    "year": "2015",
+    "abstract": "This study aimed to explore the differences between Arabic-English bilingual and monolingual Arabic children on a battery of executive functions. Prior research on the influence of bilingualism on cognitive abilities and executive functions has shown mixed results. Some results suggested that bilinguals perform significantly better than monolinguals, while others showed that monolinguals perform significantly better. Other studies showed no significant differences between both groups, findings which were argued to be due to methodological issues. A total of 50 Arabic monolingual and Arabic--En",
+    "label": "Topic match · scope needs checking",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   1,
+   0,
+   1,
+   2,
+   2
+  ]
+ },
+ {
+  "q": "role of women in the civil rights movement",
+  "variant": "rules",
+  "ms": 1688,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "role AND \"civil rights movement\" AND women",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "The American Civil Rights Movement Reconsidered: Teaching the Role of Women",
+    "type": "article",
+    "year": "2020",
+    "abstract": "This article examines coverage in social studies curriculum and U.S. history textbooks, specifically, of women in the American Civil Rights Movement (CRM) and considers how social studies teachers can broaden the narrative they teach to include more gender-related issues and the work of women activists. The author found that despite a rich body of scholarship focused on women in the CRM, textbooks, which still serve as the central curriculum documents in most secondary social studies classrooms, provide a relatively cursory treatment of women's roles in the movement. The context of women's act",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Role of Women in Milwaukee’s Fair Housing Marches and Civil Rights Movements: Recognizing the Unsung Heroines",
+    "type": "article",
+    "year": "2026",
+    "abstract": "This article examines the critical yet overlooked contributions of women to Milwaukee’s fair housing activism during the mid-twentieth century, challenging the male-centric narrative of civil rights leadership. Through a focus on two pivotal figures, Vel Phillips and Betty Glosson, this study reveals how Black women navigated and reshaped systemic racial and gender injustices. Vel Phillips’s institutional advocacy and Betty Glosson’s grassroots organizing demonstrate the complementary roles women played in driving systemic change. Drawing on primary sources, including oral histories and radio ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The Women of Operation Breadbasket: A Lost Chapter in the Chicago Civil Rights Movement",
+    "type": "article",
+    "year": "2026",
+    "abstract": "This study is the first scholarly exploration of the Women of Operation Breadbasket (WOB). Founded in 1967 by Rev. Mrs. Willie T. Barrow, the WOB was the direct-action unit of Operation Breadbasket-Chicago (OB-C), the economic justice arm of the Southern Christian Leadership Conference (SCLC) in the North. Placing Black women at the forefront of the movement in Chicago, the WOB empowered them to assert their agency in the pursuit of social change within their communities. Yet, the WOB remains woefully understudied, rendering it virtually invisible to scholars and the broader public. Consequent",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Beauty and Power: Beauticians, the Highlander Folk School, and Women’s Professional Networks in the Civil Rights Movement",
+    "type": "article",
+    "year": "2022",
+    "abstract": "In January 1961, fifty-two African American beauticians gathered at the Highlander Folk School, a tiny bastion of racial integration perched in the mountains of Tennessee. They had come to discuss their role in the struggle against American racism. While historians have long acknowledged the importance of gendered networks and women’s organizing within the African American freedom struggle, the history of the beauticians who gathered at Highlander demonstrates the importance of professional networks as a bridge between different local struggles. In their skill at building networks, and their a",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The Relationship Between the \"Invisibility\" of African American Women in the American Civil Rights Movement of the 1950s and 1960s and Their Portrayal in Modern Film",
+    "type": "article",
+    "year": "2017",
+    "abstract": "This research argues that the representation of African American women in modern civil rights film is a result of the \"invisibility\" that they faced during the civil rights movement in America during the 1950s and 1960s. To make its argument, this article contends that the media's scant but negative coverage of women activists along with male leaders, such as Malcolm X's attitude toward African American women during the period of the movement, is the reason why ultimately African American women activists received lack of recognition for their involvement in the movement. This work also argues ",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   1,
+   1,
+   2,
+   1
+  ]
+ },
+ {
+  "q": "is intermittent fasting effective for weight loss",
+  "variant": "rules",
+  "ms": 3663,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"intermittent fasting effective\" AND \"weight loss\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Intermittent fasting combined with calorie restriction is effective for weight loss and cardio-protection in obese women",
+    "type": "article",
+    "year": "2012",
+    "abstract": "Background Intermittent fasting (IF; severe restriction 1 d/week) facilitates weight loss and improves coronary heart disease (CHD) risk indicators. The degree to which weight loss can be enhanced if IF is combined with calorie restriction (CR) and liquid meals, remains unknown. Objective This study examined the effects of IF plus CR (with or without a liquid diet) on body weight, body composition, and CHD risk. Methods Obese women (n = 54) were randomized to either the IFCR-liquid (IFCR-L) or IFCR-food based (IFCR-F) diet. The trial had two phases: 1) 2-week weight maintenance period, and 2) ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Exercise Training, Intermittent Fasting and Alkaline Supplementation as an Effective Strategy for Body Weight Loss: A 12-Week Placebo-Controlled Double-Blind Intervention with Overweight Subjects",
+    "type": "article",
+    "year": "2020",
+    "abstract": "Background: Intermittent fasting (IF) combined with exercise has been suggested to enhance weight loss. However, both procedures might negatively influence acid–base status. The aim of this study was to determine the combined effects of IF, exercise training and alkaline supplementation in overweight subjects on body composition and running performance. Methods: 80 overweight subjects of age 45.5 ± 7.8 years were assigned to IF or non-intermittent fasting (nIF). Furthermore, subjects were randomly assigned to take either an alkaline supplement (IF-v, nIF-v) or a placebo (IF-p, nIF-p) twice a d",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Evaluation of the effectiveness of intermittent fasting versus caloric restriction in weight loss and improving cardiometabolic health: A systematic review and meta-analysis",
+    "type": "article",
+    "year": "2025",
+    "abstract": "هدفنا إلى إجراء مراجعة منهجية وتحليل تلوي لاستكشاف آثار الأنظمة الغذائية المقيدة بالطاقة والصيام المتقطع على وزن الجسم وعوامل القلب والأيض. تم استخدام منهجية متوافقة مع \"بريزما\"، وتم إجراء بحث منهجي في \"ببميد\" ومكتبة \"كوشرين المركزية\" للتجارب العشوائية الخاضعة للتحكم، لتحديد التجارب العشوائية الخاضعة للتحكم ذات الصلة من بداية قاعدة البيانات حتى ۲٧ سبتمبر ۲۰۲٣. كما تم إجراء البحث الببليوغرافي والبحث في الأدبيات الرمادية لتحديد الأدبيات غير المنشورة. تم تجميع أحجام التأثير باستخدام نماذج التأثيرات العشوائية في حزمة \"آر ميتا\" وتم الإبلاغ عنها على أنها فروق متوسطة. تم تقييم جودة الدراسات المشمولة ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Evaluating the efficacy of intermittent fasting and exercise combinations for weight loss: A network meta‐analysis",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Summary Objective The purpose of this study is to utilize network meta‐analysis (NMA) to synthesize relevant randomized controlled trials (RCTs) and evaluate the most effective intermittent fasting (IF) combined with exercise interventions for weight loss. Methods This study searched five databases up until April 2024, obtaining RCTs that investigated the effects of intermittent fasting (IF) combined with exercise. The quality of the literature was assessed using the Cochrane tool, followed by a random‐effects statistical analysis of each intervention. Eventually, a NMA was conducted to compar",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Intermittent fasting and weight loss: Systematic review",
+    "type": "article",
+    "year": "2020",
+    "abstract": "To examine the evidence for intermittent fasting (IF), an alternative to calorie-restricted diets, in treating obesity, an important health concern in Canada with few effective office-based treatment strategies. A MEDLINE and EMBASE search from January 1, 2000, to July 1, 2019, yielded 1200 results using the key words and . Forty-one articles describing 27 trials addressed weight loss in overweight and obese patients: 18 small randomized controlled trials (level I evidence) and 9 trials comparing weight after IF to baseline weight with no control group (level II evidence). Studies were often o",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   1,
+   2,
+   1,
+   2
+  ]
+ },
+ {
+  "q": "impact of NIL deals on college athletes",
+  "variant": "rules",
+  "ms": 1887,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"NIL deals\" AND \"college athletes\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "International College Athletes’ Perceptions of NIL and its Impact on Their Experiences: A Theory of Capital Approach",
+    "type": "article",
+    "year": "2026",
+    "abstract": "The name, image, and likeness (NIL) policy altered the landscape of college sports and provided college athletes with new opportunities to monetize their talents and personal brands. However, while the NCAA stated that all athletes would be able to participate in NIL deals and be compensated for the use of their NIL, international college athletes (ICAs) soon discovered they were restricted from participation while located in the U.S., due to their student visa status. Through nine semi-structured interviews of current and former ICAs we identified themes related to Bourdieu’s theory of social",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Name, Image, and Likeness (NIL) Opportunities for Black College Athletes: Strategically Facilitating Academic Achievement and Successful Career Transitions",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Omitted in discussions of college athletes’ use of Name, Image, and Likeness (NIL) opportunities is a focus on equity, educational issues, and transition into post-college careers. We frequently hear National Collegiate Athletic Association (NCAA) declarations stating that nearly all college athletes ‘will go pro in something other than sports,’ but little is said about the challenges faced by Black athletes as they deal with coursework and the transition into post-college careers. In this paper, we summarize how the changing contexts of collegiate sports and race relations in higher education",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "More money, more problems: NIL deals’ effect on NCAA booster donations",
+    "type": "article",
+    "year": "2025",
+    "abstract": "PurposeThis paper explores the effect of recent changes in National Collegiate Athletic Association rules permitting student athletes to profit from their name, image and likeness (NIL) on donations to public university athletic departments.Design/methodology/approachUsing Prais–Winsten panel data models, we test whether boosters decreased donations in order to divert funding to pay student athletes.FindingsWe find evidence that NIL deals are complements rather than substitutes for traditional booster donations.Originality/valueThese changes only took place very recently, and no other work to ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "How a possible TikTok ban could impact NIL deals; Instagram could make up for any potential revenue losses for college athletes",
+    "type": "article",
+    "year": "2023",
+    "abstract": "",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "New volleyball brand Avoli announces first NIL deals with college athletes",
+    "type": "article",
+    "year": "2023",
+    "abstract": "",
+    "label": "All topic concepts found",
+    "peer": false
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   1,
+   1,
+   0
+  ]
+ },
+ {
+  "q": "algorithmic bias in facial recognition",
+  "variant": "rules",
+  "ms": 2752,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"algorithmic bias\" AND \"facial recognition\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Facial Recognition Technology in the Global Divide: Why Real-Time Biometric Identification Should Be Banned Beyond the EU AI Act",
+    "type": "article",
+    "year": "2026",
+    "abstract": "This article explores the global divide in regulating facial recognition technology for law enforcement, focusing on tensions between the European Union’s exceptions and the right to non-discrimination. Moving beyond privacy-based critiques, it grounds the analysis in equal treatment guarantees. Using Brazil as a case study, the article argues against reproducing the EU AI Act’s exceptions permitting real-time remote biometric identification by law enforcement. It demonstrates that even technically accurate FRT systems, when deployed within contexts of racialized policing and structural inequa",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "When facial recognition does not ‘recognise’: erroneous identifications and resulting liabilities",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Facial recognition is an artificial intelligence-based technology that, like many other forms of artificial intelligence, suffers from an accuracy deficit. This paper focuses on one particular use of facial recognition, namely identification, both as authentication and as recognition. Despite technological advances, facial recognition technology can still produce erroneous identifications. This paper addresses algorithmic identification failures from an upstream perspective by identifying the main causes of misidentifications (in particular, the probabilistic character of this technology, its ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Facial recognition technology acceptance: a systematic review, cognitive implications, and automation-bias framework",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Facial recognition technologies (FRT) have been widely studied across technical, ethical, and application-specific domains, yet their real-world adoption continues to raise persistent concerns about trust, governance, and responsible use. While prior systematic reviews have examined FRT from algorithmic, bias-related, or adoption-intention perspectives within specific use cases, they largely treat governance as contextual background and conceptualize trust and acceptance as static outcomes. This review addresses this gap by synthesizing the literature through a human–AI collaboration lens, exp",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Facial Recognition in Asylum Seeker Procedures: Criminal Implications of Data Misuse and Profiling",
+    "type": "article",
+    "year": "2026",
+    "abstract": "The current use of facial recognition technology (FRT) for asylum-seeker provides a more reliable method of establishing identity than previous methods; however, FRT also raises broader concerns about individual rights to privacy, data security, and algorithmic bias. This study aims to identify opportunities for criminal law to address these concerns by reviewing existing legal and regulatory frameworks in the European Union (GDPR/EU), the United States (BIPA), Brazil (LGPD), Australia (Privacy Act 1988), and International Refugee Legal Instruments. Using doctrinal legal methods, this study ev",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The algorithmic blind spot: bias, moral status, and the future of robot rights",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Contemporary debates in AI ethics increasingly foreground the prospective moral status of artificial intelligence and the possibility of extending moral or legal rights to artificial agents. While such discussions raise substantive philosophical questions, they often proceed alongside a comparatively limited engagement with the empirically documented harms generated by algorithmic systems already embedded within social, legal, and economic institutions. We conceptualize this asymmetry as an algorithmic blind spot: a discursive-structural pattern in which disproportionate ethical investment in ",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   1,
+   2,
+   1,
+   2,
+   0
+  ]
+ },
+ {
+  "q": "climate anxiety among young people",
+  "variant": "rules",
+  "ms": 3339,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "climate AND anxiety AND adolescent*",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Adolescents’ impairment due to climate anxiety is associated with self-efficacy and behavioral engagement: a cross-sectional analysis in Quebec (Canada)",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Background The current understanding of climate anxiety among adolescents is sparse. This study identifies the characteristics of adolescents living in Quebec (Canada) who experience impairments induced by climate anxiety, who have feelings of self-efficacy and who adopt pro-environment behaviors. It also characterizes the association between climate anxiety, feelings of self-efficacy, and environmental actions. Methods We used a cross-sectional design to analyze data from the COMPASS study on adolescent health. Participants ( n = 45 362) from 113 schools in Quebec (Canada) answered questions ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Feeling anxious and being engaged in a warming world: climate anxiety and adolescents' pro‐environmental behavior",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Background Climate anxiety is increasingly prevalent among adolescents worldwide. Are climate‐anxious adolescents prone to engage in pro‐environmental behavior? Or might the association between climate anxiety and pro‐environmental be curvilinear, such that high levels of climate anxiety become ‘paralyzing’? And do these associations depend on whether adolescents believe that, with effort, the worst impacts of climate change can still be prevented? Methods We addressed these questions in three studies (two preregistered; combined N = 2,211), conducted across two countries. We used cross‐sectio",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Complex psychological responses to climate change: a longitudinal study exploring the interplay between climate change awareness and climate change anxiety among Chinese adolescents",
+    "type": "article",
+    "year": "2025",
+    "abstract": "Background Adolescents are increasingly recognized as important stakeholders in responding to the challenges of climate change, with their psychological responses shaping both mental health outcomes and behavioral choices. However, the intricate relationship between climate change awareness and climate change anxiety among adolescents, as significant manifestations of psychological reactions to climate change, has not yet been thoroughly investigated. Grounded in the Stress and Coping Theory, this study aimed to empirically investigate the bidirectional relationship between climate change awar",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The psychological cost of climate change: anxiety among adolescents and young adults - a cross-sectional study",
+    "type": "article",
+    "year": "2025",
+    "abstract": "Climate change is an undeniable reality that has never before been experienced at such a higher scale of social, physical, and mental levels. Its impact has been studied at environmental, health, economic and sustainable survival levels, but the toll that it takes on the mind, especially among the youth, needs further studies to highlight the impact. Therefore, this study aimed to investigate the impact of climate change on anxiety among adolescents and young adults in the Global South. This questionnaire-based cross-sectional survey was conducted among students from all levels of education in",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The relationships between adolescents' climate anxiety, efficacy beliefs, group dynamics, and pro-environmental behavioral intentions after a group-based environmental education intervention",
+    "type": "article",
+    "year": "2022",
+    "abstract": "The present study examined the relationship between adolescents’ efficacy beliefs (both personal and collective), climate anxiety (as measured with climate worry), group dynamics during an environmental intervention, and behavioral intentions in a setting where their agency was called upon. Data were collected in French-speaking Switzerland during and after four environmental education interventions during which adolescents developed climate-related projects or narratives in small groups. Questionnaire data (N = 150 adolescents) were matched with observations (from group dynamics) and intervie",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "q": "history of redlining and its effects on the racial wealth gap",
+  "variant": "rules",
+  "ms": 1247,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"history redlining\" AND \"racial wealth gap\"",
+  "count": 2,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Recognizing the Wealth–Race Nexus",
+    "type": "book_chapter",
+    "year": "2025",
+    "abstract": "Sometime in 2021, the US economy became capable of making every American household a millionaire if wealth is spread equally. Of course, it is not. Indeed, it is one of the most unequally divided economies in the world. Whereas the typical Black household earns 60 percent of what Whites make, Blacks typically hold less than 10 percent of the wealth of Whites.The tight link between wealth and race that is exhibited in the current racial wealth gap is simply the reflection of our nation’s history. From the earliest beginnings through constitutional protections of chattel slavery, disparate land ",
+    "label": "All topic concepts found",
+    "peer": false
+   },
+   {
+    "title": "URBAN RENEWAL'S GRANDCHILDREN: REMEDYING THE PERSISTENT EFFECTS OF POST-WAR RACE PLANNING",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Urban renewal, a mid-century federal-local redevelopment program that transformed American cities and displaced millions of Black migrants from the South, was a race-conscious government policy responsible for the enduring suppression of Black wealth. Its racial history and character are untold in legal scholarship. This Article argues that the 25-year regime enacted in the Housing Act of 1949 was a response to the Great Migration of Black workers and families to northern, midwestern, and western cities. It was codified to interact with other segregation policies, such as highway construction,",
+    "label": "All topic concepts found",
+    "peer": false
+   }
+  ],
+  "ratings": [
+   1,
+   1
+  ]
+ },
+ {
+  "q": "music therapy for dementia patients",
+  "variant": "rules",
+  "ms": 2549,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"music therapy\" AND \"dementia patients\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Does music therapy enhance behavioral and cognitive function in elderly dementia patients? A systematic review and meta-analysis",
+    "type": "article",
+    "year": "2017",
+    "abstract": "•Demographic aging is a worldwide phenomenon, as rising interest in cycling coincides with an aging population.•Declines in behavioral and cognitive function are part of aging.•Currently, pharmacological therapy is essentially symptomatic and does not have a satisfactory impact on dementia.•There was positive evidence to support the use of music therapy on disease-specific outcomes for patients with dementia.•Music therapy can be used as first-line non-pharmacological treatment. Demographic aging is a worldwide phenomenon, cognitive and behavioral impairment is becoming global burden of nerve ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "How does group music therapy help in combating the anxiety and depression of dementia patients? A quasi-experimental investigation",
+    "type": "article",
+    "year": "2024",
+    "abstract": "This study looked at the effect of group music therapy on dementia patients' levels of feelings of depression and anxiety. Quasi-experiment was carried out (N = 121) in which patients were randomly divided into a control (N = 61) and an experimental group (N = 60). Following a six-weeks, twelve-sessions trial involving both passive and active music therapy, it was discovered that the music group therapy intervention decreased the anxiety and depression levels of dementia patients in the experimental group as compared to the control group, which did not receive any music therapy. It was also no",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Acoustic music therapy on improving cognitive function and sleep quality in elderly dementia patients",
+    "type": "article",
+    "year": "2023",
+    "abstract": "Background: Acoustic music therapy has been shown to have an impact on reducing anxiety and stress, but not specifically on various stages of dementia and sleep quality in the elderly. This research could explore how acoustic music therapy can provide similar benefits in elderly patients with dementia, where sleep and quality of life problems are often primary concerns. Objective: To determine the effect of acoustic music therapy on improving cognitive function and sleep quality in elderly dementia patients. Method: A pre-experimental design employing a one-group pretest-posttest without a con",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Effects of Music Therapy on the Care Burden of In-Home Caregivers and Physiological Parameters of Their In-Home Dementia Patients: A Randomized Controlled Trial",
+    "type": "article",
+    "year": "2019",
+    "abstract": "Objectives: This study was conducted to explore the effects of classical Turkish music therapy on both the caregiver burden and physiological parameters of patients with dementia. Methods: The study was a randomized controlled trial. It was conducted with dementia patients (n = 75) and their caregivers who were registered at in-home care services of the General Secretariat of the Association of Public Hospitals in Ordu. The study sample consisted of 30 control and 30 music group patients and their caregivers who satisfied the inclusion criteria for the study conducted between April 2015 and Ap",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Music Therapy with Ethnic Music for Dementia Patients",
+    "type": "article",
+    "year": "2012",
+    "abstract": "Summary Background Dementia is already critical issues in the world when the society experiences super-aging. This situation requires establishment of rehabilitation methods for relieving symptoms of the patients. We have done research based on our assumption that most effective music therapy differs from culture, because music is dependent on cultural context. Here, we propose a hypothesis that the Japanese music gives better effects to Japanese patients than Classical music. Methods In this study, we collected 87 volunteers including 79 dementia patients, 5 people 75). We let the volunteers ",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "q": "the Federalist Papers and the debate over a strong central government",
+  "variant": "rules",
+  "ms": 1319,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"Federalist Papers\" AND (debate AND over AND strong AND central AND government)",
+  "count": 0,
+  "failures": 0,
+  "top": [],
+  "ratings": []
+ },
+ {
+  "q": "should social media platforms be regulated like public utilities",
+  "variant": "rules",
+  "ms": 864,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "should AND \"social media\" AND (platforms AND regulated AND like AND public AND utilities)",
+  "count": 0,
+  "failures": 0,
+  "top": [],
+  "ratings": []
+ },
+ {
+  "q": "Toni Morrison and the theme of memory",
+  "variant": "rules",
+  "ms": 2364,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"Toni Morrison\" AND \"theme memory\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Fictive Strategies and Cinematic Representations in Toni Morrison's Beloved: Postcolonial Theory/Postcolonial Text",
+    "type": "article",
+    "year": "1995",
+    "abstract": "Toni Morrison's \"Beloved\" balances between traditional slave narratives and relies on the inclusion of themes omitted from the conventions of a slave narrative and the \"cinematic\" quality of the text. The novel is densely textured, visual and cinematic in its onrush of simultaneous images and memories.",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Body Marks of the Past in Toni Morrison’s A Mercy and Home",
+    "type": "article",
+    "year": "2021",
+    "abstract": "Toni Morrison’s project of reimagining individual memories of the African American past has been immortalized by the image of the chokecherry tree of scar tissue on Sethe’s back in Beloved. Invisible and dumb for Sethe, the scars have to be faced and interpreted with the help of others in order to process traumatic memories of the slave past. The image questions a presumed opposition between objects of memory as separate from subjects of memory, as the wound, the supposed object is located in the body of the subject, Sethe. Body marks of the past also appear in Morrison’s novels after 2003, wh",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The legacy of rememoration: traces and memory vestiges in the Americas/O legado da rememoracao: tracos e vestigios memoriais nas Americas",
+    "type": "article",
+    "year": "2013",
+    "abstract": "Based on the theme of traces and memory as family heritage, individual trajectory, and historical legacy, this work analyzes novels by contemporary women writers from the Americas with a view to articulating the concept of rememoration by Toni Morrison and the theorizations about the notion of trace by Freud, Ricouer, Benjamin, Derrida and Spivak. Keywords: Memory, trace, mark, vestiges. A luz da tematica dos rastros e da memoria como heranca familiar, percurso individual e legado historico, o trabalho discute romances de escritoras contemporaneas das Americas, a partir da articulacao do conce",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "O legado da rememoração: traços e vestígios memoriais nas américas",
+    "type": "article",
+    "year": "2013",
+    "abstract": "À luz da temática dos rastros e da memória como herança familiar, percurso individual e legado histórico, o trabalho discute romances de escritoras contemporâneas das Américas, a partir da articulação do conceito de \"rememoração\" de Toni Morrison e das teorizações sobre a noção de traço e o rastro, segundo Freud, Ricouer, Benjamin, Derrida e Spivak. A la luz del tema de los rastros y de la memoria como herencia familiar, recorrido individual y legado histórico, el trabajo analiza novelas de escritoras contemporáneas de las Américas, a partir de la articulación del concepto de \"rememoración\" de",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "“I Saw Things I Imagined”: Speculative Modalities of Black Trans Feminism in Janelle Monáe’s Dirty Computer and Solange’s When I Get Home",
+    "type": "article",
+    "year": "2025",
+    "abstract": "Abstract Attending to the canon of Black speculative works, Janelle Monáe's 2018 “emotion picture” Dirty Computer and Solange's 2019 visual album When I Get Home have been lauded as critical moments in the recent tradition of Black women's writing/cultural production. Utilizing Toni Morrison's Beloved (1987), particularly conceptualizing the novel's notion of rememory/rememories as engaging the speculative fiction genre and producing a tool of Black trans feminist world-making seen in recent feminist Afrofuturist projects, this article stretches across racialized gender and genre to consider D",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   2,
+   2,
+   1
+  ]
+ },
+ {
+  "q": "microfinance and women's empowerment in South Asia",
+  "variant": "rules",
+  "ms": 2271,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "microfinance AND \"women's empowerment\" AND \"South Asia\"",
+  "count": 8,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Improving women's nutrition imperative for rapid reduction of childhood stunting in South Asia: coupling of nutrition specific interventions with nutrition sensitive measures essential",
+    "type": "article",
+    "year": "2016",
+    "abstract": "The implications of direct nutrition interventions on women's nutrition, birth outcome and stunting rates in children in South Asia are indisputable and well documented. In the last decade, a number of studies present evidence of the role of non‐nutritional factors impacting on women's nutrition, birth outcome, caring practices and nutritional status of children. The implications of various dimensions of women's empowerment and gender inequality on child stunting is being increasingly recognised. Evidence reveals the crucial role of early age of marriage and conception, poor secondary educatio",
+    "label": "Topic match · scope needs checking",
+    "peer": true
+   },
+   {
+    "title": "A scoping review of theoretical and measurement approaches to women’s empowerment in low-and middle-income countries’ capacity-building interventions",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Women's empowerment is critical for achieving gender equality and sustainable development in low-and-middle-income countries (LMICs). Capacity-building interventions, such as vocational training, microfinance, and digital literacy programmes, are frequently employed to foster empowerment. However, wide variation exists in how empowerment is defined, theorised, and measured, limiting comparability across studies. This scoping review mapped the conceptual foundations, theoretical frameworks, and measurement approaches used in capacity-building interventions for women entrepreneurs in LMICs. The ",
+    "label": "Topic match · scope needs checking",
+    "peer": true
+   },
+   {
+    "title": "A scoping review of women’s capacity-building initiatives in low- and middle-income countries examining design, implementation, and barriers for sustainable development",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Introduction Gender inequality continues to limit women’s economic participation and health outcomes in low- and middle-income countries (LMICs), undermining progress toward the Sustainable Development Goals (SDGs), particularly SDG 5 (Gender Equality) and SDG 3 (Good Health and Well-being). Capacity-building interventions—such as financial, vocational, digital, and community-based programs—are widely promoted to advance women’s empowerment; yet evidence on their design, delivery, and sustainability remains fragmented. This review mapped existing intervention types, implementation strategies, ",
+    "label": "Topic match · scope needs checking",
+    "peer": true
+   },
+   {
+    "title": "The Effect of Microcredit on Women's Control over Household Spending in Developing Countries: A Systematic Review",
+    "type": "article",
+    "year": "2014",
+    "abstract": "BACKGROUND Over the past three decades, microfinance activities have spread across the globe, reaching tens of millions of poor households with tailored financial services. Microfinance can best be described as a field of intervention rather than a particular instrument. Initially, microfinance usually meant microcredit for working capital and very small investments, but increasingly it has been broadened to include savings/deposits, a limited range of micro-insurance and payment services (including micro-leasing) as well as a somewhat broader range of credit products for more substantial inve",
+    "label": "Topic match · scope needs checking",
+    "peer": true
+   },
+   {
+    "title": "The Effects of Microcredit on Women's Control over Household Spending in Developing Countries: A Systematic Review and Meta‐analysis",
+    "type": "article",
+    "year": "2014",
+    "abstract": "Executive summary “The main objective of this Campbell systematic review was to provide a systematic review of the evidence on the effects of microcredit on women's control over household spending in developing countries. More specifically, we aimed to answer two related research questions: 1) what does the impact evaluative evidence say about the causal relationship between microcredit and specific dimensions of women's empowerment (women's control over household spending); and 2) what are the mechanisms which mediate this relationship. We prioritise depth of analysis over breadth, thus the s",
+    "label": "Topic match · scope needs checking",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   0,
+   1,
+   1,
+   1,
+   1
+  ]
+ },
+ {
+  "q": "ocean acidification effects on coral reefs",
+  "variant": "rules",
+  "ms": 2201,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"ocean acidification\" AND \"coral reefs\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Simulation of global ocean acidification and chemical habitats of shallow- and cold-water coral reefs",
+    "type": "article",
+    "year": "2014",
+    "abstract": "Using the UVic Earth System Model, this study simulated the change of seawater chemistry and analyzed the chemical habitat surrounding shallow- and cold-water coral reefs from the year 1800 to 2300 employing RCP2.6, RCP4.5, RCP6.0, and RCP8.5 scenarios. The model results showed that the global ocean will continue to absorb atmospheric CO2. Global mean surface ocean temperature will rise 1.1-2.8 K at the end of the 21st century across RCP scenarios. Meanwhile, the global mean surface ocean pH will drop 0.14--0.42 and the ocean surface mean con- centration of carbonate will decrease 20%--51% acr",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Coral reefs modify their seawater carbon chemistry – implications for impacts of ocean acidification",
+    "type": "article",
+    "year": "2011",
+    "abstract": "Reviews suggest that that the biogeochemical threshold for sustained coral reef growth will be reached during this century due to ocean acidification caused by increased uptake of atmospheric CO2. Projections of ocean acidification, however, are based on air‐sea fluxes in the open ocean, and not for shallow‐water systems such as coral reefs. Like the open ocean, reef waters are subject to the chemical forcing of increasing atmospheric pCO2. However, for reefs with long water residence times, we illustrate that benthic carbon fluxes can drive spatial variation in pH, pCO2 and aragonite saturati",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Coral Reefs Under Rapid Climate Change and Ocean Acidification",
+    "type": "article",
+    "year": "2007",
+    "abstract": "Atmospheric carbon dioxide concentration is expected to exceed 500 parts per million and global temperatures to rise by at least 2°C by 2050 to 2100, values that significantly exceed those of at least the past 420,000 years during which most extant marine organisms evolved. Under conditions expected in the 21st century, global warming and ocean acidification will compromise carbonate accretion, with corals becoming increasingly rare on reef systems. The result will be less diverse reef communities and carbonate reef structures that fail to be maintained. Climate change also exacerbates local s",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Coral Reefs and Ocean Acidification",
+    "type": "article",
+    "year": "2009",
+    "abstract": "Coral reefs were one of the first ecosystems to be recognized as vulnerable to ocean acidification. To date, most scientific investigations into the effects of ocean acidification on coral reefs have been related to the reefs' unique ability to produce voluminous amounts of calcium carbonate. It has been estimated that the main reef-building organisms, corals and calcifying macroalgae, will calcify 10–50% less relative to pre-industrial rates by the middle of this century. This decreased calcification is likely to affect their ability to function within the ecosystem and will almost certainly ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Opposite latitudinal gradients in projected ocean acidification and bleaching impacts on coral reefs",
+    "type": "article",
+    "year": "2014",
+    "abstract": "Coral reefs and the services they provide are seriously threatened by ocean acidification and climate change impacts like coral bleaching. Here, we present updated global projections for these key threats to coral reefs based on ensembles of IPCC AR5 climate models using the new Representative Concentration Pathway (RCP) experiments. For all tropical reef locations, we project absolute and percentage changes in aragonite saturation state (Ωarag) for the period between 2006 and the onset of annual severe bleaching (thermal stress >8 degree heating weeks); a point at which it is difficult to bel",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   1,
+   1,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "q": "why do people believe conspiracy theories",
+  "variant": "rules",
+  "ms": 1774,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "(people AND believe AND conspiracy AND theories)",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Why do people believe COVID-19 conspiracy theories?",
+    "type": "article",
+    "year": "2020",
+    "abstract": "As conspiracy theories about COVID-19 take root in the United States, understanding the psychological foundations of conspiracy beliefs is increasingly critical. Our research shows that beliefs in two popular variants of COVID-19 conspiracy theory are the joint product of the psychological predispositions 1) to reject information coming from experts and other authority figures and 2) to view major events as the product of conspiracies, as well as partisan and ideological motivations. The psychological foundations of conspiracy beliefs have implications for the development of strategies designe",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The genesis of a conspiracy theory: Why do people believe in scientific conspiracy theories and how do they spread?",
+    "type": "article",
+    "year": "2018",
+    "abstract": "Graphical Abstract Conspiracy theories about science can do real damage if they affect matters of health and disease. Understanding the psychology of a conspiracy theorist along with openness about how scientists come to conclusions could help to combat harmful theories.",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "What drives people to believe in Zika conspiracy theories?",
+    "type": "article",
+    "year": "2019",
+    "abstract": "Conspiracy theories and other pseudo-scientific claims about the Zika virus have been prominent on social media. To what extent are the public concerned about the virus, and to what extent have the public adopted Zika conspiracy theories? Using data from the 2016 Cooperative Congressional Election Study, we show that a majority of Americans are not concerned about the Zika virus, but approximately one in five Americans believes in at least one Zika-related conspiracy theory. The most widely believed is that the virus is caused by genetically modified mosquitoes. We find that elevated levels of",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Do People Sincerely Believe Conspiracy Theories That They Endorse?",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Survey data are widely used to estimate the prevalence of belief in conspiracy theories and to test hypotheses about the correlates, causes, and consequences of these beliefs. However, concerns have been raised about equating endorsements of conspiracy theories with sincere belief in them. In a survey of 1,044 Australians, we found that endorsement of six pre-existing conspiracy theories ranged from 10% to 19%, and that 7% of participants endorsed two that were clearly contradictory together. In addition, 10% of participants endorsed a highly bizarre raccoon army conspiracy theory that we inve",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Characteristics of people who believe in conspiracy theories: Personality disorder traits, paranormal beliefs, and political ideologies",
+    "type": "article",
+    "year": "2026",
+    "abstract": "The present study investigated personality disorder traits, paranormal beliefs, and political ideologies associated with people who believe in conspiracy theories. Through Amazon Mechanical Turk, 133 adults (M = 45.16 years, range = 23–65 years, 84 women, 46 men, three not stated) completed two conspiracy measures: A newly constructed Conspiracy Ideational Scale and the Generic Conspiracist Beliefs Scale. They also completed the Coolidge Axis II Inventory, Revised Paranormal Belief Scale, and Political Beliefs Scale. It was found that personality disorder traits weakly predicted conspiracy the",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   1,
+   1,
+   2
+  ]
+ },
+ {
+  "q": "remote learning during COVID and student achievement gaps",
+  "variant": "rules",
+  "ms": 976,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"remote learning\" AND COVID AND \"student achievement gaps\"",
+  "count": 0,
+  "failures": 0,
+  "top": [],
+  "ratings": []
+ },
+ {
+  "q": "nuclear energy vs renewables for decarbonization",
+  "variant": "rules",
+  "ms": 2438,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "(\"nuclear energy\" OR renewables) AND decarbonization",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Incremental techno-economic benefits of interregional generation-grid-load-storage coordination in China's power system decarbonization: A long-term evolutionary and provincial heterogeneity analysis",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Interregional generation-grid-load-storage coordination offers critical pathways for the economic decarbonization of power systems. However, decentralized regional decarbonization decisions may crowd out the interregional coordination optimization space through suboptimal technology lock-in. This study develops a multiperiod optimization model for interprovincial generation-grid-load-storage coordination and employs provincial self-reliant decarbonization scenarios as a counterfactual comparative baseline to reveal the long-term techno-economic benefits of interprovincial generation-grid-load-",
+    "label": "Comparison indicated · verify design",
+    "peer": true
+   },
+   {
+    "title": "Positive Externalities of Decarbonization: Quantifying the Full Potential of Avoided Deaths and Displaced Carbon Emissions from Renewable Energy and Nuclear Power",
+    "type": "article",
+    "year": "2021",
+    "abstract": "Earlier research in this journal suggests that nuclear power systems have prevented 1.84 million air pollution-related deaths from 1971 to 2009 and could save an additional 7 million deaths by 2050. Building on that work, we adopt a broader lens that looks at renewable energy and nuclear power as well as a greater range of energy pathways. We examine via 10 hypothetical scenarios and two time frames the varying impact of different technology configurations on the full potential of avoided carbon emissions and avoided mortality across China, the European Union, India, and the United States. Fro",
+    "label": "Topic match · comparison not established",
+    "peer": true
+   },
+   {
+    "title": "Flexible nuclear power and fluctuating renewables? — An analysis for decarbonized multi-vector energy systems",
+    "type": "article",
+    "year": "2025",
+    "abstract": "Many governments consider new nuclear power plants to promote decarbonization. On the one hand, dispatchable nuclear plants can complement fluctuating generation from wind and PV. On the other hand, escalating construction costs and times raise economic concerns. This paper investigates the economic threshold at which nuclear plants are an efficient decarbonization option. Building on an extensive review of construction costs and times, we apply a detailed model of the European energy system to analyze the cost-efficient share of nuclear power in fully decarbonized energy systems in 2040. Our ",
+    "label": "Combined approach · comparison not established",
+    "peer": true
+   },
+   {
+    "title": "Assessing the decarbonization of electricity generation in major emitting countries by 2030 and 2050: Transition to a high share renewable energy mix",
+    "type": "article",
+    "year": "2024",
+    "abstract": "The urgent need to mitigate the severe environmental impacts of climate change necessitates a transition to a low-carbon energy infrastructure, crucial for decarbonization and achieving global sustainability goals. This study investigates the decarbonization trajectories of five major economies and significant carbon emitters: the United States of America (USA), China, Japan, Germany, and India. We focus on evaluating two decarbonization scenarios for power generation. Scenario 1 explores the use of a generic storage system for reducing critical excess electricity production (CEEP), maintainin",
+    "label": "Topic match · comparison not established",
+    "peer": true
+   },
+   {
+    "title": "Supercapacitors as Key Enablers of Decarbonization and Renewable Energy Expansion in Poland",
+    "type": "article",
+    "year": "2024",
+    "abstract": "Decarbonization and the replacement of coal-fired power plants with solar and wind farms require adequately large energy storage facilities. This is especially important in countries such as Poland, which still do not have a nuclear power plant. Supercapacitors represent a new generation of energy storage. The paper demonstrates that the use of supercapacitors presents an opportunity to increase the share of solar and wind power plants in the energy market. Furthermore, there is no need to replace all coal plants (that are being gradually decommissioned) with nuclear ones. The paper underscore",
+    "label": "Topic match · comparison not established",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   1,
+   2,
+   2,
+   1,
+   1
+  ]
+ },
+ {
+  "q": "the ethics of CRISPR gene editing in humans",
+  "variant": "rules",
+  "ms": 2705,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "(ethics AND CRISPR AND gene AND editing) AND humans",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "CRISPR/Cas9-mediated Editing of Human ?-globin Gene in Human Cells: A Commentary on the Research Ethics",
+    "type": "article",
+    "year": "2015",
+    "abstract": "Recently, Chinese researchers published the results of their research using a gene-editing technology on abnormal human zygotes. The research team believes this research has prospective clinical application, viz., for gene therapy for ?-thalassemia, a white blood cell disorder, and plan to persist with further studies, despite technical problems in this experiment. The research has elicited international criticism from both scientific and bioethics domains, because it innovates beyond the current global consensus against human germ line modification. This paper comments on some ethical issues ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Beyond Mendelian Genetics: Anticipatory Biomedical Ethics and Policy Implications for the Use of CRISPR Together with Gene Drive in Humans",
+    "type": "article",
+    "year": "2020",
+    "abstract": "Clustered regularly interspaced short palindromic repeats (CRISPR) genome editing has already reinvented the direction of genetic and stem cell research. For more complex diseases it allows scientists to simultaneously create multiple genetic changes to a single cell. Technologies for correcting multiple mutations in an in vivo system are already in development. On the surface, the advent and use of gene editing technologies is a powerful tool to reduce human suffering by eradicating complex disease that has a genetic etiology. Gene drives are CRISPR mediated alterations to genes that allow th",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Ethics of Human Genome Editing",
+    "type": "article",
+    "year": "2019",
+    "abstract": "Advances in human genome editing, in particular the development of the clustered regularly interspaced palindromic repeats (CRISPR) Cas9 method, have led to increasing concerns about the ethics of editing the human genome. In response, the US National Academy of Sciences and the National Academy of Medicine constituted a multidisciplinary, international committee to review the current status and make recommendations. I was a member of that committee, and the core of this review reflects the committee's conclusions. The committee's report, issued in February 2017, recommends the application of ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Realigning gene editing with clinical research ethics: What the \"CRISPR Twins\" debacle means for Chinese and international research ethics governance",
+    "type": "article",
+    "year": "2019",
+    "abstract": "The announcement of the \"CRISPR babies\" reignited the debate surrounding the ethical, legal and social implications of germline gene editing. Despite having been conducted in the context of a clinical trial, Dr. Jiankui He's research appears to have violated both Chinese regulations and standard ethical procedures, as well as internationally accepted research and bioethical standards. It is within this context that our commentary surrounding the question of the enforceability of Chinese regulations in such a case. We argue that Chinese regulations do align with internationally accepted standar",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The Ethics of Human Embryo Editing via CRISPR-Cas9 Technology: A Systematic Review of Ethical Arguments, Reasons, and Concerns",
+    "type": "article",
+    "year": "2025",
+    "abstract": "The possibility of editing the genomes of human embryos has generated significant discussion and interest as a matter of science and ethics. While it holds significant promise to prevent or treat disease, research on and potential clinical applications of human embryo editing also raise ethical, regulatory, and safety concerns. This systematic review included 223 publications to identify the ethical arguments, reasons, and concerns that have been offered for and against the editing of human embryos using CRISPR-Cas9 technology. We identified six major themes: risk/harm; potential benefit; over",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "q": "minimum wage increases and small businesses, but not fast food",
+  "variant": "rules",
+  "ms": 1970,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"minimum wage\" AND \"small businesses\" AND NOT \"fast food\"",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Implementation of The Provision of Wages Below the Minimum Wage Provisions in Micro Enterprises and Small Businesses",
+    "type": "article",
+    "year": "2022",
+    "abstract": "This research is based on the application of wages below the minimum wage for businesses that meet the criteria for micro and small businesses. As it is known that the provisions of the district and city minimum wages are a form of safety net for the economic life of Indonesian workers. However, often a common problem for micro and small businesses is that they cannot meet the minimum wage requirements because the economic capacity of their own businesses is different from that of large businesses. Through the Employment Creation Act, the government finally made changes to the labor cluster by",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Effects of minimum wage legislation: some evidence from small enterprises in the UK",
+    "type": "article",
+    "year": "2005",
+    "abstract": "ABSTRACT IN ENGLISH: This article explores the consequences of minimum wage legislation on small businesses, focusing specifically on the case of the equestrian sector in the UK. This was done by means of a survey of employers, rather than trying to discern impacts from existing national survey data. The survey revealed that, contrary to conventional wisdom regarding the negative effects of minimum wages on smaller firms, a sizeable proportion of respondents were favourably inclined to such measures. This would reflect the diversity of the small business sector, and highlights the need for fur",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "The impact of minimum pay implementation on small businesses operating cost and sustainability: A case of service business",
+    "type": "article",
+    "year": "2017",
+    "abstract": "The implementation of minimum wage requirement in Malaysia beginning mid 2016 seems to impact both employees and employers in different ways. While this implementation could increase household income and claimed to boost employees’ productivity, employers or business operators, on the other hand are experiencing stringent effect on their business operating cost. The effect is more significant for small business operators, including the childcare centers. Childcare industry operates in the service sector, which represents the main contributor of Malaysian SMEs. Unfortunately for the industry, t",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Minimum Wage and Job Mobility in Peru",
+    "type": "article",
+    "year": "2014",
+    "abstract": "We study the effects of the minimum wage over employment and income in Peru by considering a monthly database that captures seven minimum wage changes registered between 2002 and 2011. We estimate that about 1 million workers earn an income by main occupation in the neighborhood of the minimum wage. Findings show that the minimum wage-income elasticity is statistically significant; the evidence also suggests that those who receive low incomes and those working in small businesses are the most affected by increases in the minimum wage. Employment effects are monotonically decreasing in absolute",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "How do small businesses in CA survive the highest minimum wage in the U.S.?",
+    "type": "article",
+    "year": "2024",
+    "abstract": "West Hollywood's $19.08/hour wage – resulting from a law passed in 2021 mandating that wage increases be tied to the rate of inflation – is getting pushback from small business owners who want a moratorium on increases.",
+    "label": "All topic concepts found",
+    "peer": false
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   2,
+   1,
+   2
+  ]
+ },
+ {
+  "q": "Find the book Sapiens by Yuval Noah Harari",
+  "variant": "rules",
+  "ms": 786,
+  "mode": "books",
+  "aiUsed": false,
+  "query": "\"Sapiens\" AND \"Yuval Noah Harari\"",
+  "count": 5,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Sapiens : a brief history of humankind",
+    "type": "book",
+    "year": "2015",
+    "abstract": "\"From a renowned historian comes a groundbreaking narrative of humanity's creation and evolution--a #1 international bestseller--that explores the ways in which biology and history have defined us and enhanced our understanding of what it means to be \"human.\" One hundred thousand years ago, at least six different species of humans inhabited Earth. Yet today there is only one--homo sapiens. What happened to the others? And what may happen to us? Most books about the history of humanity pursue either a historical or a biological approach, but Dr. Yuval Noah Harari breaks the mold with this highl",
+    "label": "Related work · requested item not matched",
+    "peer": false
+   },
+   {
+    "title": "Sapiens : a graphic history",
+    "type": "book",
+    "year": "2020",
+    "abstract": "In the first volume of the full-color illustrated adaptation of his groundbreaking book, renowned historian Yuval Harari tells the story of humankind's creation and evolution, exploring the ways in which biology and history have defined us and enhanced our understanding of what it means to be 'human'. The second volume focuses on the Agricultural Revolution -- when humans fell into a trap we've yet to escape: working harder and harder with diminishing returns.",
+    "label": "Related work · requested item not matched",
+    "peer": false
+   },
+   {
+    "title": "Sapiens A brief history of humankind.",
+    "type": "audio",
+    "year": "2017",
+    "abstract": "#1 New York Times Bestseller New York Times Readers' Pick: Top 100 Books of the 21 st Century The Summer Reading Pick for President Barack Obama and Bill Gates Official U.S. edition From renowned historian Yuval Noah Harari comes a groundbreaking narrative of humanity's creation and evolution—a #1 international bestseller—that explores the ways in which biology and history have defined us and enhanced our understanding of what it means to be \"human.\" One hundred thousand years ago, at least six different species of humans inhabited Earth. Yet today there is only one—homo sapiens. What happened",
+    "label": "Related work · requested item not matched",
+    "peer": false
+   },
+   {
+    "title": "Nexus : a brief history of information networks from the Stone Age to AI",
+    "type": "book",
+    "year": "2024",
+    "abstract": "\"For the last 100,000 years, we Sapiens have accumulated enormous power. But despite all our discoveries, inventions, and conquests, we now find ourselves in an existential crisis. The world is on the verge of ecological collapse. Misinformation abounds. And we are rushing headlong into the age of AI--a new information network that threatens to annihilate us. For all that we have accomplished, why are we so self-destructive? Nexus looks through the long lens of human history to consider how the flow of information has shaped us, and our world. Taking us from the Stone Age, through the canoniza",
+    "label": "Related work · requested item not matched",
+    "peer": false
+   },
+   {
+    "title": "Homo deus A brief history of tomorrow.",
+    "type": "audio",
+    "year": "2017",
+    "abstract": "Yuval Noah Harari, author of the critically-acclaimed New York Times bestseller and international phenomenon Sapiens, returns with an equally original, compelling, and provocative book, turning his focus toward humanity's future, and our quest to upgrade humans into gods. Over the past century humankind has managed to do the impossible and rein in famine, plague, and war. This may seem hard to accept, but, as Harari explains in his trademark style—thorough, yet riveting—famine, plague and war have been transformed from incomprehensible and uncontrollable forces of nature into manageable challe",
+    "label": "Related work · requested item not matched",
+    "peer": false
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   2,
+   0,
+   0
+  ]
+ },
+ {
+  "q": "police body cameras and use of force",
+  "variant": "rules",
+  "ms": 1867,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"police body cameras\" AND force",
+  "count": 10,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Police Body Cameras and Us: Public Perceptions of the Justification of the Police Use of Force in the Body Camera Era",
+    "type": "article",
+    "year": "2017",
+    "abstract": "Using an experimental design, this research looked at the medium of presentation (text, audio, video) through which members of the public were exposed to a controversial police shooting. Furthermore, this research tested whether the officer's immediate reaction to the shooting (crying, talking, or calling his attorney) across mediums of presentation impacted the public's perception of justification. We found that the medium of presentation did matter; those who were exposed to the shooting through video were significantly more likely to perceive of the shooting as unjustified when compared to ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "POLICE BODY CAMERAS IN LARGE POLICE DEPARTMENTS",
+    "type": "article",
+    "year": "2016",
+    "abstract": "Body Worn Cameras are spreading worldwide, under the assumption that police performance, conduct, accountability, and legitimacy, in the eyes of the public, are enhanced as a result of using these devices. In addition, suspects' demeanor during police-public engagements is hypothesized to change as a result of the video-recording of the encounter. For both parties—officers and suspects—the theoretical mechanism that underpins these behavioral changes is deterrence theory, self-awareness theory, or both. Yet evidence on the efficacy of Body Worn Cameras remains largely anecdotal, with only one ",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Police Body Cameras and Professional Responsibility: Public Records and Private Evidence",
+    "type": "article",
+    "year": "2017",
+    "abstract": "Extensive media coverage has focused attention on the disproportionate frequency and severity of police use of force against black communities in the United States. Video documentation captured by public officials and private citizens aided by the ubiquity of cell phones has made this violence inescapable, enabling conversations of system-wide problems within a mainstream context. Video documentation has been posed as a means of increasing transparency on the part of police and the district attorneys tasked with the decision of whether or not a police shooting requires the indictment of an off",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Body-worn cameras for police accountability: Opportunities and risks",
+    "type": "article",
+    "year": "2015",
+    "abstract": "The use of body-worn cameras by police forces around the world is spreading quickly. The resulting mobile and ubiquitous surveillance is often marketed as an instrument for accountability and an effective way of reducing violence, discrimination or corruption. It also involves remarkable potential for intrusion into the privacy of both individuals and police agents. We analyse the deployment of police body-worn cameras in five countries, investigate their suitability as an accountability tool given the associated privacy threats, and discuss the societal impact of their deployment as well as t",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Key findings in forensic pathology assessment of deaths following conducted energy weapon exposure – an overview",
+    "type": "article",
+    "year": "2026",
+    "abstract": "Conducted Energy Devices (CEDs) or Conducted Energy Weapons (CEWs) are devices supplied to police and military forces worldwide, developed as a less-lethal option to disarm and immobilize individuals in dangerous situations. Their use in countries where they have been extensively adopted has reduced mortality during arrests by two-thirds and emergency medical interventions related to police actions by 80 %. Although adverse effects and complications from CEW application are very rare considering their widespread use, ocular, cranioencephalic, cutaneous, and pulmonary injuries have been reporte",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   1,
+   1,
+   1,
+   0
+  ]
+ },
+ {
+  "q": "how does sleep deprivation affect athletic performance in college athletes",
+  "variant": "rules",
+  "ms": 1230,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "\"sleep deprivation\" AND \"athletic performance\" AND \"college athletes\"",
+  "count": 6,
+  "failures": 0,
+  "top": [
+   {
+    "title": "Sleep Deprivation and Its Contribution to Mood and Performance Deterioration in College Athletes",
+    "type": "article",
+    "year": "2019",
+    "abstract": "Abstract Sleep deprivation is very common among collegiate student athletes, resulting in impacts on mood, physiology, and performance. There are multifactorial contributions to sleep deprivation, but resulting alterations in sleep architecture explain impacts on learning, vigilance, mood, and athletic performance. Recognition of the physical impacts is key. Clinical inquiry is warranted. Medication can be helpful short term but should be used with caution due to effects on sleep cycle and the potential for addiction. Education is an effective intervention to increase sleep time, improve mood,",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Longitudinal assessment of objective sleep and power output in Division I collegiate baseball athletes",
+    "type": "article",
+    "year": "2025",
+    "abstract": "Many college athletes experience insufficient sleep due to athletic, academic, and social constraints. While prior studies have observed cross-sectional associations between poor sleep and performance in athletes, few studies have longitudinally assessed performance variations in relation to sleep measures. We investigated whether objectively measured sleep assessments were associated with peak power output improvements during a fall season of Division I collegiate baseball players. Peak power output was assessed weekly for 12weeks in 24 male collegiate baseball players (age: 21±1years). Objec",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "From pillow to podium: a review on understanding sleep for elite athletes",
+    "type": "article",
+    "year": "2018",
+    "abstract": "Sleep is considered vital to human health and well-being, and is critical to physiological and cognitive functioning. Elite athletes experience high training and competition demands, and are often exposed to various factors, situations, and environments that can cause sleep impairments. Previous research has shown that athletes commonly experience sleep loss in the lead up to and following competition, which could have significant impacts on their preparation, performance, and recovery. In particular, the results from previous research show significant reductions in total sleep time (~1:40 h:m",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Relationship Between Sleep Quality, Wellness, and Training Load in Division I Women's Lacrosse Athletes",
+    "type": "article",
+    "year": "2023",
+    "abstract": "Background: Evaluating sleep quality among athletes is critical due to the adverse effects of sleep deprivation, including reduced capacity to think and react quickly, reduced communication skills, and reduced athletic performance. Examining the role of chronotype in athletic performance provides insight to optimize training, performance, and recovery. The purpose of this study was to evaluate differences by chronotype preference for training volume, sleep quality, and wellness in collegiate female lacrosse athletes. Methods: Athletes (n=14) completed a survey to identify their chronotype: mor",
+    "label": "All topic concepts found",
+    "peer": true
+   },
+   {
+    "title": "Establishing Comprehensive Normative Values of Objective Sleep Quantity and Quality in Collegiate Athletes",
+    "type": "article",
+    "year": "2025",
+    "abstract": "AbstractVatne, E, Vatne, M, Cencer, D, Kraemer, WJ, Saenz, C, Stone, J, Merrigan, J, Pulvermacher, K, Robinson, B, Dial, M, Jones, P, Montalbano, A, Carpenter, T, and Hagen, J. Establishing comprehensive normative values of objective sleep quantity and quality in collegiate athletes. J Strength Cond Res 39(12): 1284-1291, 2025-Collegiate athletes frequently experience insufficient sleep, adversely affecting physical performance and recovery. Historically, sleep studies primarily relied on subjective data and small sample sizes with most subjects being male athletes, which limits generalizabili",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2,
+   2,
+   1,
+   1,
+   1
+  ]
+ },
+ {
+  "q": "medieval plague and religious responses",
+  "variant": "rules",
+  "ms": 813,
+  "mode": "scholarly",
+  "aiUsed": false,
+  "query": "medieval AND plague AND \"religious responses\"",
+  "count": 1,
+  "failures": 0,
+  "top": [
+   {
+    "title": "From Purification to Protection: Plague Response in Late Medieval Valencia",
+    "type": "article",
+    "year": "2020",
+    "abstract": "On the morning of 6 July 1395, the city council of Valencia met in the council chamber. Plague had been in the city since March, and despite the council's best efforts, the death toll continued to rise. This morning, the councilmen authorized several new measures to combat the epidemic. They organized charitable donations \"to placate divine anger,\" and a procession to the chapel of Our Lady of Mercy to \"beseech divine mercy for the said plague.\" Immediately thereafter, they authorized funds for the removal of \"dead dogs, cats, rats, and other dead things that people throw in the streets and sq",
+    "label": "All topic concepts found",
+    "peer": true
+   }
+  ],
+  "ratings": [
+   2
+  ]
+ }
+]

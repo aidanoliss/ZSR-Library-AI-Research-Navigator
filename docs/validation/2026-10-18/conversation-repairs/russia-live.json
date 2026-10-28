@@ -1,0 +1,1065 @@
+{
+  "format": "zsr-search-quality-review",
+  "version": 1,
+  "label": "Live provider capture",
+  "capturedAt": "2026-10-19T00:42:47.038Z",
+  "live": true,
+  "instructions": "Grade each candidate judgment as useful, not-useful, or uncertain after inspecting the source. Leave null until reviewed. Candidate ranks 1–5 are the displayed top five; additional candidates support ranking review. Metadata and rank are not human judgments.",
+  "cases": [
+    {
+      "id": "russia-sanctions-outcomes",
+      "query": "Examples of Russia having sanctions used against them and the result",
+      "reviewPrompt": "Check sanctions imposed on Russia, distinguish reported outcomes from conjecture. Not a human relevance score.",
+      "modeId": "scholarly",
+      "subjectFocusId": "auto",
+      "accessScopeId": "library",
+      "status": "captured",
+      "researchSpec": {
+        "topic": "Examples of Russia having sanctions used against them and the result",
+        "mode": "scholarly",
+        "disciplines": [
+          "history-humanities"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-russia",
+            "preferredTerm": "Russia",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "economic-sanctions",
+            "preferredTerm": "sanctions",
+            "synonyms": [
+              "economic sanctions",
+              "financial sanctions",
+              "trade sanctions"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Examples of Russia having sanctions used against them and the result",
+          "neutralQuestion": "What does research show about Russia and sanctions, including reported outcomes?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "outcomes",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-2142ae83"
+      },
+      "queries": [
+        "Russia AND sanctions",
+        "Russia AND (sanctions OR \"economic sanctions\" OR \"financial sanctions\" OR \"trade sanctions\")",
+        "Russia AND \"economic sanctions\""
+      ],
+      "topFive": [
+        {
+          "rank": 1,
+          "sourceId": "doi:10.1111/roie.12691"
+        },
+        {
+          "rank": 2,
+          "sourceId": "doi:10.1111/twec.13732"
+        },
+        {
+          "rank": 3,
+          "sourceId": "doi:10.1093/epolic/eiaa006"
+        },
+        {
+          "rank": 4,
+          "sourceId": "doi:10.2478/ie-2023-0042"
+        },
+        {
+          "rank": 5,
+          "sourceId": "doi:10.1111/roie.12717"
+        }
+      ],
+      "candidates": [
+        {
+          "rank": 1,
+          "sourceId": "doi:10.1111/roie.12691",
+          "title": "The global sanctions data base–Release 3: COVID‐19, Russia, and multilateral sanctions",
+          "author": "Syropoulos, Constantinos; Felbermayr, Gabriel et al.",
+          "authors": [
+            "Syropoulos, Constantinos",
+            "Felbermayr, Gabriel",
+            "Kirilakha, Aleksandra",
+            "Yalcin, Erdal",
+            "Yotov, Yoto V."
+          ],
+          "date": "2024-02",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1111_roie_12691&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/roie.12691",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0965-7576",
+          "containerTitle": "Review of international economics",
+          "publisher": "Blackwell Publishing Ltd",
+          "edition": "",
+          "volume": "32",
+          "issue": "1",
+          "pages": "12-48",
+          "sourceKind": "scholarly-article",
+          "abstractText": "This paper introduces the third update/release of the Global Sanctions Data Base (GSDB‐R3). The GSDB‐R3 extends the period of coverage from 1950–2019 to 1950–2022, which includes two special periods—COVID‐19 and the new sanctions against Russia. This update of the GSDB contains a total of 1325 cases. In response to multiple inquiries and requests, the GSDB‐R3 has been amended with a new variable that distinguishes between unilateral and multilateral sanctions. As before, the GSDB comes in two versions, case‐specific and dyadic, which are freely available upon request at GSDB@drexel.edu. To highlight one of the new features of the GSDB, we estimate the heterogeneous effects of unilateral and multilateral sanctions on trade. We also obtain estimates of the effects on trade of the 2014 sanctions on Russia.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "This paper introduces the third update/release of the Global Sanctions Data Base (GSDB‐R3). The GSDB‐R3 extends the period of coverage from 1950–2019 to 1950–2022, which includes two special periods—COVID‐19 and the new sanctions against Russia. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "The global sanctions data base–Release 3: COVID‐19, Russia, and multilateral sanctions"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "The global sanctions data base–Release 3: COVID‐19, Russia, and multilateral sanctions"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 2,
+          "sourceId": "doi:10.1111/twec.13732",
+          "title": "The Global Sanctions Data Base—Release 4: The Heterogeneous Effects of the Sanctions on Russia",
+          "author": "Yalcin, Erdal; Felbermayr, Gabriel et al.",
+          "authors": [
+            "Yalcin, Erdal",
+            "Felbermayr, Gabriel",
+            "Kariem, Heider",
+            "Kirilakha, Aleksandra",
+            "Kwon, Ohyun",
+            "Syropoulos, Constantinos",
+            "Yotov, Yoto V."
+          ],
+          "date": "2025-09",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1111_twec_13732&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/twec.13732",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0378-5920",
+          "containerTitle": "World economy",
+          "publisher": "Blackwell Publishing Ltd",
+          "edition": "",
+          "volume": "48",
+          "issue": "9",
+          "pages": "2003-2017",
+          "sourceKind": "scholarly-article",
+          "abstractText": "This paper introduces the fourth release of the Global Sanctions Data Base (GSDB‐R4). Covering the period 1950–2023, it contains 1547 sanctions cases, including the recent ones against Russia. The GSDB‐R4 comes in two versions, a case‐specific and a dyadic version, both freely available upon request. To highlight one of the new features of the GSDB‐R4, we combine it with trade data until 2023 to study the effects of the sanctions on Russia's trade within an econometric gravity model. We find that, on average, the effects on trade between Russia and the sanctioning countries are negative and statistically significant, but relatively small. We also find that the effects are very heterogeneous across senders, including the EU members. Finally, our estimates identify the presence of a reduction in the direct bilateral trade costs in Russia's bilateral trade with India, China and Turkey, even after controlling for all possible general equilibrium effects. The implication is that such trade cost decreases may offset the effects of Western sanctions and even lead to net benefits for Russia.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "This paper introduces the fourth release of the Global Sanctions Data Base (GSDB‐R4). Covering the period 1950–2023, it contains 1547 sanctions cases, including the recent ones against Russia. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "The Global Sanctions Data Base—Release 4: The Heterogeneous Effects of the Sanctions on Russia"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "The Global Sanctions Data Base—Release 4: The Heterogeneous Effects of the Sanctions on Russia"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 3,
+          "sourceId": "doi:10.1093/epolic/eiaa006",
+          "title": "Friendly fire: the trade impact of the Russia sanctions and counter-sanctions",
+          "author": "Crozet, Matthieu; Hinz, Julian",
+          "authors": [
+            "Crozet, Matthieu",
+            "Hinz, Julian"
+          ],
+          "date": "2020-01-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_2471019028&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1093/epolic/eiaa006",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0266-4658",
+          "containerTitle": "Economic policy",
+          "publisher": "Oxford University Press",
+          "edition": "",
+          "volume": "35",
+          "issue": "101",
+          "pages": "97-146",
+          "sourceKind": "scholarly-article",
+          "abstractText": "Economic sanctions are a frequently used instrument of foreign policy. In a diplomatic conflict, they aim to elicit a change in the policies of a foreign government by damaging their economy. Sanctions, however, are also likely to affect the sanctioning country. This paper evaluates these costs, in terms of export losses, for the diplomatic crisis between the Russian Federation and 37 countries over the conflict in Ukraine that started in 2014. We first gauge the impact of the diplomatic conflict using a traditional trade framework and quantify the trade losses in a general equilibrium counterfactual analysis. Losses for the Russian Federation amount to US$53 billion or 7.4% of predicted total exports from 2014 until the end of 2015. Western sanctioning countries, however, have also been impacted with an estimated loss of US$42 billion, 0.3% of their total exports. Interestingly, we find that the bulk of the impact stems from products that are not directly targeted by Russian retaliation, an effect that we coin friendly fire – an unintended, largely self-inflicted cost for Western sanctioning countries. We investigate the underlying mechanism at the product- and firm-level data. Results indicate that the drop of Western exports has not been driven by a change in Russian consumers’ preferences, but mainly by an increase in country risk affecting international transactions with Russia.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "Economic sanctions are a frequently used instrument of foreign policy. In a diplomatic conflict, they aim to elicit a change in the policies of a foreign government by damaging their economy. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "Friendly fire: the trade impact of the Russia sanctions and counter-sanctions"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Friendly fire: the trade impact of the Russia sanctions and counter-sanctions"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 4,
+          "sourceId": "doi:10.2478/ie-2023-0042",
+          "title": "Toughening Financial Sanctions on Russia: Enforcing Energy Sanctions and Reducing Shadow Reserves Effectively",
+          "author": "Hilgenstock, Benjamin; Ribakova, Elina et al.",
+          "authors": [
+            "Hilgenstock, Benjamin",
+            "Ribakova, Elina",
+            "Wolff, Guntram B"
+          ],
+          "date": "2023-07-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_walterdegruyter_journals_10_2478_ie_2023_0042584201&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.2478/ie-2023-0042",
+          "pmid": "",
+          "isbn": "",
+          "issn": "1613-964X",
+          "containerTitle": "Inter economics",
+          "publisher": "Sciendo",
+          "edition": "",
+          "volume": "58",
+          "issue": "4",
+          "pages": "201-208",
+          "sourceKind": "scholarly-article",
+          "abstractText": "Financial sanctions are key in enforcing restrictions on Russian energy exports - in particular the G7/EU oil price cap regime - due to financial institutions' critical role in cross-border transactions. While the energy sanctions regime is having an impact on export earnings and budget revenues, evidence for potentially widespread violations is also emerging. Moreover, favourable external dynamics have allowed Russia to accumulate substantial assets abroad, \"shadow reserves\", which need to be kept out of reach of the regime. To address this, a number of steps could be taken, including tasking central banks and supervisory authorities with the identification of Russian foreign assets to ensure that funds cannot be used to widen monetary and fiscal policy space, and addressing loopholes in the sanctions regime.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "Financial sanctions are key in enforcing restrictions on Russian energy exports - in particular the G7/EU oil price cap regime - due to financial institutions' critical role in cross-border transactions. While the energy sanctions regime is having an impact on export earnings and budget revenues, evidence for potentially widespread violations is also...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "Toughening Financial Sanctions on Russia: Enforcing Energy Sanctions and Reducing Shadow Reserves Effectively"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Toughening Financial Sanctions on Russia: Enforcing Energy Sanctions and Reducing Shadow Reserves Effectively"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 5,
+          "sourceId": "doi:10.1111/roie.12717",
+          "title": "Going Dutch? Firm exports and FDI in the wake of the 2014 EU‐Russia sanctions",
+          "author": "Kohl, Tristan; Berg, Marcel et al.",
+          "authors": [
+            "Kohl, Tristan",
+            "Berg, Marcel",
+            "Franssen, Loe"
+          ],
+          "date": "2024-02",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1111_roie_12717&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/roie.12717",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0965-7576",
+          "containerTitle": "Review of international economics",
+          "publisher": "Blackwell Publishing Ltd",
+          "edition": "",
+          "volume": "32",
+          "issue": "1",
+          "pages": "190-222",
+          "sourceKind": "scholarly-article",
+          "abstractText": "We examine the 2014 European Union economic sanctions on exports to Russia and the Russian retaliatory measures on imports from several Western countries. Using the universe of highly disaggregated international trade and taxation data for firms in the Netherlands, we systematically analyze the impact of these economic sanctions on Dutch firms' exports and foreign direct investment. Our analyses account for the product‐specific EU restrictions on arms, equipment used for oil exploration and extraction, and dual‐use products suitable for civilian and military use, as well as the Russian import ban on various primary commodities. Our empirical findings highlight the overall negative impact of sanctions on the intensive margin of exports. However, having a foreign affiliate in Russia helps to mitigate the otherwise negative impact of sanctions on the extensive margin of exports. We also show that exporters do not circumvent sanctions by setting up a local affiliate in Russia. In fact, exposure to Russian countersanctions may even force firms to close their Russian affiliates.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "We examine the 2014 European Union economic sanctions on exports to Russia and the Russian retaliatory measures on imports from several Western countries. Using the universe of highly disaggregated international trade and taxation data for firms in the Netherlands, we systematically analyze the impact of these economic sanctions on Dutch firms' exports...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "Firm exports and FDI in the wake of the 2014 EU‐Russia sanctions"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Firm exports and FDI in the wake of the 2014 EU‐Russia sanctions"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 6,
+          "sourceId": "doi:10.1007/s10272-022-1074-1",
+          "title": "The Economic Effects of Potential EU Tariff Sanctions on Russia – A Sectoral Approach",
+          "author": "Latipov, Olim; Lau, Christian et al.",
+          "authors": [
+            "Latipov, Olim",
+            "Lau, Christian",
+            "Mahlstein, Kornel",
+            "Schropp, Simon"
+          ],
+          "date": "2022-09",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1007_s10272_022_1074_1&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1007/s10272-022-1074-1",
+          "pmid": "",
+          "isbn": "",
+          "issn": "1613-964X",
+          "containerTitle": "Inter economics",
+          "publisher": "Springer",
+          "edition": "",
+          "volume": "57",
+          "issue": "5",
+          "pages": "294-305",
+          "sourceKind": "scholarly-article",
+          "abstractText": "As part of its sanctions regime, the United States recently announced the imposition of punitive import tariffs on 570 product groups from Russia. The European Union may follow suit and enact sanctions on Russia that mirror the US sanctions in scale and scope. Using a sector-specific partial-equilibrium model, we quantify the impact of such mirror sanctions. We find they would inflict on Russia welfare losses of at least $996 million per year – at an overall cost of $150 million to EU consumers. Breaking down these totals in a sectoral analysis, we find that mirroring the US action would produce mixed results from the EU's perspective. On the one hand, tariff sanctions cover a number of sectors whose inclusion would inflict particularly large welfare losses for Russia and/or high welfare gains for the EU. On the other hand, mirror sanctions would bring significant inefficiencies for the EU. For example, in 72 sectors, higher tariffs would inflict greater harm on the EU than on the Russian economy, causing EU losses in excess of $560 million. Thus, consistent with the spirit of international coordination and alignment, the EU may consider adjusting the suite of tariff sanctions rather than simply adopting the US package.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "As part of its sanctions regime, the United States recently announced the imposition of punitive import tariffs on 570 product groups from Russia. The European Union may follow suit and enact sanctions on Russia that mirror the US sanctions in scale and scope. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "The Economic Effects of Potential EU Tariff Sanctions on Russia – A Sectoral Approach"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "The Economic Effects of Potential EU Tariff Sanctions on Russia – A Sectoral Approach"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 7,
+          "sourceId": "doi:10.1111/twec.13311",
+          "title": "Estimating the economic effects of sanctions on Russia: An Allied trade embargo",
+          "author": "Mahlstein, Kornel; McDaniel, Christine et al.",
+          "authors": [
+            "Mahlstein, Kornel",
+            "McDaniel, Christine",
+            "Schropp, Simon",
+            "Tsigas, Marinos"
+          ],
+          "date": "2022-11",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1111_twec_13311&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/twec.13311",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0378-5920",
+          "containerTitle": "World economy",
+          "publisher": "Blackwell Publishing Ltd",
+          "edition": "",
+          "volume": "45",
+          "issue": "11",
+          "pages": "3344-3383",
+          "sourceKind": "scholarly-article",
+          "abstractText": "This article contributes to the ongoing discussion on the use of sanctions as a coercive tool of international policymaking, focusing on the economic effects of the sanctions on Russia following its invasion of Ukraine. Using CGE modelling, we explore the short‐ to medium‐term economic effects of a possible trade embargo by Allied countries imposed on Russia. We consider the Allied trade embargo as a set of comprehensive trade sanctions that include (i) import‐related measures, (ii) export‐related measures, (iii) FDI‐related measures and (iv) increased trade costs between Russia and non‐Allies. We find that Russia would sustain sizable losses upwards of 14% of real GDP from an Allied trade embargo, even in the short run. Allied economies are unevenly affected by the sanctions, with real GDP losses between 0.1% and 1.6%. Non‐Allied economies benefit from some trade diversion but experience even larger losses from the increased costs of trading and doing business with Russia. China joining the embargo resulted in greater economic losses for Russia; Allied economies and China would be adversely affected by this move. Finally, Russia would suffer significantly higher losses if it were enacting countersanctions, rather than resigning itself to being a sanction target.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "This article contributes to the ongoing discussion on the use of sanctions as a coercive tool of international policymaking, focusing on the economic effects of the sanctions on Russia following its invasion of Ukraine. Using CGE modelling, we explore the short‐ to medium‐term economic effects of a possible trade embargo by Allied countries imposed on...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "Estimating the economic effects of sanctions on Russia: An Allied trade embargo"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Estimating the economic effects of sanctions on Russia: An Allied trade embargo"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 8,
+          "sourceId": "doi:10.1177/07388942261458232",
+          "title": "Public opinion on sanctions compliance and evasion: Experimental evidence from the 2022–23 Russia sanctions",
+          "author": "Grauvogel, Julia; Attia, Hana et al.",
+          "authors": [
+            "Grauvogel, Julia",
+            "Attia, Hana",
+            "Peez, Anton",
+            "Brettfeld, Katrin",
+            "Richter, Thomas",
+            "Wetzels, Peter"
+          ],
+          "date": "2026-07-20",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_primary_10_1177_07388942261458232&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1177/07388942261458232",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0738-8942",
+          "containerTitle": "Conflict management and peace science",
+          "publisher": "",
+          "edition": "",
+          "volume": "",
+          "issue": "",
+          "pages": "",
+          "sourceKind": "scholarly-article",
+          "abstractText": "How does the public assess corporate behavior regarding economic sanctions? Private companies play a critical role in making sanctions work—circumventing, complying, or limiting their business beyond what is legally required. We theorize that stigma and information cues make citizens likely to support domestic firms withdrawing from a foreign market and disapprove of companies continuing business. We ran two pre-registered survey experiments about the 2022 Russia sanctions in Germany. Germans disapprove of firms remaining, even when not violating sanctions regulations. Firms continuing legal business cannot justify their actions in a way that mitigates negative public perception. Three replications establish generalizability.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "How does the public assess corporate behavior regarding economic sanctions? Private companies play a critical role in making sanctions work—circumventing, complying, or limiting their business beyond what is legally required. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "Public opinion on sanctions compliance and evasion: Experimental evidence from the 2022–23 Russia sanctions"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Public opinion on sanctions compliance and evasion: Experimental evidence from the 2022–23 Russia sanctions"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 9,
+          "sourceId": "doi:10.1257/pandp.20251085",
+          "title": "Trade Sanctions against Russia: Stylized Facts",
+          "author": "Egorov, Konstantin; Korovkin, Vasily et al.",
+          "authors": [
+            "Egorov, Konstantin",
+            "Korovkin, Vasily",
+            "Makarin, Alexey",
+            "Nigmatulina, Dzhamilya"
+          ],
+          "date": "2025-05-01",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_crossref_citationtrail_10_1257_pandp_20251085&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1257/pandp.20251085",
+          "pmid": "",
+          "isbn": "",
+          "issn": "2574-0768",
+          "containerTitle": "AEA papers and proceedings",
+          "publisher": "",
+          "edition": "",
+          "volume": "115",
+          "issue": "",
+          "pages": "578-582",
+          "sourceKind": "scholarly-article",
+          "abstractText": "Using a novel comprehensive dataset on sanctions imposed on the exports to Russia after 2022, we document four stylized facts. First, these sanctions covered 33 percent of Russia's pre-2022 imports in value. Second, though most of the sanctions were concentrated in a few high-tech product categories, at least as much import within these categories remained unsanctioned. Third, substantial variation exists in the specific sets of banned products across countries despite coordinating efforts. Fourth, most sanctioning countries have already prohibited most of their pre-2022 exports to Russia, limiting their future ability to impose additional trade sanctions.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "Using a novel comprehensive dataset on sanctions imposed on the exports to Russia after 2022, we document four stylized facts. First, these sanctions covered 33 percent of Russia's pre-2022 imports in value. ...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "Trade Sanctions against Russia: Stylized Facts"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Trade Sanctions against Russia: Stylized Facts"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        },
+        {
+          "rank": 10,
+          "sourceId": "doi:10.1111/twec.13604",
+          "title": "Are sanctions costly for the energy industry of sanctioning states? A difference‐in‐differences approach to sanctions during the Russia–Ukraine war",
+          "author": "Nguyen, Phuc Van; Ngo, Vu Minh et al.",
+          "authors": [
+            "Nguyen, Phuc Van",
+            "Ngo, Vu Minh",
+            "Nguyen, Huan Huu"
+          ],
+          "date": "2024-09",
+          "type": "article",
+          "url": "https://wfu.primo.exlibrisgroup.com/discovery/fulldisplay?docid=cdi_proquest_journals_3130604477&context=PC&vid=01WAKE_INST%3AZSR&tab=Articles&search_scope=CentralIndex",
+          "doi": "10.1111/twec.13604",
+          "pmid": "",
+          "isbn": "",
+          "issn": "0378-5920",
+          "containerTitle": "World economy",
+          "publisher": "Blackwell Publishing Ltd",
+          "edition": "",
+          "volume": "47",
+          "issue": "9",
+          "pages": "3836-3860",
+          "sourceKind": "scholarly-article",
+          "abstractText": "This study investigates the economic effects of states' implementing sanctions against Russia during the early stages of the Russia–Ukraine conflict in 2022. It specifically examines the effect of these sanctions on the stock returns of energy firms in a sample of 57 countries between August 2021 and October 2022, employing Difference‐in‐Differences imputation estimators to analyse heterogeneous event studies. The results show that sanctions initially lead to a short‐term increase in energy stock returns in the treatment countries, but this effect diminishes over time. The study also reveals that sanctions affect energy stock returns in NATO countries and flawed democracies significantly more than non‐NATO and fully democratic nations. The research includes robustness tests using stricter sanctions dates and an expanded sample, providing valuable insights for policymakers and investors navigating geopolitical events and their economic consequences.",
+          "abstractTruncated": false,
+          "abstractExcerpt": "This study investigates the economic effects of states' implementing sanctions against Russia during the early stages of the Russia–Ukraine conflict in 2022. It specifically examines the effect of these sanctions on the stock returns of energy firms in a sample of 57 countries between August 2021 and October 2022, employing Difference‐in‐Differences...",
+          "abstractSource": "ZSR record metadata",
+          "sourceProvider": "ZSR discovery",
+          "accessScope": "library",
+          "peerReviewed": true,
+          "provenance": {
+            "provider": "ZSR discovery",
+            "recordType": "article",
+            "accessVerified": false,
+            "metadataOnly": true,
+            "demoData": false
+          },
+          "retrievedAt": "2026-10-19T00:42:50.278Z",
+          "sourceAssessment": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "preferenceChecks": [],
+            "issues": []
+          },
+          "matchExplanation": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Russia",
+                "field": "title",
+                "term": "Russia",
+                "excerpt": "A difference‐in‐differences approach to sanctions during the Russia–Ukraine war"
+              },
+              {
+                "concept": "sanctions",
+                "field": "title",
+                "term": "sanctions",
+                "excerpt": "Are sanctions costly for the energy industry of sanctioning states?"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Russia",
+              "sanctions"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Russia; sanctions. Read the source to confirm the relationship and findings."
+          },
+          "metadataRank": {
+            "score": 7156,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          },
+          "judgment": null,
+          "reviewer": "",
+          "notes": ""
+        }
+      ],
+      "retrieval": {
+        "latencyMs": 3206,
+        "outcomes": {
+          "library": [
+            {
+              "provider": "Primo public",
+              "status": "success",
+              "query": "Russia AND sanctions",
+              "retrievedCount": 80,
+              "resultCount": 20
+            },
+            {
+              "provider": "Primo public",
+              "status": "success",
+              "query": "Russia AND (sanctions OR \"economic sanctions\" OR \"financial sanctions\" OR \"trade sanctions\")",
+              "retrievedCount": 80,
+              "resultCount": 20
+            },
+            {
+              "provider": "Primo public",
+              "status": "success",
+              "query": "Russia AND \"economic sanctions\"",
+              "retrievedCount": 80,
+              "resultCount": 20
+            }
+          ],
+          "openAccess": []
+        },
+        "recovery": null
+      }
+    }
+  ]
+}

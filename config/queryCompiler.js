@@ -1,5 +1,5 @@
 import { getResourceCapability, getSourceModeContract } from "./resourceCapabilities.js";
-import { researchSpecQuery, formatResearchTerm, researchFacetExpressions, researchConceptExpressions } from "./researchSpec.js";
+import { researchSpecQuery, formatResearchTerm, researchFacetExpressions, researchConceptExpressions, conceptTermOptions } from "./researchSpec.js";
 
 function clean(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
@@ -11,9 +11,11 @@ function conceptExpression(concept, variant = 0) {
   const preferred = clean(concept?.preferredTerm);
   const synonyms = (concept?.synonyms || []).map(clean).filter(Boolean);
   if (!preferred) return "";
-  if (!synonyms.length || variant <= 0) return quoted(preferred, { exact: concept.exactPhrase === true || /^known-item/.test(concept.source || "") });
+  const knownItem = /^known-item/.test(concept.source || "");
+  const preferredOptions = knownItem ? { exact: true } : conceptTermOptions(concept);
+  if (!synonyms.length || variant <= 0) return quoted(preferred, preferredOptions);
   const selected = synonyms.slice(0, Math.min(2, variant));
-  return `(${[preferred, ...selected].map(quoted).join(" OR ")})`;
+  return `(${[preferred, ...selected].map((term, index) => quoted(term, index === 0 ? preferredOptions : {})).join(" OR ")})`;
 }
 
 function modeQualifier(modeId, resourceId, base) {

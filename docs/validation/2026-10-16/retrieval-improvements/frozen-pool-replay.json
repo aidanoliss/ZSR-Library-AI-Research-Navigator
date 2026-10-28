@@ -1,0 +1,2422 @@
+{
+  "note": "Same captured provider pool, new interpretation/ranking; not a human accuracy measurement.",
+  "cases": [
+    {
+      "id": "sanctions-comparison",
+      "query": "Sanctions and their impact on authoritarian regimes vs democracies",
+      "originalTopFive": [
+        {
+          "title": "Sanctions and Regime Type: What Works, and When?",
+          "doi": "10.1080/714005349"
+        },
+        {
+          "title": "Aid Sanctions and Hybrid Regimes",
+          "doi": "10.1080/00220388.2025.2481878"
+        },
+        {
+          "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+          "doi": "10.1111/1475-6765.12065"
+        },
+        {
+          "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+          "doi": "10.1177/0022343314551081"
+        },
+        {
+          "title": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States",
+          "doi": "10.1017/gov.2026.10040"
+        }
+      ],
+      "rerankedTopFive": [
+        {
+          "title": "Sanctions and Regime Type: What Works, and When?",
+          "doi": "10.1080/714005349",
+          "fit": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison indicated · verify design",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Sanctions and Regime Type: What Works, and When?"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes."
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democratic",
+                "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes."
+              }
+            ],
+            "relationship": {
+              "status": "comparison-indicated",
+              "explanation": "The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source.",
+              "evidence": [
+                {
+                  "field": "abstract",
+                  "excerpt": "Following a review of the literature on the effectiveness of sanctions, the relationship between a state's regime type & its response to sanctions is investigated, comparing authoritarian vs democratic regimes."
+                }
+              ]
+            },
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7168,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Aid Sanctions and Hybrid Regimes",
+          "doi": "10.1080/00220388.2025.2481878",
+          "fit": {
+            "status": "meets",
+            "category": "direct-comparison",
+            "label": "Comparison indicated · verify design",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Aid Sanctions and Hybrid Regimes"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types."
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democracies",
+                "excerpt": "These studies generally conclude that economic sanctions tend to be more effective on democracies than on autocracies, but also on weakly institutionalised autocracies rather than on other authoritarian types."
+              }
+            ],
+            "relationship": {
+              "status": "comparison-indicated",
+              "explanation": "The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source.",
+              "evidence": [
+                {
+                  "field": "abstract",
+                  "excerpt": "We address these deficits by investigating whether (i) the autocratic type or the level of democratic openness of the target better predicts sanctions effectiveness, (ii) whether hybrid regimes behave like closed autocracies or like democracies under sanctions, and (iii) whether aid suspensions perform similarly than other sanctions in terms of effectiveness"
+                }
+              ]
+            },
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. The title or abstract explicitly describes a comparison involving both requested concepts. Verify the study groups and design in the source."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7168,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes",
+          "doi": "10.1111/1475-6765.12065",
+          "fit": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Topic match · comparison not established",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "title",
+                "term": "authoritarian regimes",
+                "excerpt": "Claims to legitimacy count: Why sanctions fail to instigate democratisation in authoritarian regimes"
+              },
+              {
+                "concept": "democracies",
+                "field": "abstract",
+                "term": "democratic",
+                "excerpt": "However, despite long‐term sanction pressure by the European Union, the United States and/or the United Nations, non‐democratic rule has proven to be extremely persistent."
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 4136,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions",
+          "doi": "10.1177/0022343314551081",
+          "fit": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Topic match · comparison not established",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "authoritarian regimes",
+                "excerpt": "However, some of the world's most repressive autocracies have never been subjected to sanctions, while other more competitive authoritarian regimes have been exposed to repeated sanction episodes."
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Not all dictators are equal: Coups, fraudulent elections, and the selective targeting of democratic sanctions"
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 4136,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States",
+          "doi": "10.1017/gov.2026.10040",
+          "fit": {
+            "status": "partial",
+            "category": "supporting",
+            "label": "Topic match · comparison not established",
+            "evidence": [
+              {
+                "concept": "Sanctions",
+                "field": "title",
+                "term": "Sanctions",
+                "excerpt": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States"
+              },
+              {
+                "concept": "authoritarian regimes",
+                "field": "abstract",
+                "term": "autocracies",
+                "excerpt": "We develop a theory of sanctions preferences where citizens (1) value policy concessions, (2) hold humanitarian motivations and (3) hold beliefs about how policy change occurs in autocracies."
+              },
+              {
+                "concept": "democracies",
+                "field": "title",
+                "term": "democratic",
+                "excerpt": "Conditional Humanitarianism: Citizen Preferences for Economic Sanctions in Democratic Sender States"
+              }
+            ],
+            "relationship": {
+              "status": "not-established",
+              "explanation": "Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups.",
+              "evidence": []
+            },
+            "matchedConcepts": [
+              "Sanctions",
+              "authoritarian regimes",
+              "democracies"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Sanctions; authoritarian regimes; democracies. Both terms may occur in the metadata, but a direct comparison between them is not established. Read the methods and study groups."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 4136,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        }
+      ],
+      "newSpec": {
+        "topic": "Sanctions and their impact on authoritarian regimes vs democracies",
+        "mode": "scholarly",
+        "disciplines": [
+          "policy-law"
+        ],
+        "concepts": [
+          {
+            "id": "economic-sanctions",
+            "preferredTerm": "Sanctions",
+            "synonyms": [
+              "economic sanctions",
+              "financial sanctions",
+              "trade sanctions"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "authoritarian-regimes",
+            "preferredTerm": "authoritarian regimes",
+            "synonyms": [
+              "authoritarian",
+              "autocratic",
+              "autocracies",
+              "dictatorships",
+              "authoritarian states"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "democracies",
+            "preferredTerm": "democracies",
+            "synonyms": [
+              "democracy",
+              "democratic",
+              "democratic regimes",
+              "democratic states"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": {
+          "conceptIds": [
+            "authoritarian-regimes",
+            "democracies"
+          ],
+          "terms": [
+            "authoritarian regimes",
+            "democracies"
+          ]
+        },
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Sanctions and their impact on authoritarian regimes vs democracies",
+          "neutralQuestion": "What does research show about Sanctions and authoritarian regimes and democracies?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-4733c040"
+      }
+    },
+    {
+      "id": "electoral-systems",
+      "query": "How do proportional representation and first-past-the-post systems affect voter turnout?",
+      "originalTopFive": [
+        {
+          "title": "The Impact of Proportional Representation on Turnout: Evidence from New Zealand",
+          "doi": "10.1080/10361149950281"
+        },
+        {
+          "title": "Electoral System Changes and Voter Turnout: Reflections on New Zealand General Elections",
+          "doi": "10.4335/12.1.145-162(2014"
+        },
+        {
+          "title": "The influence of promotional activity and different electoral systems on voter turnout: A study of the UK and German Euro elections",
+          "doi": "10.1108/03090561011020499"
+        },
+        {
+          "title": "Political Efficacy and Participation in Twenty-Seven Democracies: How Electoral Systems Shape Political Behaviour",
+          "doi": "10.1017/S0007123408000161"
+        },
+        {
+          "title": "To vote or to abstain? An experimental test of rational calculus in first past the post and PR elections",
+          "doi": "10.1016/j.electstud.2014.07.001"
+        }
+      ],
+      "rerankedTopFive": [
+        {
+          "title": "The Impact of Proportional Representation on Turnout: Evidence from New Zealand",
+          "doi": "10.1080/10361149950281",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "proportional representation",
+                "field": "title",
+                "term": "proportional representation",
+                "excerpt": "The Impact of Proportional Representation on Turnout: Evidence from New Zealand"
+              },
+              {
+                "concept": "first-past-the-post",
+                "field": "abstract",
+                "term": "first-past-the-post",
+                "excerpt": "As a direct test of individual change, the analysis was supplemented with survey data from the last election held under first past the post (FPP) merged with validated participation data from the following election held under PR."
+              },
+              {
+                "concept": "voter turnout",
+                "field": "abstract",
+                "term": "voter turnout",
+                "excerpt": "Theories of voter turnout assume that institutional arrangements can alter incentives for participation."
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "proportional representation",
+              "first-past-the-post",
+              "voter turnout"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions proportional representation; first-past-the-post; voter turnout. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7158,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Electoral System Changes and Voter Turnout: Reflections on New Zealand General Elections",
+          "doi": "10.4335/12.1.145-162(2014",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "proportional representation",
+                "field": "abstract",
+                "term": "proportional representation",
+                "excerpt": "From 2004, New Zealand local elections were unique in that local councils had the choice of two different electoral systems: plurality majority and proportional representation."
+              },
+              {
+                "concept": "first-past-the-post",
+                "field": "abstract",
+                "term": "first-past-the-post",
+                "excerpt": "This article analyses the impact of the \"Single Transferable Vote\" electoral system in those councils that adopted it, comparing it to those councils which used \"First Past the Post\"."
+              },
+              {
+                "concept": "voter turnout",
+                "field": "title",
+                "term": "voter turnout",
+                "excerpt": "Electoral System Changes and Voter Turnout: Reflections on New Zealand General Elections"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "proportional representation",
+              "first-past-the-post",
+              "voter turnout"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions proportional representation; first-past-the-post; voter turnout. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7158,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "The influence of promotional activity and different electoral systems on voter turnout: A study of the UK and German Euro elections",
+          "doi": "10.1108/03090561011020499",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "proportional representation",
+                "field": "abstract",
+                "term": "proportional representation",
+                "excerpt": " influence of promotional activity (party campaigning) and the different voting systems prevailing in these two countries - first past the post (FPTP) in the UK and proportional representation (PR) in Germany - on voter turnout.Design methodology approach - The paper takes the form of a binomial logistic regression analysis of individual-level survey data fr"
+              },
+              {
+                "concept": "first-past-the-post",
+                "field": "abstract",
+                "term": "first-past-the-post",
+                "excerpt": "ine the influence of promotional activity (party campaigning) and the different voting systems prevailing in these two countries - first past the post (FPTP) in the UK and proportional representation (PR) in Germany - on voter turnout.Design methodology approach - The paper takes the form of a binomial logistic regression analysis of individual-level survey "
+              },
+              {
+                "concept": "voter turnout",
+                "field": "title",
+                "term": "voter turnout",
+                "excerpt": "The influence of promotional activity and different electoral systems on voter turnout: A study of the UK and German Euro elections"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "proportional representation",
+              "first-past-the-post",
+              "voter turnout"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions proportional representation; first-past-the-post; voter turnout. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7158,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Political Efficacy and Participation in Twenty-Seven Democracies: How Electoral Systems Shape Political Behaviour",
+          "doi": "10.1017/S0007123408000161",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "proportional representation",
+                "field": "abstract",
+                "term": "proportional representation",
+                "excerpt": "Advocates of proportional representation (PR) often cite its potential for increasing citizen involvement in politics as one of PR's fundamental advantages over plurality or first-past-the-post systems."
+              },
+              {
+                "concept": "first-past-the-post",
+                "field": "abstract",
+                "term": "first-past-the-post",
+                "excerpt": "Advocates of proportional representation (PR) often cite its potential for increasing citizen involvement in politics as one of PR's fundamental advantages over plurality or first-past-the-post systems."
+              },
+              {
+                "concept": "voter turnout",
+                "field": "title",
+                "term": "electoral participation",
+                "excerpt": "Political Efficacy and Participation in Twenty-Seven Democracies: How Electoral Systems Shape Political Behaviour"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "proportional representation",
+              "first-past-the-post",
+              "voter turnout"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions proportional representation; first-past-the-post; voter turnout. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7158,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "To vote or to abstain? An experimental test of rational calculus in first past the post and PR elections",
+          "doi": "10.1016/j.electstud.2014.07.001",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "proportional representation",
+                "field": "abstract",
+                "term": "proportional representation",
+                "excerpt": "We performed laboratory experiments in which participants had to decide whether to vote or not in a number of first past the post and proportional representation elections."
+              },
+              {
+                "concept": "first-past-the-post",
+                "field": "title",
+                "term": "first-past-the-post",
+                "excerpt": "An experimental test of rational calculus in first past the post and PR elections"
+              },
+              {
+                "concept": "voter turnout",
+                "field": "subjects",
+                "term": "voter turnout",
+                "excerpt": "Decision Theory; Elections; Experiments; Laboratories; Proportional representation; Voter turnout"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "proportional representation",
+              "first-past-the-post",
+              "voter turnout"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions proportional representation; first-past-the-post; voter turnout. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7155,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        }
+      ],
+      "newSpec": {
+        "topic": "How do proportional representation and first-past-the-post systems affect voter turnout?",
+        "mode": "scholarly",
+        "disciplines": [
+          "policy-law"
+        ],
+        "concepts": [
+          {
+            "id": "proportional-representation",
+            "preferredTerm": "proportional representation",
+            "synonyms": [
+              "proportional electoral systems"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "plurality-voting",
+            "preferredTerm": "first-past-the-post",
+            "synonyms": [
+              "plurality voting",
+              "single-member plurality"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "voter-turnout",
+            "preferredTerm": "voter turnout",
+            "synonyms": [
+              "electoral participation"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "How do proportional representation and first-past-the-post systems affect voter turnout?",
+          "neutralQuestion": "What does research show about proportional representation and first-past-the-post and voter turnout?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-408f477c"
+      }
+    },
+    {
+      "id": "psychology-comparison",
+      "query": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+      "originalTopFive": [],
+      "rerankedTopFive": [],
+      "newSpec": {
+        "topic": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+        "mode": "scholarly",
+        "disciplines": [
+          "psychology"
+        ],
+        "concepts": [
+          {
+            "id": "cognitive-behavioral-therapy",
+            "preferredTerm": "Cognitive behavioral therapy",
+            "synonyms": [
+              "cognitive behavioural therapy",
+              "CBT"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "parsed-2-mindfulness",
+            "preferredTerm": "mindfulness",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "anxiety",
+            "preferredTerm": "anxiety",
+            "synonyms": [
+              "anxiety symptoms"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          }
+        ],
+        "comparison": {
+          "conceptIds": [
+            "cognitive-behavioral-therapy",
+            "parsed-2-mindfulness"
+          ],
+          "terms": [
+            "Cognitive behavioral therapy",
+            "mindfulness"
+          ]
+        },
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Cognitive behavioral therapy versus mindfulness for anxiety among college students",
+          "neutralQuestion": "What does research show about Cognitive behavioral therapy and mindfulness and anxiety among college students?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "college students",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-ed4dd75d"
+      }
+    },
+    {
+      "id": "climate-migration",
+      "query": "Climate change and internal migration in Bangladesh",
+      "originalTopFive": [
+        {
+          "title": "Climate change and internal migration patterns in Bangladesh: an agent-based model",
+          "doi": "10.1017/S1355770X12000290"
+        },
+        {
+          "title": "Coastal climate change, soil salinity and human migration in Bangladesh",
+          "doi": "10.1038/s41558-018-0313-8"
+        },
+        {
+          "title": "Is Climate Change Migration an Adjustment to Extreme Weather Events? A Study on the Coastal Areas of Bangladesh",
+          "doi": "10.1175/WCAS-D-21-0124.1"
+        },
+        {
+          "title": "Natural hazards, internal migration and protests in Bangladesh",
+          "doi": "10.1177/0022343320973741"
+        },
+        {
+          "title": "Climate‐influenced migration in Bangladesh: The need for a policy realignment",
+          "doi": "10.1111/dpr.12260"
+        }
+      ],
+      "rerankedTopFive": [
+        {
+          "title": "Climate change and internal migration patterns in Bangladesh: an agent-based model",
+          "doi": "10.1017/S1355770X12000290",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Climate change",
+                "field": "title",
+                "term": "Climate change",
+                "excerpt": "Climate change and internal migration patterns in Bangladesh: an agent-based model"
+              },
+              {
+                "concept": "internal migration",
+                "field": "title",
+                "term": "internal migration",
+                "excerpt": "Climate change and internal migration patterns in Bangladesh: an agent-based model"
+              },
+              {
+                "concept": "Bangladesh",
+                "field": "title",
+                "term": "Bangladesh",
+                "excerpt": "Climate change and internal migration patterns in Bangladesh: an agent-based model"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Climate change",
+              "internal migration",
+              "Bangladesh"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "meets",
+                "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Climate change and internal migration patterns in Bangladesh: an agent-based model”. Verify its coverage in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7164,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Coastal climate change, soil salinity and human migration in Bangladesh",
+          "doi": "10.1038/s41558-018-0313-8",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Climate change",
+                "field": "title",
+                "term": "Climate change",
+                "excerpt": "Coastal climate change, soil salinity and human migration in Bangladesh"
+              },
+              {
+                "concept": "internal migration",
+                "field": "abstract",
+                "term": "internal migration",
+                "excerpt": "However, gradual increases in soil salinity correspond to increasing diversification into aquaculture and internal migration of household members."
+              },
+              {
+                "concept": "Bangladesh",
+                "field": "title",
+                "term": "Bangladesh",
+                "excerpt": "Coastal climate change, soil salinity and human migration in Bangladesh"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Climate change",
+              "internal migration",
+              "Bangladesh"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "meets",
+                "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Coastal climate change, soil salinity and human migration in Bangladesh”. Verify its coverage in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7161,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Natural hazards, internal migration and protests in Bangladesh",
+          "doi": "10.1177/0022343320973741",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Climate change",
+                "field": "abstract",
+                "term": "Climate change",
+                "excerpt": " the role of migration as a linking pathway in that relationship. The impact of climate-related shocks may erode household assets and therefore adaptive capacity in ways that can eventually influence decisions to migrate to larger urban centres. Although migrants are agents of economical and technological change, urban environments may impose challenges to r"
+              },
+              {
+                "concept": "internal migration",
+                "field": "title",
+                "term": "internal migration",
+                "excerpt": "Natural hazards, internal migration and protests in Bangladesh"
+              },
+              {
+                "concept": "Bangladesh",
+                "field": "title",
+                "term": "Bangladesh",
+                "excerpt": "Natural hazards, internal migration and protests in Bangladesh"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Climate change",
+              "internal migration",
+              "Bangladesh"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "meets",
+                "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Natural hazards, internal migration and protests in Bangladesh”. Verify its coverage in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7161,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Climate‐influenced migration in Bangladesh: The need for a policy realignment",
+          "doi": "10.1111/dpr.12260",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Climate change",
+                "field": "abstract",
+                "term": "Climate change",
+                "excerpt": "However, a textual analysis of current and recent policies concerning climate change, development and poverty alleviation, and disaster management shows that the economic and adaptive roles of internal migration are often not included in policy framing."
+              },
+              {
+                "concept": "internal migration",
+                "field": "abstract",
+                "term": "internal migration",
+                "excerpt": "If facilitated appropriately, internal and international migration can help build adaptive capacity to future environmental and climatic hazards."
+              },
+              {
+                "concept": "Bangladesh",
+                "field": "title",
+                "term": "Bangladesh",
+                "excerpt": "Climate‐influenced migration in Bangladesh: The need for a policy realignment"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Climate change",
+              "internal migration",
+              "Bangladesh"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "meets",
+                "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Climate‐influenced migration in Bangladesh: The need for a policy realignment”. Verify its coverage in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7158,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Environmental change and migration aspirations: Evidence from Bangladesh",
+          "doi": "10.1016/j.gloenvcha.2025.102966",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Climate change",
+                "field": "abstract",
+                "term": "Climate change",
+                "excerpt": "This entails important policy implications regarding the effects of climate change on future patterns of internal migration and highlights that most affected individuals prefer to adapt to environmental stress in situ or within close proximity."
+              },
+              {
+                "concept": "internal migration",
+                "field": "abstract",
+                "term": "internal migration",
+                "excerpt": "The results reveal that riverbank erosion – a long-term environmental event causing permanent destruction – increases aspirations for internal, permanent migration by about 15 percentage points, 4 to 6 months after the occurrence."
+              },
+              {
+                "concept": "Bangladesh",
+                "field": "title",
+                "term": "Bangladesh",
+                "excerpt": "Environmental change and migration aspirations: Evidence from Bangladesh"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Climate change",
+              "internal migration",
+              "Bangladesh"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Climate change; internal migration; Bangladesh. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "geography",
+                "label": "Study geography",
+                "status": "meets",
+                "detail": "The provider title or study description places this work in the requested geography (Bangladesh): “Environmental change and migration aspirations: Evidence from Bangladesh”. Verify its coverage in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7158,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        }
+      ],
+      "newSpec": {
+        "topic": "Climate change and internal migration in Bangladesh",
+        "mode": "scholarly",
+        "disciplines": [
+          "science-engineering"
+        ],
+        "concepts": [
+          {
+            "id": "climate-change",
+            "preferredTerm": "Climate change",
+            "synonyms": [
+              "global warming",
+              "climate variability"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "parsed-2-internal-migration",
+            "preferredTerm": "internal migration",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-3-bangladesh",
+            "preferredTerm": "Bangladesh",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Climate change and internal migration in Bangladesh",
+          "neutralQuestion": "What does research show about Climate change and internal migration and Bangladesh?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "Bangladesh",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-6d3671ac"
+      }
+    },
+    {
+      "id": "renewable-energy",
+      "query": "Offshore wind energy impacts on marine mammals systematic reviews",
+      "originalTopFive": [
+        {
+          "title": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide",
+          "doi": "10.1016/j.jenvman.2024.123808"
+        },
+        {
+          "title": "Evidence of predation events by marine mammals at offshore wind farms",
+          "doi": "10.1038/s41598-026-65167-3"
+        },
+        {
+          "title": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities",
+          "doi": "10.4031/mtsj.58.3.1"
+        },
+        {
+          "title": "Beneath the blades: Marine wind farms support parts of local biodiversity - a systematic review",
+          "doi": "10.1016/j.scitotenv.2024.173241"
+        },
+        {
+          "title": "The global impact of offshore wind farms on ecosystem services",
+          "doi": "10.1016/j.ocecoaman.2024.107023"
+        }
+      ],
+      "rerankedTopFive": [
+        {
+          "title": "Beneath the blades: Marine wind farms support parts of local biodiversity - a systematic review",
+          "doi": "10.1016/j.scitotenv.2024.173241",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "Offshore wind energy",
+                "field": "abstract",
+                "term": "Offshore wind energy",
+                "excerpt": "Offshore wind energy developments in European waters are rapidly expanding to meet the increasing global demand for renewable energy."
+              },
+              {
+                "concept": "marine mammals",
+                "field": "abstract",
+                "term": "marine mammals",
+                "excerpt": "and hydrological conditions. Understanding how these man-made structures affect marine biodiversity across various species groups is crucial, yet our knowledge in this field remains incomplete. In this synthesis paper, based on 14 case studies conducted in northeastern Atlantic (North, Irish and Baltic seas), we aggregated species-level data on abundance, bi"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Offshore wind energy",
+              "marine mammals"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions Offshore wind energy; marine mammals. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "meets",
+                "detail": "The provider title identifies this work as a systematic review. Verify its methods in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7150,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide",
+          "doi": "10.1016/j.jenvman.2024.123808",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "Offshore wind energy",
+                "field": "title",
+                "term": "Offshore wind energy",
+                "excerpt": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide"
+              },
+              {
+                "concept": "marine mammals",
+                "field": "title",
+                "term": "marine mammals",
+                "excerpt": "Potential feeding sites for seabirds and marine mammals reveal large overlap with offshore wind energy development worldwide"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Offshore wind energy",
+              "marine mammals"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "systematic review"
+            ],
+            "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "unverified",
+                "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            ]
+          },
+          "rank": {
+            "score": 4144,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Evidence of predation events by marine mammals at offshore wind farms",
+          "doi": "10.1038/s41598-026-65167-3",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "Offshore wind energy",
+                "field": "abstract",
+                "term": "Offshore wind energy",
+                "excerpt": " how marine mammals’ behaviour or foraging activities are influence by existing wind farms is essential to predict the effect of future large-scale renewable energy development on local or regional populations. During acoustic tracking of demersal gadoid fish at two offshore wind farms in Scotland, six Atlantic cod were predated by a marine mammal close to o"
+              },
+              {
+                "concept": "marine mammals",
+                "field": "title",
+                "term": "marine mammals",
+                "excerpt": "Evidence of predation events by marine mammals at offshore wind farms"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Offshore wind energy",
+              "marine mammals"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "systematic review"
+            ],
+            "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "unverified",
+                "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            ]
+          },
+          "rank": {
+            "score": 4141,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities",
+          "doi": "10.4031/mtsj.58.3.1",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "Offshore wind energy",
+                "field": "abstract",
+                "term": "Offshore wind energy",
+                "excerpt": "Abstract With increased focus on offshore wind (OSW) as a renewable energy resource in the United States and elsewhere, there are concerns about OSW impacts to wildlife, particularly birds and marine mammals."
+              },
+              {
+                "concept": "marine mammals",
+                "field": "title",
+                "term": "marine mammals",
+                "excerpt": "Technology Gaps for Monitoring Birds and Marine Mammals at Offshore Wind Facilities"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Offshore wind energy",
+              "marine mammals"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "systematic review"
+            ],
+            "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "unverified",
+                "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            ]
+          },
+          "rank": {
+            "score": 4141,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "The global impact of offshore wind farms on ecosystem services",
+          "doi": "10.1016/j.ocecoaman.2024.107023",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "Offshore wind energy",
+                "field": "abstract",
+                "term": "Offshore wind energy",
+                "excerpt": "Understanding the global impact of offshore wind farms (OWF) on biodiversity and ecosystem services (ES) is crucial in developing sustainable energy transition pathways."
+              },
+              {
+                "concept": "marine mammals",
+                "field": "abstract",
+                "term": "marine mammals",
+                "excerpt": "Negative effects on ES, including existence values for culturally important groups, e.g., marine mammals and birds and the spread of non-native species, are potentially of most significance."
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "Offshore wind energy",
+              "marine mammals"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "systematic review"
+            ],
+            "explanation": "Metadata mentions Offshore wind energy; marine mammals. Facets not established: systematic review. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "method-include-systematic review",
+                "label": "Requested method: systematic review",
+                "status": "unverified",
+                "detail": "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish this method. Read the methods or publication description; keyword mentions alone are insufficient."
+            ]
+          },
+          "rank": {
+            "score": 4138,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        }
+      ],
+      "newSpec": {
+        "topic": "Offshore wind energy impacts on marine mammals systematic reviews",
+        "mode": "scholarly",
+        "disciplines": [
+          "interdisciplinary"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-offshore-wind-energy",
+            "preferredTerm": "Offshore wind energy",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-2-marine-mammals",
+            "preferredTerm": "marine mammals",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Offshore wind energy impacts on marine mammals systematic reviews",
+          "neutralQuestion": "What does research show about Offshore wind energy and marine mammals?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [
+            "systematic review"
+          ],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "systematic review",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-e26dcd99"
+      }
+    },
+    {
+      "id": "books-background",
+      "query": "Books introducing environmental justice in the United States",
+      "originalTopFive": [],
+      "rerankedTopFive": [],
+      "newSpec": {
+        "topic": "Books introducing environmental justice in the United States",
+        "mode": "books",
+        "disciplines": [
+          "interdisciplinary"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-environmental-justice",
+            "preferredTerm": "environmental justice",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-2-united-states",
+            "preferredTerm": "United States",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "Books introducing environmental justice in the United States",
+          "neutralQuestion": "What does research show about environmental justice and United States?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "United States",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Books and background"
+        },
+        "sourceContract": {
+          "id": "books",
+          "label": "Books and background",
+          "requiredKinds": [
+            "book",
+            "catalog-record"
+          ],
+          "allowedKinds": [
+            "book",
+            "book-chapter",
+            "catalog-record",
+            "background"
+          ],
+          "excludedKinds": [
+            "news",
+            "dataset"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-6a01e38e"
+      }
+    },
+    {
+      "id": "exact-book-title",
+      "query": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+      "originalTopFive": [],
+      "rerankedTopFive": [],
+      "newSpec": {
+        "topic": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+        "mode": "books",
+        "disciplines": [
+          "interdisciplinary"
+        ],
+        "concepts": [
+          {
+            "id": "known-item-title",
+            "preferredTerm": "Governing the Commons",
+            "synonyms": [],
+            "required": true,
+            "source": "known-item-title"
+          },
+          {
+            "id": "known-item-author",
+            "preferredTerm": "Elinor Ostrom",
+            "synonyms": [],
+            "required": true,
+            "source": "known-item-author"
+          }
+        ],
+        "comparison": null,
+        "knownItem": {
+          "kind": "book",
+          "title": "Governing the Commons",
+          "author": "Elinor Ostrom"
+        },
+        "searchIntent": {
+          "originalQuestion": "Find the book \"Governing the Commons\" by Elinor Ostrom",
+          "neutralQuestion": "Locate Governing the Commons by Elinor Ostrom.",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Books and background"
+        },
+        "sourceContract": {
+          "id": "books",
+          "label": "Books and background",
+          "requiredKinds": [
+            "book",
+            "catalog-record"
+          ],
+          "allowedKinds": [
+            "book",
+            "book-chapter",
+            "catalog-record",
+            "background"
+          ],
+          "excludedKinds": [
+            "news",
+            "dataset"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-6461ef43"
+      }
+    },
+    {
+      "id": "new-student-ai",
+      "query": "How does generative AI use affect critical thinking among undergraduate students?",
+      "originalTopFive": [
+        {
+          "title": "Collaborative Working and Critical Thinking: Adoption of Generative Artificial Intelligence Tools in Higher Education",
+          "doi": "10.3390/su16135367"
+        },
+        {
+          "title": "Information competence and critical thinking in digital environments evidence from university students in Kazakhstan",
+          "doi": "10.3389/feduc.2026.1809360"
+        },
+        {
+          "title": "Associations between generative AI usage orientations and critical thinking disposition among college students in China",
+          "doi": "10.3389/fpsyg.2026.1957029"
+        },
+        {
+          "title": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading",
+          "doi": "10.32674/jey59q25"
+        },
+        {
+          "title": "The Impact of Generative AI Dependence on University Students’ Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation",
+          "doi": "10.3390/jintelligence14080168"
+        }
+      ],
+      "rerankedTopFive": [
+        {
+          "title": "Information competence and critical thinking in digital environments evidence from university students in Kazakhstan",
+          "doi": "10.3389/feduc.2026.1809360",
+          "fit": {
+            "status": "meets",
+            "category": "full-topic-match",
+            "label": "All topic concepts found",
+            "evidence": [
+              {
+                "concept": "generative",
+                "field": "abstract",
+                "term": "generative",
+                "excerpt": "The rapid expansion of digital platforms and generative artificial intelligence has reshaped how university students access and evaluate academic information, intensifying concerns about information reliability, critical thinking, and ethical use."
+              },
+              {
+                "concept": "AI",
+                "field": "abstract",
+                "term": "AI",
+                "excerpt": "The rapid expansion of digital platforms and generative artificial intelligence has reshaped how university students access and evaluate academic information, intensifying concerns about information reliability, critical thinking, and ethical use."
+              },
+              {
+                "concept": "critical thinking",
+                "field": "title",
+                "term": "critical thinking",
+                "excerpt": "Information competence and critical thinking in digital environments evidence from university students in Kazakhstan"
+              },
+              {
+                "concept": "students",
+                "field": "title",
+                "term": "students",
+                "excerpt": "Information competence and critical thinking in digital environments evidence from university students in Kazakhstan"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "generative",
+              "AI",
+              "critical thinking",
+              "students"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [],
+            "explanation": "Metadata mentions generative; AI; critical thinking; students. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "meets",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "meets",
+                "detail": "The provider's study description names the requested population (undergraduates). Verify the sample and applicability in the source."
+              }
+            ],
+            "issues": []
+          },
+          "rank": {
+            "score": 7166,
+            "coverage": 1,
+            "scopeCoverage": 1,
+            "requestFit": "metadata-supported",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Associations between generative AI usage orientations and critical thinking disposition among college students in China",
+          "doi": "10.3389/fpsyg.2026.1957029",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "generative",
+                "field": "title",
+                "term": "generative",
+                "excerpt": "Associations between generative AI usage orientations and critical thinking disposition among college students in China"
+              },
+              {
+                "concept": "AI",
+                "field": "title",
+                "term": "AI",
+                "excerpt": "Associations between generative AI usage orientations and critical thinking disposition among college students in China"
+              },
+              {
+                "concept": "critical thinking",
+                "field": "title",
+                "term": "critical thinking",
+                "excerpt": "Associations between generative AI usage orientations and critical thinking disposition among college students in China"
+              },
+              {
+                "concept": "students",
+                "field": "title",
+                "term": "students",
+                "excerpt": "Associations between generative AI usage orientations and critical thinking disposition among college students in China"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "generative",
+              "AI",
+              "critical thinking",
+              "students"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "undergraduates"
+            ],
+            "explanation": "Metadata mentions generative; AI; critical thinking; students. Facets not established: undergraduates. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+            ]
+          },
+          "rank": {
+            "score": 4160,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading",
+          "doi": "10.32674/jey59q25",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "generative",
+                "field": "title",
+                "term": "generative",
+                "excerpt": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading"
+              },
+              {
+                "concept": "AI",
+                "field": "title",
+                "term": "AI",
+                "excerpt": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading"
+              },
+              {
+                "concept": "critical thinking",
+                "field": "title",
+                "term": "critical thinking",
+                "excerpt": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading"
+              },
+              {
+                "concept": "students",
+                "field": "title",
+                "term": "students",
+                "excerpt": "Generative AI and Critical Thinking in Higher Education: Students' Narratives of Cognitive Offloading"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "generative",
+              "AI",
+              "critical thinking",
+              "students"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "undergraduates"
+            ],
+            "explanation": "Metadata mentions generative; AI; critical thinking; students. Facets not established: undergraduates. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+            ]
+          },
+          "rank": {
+            "score": 4160,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "The Impact of Generative AI Dependence on University Students’ Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation",
+          "doi": "10.3390/jintelligence14080168",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "generative",
+                "field": "title",
+                "term": "generative",
+                "excerpt": "The Impact of Generative AI Dependence on University Students’ Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation"
+              },
+              {
+                "concept": "AI",
+                "field": "title",
+                "term": "AI",
+                "excerpt": "The Impact of Generative AI Dependence on University Students’ Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation"
+              },
+              {
+                "concept": "critical thinking",
+                "field": "title",
+                "term": "critical thinking",
+                "excerpt": "The Impact of Generative AI Dependence on University Students’ Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation"
+              },
+              {
+                "concept": "students",
+                "field": "title",
+                "term": "students",
+                "excerpt": "The Impact of Generative AI Dependence on University Students’ Creativity: The Mediating Role of Critical Thinking and the Moderating Role of Thinking Orientation"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "generative",
+              "AI",
+              "critical thinking",
+              "students"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "undergraduates"
+            ],
+            "explanation": "Metadata mentions generative; AI; critical thinking; students. Facets not established: undergraduates. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+            ]
+          },
+          "rank": {
+            "score": 4160,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        },
+        {
+          "title": "Generative AI as a catalyst for critical thinking: reframing students from consumers to co-creators",
+          "doi": "10.3389/feduc.2026.1952725",
+          "fit": {
+            "status": "partial",
+            "category": "full-topic-match",
+            "label": "Topic match · scope needs checking",
+            "evidence": [
+              {
+                "concept": "generative",
+                "field": "title",
+                "term": "generative",
+                "excerpt": "Generative AI as a catalyst for critical thinking: reframing students from consumers to co-creators"
+              },
+              {
+                "concept": "AI",
+                "field": "title",
+                "term": "AI",
+                "excerpt": "Generative AI as a catalyst for critical thinking: reframing students from consumers to co-creators"
+              },
+              {
+                "concept": "critical thinking",
+                "field": "title",
+                "term": "critical thinking",
+                "excerpt": "Generative AI as a catalyst for critical thinking: reframing students from consumers to co-creators"
+              },
+              {
+                "concept": "students",
+                "field": "title",
+                "term": "students",
+                "excerpt": "Generative AI as a catalyst for critical thinking: reframing students from consumers to co-creators"
+              }
+            ],
+            "relationship": null,
+            "matchedConcepts": [
+              "generative",
+              "AI",
+              "critical thinking",
+              "students"
+            ],
+            "missingConcepts": [],
+            "missingFacets": [
+              "undergraduates"
+            ],
+            "explanation": "Metadata mentions generative; AI; critical thinking; students. Facets not established: undergraduates. Read the source to confirm the relationship and findings."
+          },
+          "checks": {
+            "status": "unverified",
+            "checks": [
+              {
+                "id": "source-type",
+                "label": "Source format",
+                "status": "meets",
+                "detail": "Metadata format: article. Format alone does not establish research method, quality, or peer review."
+              },
+              {
+                "id": "population",
+                "label": "Study population",
+                "status": "unverified",
+                "detail": "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+              }
+            ],
+            "issues": [
+              "The available metadata does not establish the requested population (undergraduates); check the study's sample or scope."
+            ]
+          },
+          "rank": {
+            "score": 4160,
+            "coverage": 1,
+            "scopeCoverage": 0,
+            "requestFit": "partial-or-unverified",
+            "basis": "title-abstract-subject-metadata"
+          }
+        }
+      ],
+      "newSpec": {
+        "topic": "How does generative AI use affect critical thinking among undergraduate students?",
+        "mode": "scholarly",
+        "disciplines": [
+          "psychology"
+        ],
+        "concepts": [
+          {
+            "id": "parsed-1-generative",
+            "preferredTerm": "generative",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "artificial-intelligence",
+            "preferredTerm": "AI",
+            "synonyms": [
+              "artificial intelligence",
+              "algorithm*",
+              "automated decision making"
+            ],
+            "required": true,
+            "source": "controlled-vocabulary"
+          },
+          {
+            "id": "parsed-3-critical-thinking",
+            "preferredTerm": "critical thinking",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          },
+          {
+            "id": "parsed-4-students",
+            "preferredTerm": "students",
+            "synonyms": [],
+            "required": true,
+            "source": "parsed"
+          }
+        ],
+        "comparison": null,
+        "knownItem": null,
+        "searchIntent": {
+          "originalQuestion": "How does generative AI use affect critical thinking among undergraduate students?",
+          "neutralQuestion": "What does research show about generative and AI and critical thinking and students among undergraduates?",
+          "reformulated": false,
+          "explanation": "",
+          "requestedFocus": "",
+          "scopeNotes": []
+        },
+        "methodRequirements": {
+          "include": [],
+          "exclude": []
+        },
+        "sourceRequirements": {
+          "publicationYearFrom": null,
+          "publicationYearTo": null,
+          "peerReviewed": false,
+          "requestedSourceCount": null
+        },
+        "facets": {
+          "population": "undergraduates",
+          "geography": "",
+          "timePeriod": "",
+          "method": "",
+          "documentType": "Scholarly articles"
+        },
+        "sourceContract": {
+          "id": "scholarly",
+          "label": "Scholarly articles",
+          "requiredKinds": [
+            "scholarly-article"
+          ],
+          "allowedKinds": [
+            "scholarly-article",
+            "book-chapter"
+          ],
+          "excludedKinds": [
+            "news",
+            "market-report"
+          ]
+        },
+        "safety": {
+          "requiresPremiseCheck": false,
+          "flags": [],
+          "authorityPolicy": "research-orientation-not-conclusion"
+        },
+        "configVersion": "2026-08-10.2",
+        "planHash": "rp-a4ebf62b"
+      }
+    }
+  ]
+}

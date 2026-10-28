@@ -1,0 +1,58 @@
+{
+  "summary": {
+    "cases": 47,
+    "passedCases": 39,
+    "failedCases": 8,
+    "casePassRate": 0.8297872340425532,
+    "automatedChecks": 893,
+    "passedChecks": 885,
+    "checkPassRate": 0.9910414333706606,
+    "pendingHumanReviews": 47,
+    "completedHumanReviews": 0,
+    "humanApprovals": 0,
+    "automationStatus": "automated-review-required",
+    "humanApprovalStatus": "not-human-approved"
+  },
+  "conceptFailures": [
+    {
+      "id": "hum-003",
+      "prompt": "Typographic watermarks in privately printed almanacs",
+      "details": "jstor: missing [typographic | printing]; project-muse: missing [typographic | printing]"
+    },
+    {
+      "id": "bus-001",
+      "prompt": "Nike supply chains and ESG reporting",
+      "details": "business-source: missing [nike], [esg | sustainability reporting]; proquest-research-library: missing [nike], [esg | sustainability reporting]"
+    },
+    {
+      "id": "bus-003",
+      "prompt": "Rolex brand positioning among younger luxury consumers",
+      "details": "mintel: missing [rolex]; statista: missing [rolex]; business-source: missing [rolex]"
+    },
+    {
+      "id": "com-001",
+      "prompt": "Misinformation sharing on social media during elections",
+      "details": "communication-mass-media: missing [misinformation]; socindex: missing [misinformation]; academic-search-premier: missing [misinformation]; proquest-research-library: missing [misinformation]"
+    },
+    {
+      "id": "news-002",
+      "prompt": "News coverage of local climate-adaptation policy since 2022",
+      "details": "proquest-research-library: missing [climate adaptation], [news | coverage]; cq-researcher: missing [climate adaptation], [news | coverage]; proquest-political-science: missing [climate adaptation], [news | coverage]; factiva: missing [climate adaptation], [news | coverage]; proquest-news: missing [climate adaptation], [news | coverage]"
+    },
+    {
+      "id": "pol-001",
+      "prompt": "Government surveillance and public trust in democratic institutions",
+      "details": "socindex: missing [democratic institutions | democracy]; proquest-political-science: missing [democratic institutions | democracy]; heinonline: missing [democratic institutions | democracy]; jstor: missing [democratic institutions | democracy]"
+    },
+    {
+      "id": "com-003",
+      "prompt": "News framing of artificial intelligence and job displacement",
+      "details": "communication-mass-media: missing [news framing | framing], [job displacement | employment]; proquest-political-science: missing [news framing | framing], [job displacement | employment]; socindex: missing [news framing | framing], [job displacement | employment]; academic-search-premier: missing [news framing | framing], [job displacement | employment]; proquest-research-library: missing [news framing | framing], [job displacement | employment]"
+    },
+    {
+      "id": "eco-003",
+      "prompt": "Minimum-wage policy and employment effects in service industries",
+      "details": "proquest-political-science: missing [minimum wage], [service industries | service sector]; heinonline: missing [minimum wage], [service industries | service sector]; socindex: missing [minimum wage], [service industries | service sector]; jstor: missing [minimum wage], [service industries | service sector]"
+    }
+  ]
+}

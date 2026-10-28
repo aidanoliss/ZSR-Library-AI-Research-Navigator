@@ -14,8 +14,14 @@ services:
         sync: false # set this in the Render dashboard (never commit the key)
       - key: GEMINI_MODEL
         value: gemini-2.5-flash
+      # AI search steps (each falls back to rules-only search on any failure).
+      # Measured in docs/validation/2026-10-27/search-quality. Set "off" to disable.
       - key: AI_QUERY_INTERPRETATION
-        value: "off" # set "on" after librarian review of assisted interpretations
+        value: "on"
+      - key: AI_SEARCH_EXPANSION
+        value: "on"
+      - key: AI_RERANK
+        value: "on"
       - key: NODE_VERSION
         value: "22.16.0"
       - key: NODE_ENV

@@ -935,6 +935,8 @@ const STRUCTURE_LEFTOVERS = new Set([
   "than", "safer", "better", "worse", "linked", "regulate", "regulates", "regulating", "pros", "cons", "role",
   "ways", "older", "newer", "like", "unlike", "cause", "causes", "change", "changed", "changes", "long", "term",
   "use", "uses", "used", "lead", "leads", "best", "worst", "good", "bad", "should", "will",
+  // Descriptive words glued onto a topic ("history redlining", "long-term residents").
+  "history", "theme", "themes", "responses", "response", "residents", "long-term", "effects", "outcomes",
 ]);
 const COMPARISON_CUE = /\b(?:compar(?:e|es|ed|ing|ison)|versus|vs\.?|differ(?:s|ed|ence|ences)?|contrast|than)\b/i;
 const NON_ENGLISH_HINT = /[ñçãõœß]|[áéíóú].*\b(?:y|el|la|los|las|de|en|et|les|des|und|der|die|das)\b|\b(?:y|el|los|las|et|les|des|und)\b.*\b(?:de|en|la|der|die)\b/i;
@@ -1016,18 +1018,20 @@ export function suggestedResearchVocabulary(term) {
 }
 
 /** Quotation is an explicit phrase choice, not the default for a whole clause. */
-export function formatResearchTerm(value, { exact = false } = {}) {
+export function formatResearchTerm(value, { exact = false, loose = false } = {}) {
   const term = clean(value);
   if (!term) return "";
   if (/^["(].*[)"]$/.test(term)) return term;
   if (/\b(?:AND|OR|NOT)\b/.test(term)) return `(${term})`;
   const words = term.split(/\s+/);
+  // A loose phrase keeps every word required without demanding that exact word order.
+  if (loose && !exact && words.length > 1) return `(${words.join(" AND ")})`;
   if (exact || words.length > 1 && words.length <= 3) return `"${term.replace(/["“”]/g, "")}"`;
   return words.length > 3 ? `(${words.join(" AND ")})` : term;
 }
 
 export function researchFacetExpressions(spec) {
-  const expressions = ["population", "geography"].map((name) => formatResearchTerm(spec?.facets?.[name])).filter(Boolean);
+  const expressions = ["population", "geography"].map((name) => formatResearchTerm(spec?.facets?.[name], { loose: looseFacet(spec?.facets?.[name]) })).filter(Boolean);
   const timePeriod = clean(spec?.facets?.timePeriod);
   // Historical calendar bounds constrain what a source discusses, not when it
   // was published or which literal years must appear in its title/abstract.
@@ -1047,7 +1051,43 @@ export function researchFacetExpressions(spec) {
 }
 
 /** Preserve the common topic while searching either side of a comparison. */
-export function researchConceptExpressions(spec, expressionFor = (concept) => formatResearchTerm(concept.preferredTerm, { exact: concept.exactPhrase === true })) {
+/**
+ * A phrase the parser or model extracted from a sentence ("long-term
+ * residents", "student achievement gaps") is not a known search phrase;
+ * searching it in quotes misses most of the literature. Keep quotes for
+ * student-quoted text, controlled vocabulary and proper names.
+ */
+// Words that make a two-word phrase a description rather than a term of art
+// ("religious responses", "history redlining", "long-term residents").
+const GENERIC_PHRASE_WORDS = new Set([
+  "history", "histories", "theme", "themes", "role", "roles", "effect", "effects", "impact", "impacts", "response", "responses",
+  "issue", "issues", "factor", "factors", "aspect", "aspects", "outcome", "outcomes", "perspective", "perspectives",
+  "experience", "experiences", "attitude", "attitudes", "perception", "perceptions", "trend", "trends", "use", "uses",
+  "approach", "approaches", "strategy", "strategies", "practice", "practices", "long-term", "short-term", "residents",
+  "levels", "rates", "gap", "gaps", "changes", "patterns", "views", "debate", "debates", "relationship", "influence",
+]);
+
+export function looseConcept(concept = {}) {
+  if (concept.exactPhrase === true || !["parsed", "ai-interpreted"].includes(concept.source)) return false;
+  const words = clean(concept.preferredTerm).split(/\s+/).filter(Boolean);
+  if (words.length < 2) return false;
+  const properName = words.every((word) => /^[\p{Lu}\d]/u.test(word) || /^(?:of|the|and|de|la|von|van)$/i.test(word));
+  if (properName) return false;
+  // Established two-word terms ("public health", "rent control") stay exact.
+  return words.length >= 3 || words.some((word) => GENERIC_PHRASE_WORDS.has(word.toLowerCase()));
+}
+
+/** A population or place value with a generic word ("long-term residents") is searched loosely. */
+function looseFacet(value) {
+  const words = clean(value).split(/\s+/).filter(Boolean);
+  return words.length >= 2 && !words.every((word) => /^[\p{Lu}\d]/u.test(word)) && words.some((word) => GENERIC_PHRASE_WORDS.has(word.toLowerCase()));
+}
+
+export function conceptTermOptions(concept = {}) {
+  return { exact: concept.exactPhrase === true, loose: looseConcept(concept) };
+}
+
+export function researchConceptExpressions(spec, expressionFor = (concept) => formatResearchTerm(concept.preferredTerm, conceptTermOptions(concept))) {
   const required = (spec?.concepts || []).filter((concept) => concept.required !== false && concept.preferredTerm);
   const comparisonIds = new Set(spec?.comparison?.conceptIds || []);
   const sides = required.filter((concept) => comparisonIds.has(concept.id));

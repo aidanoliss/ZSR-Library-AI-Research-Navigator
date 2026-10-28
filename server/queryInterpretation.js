@@ -111,6 +111,8 @@ function safeTerm(value, maxWords = 5) {
   return term;
 }
 
+const GENERIC_CONCEPT_WORDS = new Set(["effect", "effects", "impact", "impacts", "role", "roles", "history", "influence", "relationship", "outcome", "outcomes", "factor", "factors", "aspect", "aspects", "issue", "issues", "consequences", "implications", "overview", "analysis", "study", "studies", "research"]);
+
 const NEGATION_CUE = /\b(?:not|no|except|excluding|exclude|other than|apart from|without|leave out|leaving out|avoid|don['’]t|do not)\b/i;
 
 /**
@@ -126,6 +128,9 @@ export function validateAssistedInterpretation(raw, request) {
     const synonyms = (Array.isArray(item?.synonyms) ? item.synonyms : []).map((synonym) => safeTerm(synonym)).filter(Boolean).slice(0, 3);
     // A translated request may use English terms if an original-language
     // synonym is grounded; otherwise the preferred term itself must be.
+    // A concept made only of generic words ("effects", "role", "history") is
+    // request wording, not a topic; it would make every search narrower.
+    if (preferredTerm && preferredTerm.toLowerCase().split(/[\s-]+/).every((word) => GENERIC_CONCEPT_WORDS.has(word))) return null;
     const termGrounded = preferredTerm && groundedInRequest(preferredTerm, request);
     const grounded = termGrounded || (preferredTerm && translated && synonyms.some((synonym) => groundedInRequest(synonym, request)));
     if (!grounded) return null;
@@ -156,7 +161,8 @@ export function validateAssistedInterpretation(raw, request) {
 
 export function assistedInterpretationEnabled(env = process.env) {
   const key = env.GEMINI_API_KEY;
-  return /^(?:on|true|1)$/i.test(String(env.AI_QUERY_INTERPRETATION || "")) && Boolean(key && key !== "your_api_key_here");
+  // On by default when a Gemini key is configured; AI_QUERY_INTERPRETATION=off disables it.
+  return !/^(?:off|false|0)$/i.test(String(env.AI_QUERY_INTERPRETATION || "")) && Boolean(key && key !== "your_api_key_here");
 }
 
 async function requestInterpretation(request, { fetchImpl = fetch, apiKey, signal, timeoutMs = Number(process.env.AI_QUERY_INTERPRETATION_TIMEOUT_MS) || 4500 } = {}) {
