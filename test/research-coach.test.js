@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildResearchCoachRequest, validateResearchCoachReply, researchCoachReply, shouldResearchCoach } from '../server/researchCoach.js';
 import { researchChatReply } from '../server/researchChat.js';
+import { signResearchChatSources } from '../server/researchChatEvidence.js';
 import { RESEARCH_COACH_GUIDES } from '../config/researchCoachKnowledge.js';
 import { createCircuitBreaker } from '../server/providerResilience.js';
 
@@ -86,4 +87,25 @@ test('method definitions remain useful as canonical guide notes when the provide
  const result=await researchCoachReply({...request,question:'What is a systematic review?'},{apiKey:''});
  assert.equal(result.coachingOrigin,'fallback');assert.equal(result.coaching[0].text,RESEARCH_COACH_GUIDES.find(g=>g.id==='systematic-searching').summary);
  assert.equal(result.guideReferences[0].id,'systematic-searching');assert.match(result.notice,/developer-curated paraphrase/);
+});
+
+test('coaching carries forward an accepted region into a scoped search draft without a provider', async () => {
+  const topic = 'Sanctions and their impact on authoritarian regimes vs democracies — civilian well-being';
+  const options = { apiKey: 'synthetic', signingKey: 'synthetic-coach-regression', now: 1700000000000 };
+  let providerCalls = 0;
+  options.fetchImpl = async () => { providerCalls++; throw new Error('Unexpected provider call'); };
+  const [source] = signResearchChatSources([{
+    title: 'Synthetic citation-only record', url: 'https://example.org/sanctions', identityCheck: { status: 'title-difference' },
+  }], options);
+  for (const input of [
+    { question: 'Consider sanctions in a specific region like the Middle East.', sourceTokens: [source.researchChatToken] },
+    { question: "I'd like to use the Middle East as my geographic scope.", intent: 'planning' },
+  ]) {
+    const result = await researchChatReply({ ...input, topic }, options);
+    assert.equal(result.mode, 'coaching');
+    assert.match(result.message, /Middle East/);
+    assert.deepEqual(result.searchQuestions, [topic + ' in the Middle East']);
+    assert.deepEqual(result.blocks, []);
+  }
+  assert.equal(providerCalls, 0);
 });
