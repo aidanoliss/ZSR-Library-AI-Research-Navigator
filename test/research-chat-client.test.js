@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chatSourceHasAbstract, chatSourceKey, mergeChatSources, normalizeResearchChatReply, normalizeResearchChatSession, researchChatPayload, requestResearchChat, researchChatReplyToText, researchChatToMarkdown, safeChatSourceUrl } from '../src/researchChat.js';
+import { chatSourceHasAbstract, chatSourceIsExpired, chatSourceKey, mergeChatSources, normalizeResearchChatReply, normalizeResearchChatSession, researchChatPayload, requestResearchChat, researchChatReplyToText, researchChatToMarkdown, safeChatSourceUrl } from '../src/researchChat.js';
 import { NAVIGATOR_ATTRIBUTION, NAVIGATOR_PROTOTYPE_NOTICE } from '../config/navigatorAttribution.js';
 import { conversationToMarkdown } from '../src/exportPlan.js';
 
@@ -178,4 +178,74 @@ test('coaching references and blocks reject unsafe, unknown and unbounded data',
   assert.deepEqual(evidence.coaching, []); assert.deepEqual(evidence.guideReferences, []);
   assert.match(researchChatReplyToText({ mode: 'coaching', coachingOrigin: 'fallback', coaching: [{ kind: 'advice', text: 'A basic next step.' }] }), /Research planning starter/);
   assert.equal(normalizeResearchChatReply({ mode: 'planning', coachingOrigin: 'fallback' }).coachingOrigin, 'fallback');
+});
+
+test('planning keeps attached keys and draft without forwarding tokens or earlier excerpts', () => {
+  const chosen = source('one', { researchChatScope: 'abstract' });
+  const session = normalizeResearchChatSession({
+    intent: 'planning', selectedSourceKeys: ['one'], draft: 'Help plan my research',
+    messages: [{ role: 'assistant', reply: {
+      mode: 'evidence', status: 'answered',
+      sources: [{ id: 'one', title: 'Source one', scope: 'abstract' }],
+      blocks: [{ sourceId: 'one', scope: 'abstract', presentation: 'excerpt', quote: 'A selected abstract passage.' }],
+    } }],
+  });
+  const payload = researchChatPayload({ question: session.draft, session, sources: [chosen] });
+  assert.equal(payload.intent, 'planning');
+  assert.deepEqual(payload.sourceTokens, []);
+  assert.deepEqual(payload.messages, []);
+  assert.deepEqual(session.selectedSourceKeys, ['one']);
+  assert.equal(session.draft, 'Help plan my research');
+  const evidence = researchChatPayload({ question: session.draft, session: { ...session, intent: 'evidence' }, sources: [chosen] });
+  assert.equal(evidence.intent, 'evidence');
+  assert.deepEqual(evidence.sourceTokens, ['signed-one']);
+});
+
+test('refreshed records replace older copies of the same attachment', () => {
+  const packet = (expiresAt) => `${Buffer.from(JSON.stringify({ expiresAt })).toString('base64url')}.fixture`;
+  const stale = source('one', { researchChatToken: packet(100) });
+  const fresh = source('one', { researchChatToken: packet(200) });
+  assert.equal(chatSourceIsExpired(stale, 100), true);
+  assert.equal(chatSourceIsExpired(fresh, 100), false);
+  assert.deepEqual(mergeChatSources([stale], [fresh]), [fresh]);
+  assert.deepEqual(mergeChatSources([fresh], [stale]), [fresh]);
+});
+
+test('excerpt replies preserve limitations and ignore any generated restatement', () => {
+  const reply = normalizeResearchChatReply({
+    mode: 'evidence', status: 'answered',
+    sources: [{ id: 'one', title: 'Source one', scope: 'abstract' }],
+    blocks: [{ sourceId: 'one', scope: 'abstract', presentation: 'excerpt', quote: 'A selected abstract passage.',
+      text: 'Unverified AI restatement.', limitationQuote: 'The abstract reports an important limit.' }],
+  });
+  const copied = researchChatReplyToText(reply);
+  assert.match(copied, /What the passage supports/);
+  assert.match(copied, /What remains uncertain/);
+  assert.match(copied, /important limit/);
+  assert.doesNotMatch(copied, /Unverified AI restatement/);
+  assert.deepEqual(normalizeResearchChatReply({
+    status: 'attachments_need_refresh', expiredSourceIds: ['one'],
+  }).expiredSourceIds, ['one']);
+});
+
+test('restored coaching continues a selected scope with no evidence even after a stale evidence error', () => {
+  const suggestion = 'Consider sanctions in a specific region like the Middle East.';
+  const stored = {
+    selectedSourceKeys: ['metadata'],
+    messages: [
+      { role: 'assistant', reply: { mode: 'coaching', status: 'answered', suggestions: [suggestion] } },
+      { role: 'user', content: suggestion },
+      { role: 'assistant', reply: { mode: 'evidence', status: 'insufficient_evidence', message: 'The attachments have no usable abstracts.' } },
+    ],
+    draft: suggestion,
+  };
+  const options = { question: stored.draft, sources: [source('metadata', { researchChatScope: 'metadata' })] };
+  const planning = researchChatPayload({ ...options, session: stored });
+  assert.equal(planning.intent, 'planning');
+  assert.deepEqual(planning.sourceTokens, []);
+  assert.equal(planning.question, suggestion);
+  assert.doesNotMatch(JSON.stringify(planning.messages), /no usable abstracts/);
+  const evidence = researchChatPayload({ ...options, session: { ...stored, intent: 'evidence' } });
+  assert.equal(evidence.intent, 'evidence');
+  assert.deepEqual(evidence.sourceTokens, ['signed-metadata']);
 });

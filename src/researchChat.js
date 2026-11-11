@@ -3,12 +3,30 @@ import { withNavigatorAttribution } from "../config/navigatorAttribution.js";
 const text = (value, limit = 2000) => typeof value === "string" ? value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "").trim().slice(0, limit) : "";
 export const CHAT_SOURCE_LIMIT = 6;
 export const CHAT_TURN_LIMIT = 24;
+const DEFAULT_ABSTRACT_LIMITS = "Check the original study's design, sample, and methods before drawing causal conclusions or applying the findings more broadly.";
 
 export function proposedChatSearchQuestion(block = {}) {
-  const proposal = text(block?.text, 2000).match(/^Question to explore:\s*([\s\S]+)/i)?.[1]?.trim();
+  const proposal = text(block?.question, 240) || text(block?.text, 2000).match(/^Question to explore:\s*([\s\S]+)/i)?.[1]?.trim();
   return proposal && !/(?:https?:\/\/|www\.|<[^>]*>)/i.test(proposal) ? proposal : "";
 }
 export function chatSourceHasAbstract(source = {}) { return source?.researchChatScope === "abstract"; }
+
+// Read the signed packet's timestamp to show timely recovery guidance in the
+// browser. The server still authenticates the token and enforces expiry.
+export function chatSourceExpiresAt(source = {}) {
+  const token = source?.researchChatToken;
+  if (typeof token !== "string" || token.length > 12000) return null;
+  try {
+    const encoded = token.split(".")[0].replace(/-/g, "+").replace(/_/g, "/");
+    const { expiresAt } = JSON.parse(atob(encoded));
+    return Number.isFinite(expiresAt) ? expiresAt : null;
+  } catch { return null; }
+}
+
+export function chatSourceIsExpired(source, now = Date.now()) {
+  const expiresAt = chatSourceExpiresAt(source);
+  return expiresAt !== null && expiresAt <= now;
+}
 
 export function safeChatSourceUrl(value) {
   try {
@@ -32,12 +50,17 @@ export function chatSourceKey(source = {}) {
 /** These are selectable leads only; the server verifies every token again. */
 export function mergeChatSources(...groups) {
   const result = [];
-  const seen = new Set();
+  const positions = new Map();
   for (const source of groups.flatMap((group) => Array.isArray(group) ? group : [])) {
     const record = source?.sourceRecord || source;
     const key = chatSourceKey(record);
-    if (!key || seen.has(key) || !text(record?.title, 500) || typeof record?.researchChatToken !== "string" || !record.researchChatToken || record.researchChatToken.length > 12000) continue;
-    seen.add(key);
+    if (!key || !text(record?.title, 500) || typeof record?.researchChatToken !== "string" || !record.researchChatToken || record.researchChatToken.length > 12000) continue;
+    if (positions.has(key)) {
+      const index = positions.get(key);
+      if ((chatSourceExpiresAt(record) || 0) > (chatSourceExpiresAt(result[index]) || 0)) result[index] = record;
+      continue;
+    }
+    positions.set(key, result.length);
     result.push(record);
     if (result.length === 100) break;
   }
@@ -57,9 +80,14 @@ export function normalizeResearchChatReply(value = {}) {
     const sourceId = text(block?.sourceId || block?.source_id, 120);
     const source = allowed.get(sourceId);
     const quote = text(block?.quote, 1000);
-    const interpretation = text(block?.text, 2000);
-    if (!source || block?.scope !== "abstract" || !quote || !interpretation) return [];
-    return [{ text: interpretation, sourceId, quote, scope: "abstract", source }];
+    const presentation = block?.presentation === "excerpt" ? "excerpt" : "interpretation";
+    const interpretation = presentation === "interpretation" ? text(block?.text, 2000) : "";
+    if (!source || block?.scope !== "abstract" || !quote || (presentation === "interpretation" && !interpretation)) return [];
+    return [{
+      text: interpretation, sourceId, quote, scope: "abstract", source, presentation,
+      question: presentation === "excerpt" ? proposedChatSearchQuestion({ question: block?.question }) : "",
+      limitationQuote: presentation === "excerpt" ? text(block?.limitationQuote, 600) : "",
+    }];
   });
   const mode = ["planning", "coaching", "scope"].includes(value.mode) ? value.mode : "evidence";
   const guidance = mode === "planning" ? (Array.isArray(value.guidance) ? value.guidance : []).slice(0, 8).flatMap((section) => {
@@ -91,10 +119,12 @@ export function normalizeResearchChatReply(value = {}) {
     }),
     suggestions: prompts(value.suggestions, 4),
     searchQuestions: prompts(value.searchQuestions, 3),
-    status: ["answered", "insufficient_evidence", "unavailable", "redirected"].includes(value.status) ? value.status : "insufficient_evidence",
+    status: ["answered", "insufficient_evidence", "unavailable", "redirected", "attachments_need_refresh"].includes(value.status) ? value.status : "insufficient_evidence",
     message: text(value.message, 2000),
     blocks: ["scope", "coaching"].includes(mode) ? [] : blocks, sources,
     notice: text(value.notice, 2000),
+    limitations: mode === "evidence" && value.status !== "attachments_need_refresh" ? text(value.limitations, 800) || DEFAULT_ABSTRACT_LIMITS : "",
+    expiredSourceIds: value.status === "attachments_need_refresh" ? (Array.isArray(value.expiredSourceIds) ? value.expiredSourceIds : []).map((id) => text(id, 120)).filter(Boolean).slice(0, CHAT_SOURCE_LIMIT) : [],
   };
 }
 
@@ -103,8 +133,15 @@ function chatReplyLines(reply) {
   const lines = [r.mode === "coaching" ? `${r.coachingOrigin === "fallback" ? "Research planning starter" : "AI research coaching"} — guidance, not study findings` : r.mode === "planning" ? "Planning guidance — not research findings" : r.mode === "scope" ? "Navigator scope guidance" : "Research discussion — check the supporting evidence", "", r.message, ""];
   for (const part of r.coaching) lines.push(...(part.kind === "explanation" ? ["Navigator research guide note (paraphrased guidance):"] : []), part.text, "");
   for (const part of r.guidance) lines.push(part.title, part.text, "");
+  if (r.blocks.length) lines.push("What the passage supports", "");
   for (const block of r.blocks) {
-    lines.push("AI interpretation — abstract only", block.text, `Source: ${block.source.title}`, ...(block.source.url ? [block.source.url] : []), "Supporting passage from the abstract:", block.quote, "");
+    if (block.presentation === "interpretation") lines.push("Earlier AI interpretation — check against the abstract", block.text);
+    lines.push(`Source: ${block.source.title}`, ...(block.source.url ? [block.source.url] : []), "Supporting passage from the abstract:", block.quote, "");
+    if (block.question) lines.push("Question to explore", block.question, "");
+  }
+  if (r.limitations) {
+    lines.push("What remains uncertain", r.limitations, "");
+    for (const block of r.blocks) if (block.limitationQuote) lines.push(`Source: ${block.source.title}`, block.limitationQuote, "");
   }
   for (const link of r.supportLinks) lines.push(`${link.label}: ${link.url}`, "");
   if (r.guideReferences.length) lines.push("Research guides supplied for coaching (not evidence of topic findings):", ...r.guideReferences.map((guide) => `${guide.title}: ${guide.url}`), "");
@@ -135,7 +172,19 @@ export function normalizeResearchChatSession(value = {}) {
     if (message?.role === "assistant") return [{ role: "assistant", reply: normalizeResearchChatReply(message.reply || {}), question: text(message.question) }];
     return [];
   });
-  return { messages, selectedSourceKeys: [...new Set((Array.isArray(value.selectedSourceKeys) ? value.selectedSourceKeys : []).map((key) => text(key, 1600)).filter(Boolean))].slice(0, CHAT_SOURCE_LIMIT), includeAssignment: value.includeAssignment !== false, draft: typeof value.draft === "string" ? value.draft.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "").slice(0, 2000) : "" };
+  const selectedSourceKeys = [...new Set((Array.isArray(value.selectedSourceKeys) ? value.selectedSourceKeys : []).map((key) => text(key, 1600)).filter(Boolean))].slice(0, CHAT_SOURCE_LIMIT);
+  // Older sessions recorded attachments without recording the activity. A
+  // successful planning reply is a better signal than citation-only attachments.
+  const lastAnswer = messages.findLast(({ reply }) => reply?.status === "answered" &&
+    (["coaching", "planning"].includes(reply.mode) || (reply.mode === "evidence" && reply.blocks.length)));
+  const lastActivity = lastAnswer?.reply.mode === "evidence" ? "evidence" : lastAnswer ? "planning" : null;
+  const intent = ["planning", "evidence"].includes(value.intent)
+    ? value.intent
+    : lastActivity || (selectedSourceKeys.length ? "evidence" : "planning");
+  return {
+    messages, selectedSourceKeys, intent, includeAssignment: value.includeAssignment !== false,
+    draft: typeof value.draft === "string" ? value.draft.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "").slice(0, 2000) : "",
+  };
 }
 
 export function researchChatPayload({ question, session, sources, topic = "", assignmentContext = "" } = {}) {
@@ -145,16 +194,28 @@ export function researchChatPayload({ question, session, sources, topic = "", as
   const content = text(question);
   if (!content) throw new Error("Enter a question about research or ask for planning help.");
   let contextRemaining = 12000;
-  const history = normalized.messages.slice(-10).map((message) => ({ role: message.role, content: message.role === "user" ? message.content : [message.reply.message, ...message.reply.coaching.map((part) => part.text), ...message.reply.guidance.map((section) => `${section.title}: ${section.text}`), ...message.reply.blocks.map((block) => block.text)].filter(Boolean).join("\n").slice(0, 2000) })).reverse().flatMap((message) => {
+  const history = normalized.messages.slice(-10).flatMap((message) => {
+    if (message.role === "user") return [{ role: "user", content: message.content }];
+    const { reply } = message;
+    if (normalized.intent === "planning" && reply.mode === "evidence") return [];
+    const content = [
+      reply.message,
+      ...reply.coaching.map((part) => part.text),
+      ...reply.guidance.map((section) => `${section.title}: ${section.text}`),
+      ...reply.blocks.map((block) => block.presentation === "excerpt" ? block.quote : block.text),
+    ].filter(Boolean).join("\n").slice(0, 2000);
+    return [{ role: "assistant", content }];
+  }).reverse().flatMap((message) => {
     if (!message.content || message.content.length > contextRemaining) return [];
     contextRemaining -= message.content.length;
     return [message];
   }).reverse();
   return {
     question: content,
+    intent: normalized.intent,
     topic: text(topic),
     assignmentContext: normalized.includeAssignment ? text(assignmentContext, 3000) : "",
-    sourceTokens: chosen.map((source) => source.researchChatToken),
+    sourceTokens: normalized.intent === "evidence" ? chosen.map((source) => source.researchChatToken) : [],
     messages: history,
   };
 }

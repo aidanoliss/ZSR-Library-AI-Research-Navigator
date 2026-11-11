@@ -1,5 +1,5 @@
 import { uniqueSourceResults } from "../src/sourceDedup.js";
-import { assessSourceRequirements } from "../src/sourceAssessment.js";
+import { assessSourceRequirements, sourceRequestFitTier } from "../src/sourceAssessment.js";
 
 const STOPWORDS = new Set(["a", "an", "and", "or", "of", "the", "in", "on", "to", "for", "with"]);
 
@@ -253,10 +253,10 @@ export function rankSourceResults(results, researchSpec, limit = 10) {
     const scopeChecks = sourceAssessment.checks.filter((check) => /^(?:population|geography|study-period|method-)/.test(check.id));
     const scopeStatuses = [...scopeChecks.map((check) => check.status), ...(matchExplanation.relationship ? [matchExplanation.relationship.status === "comparison-indicated" ? "meets" : "unverified"] : [])];
     const scopeCoverage = scopeStatuses.length ? scopeStatuses.filter((status) => status === "meets").length / scopeStatuses.length : 1;
-    const complete = matchExplanation.status === "meets" && sourceAssessment.status === "meets";
     // Lexical density must never outweigh a complete request match. Within
     // partial matches, established scope beats repeated topical keywords.
-    const tier = complete ? 3 : matchExplanation.missingConcepts.length === 0 ? 2 : 1;
+    const tier = sourceRequestFitTier({ matchExplanation, sourceAssessment });
+    const complete = tier === 3;
     const preferenceBonus = Math.min(15, (sourceAssessment.preferenceChecks || []).filter((check) => check.status === "meets").length * 5);
     // Evaluability signals break ties among equally matched leads; they never
     // lift a partial match above a complete one (tiers are 2000 points apart).

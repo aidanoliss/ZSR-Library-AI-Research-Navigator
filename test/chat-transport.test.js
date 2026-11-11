@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { ChatRequestError, chatFailureMessage, requestChatReply } from "../src/chatTransport.js";
+import { unconfirmedSourceDiscovery } from "../src/sourceSearchStatus.js";
+import { emptySourcePresentation } from "../src/sourcePresentation.js";
 
 test("sources arrive before generation and survive a broken stream without repeating the paid request", async () => {
   let calls = 0;
@@ -84,7 +86,9 @@ test("does not retry an actionable 4xx response", async () => {
   let calls = 0;
   const fetchImpl = async () => {
     calls += 1;
-    return jsonResponse({ error: "Too many requests. Please wait before trying again." }, 429);
+    return new Response(JSON.stringify({ error: "Too many requests. Please wait before trying again." }), {
+      status: 429, headers: { "Content-Type": "application/json", "Retry-After": "2" },
+    });
   };
 
   await assert.rejects(
@@ -93,6 +97,10 @@ test("does not retry an actionable 4xx response", async () => {
       assert.ok(err instanceof ChatRequestError);
       assert.equal(err.status, 429);
       assert.match(err.message, /Too many requests/);
+      const discovery = unconfirmedSourceDiscovery("library", { rateLimited: true, retryAfterSeconds: err.retryAfterSeconds });
+      const presentation = emptySourcePresentation([{ label: "Library", status: discovery.lanes.library }]);
+      assert.equal(presentation.title, "Search service is busy");
+      assert.match(presentation.requested[0].message, /in about 2 seconds/);
       return true;
     }
   );

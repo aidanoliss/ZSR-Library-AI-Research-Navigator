@@ -1,9 +1,10 @@
 export class ChatRequestError extends Error {
-  constructor(message, { status = 0, retryable = false, cause } = {}) {
+  constructor(message, { status = 0, retryable = false, retryAfterSeconds = null, cause } = {}) {
     super(message, cause ? { cause } : undefined);
     this.name = "ChatRequestError";
     this.status = status;
     this.retryable = retryable;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -19,8 +20,10 @@ function requestOptions(payload, signal) {
 async function responseError(response) {
   const data = await response.json().catch(() => ({}));
   const message = data?.error || `The AI service returned an HTTP ${response.status} error.`;
+  const retryAfter = response.headers.get("Retry-After");
   return new ChatRequestError(message, {
     status: response.status,
+    retryAfterSeconds: /^\d{1,6}$/.test(retryAfter || "") ? Number(retryAfter) : null,
     retryable: response.status === 408 || response.status >= 500,
   });
 }

@@ -25,6 +25,13 @@ export function sourceKindFromMetadata(source = {}) {
   return "";
 }
 
+/** Shared priority for metadata ranking, AI re-ranking and the results view. */
+export function sourceRequestFitTier({ matchExplanation, sourceAssessment } = {}) {
+  if (matchExplanation?.status === "mismatch" || matchExplanation?.excludedMatches?.length || sourceAssessment?.status === "mismatch") return 0;
+  if (matchExplanation?.status === "meets" && sourceAssessment?.status === "meets") return 3;
+  return Array.isArray(matchExplanation?.missingConcepts) && !matchExplanation.missingConcepts.length ? 2 : 1;
+}
+
 export function assessSourceRequirements(source = {}, specOrRequirements = {}) {
   const requirements = specOrRequirements.sourceRequirements || specOrRequirements;
   const contract = specOrRequirements.sourceContract || SOURCE_MODE_CONTRACTS[specOrRequirements.mode || specOrRequirements.modeId];

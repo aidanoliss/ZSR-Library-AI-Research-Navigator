@@ -125,3 +125,85 @@
 .research-chat-support-links a { overflow-wrap: anywhere; font-weight: 600; }
 
 @media (max-width: 600px) { .research-chat-response-footer > p { flex-basis: 100%; } }
+
+.research-chat-heading details.research-chat-transmission {
+  margin-top: 4px;
+  color: #625b50;
+  font-size: .76rem;
+  line-height: 1.6;
+}
+
+.research-chat-transmission summary {
+  width: fit-content;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.research-chat-transmission[open] > p {
+  margin: 4px 0 0;
+  font-size: inherit;
+}
+
+.research-chat-intent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.research-chat-intent button {
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 1px solid #ded5c3;
+  border-radius: 8px;
+  background: #fff;
+  color: #29251f;
+  font: 600 .78rem/1.4 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.research-chat-intent button[aria-pressed="true"] {
+  background: #29251f;
+  border-color: #29251f;
+  color: #fff;
+}
+
+.research-chat-manage-inline {
+  min-height: 36px;
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  color: #214e83;
+  font: 600 .76rem/1.4 system-ui, sans-serif;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.research-chat-expired {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #d8c9a7;
+  border-radius: 9px;
+  background: #fffaf1;
+  font-size: .8rem;
+  overflow-wrap: anywhere;
+}
+
+.research-chat-expired p { margin: 0; }
+.research-chat-expired ul { padding: 0; margin: 10px 0 0; list-style: none; }
+.research-chat-expired li { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.research-chat-expired li + li { margin-top: 10px; }
+.research-chat-expired li > span { flex: 1 1 230px; }
+.research-chat-expired li > div { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.research-chat-support > h3,
+.research-chat-limitations > h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.research-chat-support .research-chat-evidence { margin-top: 12px; }
+.research-chat-limitations { margin-top: 20px; padding-top: 16px; border-top: 1px solid #ded5c3; }
+.research-chat-limitations p { margin: 0; }
+.research-chat-limitations .research-chat-quote > a { display: inline-block; margin-top: 8px; font-size: .8rem; }

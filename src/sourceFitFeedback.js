@@ -13,14 +13,20 @@ const validStatuses = new Set(["meets", "mismatch", "unverified"]);
 
 export function sourceFitSummary(assessment = {}) {
   const checks = (Array.isArray(assessment.checks) ? assessment.checks : []).map((check) => ({ ...check, status: validStatuses.has(check.status) ? check.status : "unverified" }));
-  const scope = checks.filter((check) => check.id === "population" || check.id === "geography" || check.id?.startsWith("method-"));
   const joint = checks.find((check) => check.id === "population-geography");
-  const rows = scope.length ? scope : checks.filter((check) => check.id !== "population-geography").slice(0, 3);
+  const rows = checks.filter((check) => check.id !== "population-geography").map((check) => ({
+    ...check,
+    label: check.id === "population" ? "Population" : check.id === "geography" ? "Location" : check.label || "Requirement",
+    statusLabel: check.status === "meets" ? "Supported by metadata" : check.status === "mismatch" ? "Conflicts with request" : "Not established",
+  }));
+  const attention = [...rows, ...(joint ? [{ ...joint, label: "Population and location together" }] : [])]
+    .filter((check) => check.status !== "meets")
+    .map((check) => ({ ...check, message: check.label + (check.status === "mismatch" ? " conflicts" : " not confirmed") }));
   const conflict = checks.some((check) => check.status === "mismatch");
   const unknown = checks.some((check) => check.status !== "meets");
   return {
-    rows: rows.map((check) => ({ ...check, label: check.id === "population" ? "Population" : check.id === "geography" ? "Location" : check.label,
-      statusLabel: check.status === "meets" ? "Supported by metadata" : check.status === "mismatch" ? "Conflicts with request" : "Not established" })),
+    rows,
+    attention,
     joint,
     preferences: (Array.isArray(assessment.preferenceChecks) ? assessment.preferenceChecks : []).map(check => ({ ...check, status: validStatuses.has(check.status) ? check.status : "unverified", statusLabel: check.status === "meets" ? "Preference supported by metadata" : check.status === "mismatch" ? "Does not match preference" : "Preference not established" })),
     summary: conflict ? "Does not satisfy every checked requirement." : !checks.length ? "No specific requirement checks are available for this record." : unknown ? "Some requested criteria are not established. Treat this as a lead to check." : "Reported metadata supports the checked criteria; relevance and claims still need your review.",

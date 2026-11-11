@@ -1,4 +1,4 @@
-import { useContext, useId, useState } from "react";
+import { useContext, useId, useRef, useState } from "react";
 import { ResearchChatContext } from "./researchChatContext.js";
 import { buildAccessLinks, extractDoi, extractPmid, fillTemplate, LIBRARY_LINKS } from "../config/libraryLinks.js";
 import { researchSpecQuery } from "../config/researchSpec.js";
@@ -8,7 +8,7 @@ import { assessSourceRequirements, sourcePublicationYear } from "./sourceAssessm
 import { researchItemKey } from "./researchWorkspace.js";
 import CitationExport from "./CitationExport.jsx";
 import SourceDetailsDialog from "./SourceDetailsDialog.jsx";
-import { filterSourceResults, paginateSourceLanes, shortSourceExcerpt, sourceAuthors, sourceJournal, sourceResultLanes, sourceTypeKey, sourceTypeLabel, sourceTypeOptions } from "./sourceResultView.js";
+import { paginateSourceLanes, shortSourceExcerpt, sourceAuthors, sourceJournal, sourceResultLanes, sourceTypeLabel, sourceTypeOptions } from "./sourceResultView.js";
 import SourceReadingGuide from "./SourceReadingGuide.jsx";
 import SourceFitSummary from "./SourceFitSummary.jsx";
 import SourceExploration from "./SourceExploration.jsx";
@@ -34,8 +34,8 @@ const FIT_DISPLAY = [
   [/^Requested item/, "Your requested item"],
   [/^Possible requested item/, "Possibly your item · check author"],
   [/^Related work/, "Related work"],
-  [/^Comparison indicated · verify design$/, "Compares both"],
-  [/^Comparison indicated · scope needs checking$/, "Compares both · check scope"],
+  [/^Comparison indicated · verify design$/, "Comparison indicated"],
+  [/^Comparison indicated · scope needs checking$/, "Comparison indicated · check scope"],
   [/^Combined approach/, "Combined approach, not a comparison"],
   [/comparison not established$/, "Comparison not confirmed"],
   [/^Topic match · scope needs checking$/, "Check scope"],
@@ -151,18 +151,23 @@ function SourceRow({ feedback, feedbackRequest, explorationAccessScope, result: 
   </li>;
 }
 
-function WhereToStart({ results, researchSpec, incomplete = false }) {
-  const guide = whereToStart(results, researchSpec, { incomplete });
+function WhereToStart({ results, researchSpec, selectRecord, incomplete = false }) {
+  const region = useRef(null);
+  const selected = results.map(selectRecord);
+  const groupKeys = new Map(selected.map((record, index) => [sourceKey(record), sourceKey(results[index])]));
+  const guide = whereToStart(selected, researchSpec, { incomplete });
   if (!guide) return null;
   const jump = (key) => {
-    const row = [...document.querySelectorAll(".source-result-row")].find((element) => element.dataset.sourceKey === key);
+    const workspace = region.current?.closest(".source-results-workspace");
+    const rows = workspace?.querySelectorAll(".source-result-row") || [];
+    const row = [...rows].find((element) => element.dataset.sourceKey === groupKeys.get(key));
     if (!row) return;
     const hidden = row.closest("details:not([open])");
     if (hidden) hidden.open = true;
     row.scrollIntoView({ behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
     row.querySelector(".source-result-title a, .source-result-title")?.focus?.({ preventScroll: true });
   };
-  return <section className="where-to-start" aria-label="Where to start">
+  return <section ref={region} className="where-to-start" aria-label="Where to start">
     <h3>Where to start</h3>
     {guide.picks.length > 0 && <ol>{guide.picks.map((pick) => <li key={pick.key}><button type="button" onClick={() => jump(pick.key)}>{pick.title}</button><span>{pick.reason}</span></li>)}</ol>}
     {guide.tip && <p className="where-to-start-tip">{guide.tip}</p>}
@@ -187,7 +192,9 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
   const excludedCount = checkedResults.filter((result) => result.sourceAssessment.status === "mismatch").length;
   const lanes = sourceResultLanes(checkedResults.filter((result) => result.sourceAssessment.status !== "mismatch"), sourceDiscovery);
   const allResults = lanes.flatMap((lane) => lane.results);
-  const shownCount = filterSourceResults(allResults, filters).length;
+  const pagedLanes = paginateSourceLanes(lanes, filters);
+  const visibleResults = pagedLanes.flatMap((lane) => lane.filteredResults);
+  const shownCount = visibleResults.length;
   const localFiltersApplied = filters.type !== "all" || Boolean(filters.from || filters.to);
   const invalidYears = Boolean((filters.from && !/^\d{4}$/.test(filters.from)) || (filters.to && !/^\d{4}$/.test(filters.to)) || (filters.from && filters.to && Number(filters.from) > Number(filters.to)));
   const unknownYears = allResults.filter((result) => sourcePublicationYear(result) === null).length;
@@ -222,13 +229,13 @@ export default function SourceResults({ liveResults = [], sourceDiscovery = null
         {invalidYears && <p role="status" className="source-filter-error">Enter four-digit years, with the start year no later than the end year.</p>}
       </div></details>
     </div>}
-    {allResults.length > 0 && <WhereToStart results={allResults} researchSpec={researchSpec} incomplete={lanes.some((lane) => RETRY_OUTCOMES.has(sourceLaneOutcome(lane.status)))} />}
+    {visibleResults.length > 0 && <WhereToStart results={visibleResults} researchSpec={researchSpec} selectRecord={exportRecord} incomplete={lanes.some((lane) => lane.status?.requested && RETRY_OUTCOMES.has(sourceLaneOutcome(lane.status)))} />}
     {allResults.length > 0 && <p className="source-results-trust">Records come from library providers. Fit labels are automated and can be wrong; <strong>verify in the source</strong>.{evidenceNotice && <> <details className="source-trust-more"><summary>About AI &amp; evidence</summary><span>{evidenceNotice}</span></details></>}</p>}
     {feedback.queue.length > 0 && <SourceFeedbackQueue feedback={feedback} />}
     {retryError && <p className="source-provider-status" role="alert">{retryError}</p>}
     {!allResults.length && <SourceEmptyState excludedCount={excludedCount} lanes={lanes} recovery={recovery} directQuery={directQuery} researchSpec={researchSpec} externalFilters={externalFilters} pending={retryPending} onRetry={onRerunInterpretation ? retry : null} onShowStrategy={onShowStrategy} onEditRequirements={onEditRequirements} onTrackSearch={onTrackSearch} />}
     {evidenceNotice && !allResults.length && <details className="source-record-details"><summary>About AI guidance &amp; evidence</summary><p className="source-results-trust">{evidenceNotice}</p></details>}
-    {allResults.length > 0 && paginateSourceLanes(lanes, filters).map((lane) => {
+    {allResults.length > 0 && pagedLanes.map((lane) => {
       if (!lane.results.length && !lane.status?.requested && !lane.mergedResultCount) return null;
       const visible = lane.filteredResults;
       const first = lane.initialResults;

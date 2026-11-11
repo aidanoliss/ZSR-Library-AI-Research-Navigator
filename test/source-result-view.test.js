@@ -60,3 +60,24 @@ test("a lane with no initially featured work retains nonempty disclosure results
   assert.equal(pages[1].filteredResults.length, 1);
   assert.equal(pages[1].moreResults.length, 1);
 });
+
+test("initial page honors AI relevance within fit tiers across lanes", () => {
+  const matchExplanation = { status: "meets", missingConcepts: [] };
+  const supported = { matchExplanation, sourceAssessment: { status: "meets" } };
+  const library = Array.from({ length: 5 }, (_, index) => ({
+    ...supported, title: `Relevant library study ${index}`, doi: `10.1234/library-fit-${index}`,
+    metadataRank: { score: 12 - index }, aiRelevance: { score: 1 },
+  }));
+  const preferred = {
+    ...supported, title: "Relevant open access study", doi: "10.1234/strong-oa",
+    accessScope: "open-access", metadataRank: { score: 1 }, aiRelevance: { score: 2 },
+  };
+  const unverified = {
+    ...preferred, title: "Unverified open access study", doi: "10.1234/weak-oa",
+    sourceAssessment: { status: "unverified" }, aiRelevance: { score: 3 },
+  };
+  const pages = paginateSourceLanes(sourceResultLanes([...library, preferred, unverified]));
+  assert.equal(pages[0].initialResults.length, 4);
+  assert.deepEqual(pages[1].initialResults.map((source) => source.doi), [preferred.doi]);
+  assert.deepEqual(pages[1].moreResults.map((source) => source.doi), [unverified.doi]);
+});

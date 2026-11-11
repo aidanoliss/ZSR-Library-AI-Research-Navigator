@@ -754,7 +754,7 @@ export default function App() {
 }
 
 function ResearchApp({ privateMode, onPrivacyChange }) {
-  const [sidebarExpanded, setSidebarExpanded] = useState(() => window.matchMedia("(min-width: 861px)").matches);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [input, setInput] = useState(() => privateMode ? "" : readStoredText(STORAGE_KEY, initialTopicFromUrl()));
   const [messages, setMessages] = useState([]);
   const [workspaceView, setWorkspaceView] = useState("search");
@@ -807,6 +807,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   const [error, setError] = useState("");
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  const latestResultRef = useRef(null);
+  const pendingResultScroll = useRef(null);
+  const toolsMenuRef = useRef(null);
   const requestRef = useRef(null);
   const workspaceRef = useRef(researchWorkspace);
   workspaceRef.current = researchWorkspace;
@@ -822,6 +825,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
   }, [actionNotice]);
 
   const hasConversation = messages.length > 0;
+  const savedSourceCount = researchWorkspace.trail.filter(isSavedSource).length;
   const latestUserIndex = messages.findLastIndex((message) => message.role === "user");
   const activeMode = getSearchMode(mode);
   const subjectFocusSeed = useMemo(() => submittedResearchTopicContext(messages), [messages]);
@@ -880,12 +884,17 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [messages.filter((m) => m.role === "user").length]);
 
-  const updatedResultRef = useRef(null);
   useEffect(() => {
-    if (!loading && messages.at(-1)?.isCorrectionResult) {
-      updatedResultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [loading, messages]);
+    const latest = messages.at(-1);
+    if (loading || workspaceView !== "search" || !pendingResultScroll.current ||
+        latest?.searchMetricId !== pendingResultScroll.current) return;
+    pendingResultScroll.current = null;
+    const result = latestResultRef.current;
+    const outcome = result?.querySelector(".source-empty-state");
+    const target = outcome || (latest.isCorrectionResult ? result : null);
+    if (!target || (document.activeElement === inputRef.current && inputRef.current?.value.trim())) return;
+    target.scrollIntoView({ block: "start" });
+  }, [loading, messages, workspaceView]);
 
   const exportableMessages = useMemo(
     () => messages.filter((m) => m.role === "user" || m.role === "assistant"),
@@ -922,7 +931,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     const attached = mergeChatSources(selected, chatSourcesRef.current).slice(0, 24);
     chatSourcesRef.current = attached;
     setChatSources(attached);
-    changeResearchChat({ ...researchChatRef.current, selectedSourceKeys: selected.map(chatSourceKey) });
+    changeResearchChat({ ...researchChatRef.current, selectedSourceKeys: selected.map(chatSourceKey), intent: "evidence" });
     setResearchWorkspaceOpen(false);
     setWorkspaceView("chat");
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -1205,6 +1214,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
 
     const requestPreviousSpec = options.previousResearchSpec || researchSpecForFollowup(latestResearchSpec, messages);
     const searchMetricId = crypto.randomUUID();
+    pendingResultScroll.current = searchMetricId;
     const startedAt = new Date().toISOString();
     studyRef.current.record("search_started", { searchId: searchMetricId, accessScope: requestAccessScope });
     setActionNotice("");
@@ -1362,7 +1372,9 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
     } catch (err) {
       if (controller.signal.aborted || requestRef.current !== controller) return;
       setError("");
-      studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: "error" });
+      const rateLimited = err?.status === 429;
+      const failureStatus = rateLimited ? "rate_limited" : "error";
+      studyRef.current.record("search_finished", { searchId: searchMetricId, resultCount: 0, status: failureStatus });
       const failureMessage = chatFailureMessage(err);
       const deterministicFallbackPlan = buildResearchPlan(
         focusText,
@@ -1382,6 +1394,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         ...nextMessages,
         {
           role: "assistant",
+          searchMetricId,
           content: failureMessage,
           reply: {
             message: failureMessage,
@@ -1396,7 +1409,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           matched: deterministicFallbackPlan.recommendations || [],
           searchTools: FALLBACK_SEARCH_TOOLS,
           liveResults: [],
-          sourceDiscovery: unconfirmedSourceDiscovery(requestAccessScope),
+          sourceDiscovery: unconfirmedSourceDiscovery(requestAccessScope, { rateLimited, retryAfterSeconds: err?.retryAfterSeconds }),
           researchSpec: {
             ...deterministicFallbackPlan.researchSpec,
             planHash: deterministicFallbackPlan.planHash,
@@ -1411,7 +1424,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           ...(isCorrection ? { isCorrectionResult: true, correctionFailed: true, correctionChanges: options.correctionChanges || [] } : {}),
         },
       ];
-      recordRun(fallback.at(-1), "error");
+      recordRun(fallback.at(-1), failureStatus);
       setMessages(fallback);
       saveSession(fallback, requestMode, requestResponseStyle, sessionId, requestSubjectFocusId, workspaceRef.current, requestAccessScope);
     } finally {
@@ -1548,7 +1561,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
                       {assistant}
                     </details>;
                   }
-                  return <div key={`${message.role}-${index}`} ref={message.isCorrectionResult && index === messages.length - 1 ? updatedResultRef : null} className={message.isCorrectionResult ? "updated-search-result" : ""}>
+                  return <div key={`${message.role}-${index}`} ref={index === messages.length - 1 ? latestResultRef : null} className={message.isCorrectionResult ? "updated-search-result" : ""}>
                     {loading && message.guidancePending && <p className="source-guidance-status" role="status"><strong>Search results are ready.</strong> Checking optional abstract passages. You can open and save sources now.</p>}
                     {message.guidanceUnavailable && !message.guidanceSkipped && <p className="source-guidance-status" role="status">Source results were preserved. Optional abstract selection could not finish.</p>}
                     {message.isCorrectionResult && <div className="correction-result-status" role="status">
@@ -1628,22 +1641,25 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
         </header>
 
         <nav className="research-toolbar research-workspace-toolbar no-print" aria-label="Research actions">
-          <button type="button" onClick={() => openWorkspace("trail")}>{Icon.workspace} My sources <span>{researchWorkspace.trail.filter(isSavedSource).length}</span></button>
-          <button type="button" onClick={() => openWorkspace("brief")} title="Set assignment requirements">Assignment brief</button>
+          <button type="button" className={savedSourceCount ? "research-sources-action" : "research-sources-action is-empty"} onClick={() => openWorkspace("trail")}>
+            {Icon.workspace} My sources {savedSourceCount > 0 && <span>{savedSourceCount}</span>}
+          </button>
           <a href={LIBRARY_LINKS.zsrAsk} target="_blank" rel="noopener noreferrer">Ask a librarian</a>
           <div className="research-view-switch" role="group" aria-label="Research workspace">
             <button id="research-search-button" type="button" aria-pressed={workspaceView === "search"} aria-controls="research-search-view" onClick={() => setWorkspaceView("search")}>Search</button>
             <button id="research-chat-button" type="button" aria-pressed={workspaceView === "chat"} aria-controls="research-chat-view" onClick={() => setWorkspaceView("chat")}>Research chat <span>AI</span></button>
           </div>
-          <details className="research-export-menu">
-            <summary>Export &amp; share</summary>
+          <details className="research-export-menu" ref={toolsMenuRef}>
+            <summary>Tools</summary>
             <div>
-              <button type="button" onClick={copyPlan} disabled={!hasConversation}>Copy research plan</button>
-              <button type="button" onClick={downloadPlan} disabled={!hasConversation}>Download plan</button>
-              <button type="button" onClick={() => window.print()} disabled={!hasConversation}>Print plan</button>
-              <button type="button" onClick={() => setHandoffOpen(true)} disabled={!handoffPayload.topic}>Prepare librarian handoff</button>
+              <button type="button" onClick={() => { toolsMenuRef.current.open = false; openWorkspace("brief"); }}>Assignment brief</button>
+              {hasConversation && <>
+                <button type="button" onClick={copyPlan}>Copy research plan</button>
+                <button type="button" onClick={downloadPlan}>Download plan</button>
+                <button type="button" onClick={() => window.print()}>Print plan</button>
+              </>}
+              {handoffPayload.topic && <button type="button" onClick={() => { toolsMenuRef.current.open = false; setHandoffOpen(true); }}>Prepare librarian handoff</button>}
               <button type="button" onClick={sharePlan}>Share Navigator link</button>
-              <p>Share Navigator sends the app link. Export your plan or My sources to share your research.</p>
               <LocalStudyPanel enabled={studyEnabled} onToggle={(enabled) => { enabled ? studyRef.current.start() : studyRef.current.stop(); setStudyEnabled(enabled); setActionNotice(enabled ? "Local review recording is on. Run a search, then mark a checked source useful." : "Local review recording stopped."); }} onExport={() => downloadText("zsr-usability-session.json", studyRef.current.exportJson())} onClear={() => { studyRef.current.clear(); setStudyEnabled(false); setActionNotice("Local review session cleared."); }} />
             </div>
           </details>
@@ -1702,7 +1718,7 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
                   ))}
                 </div>
               </form>
-              <p className="entry-privacy">Your request goes to an AI service. Avoid personal or sensitive information. {privateMode ? "Private research is not saved to browser storage." : "Saved research stays in this browser."}</p>
+              <p className="entry-privacy">Search uses an AI service. Avoid personal or sensitive information.</p>
               <details className="search-options">
                 <summary>Optional search settings <span>{activeMode.shortLabel} · {getAccessScope(accessScope).label}</span></summary>
                 <ModeSelector providerStatus={providerStatus} value={mode} onChange={setMode} accessScope={accessScope} onAccessScopeChange={setAccessScope} responseStyle={responseStyle} onResponseStyleChange={setResponseStyle} />
@@ -1731,7 +1747,13 @@ function ResearchApp({ privateMode, onPrivacyChange }) {
           session={researchChat} onSessionChange={changeResearchChat} sources={availableChatSources}
           topic={latestResearchSpec?.topic || handoffPayload.topic || input}
           assignmentContext={assignmentContext(researchWorkspace.assignment)} privateMode={privateMode}
-          onSearch={(prompt) => { setWorkspaceView("search"); if (String(prompt || "").trim()) setInput(String(prompt).slice(0, 2000)); setActionNotice("Review your question in Search, then start the search."); requestAnimationFrame(() => inputRef.current?.focus()); }}
+          onSearch={(prompt) => {
+            const draft = String(prompt || "").trim();
+            setWorkspaceView("search");
+            if (draft) setInput(draft.slice(0, 2000));
+            setActionNotice("");
+            requestAnimationFrame(() => inputRef.current?.focus());
+          }}
         /></div>}
         {hasConversation && workspaceView === "search" && (
           <div className="conversation-composer-area no-print">

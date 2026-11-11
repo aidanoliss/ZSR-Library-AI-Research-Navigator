@@ -81,7 +81,11 @@ export function verifyResearchChatToken(token, options = {}) {
   if (packet?.v !== TOKEN_VERSION || !Number.isFinite(packet.issuedAt) || !Number.isFinite(packet.expiresAt)
     || packet.expiresAt - packet.issuedAt !== RESEARCH_CHAT_TOKEN_TTL_MS || packet.issuedAt > now + 60000
     || !packet.source || typeof packet.source.id !== "string" || typeof packet.source.title !== "string" || typeof packet.source.abstract !== "string") throw tokenError("The source record is invalid. Run the Navigator search again.");
-  if (packet.expiresAt <= now) throw tokenError("This source's chat evidence has expired. Run its Navigator search again to refresh the record.", "SOURCE_EXPIRED", 409);
+  if (packet.expiresAt <= now) {
+    throw Object.assign(tokenError("This source's chat evidence has expired. Run its Navigator search again to refresh the record.", "SOURCE_EXPIRED", 409), {
+      sourceId: packet.source.id,
+    });
+  }
   return packet.source;
 }
 

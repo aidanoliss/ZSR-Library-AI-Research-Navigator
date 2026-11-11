@@ -31,6 +31,17 @@ test("re-ranking orders by score, keeps metadata order for ties, and never adds 
   assert.equal(applyRerankScores(records, { scores: records.map((_, i) => ({ i: i + 1, s: 9 })) }), null, "out-of-range scores are ignored");
 });
 
+test("AI can reorder sources within a fit tier and cannot promote an unverified source over supported ones", () => {
+  const topic = { status: "meets", missingConcepts: [] };
+  const complete = { ...records[0], matchExplanation: topic, sourceAssessment: { status: "meets" } };
+  const unknown = { ...records[1], matchExplanation: topic, sourceAssessment: { status: "unverified" } };
+  const better = { ...complete, ...records[2] };
+  const ordered = applyRerankScores([complete, unknown, better], {
+    scores: [{ i: 1, s: 0 }, { i: 2, s: 3 }, { i: 3, s: 2 }],
+  });
+  assert.deepEqual(ordered.map((source) => source.doi), [better.doi, complete.doi, unknown.doi]);
+});
+
 test("re-ranking is skipped for known items, small pools, no key or the off switch, and survives provider failure", async () => {
   const spec = buildResearchSpec("ocean acidification and coral reefs");
   const env = { GEMINI_API_KEY: "k" };

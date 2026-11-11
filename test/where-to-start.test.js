@@ -16,27 +16,28 @@ test("picks only returned sources, at most three, each with a reason", () => {
   assert.equal(guide.picks.length, 3);
   assert.ok(guide.picks.every((pick) => results.some((result) => sourceKey(result) === pick.key) && pick.reason));
   assert.equal(guide.picks[0].title, "A systematic review of the topic", "an overview comes first when there is no comparison");
-  assert.ok(guide.picks.some((pick) => /newest matches \(2026\)/.test(pick.reason)));
+  assert.ok(guide.picks.some((pick) => /newest leads \(2026\)/.test(pick.reason)));
   assert.equal(guide.tip, "");
 });
 
 test("a direct comparison leads when the request compares two sides", () => {
   const spec = { mode: "scholarly", comparison: { terms: ["adolescent*", "older adults"] } };
   const guide = whereToStart([
-    match({ title: "Loneliness in teens", doi: "1" }),
+    match({ title: "Loneliness in teens", doi: "1", matchExplanation: { status: "partial", category: "supporting", missingConcepts: ["older adults"] } }),
     match({ title: "Loneliness across the lifespan", doi: "2", matchExplanation: { status: "partial", category: "direct-comparison", missingConcepts: [] } }),
   ], spec);
   assert.equal(guide.picks[0].title, "Loneliness across the lifespan");
-  assert.match(guide.picks[0].reason, /compares adolescent and older adults/);
+  assert.match(guide.picks[0].reason, /indicates a comparison of adolescent and older adults/);
+  assert.match(guide.picks[0].reason, /Check the groups and design/);
 });
 
 test("thin or partial results produce an honest tip instead of false picks", () => {
   const partial = [match({ title: "Partial", doi: "p", matchExplanation: { status: "partial", category: "supporting", missingConcepts: ["safety"] } })];
   const guide = whereToStart(partial, { mode: "scholarly" });
   assert.deepEqual(guide.picks, []);
-  assert.match(guide.tip, /None of these match every idea/);
+  assert.match(guide.tip, /doesn't show every required topic/);
   const noComparison = whereToStart([match({ title: "One side", doi: "x" })], { comparison: { terms: ["A", "B"] } });
-  assert.match(noComparison.tip, /No result clearly compares both sides/);
+  assert.match(noComparison.tip, /A direct comparison remains unconfirmed/);
   assert.equal(whereToStart([], {}), null);
 });
 
@@ -45,9 +46,30 @@ test("excluded-topic mentions are never recommended", () => {
   assert.deepEqual(guide.picks, []);
 });
 
-test("book searches point to a copy on the shelf", () => {
+test("book searches show the catalog location and prompt an availability check", () => {
   const guide = whereToStart([match({ title: "Jazz history", url: "u", type: "book", fulfillment: { statusLabel: "Available when checked", location: "ZSR Main Stacks", callNumber: "ML3508 .T87" } })], { mode: "books" });
-  assert.equal(guide.picks[0].reason, "On the shelf: ZSR Main Stacks, ML3508 .T87.");
+  assert.equal(guide.picks[0].reason, "Check availability at ZSR Main Stacks, ML3508 .T87.");
+});
+
+test("a topical recommendation exposes each unverified requirement with the card's wording", async () => {
+  const { assessSourceRequirements } = await import("../src/sourceAssessment.js");
+  const { sourceFitSummary } = await import("../src/sourceFitFeedback.js");
+  const spec = { facets: { population: "college students" }, sourceRequirements: { peerReviewed: true, publicationYearFrom: 2021 } };
+  const lead = match({ title: "Social media use and sleep quality", doi: "10.1/sleep" });
+  const assessment = assessSourceRequirements(lead, spec);
+  const card = sourceFitSummary(assessment);
+  const recommendation = whereToStart([lead], spec).picks[0];
+  assert.deepEqual(card.attention.map((check) => check.id), ["publication-date", "peer-review", "population"]);
+  for (const check of card.attention) assert.ok(recommendation.reason.includes(check.message), check.message);
+  assert.doesNotMatch(recommendation.reason, /matches every part/i);
+});
+
+test("a supported lead takes precedence over an unverified review", () => {
+  const spec = { sourceRequirements: { peerReviewed: true } };
+  const review = match({ title: "A systematic review of the topic", doi: "10.1/review" });
+  const peerReviewed = match({ title: "A directly relevant study", doi: "10.1/study", peerReviewed: true });
+  assert.equal(whereToStart([review, peerReviewed], spec).picks[0].key, peerReviewed.doi);
+  assert.deepEqual(whereToStart([match({ ...review, peerReviewed: false })], spec).picks, []);
 });
 
 test("an unfinished library search never presents a partial list as the best start", () => {

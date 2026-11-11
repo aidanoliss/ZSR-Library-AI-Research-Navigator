@@ -1,4 +1,4 @@
-import { sourceKindFromMetadata, sourcePublicationYear } from "./sourceAssessment.js";
+import { sourceKindFromMetadata, sourcePublicationYear, sourceRequestFitTier } from "./sourceAssessment.js";
 import { uniqueSourceResults, groupRelatedSourceResults } from "./sourceDedup.js";
 
 /** Count a work once while retaining the separate access options merged into its record. */
@@ -64,7 +64,9 @@ export function paginateSourceLanes(lanes = [], filters = {}, limit = 5) {
   const filteredLanes = lanes.map((lane) => ({ ...lane, filteredResults: filterSourceResults(lane.results, filters) }));
   const ranked = filteredLanes.flatMap((lane) => lane.filteredResults).sort((a, b) => filters.sort === "newest"
     ? (sourcePublicationYear(b) ?? -Infinity) - (sourcePublicationYear(a) ?? -Infinity)
-    : (b.metadataRank?.score ?? 0) - (a.metadataRank?.score ?? 0));
+    : sourceRequestFitTier(b) - sourceRequestFitTier(a)
+      || (b.aiRelevance?.score ?? -1) - (a.aiRelevance?.score ?? -1)
+      || (b.metadataRank?.score ?? 0) - (a.metadataRank?.score ?? 0));
   const initial = new Set(ranked.slice(0, Math.max(0, limit)));
   return filteredLanes.map((lane) => ({
     ...lane,

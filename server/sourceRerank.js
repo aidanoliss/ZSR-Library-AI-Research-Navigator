@@ -1,4 +1,5 @@
 import { ProviderError, createCircuitBreaker, providerHttpError, runProviderOperation } from "./providerResilience.js";
+import { sourceRequestFitTier } from "../src/sourceAssessment.js";
 
 /**
  * Re-order provider records by how well each could help answer the student's
@@ -37,7 +38,7 @@ export function rerankPrompt(question, records) {
   return `Research question: ${clean(question, 600)}\n\nRecords:\n${list}`;
 }
 
-/** Stable order: higher score first, then the original metadata rank. */
+/** Keep deterministic request fit ahead of the model's relevance score. */
 export function applyRerankScores(records, raw) {
   const scores = new Map();
   for (const item of Array.isArray(raw?.scores) ? raw.scores : []) {
@@ -46,8 +47,13 @@ export function applyRerankScores(records, raw) {
     if (Number.isInteger(index) && index >= 0 && index < records.length && Number.isInteger(score) && score >= 0 && score <= 3 && !scores.has(index)) scores.set(index, score);
   }
   if (scores.size < Math.ceil(records.length / 2)) return null;
-  return records.map((record, index) => ({ record, index, score: scores.has(index) ? scores.get(index) : 1 }))
-    .sort((a, b) => b.score - a.score || a.index - b.index)
+  return records.map((record, index) => ({
+    record,
+    index,
+    tier: sourceRequestFitTier(record),
+    score: scores.get(index) ?? 1,
+  }))
+    .sort((a, b) => b.tier - a.tier || b.score - a.score || a.index - b.index)
     .map(({ record, score }) => ({ ...record, aiRelevance: { score, scale: 3, method: "ai-rerank" } }));
 }
 

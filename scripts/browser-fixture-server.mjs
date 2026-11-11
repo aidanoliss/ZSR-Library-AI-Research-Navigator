@@ -7,15 +7,15 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildResearchPlan } from "../config/researchAgent.js";
 import { parseChatRequest } from "../server/chatRequest.js";
 import { assessSourceRequirements } from "../src/sourceAssessment.js";
-import { signResearchChatSources } from "../server/researchChatEvidence.js";
+import { RESEARCH_CHAT_TOKEN_TTL_MS, signResearchChatSources } from "../server/researchChatEvidence.js";
 import { researchChatReply } from "../server/researchChat.js";
 import { screenMessage, blockedReply } from "../server/screen.js";
 
 const PROJECT_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const FIXTURE_TIME = "2026-09-15T12:00:00.000Z";
-const CHAT_FIXTURE_OPTIONS = { signingKey: "synthetic-browser-fixture-only", now: Date.parse(FIXTURE_TIME) };
+const CHAT_FIXTURE_OPTIONS = { signingKey: "synthetic-browser-fixture-only", now: Date.now };
 const BODY_LIMIT = 131072;
-const TAG_RE = /\[fixture:(delay|error|empty|timeout|rate-limit|stream-retry|editions)\]/gi;
+const TAG_RE = /\[fixture:(delay|error|empty|timeout|rate-limit|busy|stream-retry|editions|expired-attachment|metadata-only)\]/gi;
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".woff2": "font/woff2" };
 
 function fixtureControls(body) {
@@ -73,7 +73,7 @@ function fixtureSources(plan, origin, scope) {
 }
 
 /** Pure export for fixture-shape assertions; uses the same request parser/planner as the app. */
-export function buildFixturePayload(body, origin = "http://127.0.0.1:3004") {
+export function buildFixturePayload(body, origin = "http://127.0.0.1:3004", now = Date.now()) {
   const parsed = parseChatRequest(cleanedRequest(body));
   if (parsed.error) throw Object.assign(new Error(parsed.error), { status: 400 });
   const scope = screenMessage(parsed.last.content, { messages: parsed.history.slice(0, -1) });
@@ -88,6 +88,12 @@ export function buildFixturePayload(body, origin = "http://127.0.0.1:3004") {
   const controls = fixtureControls(body);
   const empty = ["empty", "timeout", "rate-limit"].some((tag) => controls.has(tag));
   const liveResults = empty ? [] : fixtureSources(plan, origin, parsed.accessScope);
+  if (!empty && controls.has("metadata-only")) {
+    const record = liveResults[0];
+    delete record.abstractText;
+    delete record.abstractExcerpt;
+    record.identityCheck = { status: "title-difference", provider: "Synthetic registry", registryTitle: "SYNTHETIC title for warning test", checkedAt: FIXTURE_TIME };
+  }
   if (!empty && controls.has("editions")) {
     const book = liveResults.find((record) => record.type === "book");
     book.identityCheck = { status: "title-difference", provider: "Synthetic registry", registryTitle: "SYNTHETIC alternative title for warning test", detail: "Synthetic discrepancy for browser regression only.", checkedAt: FIXTURE_TIME, url: book.url };
@@ -113,7 +119,10 @@ export function buildFixturePayload(body, origin = "http://127.0.0.1:3004") {
     },
     matchedResources: plan.recommendations,
     searchTools: [],
-    liveResults: signResearchChatSources(liveResults, CHAT_FIXTURE_OPTIONS),
+    liveResults: liveResults.map((source, index) => {
+      const issuedAt = controls.has("expired-attachment") && index === 0 ? now - RESEARCH_CHAT_TOKEN_TTL_MS : now;
+      return signResearchChatSources([source], { ...CHAT_FIXTURE_OPTIONS, now: issuedAt })[0];
+    }),
     sourceDiscovery: { accessScope: parsed.accessScope, lanes: { library: lane("library"), openAccess: lane("open-access") } },
     researchSpec: { ...plan.researchSpec, planHash: plan.planHash, configVersion: plan.configVersion },
     researchPlan: plan,
@@ -162,10 +171,30 @@ export function createFixtureServer({ distDir = resolve(PROJECT_ROOT, "dist"), d
         const body = await bodyJson(req);
         const reply = await researchChatReply(body, { ...CHAT_FIXTURE_OPTIONS, apiKey: "synthetic-only-no-network", fetchImpl: async (_url, init) => {
           const request = JSON.parse(JSON.parse(init.body).contents[0].parts[0].text);
-          if (request.reference_guides) return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify({ coaching: [{ kind: "advice", text: "Choose one outcome and a place to focus your research question. This is a synthetic interface test, not research findings.", guide_ids: ["topic-refinement"] }, { kind: "question", text: "Which outcome would you like to investigate?", guide_ids: [] }], suggestions: ["Help me plan a library search."], search_questions: ["Economic sanctions and civilian health"] }) }] } }] }) };
+          if (request.reference_guides) {
+            const region = "Consider sanctions in a specific region like the Middle East.";
+            const pickedRegion = request.question === region;
+            const sanctions = /sanctions/i.test(request.context_not_evidence?.topic || "");
+            const reply = {
+              coaching: [{ kind: "advice", text: pickedRegion
+                ? "Use the Middle East as your geographic scope. Pick a country and a time period to make the search manageable."
+                : "Choose one outcome and a place to focus your research question. This is a synthetic interface test.", guide_ids: ["topic-refinement"] }],
+              suggestions: pickedRegion ? ["Help me pick a country and time period."] : [sanctions ? region : "Help me plan a library search."],
+              search_questions: pickedRegion
+                ? ["Economic sanctions and civilian food security in the Middle East"]
+                : ["Economic sanctions and civilian health"],
+            };
+            return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify(reply) }] } }] }) };
+          }
           const source = request.source_evidence[0];
           const quote = source?.abstract_excerpt.length <= 600 ? source.abstract_excerpt : "";
-          const blocks = quote && !String(body.question).includes("[fixture:unsupported]") ? [{ text: /narrow/i.test(body.question) ? `Question to explore: What questions remain about ${request.task_context_not_evidence.topic}?` : "This synthetic passage is available for testing the source discussion interface. It reports no real research findings.", source_id: source.source_id, quote, evidence_scope: "abstract" }] : [];
+          const blocks = quote && !String(body.question).includes("[fixture:unsupported]") ? [{
+            source_id: source.source_id,
+            quote,
+            evidence_scope: "abstract",
+            limitation_quote: source.abstract_excerpt.match(/No (?:real study or )?findings are asserted\.$|No research findings are asserted\.$/)?.[0],
+            question_to_explore: /narrow/i.test(body.question) ? `What questions remain about ${request.task_context_not_evidence.topic.replace(/[?]+$/, "")}?` : undefined,
+          }] : [];
           return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify({ insufficient_evidence: !blocks.length, blocks }) }] } }] }) };
         } });
         return json(res, 200, { ...reply, fixture: true });
@@ -173,6 +202,10 @@ export function createFixtureServer({ distDir = resolve(PROJECT_ROOT, "dist"), d
       if (req.method === "POST" && ["/api/chat", "/api/chat/stream"].includes(path)) {
         const body = await bodyJson(req);
         const controls = fixtureControls(body);
+        if (controls.has("busy")) {
+          res.setHeader("Retry-After", "2");
+          return json(res, 429, { fixture: true, error: "Synthetic busy response." });
+        }
         if (controls.has("error")) return json(res, 503, { fixture: true, error: "Synthetic fixture failure. No provider was contacted." });
         const payload = buildFixturePayload(body, origin);
         if (path.endsWith("/stream")) {
@@ -217,13 +250,14 @@ export function createFixtureServer({ distDir = resolve(PROJECT_ROOT, "dist"), d
 async function selfTest() {
   const { default: assert } = await import("node:assert/strict");
   const body = { mode: "scholarly", responseStyle: "sources", accessScope: "both", messages: [{ role: "user", content: "Find 3 peer-reviewed sources from 2022-2026 about adolescent sleep" }] };
-  const payload = buildFixturePayload(body);
+  const fixtureClock = Date.now();
+  const payload = buildFixturePayload(body, undefined, fixtureClock);
   assert.equal(payload.liveResults.length, 3);
   assert.deepEqual(payload.liveResults.map((source) => source.sourceAssessment.status), ["meets", "unverified", "mismatch"]);
   assert.equal(payload.researchSpec.sourceRequirements.requestedSourceCount, 3);
   assert.equal(payload.researchSpec.sourceRequirements.publicationYearFrom, 2022);
   assert.equal(payload.researchSpec.planHash, payload.researchPlan.planHash);
-  assert.deepEqual(buildFixturePayload(body), payload);
+  assert.deepEqual(buildFixturePayload(body, undefined, fixtureClock), payload);
   assert.ok(payload.liveResults.every((source) => source.title.startsWith("[SYNTHETIC TEST FIXTURE]")));
   const server = createFixtureServer({ delayMs: 250 });
   await new Promise((done, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", () => { server.removeListener("error", reject); done(); }); });
@@ -252,9 +286,18 @@ async function selfTest() {
     assert.equal((await post("/api/chat", { messages: [] })).status, 400);
     assert.equal((await fetch(`${base}/.env`)).status, 404);
     assert.equal((await fetch(`${base}/__fixtures__/source/current-article`)).status, 200);
-    const sourceChat = await (await post("/api/research-chat", { question: "Discuss this synthetic source.", sourceTokens: [payload.liveResults[0].researchChatToken] })).json();
+    const sourceChat = await (await post("/api/research-chat", { question: "Discuss this synthetic source.", intent: "evidence", sourceTokens: [events[1].liveResults[0].researchChatToken] })).json();
     assert.equal(sourceChat.status, "answered");
-    assert.match(sourceChat.blocks[0].text, /synthetic/);
+    assert.equal(sourceChat.blocks[0].presentation, "excerpt");
+    assert.match(sourceChat.blocks[0].quote, /Synthetic/);
+    assert.match(sourceChat.limitations, /limited context/);
+    const stale = await (await post("/api/chat", withTag("expired-attachment"))).json();
+    const expiredChat = await (await post("/api/research-chat", {
+      question: "Discuss this synthetic source.", intent: "evidence",
+      sourceTokens: stale.liveResults.slice(0, 2).map((source) => source.researchChatToken),
+    })).json();
+    assert.equal(expiredChat.status, "attachments_need_refresh");
+    assert.deepEqual(expiredChat.expiredSourceIds, [stale.liveResults[0].evidenceId]);
     const coach = await (await post("/api/research-chat", { question: "I am interested in sanctions but unsure where to start.", sourceTokens: [] })).json();
     assert.equal(coach.mode, "coaching"); assert.equal(coach.coachingOrigin, "gemini");
     assert.equal(coach.guideReferences[0].id, "topic-refinement"); assert.deepEqual(coach.blocks, []);

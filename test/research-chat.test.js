@@ -114,12 +114,17 @@ test("Gemini receives only selected authenticated evidence and untrusted bounded
   assert.doesNotMatch(captured.init.body, /synthetic-provider-key|Private notes/);
   assert.equal(captured.init.headers["x-goog-api-key"], options.apiKey);
   assert.deepEqual(result.blocks[0].quote, quote); assert.equal(result.blocks[0].source.url, sample.url);
-  assert.match(result.notice, /does not verify the interpretation/); assert.match(result.notice, /No full text was read/);
+  assert.match(result.notice, /Check their relevance and context/); assert.match(result.notice, /No full text was read/);
 });
 
-test("unknown citations, altered quotes, fragments, full-text scope, links and markup are removed", () => {
-  const invalid = [block({ source_id: "invented" }), block({ quote: quote.replace("cannot", "can") }), block({ quote: "sanctions and trade changes." }), block({ evidence_scope: "full_text" }), block({ text: "Read https://attacker.example" }), block({ text: "[Read](javascript:alert(1))" }), block({ text: "<script>bad</script>" }), block({ text: "I have read the full text and it agrees." }), block({ text: "x".repeat(1001) }), null];
-  assert.deepEqual(validateResearchChatReply({ insufficient_evidence: false, blocks: invalid }, [record()]), []);
+test("unknown citations, altered quotes, fragments and full-text scope are removed", () => {
+  const invalid = [
+    block({ source_id: "invented" }), block({ quote: quote.replace("cannot", "can") }),
+    block({ quote: "sanctions and trade changes." }), block({ evidence_scope: "full_text" }), null,
+  ];
+  for (const candidate of invalid) {
+    assert.deepEqual(validateResearchChatReply(validReply({ blocks: [candidate] }), [record()]), []);
+  }
   assert.deepEqual(validateResearchChatReply(validReply({ insufficient_evidence: true }), [record()]), []);
   assert.deepEqual(validateResearchChatReply({ blocks: [block()] }, [record()]), []);
 });
@@ -132,14 +137,27 @@ test("a valid quote alone does not bypass source identity warnings or permit fre
   assert.equal(validateResearchChatReply({ insufficient_evidence: false, blocks: [block(), block()] }, [record()]).length, 1);
 });
 
-test("numbers and dates must appear in each block's own quoted passage", () => {
-  const abstract = "The study included 37 institutions in 2024. The reported change was 7.4 percent among 1,000 participants, with substantial uncertainty.";
-  const source = record(); source.abstract = abstract;
+test("evidence omits generated paraphrases even when their numbers and quote are genuine", () => {
+  const source = record();
+  source.abstract = "The study included 37 institutions in 2024. The reported change was 7.4 percent among 1,000 participants, with substantial uncertainty. The design cannot establish causation.";
   const quoted = "The reported change was 7.4 percent among 1,000 participants, with substantial uncertainty.";
-  assert.deepEqual(validateResearchChatReply({ insufficient_evidence: false, blocks: [block({ quote: quoted, text: "The study involved 37 institutions." })] }, [source]), []);
-  assert.deepEqual(validateResearchChatReply({ insufficient_evidence: false, blocks: [block({ quote: quoted, text: "In 2024 the study reported this change." })] }, [source]), []);
-  assert.equal(validateResearchChatReply({ insufficient_evidence: false, blocks: [block({ quote: quoted, text: "The abstract reports a 7.4% change among 1000 participants, with uncertainty." })] }, [source]).length, 1);
-  assert.match(buildResearchChatRequest(parseResearchChatRequest(body(), options)).systemInstruction.parts[0].text, /Every number or date/);
+  const raw = block({
+    quote: quoted,
+    text: "The design proved a causal effect of 7.4 percent.",
+    limitation_quote: "The design cannot establish causation.",
+    question_to_explore: "How did the 37 institutions differ?",
+  });
+  const [result] = validateResearchChatReply(validReply({ blocks: [raw] }), [source]);
+  assert.equal(result.presentation, "excerpt");
+  assert.equal(result.quote, quoted);
+  assert.equal(result.limitationQuote, "The design cannot establish causation.");
+  assert.equal(result.question, "", "a number outside the chosen passage cannot enter a proposal");
+  assert.doesNotMatch(JSON.stringify(result), /proved a causal effect/);
+  const [proposal] = validateResearchChatReply(validReply({
+    blocks: [{ ...raw, limitation_quote: "The design verified causation.", question_to_explore: "What might explain the reported change?" }],
+  }), [source]);
+  assert.equal(proposal.limitationQuote, "");
+  assert.equal(proposal.question, "What might explain the reported change?");
 });
 
 test("no checked answer becomes an explicit limitation rather than unchecked provider text", async () => {
@@ -164,7 +182,7 @@ test("abort signals cancel provider work without inventing a response", async ()
 test("prompt structure preserves excerpt qualifications and source-only JSON schema", () => {
   const packet = buildResearchChatRequest(parseResearchChatRequest(body(), options));
   assert.match(packet.contents[0].parts[0].text, /cannot establish causation/);
-  assert.deepEqual(packet.generationConfig.responseSchema.properties.blocks.items.required, ["text", "source_id", "quote", "evidence_scope"]);
+  assert.deepEqual(packet.generationConfig.responseSchema.properties.blocks.items.required, ["source_id", "quote", "evidence_scope"]);
   assert.match(packet.systemInstruction.parts[0].text, /do not merge them into one study/i);
   assert.match(packet.systemInstruction.parts[0].text, /If the supplied excerpts cannot answer/);
 });
@@ -275,4 +293,32 @@ test("draft review flags certainty wording without rewriting or validating stude
   assert.match(result.guidance[0].text, /always.*proves/);
   assert.match(result.guidance.at(-1).text, /does not verify the claims/);
   assert.doesNotMatch(JSON.stringify(result), /Sanctions always cause worse health/);
+});
+
+test("explicit abstract discussion uses evidence despite planning-like wording", async () => {
+  const result = await researchChatReply(body(signed(), {
+    question: "I need to compare what these studies found.", intent: "evidence",
+  }), { ...options, fetchImpl: provider(validReply(), (_url, request) => {
+    const task = JSON.parse(JSON.parse(request.body).contents[0].parts[0].text);
+    assert.equal(task.source_evidence[0].abstract_excerpt, quote);
+  }) });
+  assert.equal(result.status, "answered");
+  assert.equal(result.mode, "evidence");
+  assert.match(result.limitations, /Check the original methods and sample/);
+  const planning = await researchChatReply(body(signed(), { intent: "planning", sourceTokens: [] }), { ...options, apiKey: "" });
+  assert.ok(["planning", "coaching"].includes(planning.mode));
+  assert.deepEqual(planning.blocks, []);
+  assert.throws(() => parseResearchChatRequest(body(signed(), { intent: "arbitrary" }), options), { status: 400 });
+});
+
+test("explicit evidence requests identify expired attachments without sending partial evidence to the provider", async () => {
+  const expiredOptions = { ...options, now: options.now + RESEARCH_CHAT_TOKEN_TTL_MS };
+  const expired = signed();
+  const fresh = signed({ ...sample, doi: "10.1234/new" }, { now: expiredOptions.now });
+  const result = await researchChatReply(body(expired, {
+    intent: "evidence", sourceTokens: [expired.researchChatToken, fresh.researchChatToken],
+  }), { ...expiredOptions, fetchImpl: async () => { assert.fail("No provider call before attachment recovery"); } });
+  assert.equal(result.status, "attachments_need_refresh");
+  assert.deepEqual(result.expiredSourceIds, [expired.evidenceId]);
+  assert.deepEqual(result.blocks, []);
 });
